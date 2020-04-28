@@ -1,0 +1,17 @@
+{
+  "name": "epns",
+  "displayName": "epns",
+  "expo": {
+    "name": "epns",
+    "slug": "epns",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
