@@ -41,7 +41,7 @@ Current proposal is to send the operation code as **Register** along with the de
 To know more about server and it's architecture, please head to [epns-push-notification-server repo] (https://github.com/ethereum-push-notification-system/epns-push-notification-server).
 
 #### Handling Incoming Push Notifications
-The push notification handling (for when the app is open) will also be built to handle notifications recieved by the users when they are inside the app
+The push notification handling (for when the app is open) will also be built to handle notifications recieved by the users when they are inside the app.
 
 #### Fetching Previous Notifications of the User
 TBA, We are still contemplating storing a cache on the epns server or handle it alternatively.
