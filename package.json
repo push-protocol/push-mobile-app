@@ -9,17 +9,23 @@
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
+    "@react-navigation/native": "^5.1.7",
+    "@react-navigation/stack": "^5.2.14",
     "expo": "~37.0.3",
     "expo-updates": "~0.1.0",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
     "react-native": "~0.61.5",
     "react-native-gesture-handler": "^1.6.1",
+    "react-native-parsed-text": "^0.0.21",
     "react-native-reanimated": "^1.8.0",
     "react-native-safe-area-context": "^0.7.3",
+    "react-native-safe-area-view": "^1.1.1",
     "react-native-screens": "^2.7.0",
     "react-native-unimodules": "~0.9.0",
-    "react-native-web": "~0.11.7"
+    "react-native-web": "~0.11.7",
+    "react-navigation": "^4.2.2",
+    "react-navigation-stack": "^2.3.13"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
