@@ -6,6 +6,7 @@ export default {
 
   // For Async Storage --> Represents Key and some Constants
   STORAGE: {
+    IS_SIGNED_IN: 'IsUserSignedIn',
 
   },
 
@@ -14,8 +15,6 @@ export default {
     BORDER_MARGIN_SIDE: 8,
 
     BUTTONS_MARGIN_SIDE: 16,
-
-    CALENDAR_EVENT_DISPLAY_HEIGHT: 60,
   },
 
   CONSTANTS: {
@@ -28,9 +27,12 @@ export default {
 
   COLORS: {
     PRIMARY: 'rgba(27.0, 150.0, 227.0, 1.0)',
-    PRIMARY_DARK: 'rgba(14.0, 116.0, 199.0, 1.0)',
 
     LINKS: 'rgba(20.0, 126.0, 251.0, 1.0)',
+
+    GRADIENT_PRIMARY: 'rgba(226.0, 8.0, 128.0, 1.0)',
+    GRADIENT_SECONDARY: 'rgba(53.0, 197.0, 243.0, 1.0)',
+    GRADIENT_THIRD: 'rgba(103.0, 76.0, 159.0, 1.0)',
 
     WHITE: 'rgba(255.0, 255.0, 255.0, 1.0)',
     DARK_WHITE: 'rgba(255.0, 255.0, 255.0, 0.75)',

@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+} from 'react-native';
 
 import GLOBALS from 'src/Globals';
 
-export default class ClassComponent extends Component<Prop> {
+export default class HomeScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
     super(props);
@@ -11,7 +15,7 @@ export default class ClassComponent extends Component<Prop> {
 
   // COMPONENT MOUNTED
   componentDidMount() {
-    console.log("here");
+
   }
 
   // FUNCTIONS
@@ -20,11 +24,10 @@ export default class ClassComponent extends Component<Prop> {
   // RENDER
   render() {
     const {
-      style,
     } = this.props;
 
     return (
-      <View style = {[ styles.container, style ]}>
+      <View style = { styles.container }>
         <Text>I am Dummy</Text>
       </View>
     );
@@ -33,5 +36,7 @@ export default class ClassComponent extends Component<Prop> {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: GLOBALS.COLORS.WHITE,
   },
 });
