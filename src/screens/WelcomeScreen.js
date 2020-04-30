@@ -1,4 +1,4 @@
-import React, { Component, useRef } from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   Animated,
   StyleSheet,
 } from 'react-native';
-import SafeAreaView from 'react-native-safe-area-view';
+import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { useHeaderHeight } from '@react-navigation/stack';
 
@@ -30,6 +30,17 @@ function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   );
 
   return null;
+}
+
+function GetScreenInsets() {
+  const insets = useSafeArea();
+  if (insets.bottom > 0) {
+    // Adjust inset by
+    return <View style={styles.insetAdjustment}></View>;
+  }
+  else {
+    return <View style={styles.noInsetAdjustment}></View>;
+  }
 }
 
 export default class WelcomeScreen extends Component {
@@ -81,7 +92,6 @@ export default class WelcomeScreen extends Component {
           <DetailedInfoPresenter
             style={styles.intro}
             icon={require('assets/ui/fulllogo.png')}
-            issvg={false}
             contentView={
               <View>
                 <StylishLabel
@@ -118,6 +128,7 @@ export default class WelcomeScreen extends Component {
             disabled={false}
             onPress={() => {this.loadNextScreen()}}
           />
+          <GetScreenInsets />
         </Animated.View>
       </SafeAreaView>
     );
@@ -156,6 +167,11 @@ const styles = StyleSheet.create({
   footer: {
     width: '100%',
     paddingHorizontal: 20,
+  },
+  insetAdjustment: {
+    paddingBottom: 5,
+  },
+  noInsetAdjustment: {
     paddingBottom: 20,
   }
 });

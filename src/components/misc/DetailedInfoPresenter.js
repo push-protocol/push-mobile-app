@@ -49,14 +49,14 @@ export default class DetailedInfoPresenter extends Component {
     Animated.parallel([
       Animated.timing(this.state.ay, {
         toValue: 0,
-        duration: 400
+        duration: 300
       }),
       Animated.sequence([
-        Animated.delay(200),
+        Animated.delay(100),
         Animated.timing(this.state.fader, {
       		toValue: 1,
           easing: Easing.linear,
-      		duration: 300
+      		duration: 250
       	})
       ])
     ]).start(() => {
@@ -71,7 +71,6 @@ export default class DetailedInfoPresenter extends Component {
     const {
       style,
       icon,
-      issvg,
       contentView,
       animated
     } = this.props;
@@ -98,7 +97,7 @@ export default class DetailedInfoPresenter extends Component {
         >
           <Image
             style={styles.icon}
-            source={require('assets/ui/fulllogo.png')}
+            source={icon}
           />
         </Animated.View>
 

@@ -44,35 +44,45 @@ export default function App() {
               name="Welcome"
               component={WelcomeScreen}
               options = {{
-                headerTransparent: true,
+                headerShown: false,
+                headerTintColor: GLOBALS.COLORS.MID_GRAY,
               }}
-              initialParams={{ setIsSignedIn, setIsLoading }}
             />
 
             <Stack.Screen
               name="SignIn"
               component={SignInScreen}
               options = {{
-                headerTransparent: true,
+                headerShown: false,
+                headerTintColor: GLOBALS.COLORS.MID_GRAY,
               }}
-              initialParams={{ setIsSignedIn, setIsLoading }}
             />
 
             <Stack.Screen
               name="Biometric"
               component={BiometricScreen}
-              initialParams={{ setIsSignedIn, setIsLoading }}
+              options = {{
+                headerShown: false,
+                headerTintColor: GLOBALS.COLORS.MID_GRAY,
+              }}
             />
 
             <Stack.Screen
               name="PushNotify"
               component={PushNotifyScreen}
-              initialParams={{ setIsSignedIn, setIsLoading }}
+              options = {{
+                headerShown: false,
+                headerTintColor: GLOBALS.COLORS.MID_GRAY,
+              }}
             />
 
             <Stack.Screen
               name="SetupComplete"
               component={SetupCompleteScreen}
+              options = {{
+                headerShown: false,
+                headerTintColor: GLOBALS.COLORS.MID_GRAY,
+              }}
               initialParams={{ setIsSignedIn, setIsLoading }}
             />
           </React.Fragment>

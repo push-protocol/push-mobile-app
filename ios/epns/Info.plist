@@ -37,28 +37,10 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSCalendarsUsageDescription</key>
-	<string>Allow epns to access your calendar</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow epns to use the camera</string>
-	<key>NSContactsUsageDescription</key>
-	<string>Allow epns experiences to access your contacts</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Allow epns to use your location</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Allow epns to use your location</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow epns to use your location</string>
+	<string>Allow EPNS to access your camera. EPNS will use this to scan the QR Code of your wallet.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow epns to access your microphone</string>
-	<key>NSMotionUsageDescription</key>
-	<string>Allow epns to access your device's accelerometer</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Give epns periences permission to save photos</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Give epns periences permission to access your photos</string>
-	<key>NSRemindersUsageDescription</key>
-	<string>Allow epns to access your reminders</string>
+	<string>Allow EPNS to access your Audio. EPNS will use this to play sounds.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

@@ -113,6 +113,16 @@ export default class CalendarEvents extends Component {
         style: [styles.bold, styles.italics],
         renderText: this.renderStyles
       },
+      {
+        pattern: /\[(white):([^\]]+)\]/i,
+        style: [styles.white],
+        renderText: this.renderStyles
+      },
+      {
+        pattern: /\[(whitebold):([^\]]+)\]/i,
+        style: [styles.white, styles.bold],
+        renderText: this.renderStyles
+      },
     ];
 
     if (Platform.OS === 'ios') {
@@ -156,7 +166,7 @@ const styles = StyleSheet.create({
     color: GLOBALS.COLORS.SUBLIME_RED
   },
   username: {
-    color: GLOBALS.COLORS.PRIMARY
+    color: GLOBALS.COLORS.GRADIENT_SECONDARY
   },
   text: {
     color: GLOBALS.COLORS.BLACK
@@ -164,8 +174,11 @@ const styles = StyleSheet.create({
   primary: {
     color: GLOBALS.COLORS.GRADIENT_PRIMARY,
   },
+  white: {
+    color: GLOBALS.COLORS.WHITE,
+  },
   link: {
-    color: GLOBALS.COLORS.LINKS,
+    color: GLOBALS.COLORS.GRADIENT_PRIMARY,
   },
   underline: {
     textDecorationLine: 'underline',
