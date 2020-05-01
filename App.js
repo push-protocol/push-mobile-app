@@ -1,4 +1,5 @@
 import 'react-native-gesture-handler';
+
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import React, {useState} from 'react';

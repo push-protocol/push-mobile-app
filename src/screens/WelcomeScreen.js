@@ -50,6 +50,8 @@ export default class WelcomeScreen extends Component {
 
     this.state = {
       transitionFinished: false,
+      detailedInfoPresetned: false,
+
       fader: new Animated.Value(0)
     }
   }
@@ -57,12 +59,16 @@ export default class WelcomeScreen extends Component {
   // FUNCTIONS
   // When Animation is Finished
   animationFinished = () => {
-    Animated.timing(
-      this.state.fader, {
-        toValue: 1,
-        duration: 250,
-      }
-    ).start();
+    this.setState({
+      detailedInfoPresetned: true,
+    }, ()=> {
+      Animated.timing(
+        this.state.fader, {
+          toValue: 1,
+          duration: 250,
+        }
+      ).start();
+    })
   }
 
   // Load the Next Screen
@@ -111,7 +117,7 @@ export default class WelcomeScreen extends Component {
                 />
               </View>
             }
-            animated={true}
+            animated={!this.state.detailedInfoPresetned}
             startAnimation={this.state.transitionFinished}
             animationCompleteCallback={() => {this.animationFinished()}}
           />

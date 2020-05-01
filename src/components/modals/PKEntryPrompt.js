@@ -14,7 +14,9 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import GLOBALS from 'src/Globals';
 
-export default class TextEntryPrompt extends Component {
+const PK_LENGTH = 64;
+
+export default class PKEntryPrompt extends Component {
   // Constructor
   constructor(props) {
     super(props);
@@ -23,34 +25,40 @@ export default class TextEntryPrompt extends Component {
       fader: new Animated.Value(0),
       render: false,
       indicator: false,
-      PassCode: '',
+      PKEntry: '',
     }
   }
 
   // Validate Pass Code
-  validatePassCode = (parentFunc, value) => {
-    Keyboard.dismiss();
-    parentFunc(value);
+  validatePKEntry = (doneFunc, closeFunc, value) => {
+    if (value.length == PK_LENGTH) {
+      Keyboard.dismiss();
+
+      if (doneFunc) {
+        if (closeFunc) {
+          closeFunc();
+        }
+
+        doneFunc(value);
+      }
+    }
   }
 
-  resetPassCode = (value) => {
+  resetPKEntry = (value) => {
     this.setState({
-      PassCode: ''
+      PKEntry: ''
     });
   }
 
   // Set Pass Code
-  changePassCode = (parentFunc, value) => {
+  changePKEntry = (doneFunc, closeFunc, value) => {
     // replace spaces
-    value = value.replace(/ /g,'');
+    value = value.replace(/ /g, '');
+    value = value.replace(/[\n\r\t]/g, '');
 
     this.setState({
-      PassCode: value
+      PKEntry: value
     });
-
-    if (value.length == 64) {
-      this.validatePassCode(parentFunc, value);
-    }
   }
 
   // Set Render
@@ -67,7 +75,7 @@ export default class TextEntryPrompt extends Component {
   animateFadeIn = (animate) => {
     this.setState({
       render: true,
-      PassCode: '',
+      PKEntry: '',
       indicator: false
     });
 
@@ -119,73 +127,86 @@ export default class TextEntryPrompt extends Component {
       closeFunc
     } = this.props;
 
-    let PassCodesegment = this.state.PassCode.split("");
+    let doneTextStyle = {};
+    let doneDisabled = false;
+    if (this.state.PKEntry.length != PK_LENGTH) {
+      doneTextStyle.color = GLOBALS.COLORS.MID_GRAY;
+      doneDisabled = true;
+    }
 
     return (
       this.state.render == false
         ? null
         : <Animated.View
-            style = {[ styles.container, {opacity: this.state.fader} ]}>
+            style={[ styles.container, {opacity: this.state.fader} ]}>
 
             <KeyboardAvoidingView
-              style = {styles.keyboardAvoid}
-              behavior = "height"
+              style={styles.keyboardAvoid}
+              behavior="height"
               enabled
             >
-              <View style = {styles.modal}>
-                <View style = {[ styles.titleArea ]}>
+              <View style={styles.modal}>
+                <View style={[ styles.titleArea ]}>
                   {
                     title == null
                       ? null
-                      : <Text style = {[ styles.title ]}>{title}</Text>
+                      : <Text style={[ styles.title ]}>{title}</Text>
                   }
                   {
                     subtitle == null
                       ? null
-                      : <Text style = {[ styles.subtitle ]}>{subtitle}</Text>
+                      : <Text style={[ styles.subtitle ]}>{subtitle}</Text>
                   }
                 </View>
-                <View style = {[ styles.optionsArea ]}>
+                <View style={[ styles.optionsArea ]}>
                   {
                     this.state.indicator == true
                     ? <ActivityIndicator
-                        style = {styles.activity}
-                        size = "large"
-                        color = {GLOBALS.COLORS.BLACK}
+                        style={styles.activity}
+                        size="large"
+                        color={GLOBALS.COLORS.BLACK}
                       />
-                    : <TextInput
-                        style = {styles.input}
-                        maxLength = {64}
-                        contextMenuHidden = {true}
-                        multiline = {true}
-                        autoCapitalize = "characters"
-                        autoCorrect = {false}
-                        onChangeText = {(value) => (this.changePassCode(doneFunc, value))}
-                        onSubmitEditing = {(event) => {
-                          this.validatePassCode(doneFunc, event.nativeEvent.text);
-                        }}
-                        value = {this.state.PassCode}
-                        returnKeyType = "done"
-                        autoFocus
-                      />
+                    : <React.Fragment>
+                        <TextInput
+                          style={styles.input}
+                          maxLength={PK_LENGTH}
+                          contextMenuHidden={true}
+                          multiline={true}
+                          autoCapitalize="characters"
+                          autoCorrect={false}
+                          onChangeText={(value) => (this.changePKEntry(doneFunc, closeFunc, value))}
+                          onSubmitEditing={(event) => {
+                            this.validatePKEntry(doneFunc, closeFunc, event.nativeEvent.text);
+                          }}
+                          value={this.state.PKEntry}
+                          returnKeyType="done"
+                          autoFocus
+                        />
+                        <Text style={styles.lettercount}>
+                          {this.state.PKEntry.length} / {PK_LENGTH}
+                        </Text>
+                      </React.Fragment>
                 }
                 </View>
-                <View style = {[ styles.doneArea ]}>
+                <View style={[ styles.doneArea ]}>
                   <TouchableHighlight
-                    style = {[ styles.done ]}
-                    underlayColor = {GLOBALS.COLORS.MID_GRAY}
-                    onPress = {closeFunc}
+                    style={[ styles.done ]}
+                    underlayColor={GLOBALS.COLORS.LIGHT_GRAY}
+                    disabled={doneDisabled}
+                    onPress={() => {
+                      this.validatePKEntry(doneFunc, closeFunc, this.state.PKEntry)
+                    }}
                   >
-                    <Text style = {[ styles.doneText ]} >{doneTitle}</Text>
+                    <Text style={[ styles.doneText, doneTextStyle ]} >{doneTitle}</Text>
                   </TouchableHighlight>
                 </View>
-                <View style = {[ styles.cancelArea ]}>
+                <View style={[ styles.cancelArea ]}>
                   <TouchableHighlight
-                    style = {[ styles.cancel ]}
-                    underlayColor = {GLOBALS.COLORS.MID_GRAY}
-                    onPress = {closeFunc}
+                    style={[ styles.cancel ]}
+                    underlayColor={GLOBALS.COLORS.LIGHT_GRAY}
+                    onPress={closeFunc}
                   >
-                    <Text style = {[ styles.cancelText ]} >{closeTitle}</Text>
+                    <Text style={[ styles.cancelText ]} >{closeTitle}</Text>
                   </TouchableHighlight>
                 </View>
               </View>
@@ -232,7 +253,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     paddingTop: 5,
-    paddingBottom: 20,
+    paddingBottom: 10,
     paddingHorizontal: 15,
     backgroundColor: GLOBALS.COLORS.WHITE,
     color: GLOBALS.COLORS.BLACK,
@@ -247,13 +268,23 @@ const styles = StyleSheet.create({
     padding: 15
   },
   input: {
-    padding: 15,
+    paddingTop: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 10,
     borderWidth: 1,
     borderColor: GLOBALS.COLORS.LIGHT_GRAY,
     minHeight: 80,
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,
+  },
+  lettercount: {
+    flex: 1,
+    alignSelf: 'flex-end',
+    paddingTop: 2,
+    color: GLOBALS.COLORS.MID_GRAY,
+    fontSize: 12,
   },
   doneArea: {
 

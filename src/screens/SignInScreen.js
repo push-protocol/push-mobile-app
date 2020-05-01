@@ -20,8 +20,10 @@ import PrimaryButton from 'src/components/buttons/PrimaryButton';
 
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 import NoticePrompt from 'src/components/modals/NoticePrompt';
-import TextEntryPrompt from 'src/components/modals/TextEntryPrompt';
+import PKEntryPrompt from 'src/components/modals/PKEntryPrompt';
 import QRScanner from 'src/components/modals/QRScanner';
+
+import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
 
 import GLOBALS from 'src/Globals';
 
@@ -58,8 +60,12 @@ export default class SignInScreen extends Component {
 
     this.state = {
       transitionFinished: false,
+      detailedInfoPresetned: false,
+
       fader: new Animated.Value(0),
-      pkey: null,
+      pkey: '',
+      tempPKKey: '',
+      pkeyVerified: false,
       pkeyAcquired: false,
     }
   }
@@ -95,6 +101,11 @@ export default class SignInScreen extends Component {
 
   // Users Permissions
   getCameraPermissionAsync = async (navigation) => {
+    // Temp Remove Later
+    // const code = "0x789af986260800ff255a4e84311ec44de6eefd7c595115e9176c77814652e668c";
+    // this.onPKDetect(code);
+    // return;
+
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     if (status !== 'granted') {
       this.toggleNoticePrompt(
@@ -113,18 +124,24 @@ export default class SignInScreen extends Component {
   }
 
   // Detect QR Code
-  onQRDetect = (code) => {
-
+  onPKDetect = (code) => {
+    this.setState({
+      tempPKKey: code,
+    })
   }
 
   // When Animation is Finished
   animationFinished = () => {
-    Animated.timing(
-      this.state.fader, {
-        toValue: 1,
-        duration: 250,
-      }
-    ).start();
+    this.setState({
+      detailedInfoPresetned: true,
+    }, ()=> {
+      Animated.timing(
+        this.state.fader, {
+          toValue: 1,
+          duration: 250,
+        }
+      ).start();
+    })
   }
 
   // Load the Next Screen
@@ -137,7 +154,7 @@ export default class SignInScreen extends Component {
     }, () => {
       // Goto Next Screen
       this.props.navigation.navigate('Biometric', {
-        privateKey: this.state.pk
+        privateKey: this.state.pkey
       });
     });
   }
@@ -162,55 +179,110 @@ export default class SignInScreen extends Component {
 
           <Text style={styles.header}>Sign In!</Text>
           <View style={styles.inner}>
-            <DetailedInfoPresenter
-              style={styles.intro}
-              icon={require('assets/ui/wallet.png')}
-              contentView={
-                <View>
-                  <StylishLabel
-                    style={styles.para}
-                    fontSize={16}
-                    title='[bold:EPNS] requires your wallet credentials [italics:(Private Key)] to [bold:Verify You & Decrypt] your messages.'
-                  />
+            {
+              this.state.tempPKKey === ''
+                ? <DetailedInfoPresenter
+                    style={styles.intro}
+                    icon={require('assets/ui/wallet.png')}
+                    contentView={
+                      <View>
+                        <StylishLabel
+                          style={styles.para}
+                          fontSize={16}
+                          title='[bold:EPNS] requires your wallet credentials [italics:(Private Key)] to [bold:Verify You & Decrypt] your messages.'
+                        />
 
-                  <StylishLabel
-                    style={styles.para}
-                    fontSize={16}
-                    title='[default:Note:] At no time does your credentials goes out of the device for any purpose whatsoever.'
+                        <StylishLabel
+                          style={styles.para}
+                          fontSize={16}
+                          title='[default:Note:] At no time does your credentials goes out of the device for any purpose whatsoever.'
+                        />
+                      </View>
+                    }
+                    animated={!this.state.detailedInfoPresetned}
+                    startAnimation={this.state.transitionFinished}
+                    animationCompleteCallback={() => {this.animationFinished()}}
                   />
-                </View>
-              }
-              animated={true}
-              startAnimation={this.state.transitionFinished}
-              animationCompleteCallback={() => {this.animationFinished()}}
-            />
+                : <PKProfileBuilder
+                    style={styles.profile}
+                    forPKey={this.state.tempPKKey}
+                    profileBuilt={() => {console.log("Profile Built")}}
+                  />
+            }
           </View>
           <Animated.View style={[ styles.footer, {opacity: this.state.fader} ]}>
-            <PrimaryButton
-              iconFactory='Ionicons'
-              icon='ios-qr-scanner'
-              iconSize={24}
-              title='Scan via QR Code'
-              fontSize={16}
-              fontColor={GLOBALS.COLORS.WHITE}
-              bgColor={GLOBALS.COLORS.GRADIENT_SECONDARY}
-              disabled={false}
-              onPress={() => {this.getCameraPermissionAsync(navigation)}}
-            />
+            {
+              this.state.tempPKKey === ''
+                ? <View style={styles.entryFooter}>
+                    <PrimaryButton
+                      iconFactory='Ionicons'
+                      icon='ios-qr-scanner'
+                      iconSize={24}
+                      title='Scan via QR Code'
+                      fontSize={16}
+                      fontColor={GLOBALS.COLORS.WHITE}
+                      bgColor={GLOBALS.COLORS.GRADIENT_SECONDARY}
+                      disabled={false}
+                      onPress={() => {this.getCameraPermissionAsync(navigation)}}
+                    />
 
-            <View style={styles.divider}></View>
+                    <View style={styles.divider}></View>
 
-            <PrimaryButton
-              iconFactory='Ionicons'
-              icon='ios-code-working'
-              iconSize={24}
-              title='Enter Manually'
-              fontSize={16}
-              fontColor={GLOBALS.COLORS.WHITE}
-              bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
-              disabled={false}
-              onPress={() => {this.toggleTextEntryPrompt(true, true)}}
-            />
+                    <PrimaryButton
+                      iconFactory='Ionicons'
+                      icon='ios-code-working'
+                      iconSize={24}
+                      title='Enter Manually'
+                      fontSize={16}
+                      fontColor={GLOBALS.COLORS.WHITE}
+                      bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
+                      disabled={false}
+                      onPress={() => {this.toggleTextEntryPrompt(true, true)}}
+                    />
+                  </View>
+                : <View style={styles.verifyFooter}>
+                    {
+                      this.state.pkeyVerified == false
+                        ? null
+                        : <PrimaryButton
+                            iconFactory='Ionicons'
+                            icon='ios-refresh'
+                            iconSize={24}
+                            title='Reset / Use Different Wallet'
+                            fontSize={16}
+                            fontColor={GLOBALS.COLORS.WHITE}
+                            bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
+                            disabled={false}
+                            onPress={() => {
+                              this.setState({tempPKKey: ''})
+                            }}
+                          />
+                    }
+
+                    {
+                      this.state.pkeyAcquired == false
+                        ? null
+                        : <View style={styles.continueFooter}>
+                            <View style={styles.divider}></View>
+
+                            <PrimaryButton
+                              iconFactory='Ionicons'
+                              icon='ios-arrow-forward'
+                              iconSize={24}
+                              title="Continue"
+                              fontSize={16}
+                              fontColor={GLOBALS.COLORS.WHITE}
+                              bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
+                              disabled={false}
+                              onPress={() => {this.toggleTextEntryPrompt(true, true)}}
+                            />
+                          </View>
+                    }
+
+                  </View>
+            }
+
+
             <GetScreenInsets />
           </Animated.View>
         </SafeAreaView>
@@ -219,7 +291,7 @@ export default class SignInScreen extends Component {
           ref='QRScanner'
           navigation={navigation}
           doneFunc={(code) => {
-            this.onQRDetect(code)
+            this.onPKDetect(code)
           }}
           closeFunc={() => this.toggleQRScanner(false, navigation)}
         />
@@ -235,13 +307,13 @@ export default class SignInScreen extends Component {
           closeFunc={() => this.toggleNoticePrompt(false, true)}
         />
 
-        <TextEntryPrompt
+        <PKEntryPrompt
           ref='TextEntryPrompt'
           title='Enter Private Key'
           subtitle='Please enter the Private Key of your Wallet.'
           doneTitle='Verify!'
           doneFunc={(code) => {
-            this.onQRDetect(code)
+            this.onPKDetect(code)
           }}
           closeTitle='Cancel'
           closeFunc={() => this.toggleTextEntryPrompt(false, true)}
@@ -280,6 +352,8 @@ const styles = StyleSheet.create({
   },
   para: {
     paddingTop: 20,
+  },
+  profile: {
   },
   footer: {
     width: '100%',

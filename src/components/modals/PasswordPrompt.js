@@ -131,84 +131,84 @@ export default class PasswordPrompt extends Component {
       this.state.render == false
         ? null
         : <Animated.View
-            style = {[ styles.container, {opacity: this.state.fader} ]}>
+            style={[ styles.container, {opacity: this.state.fader} ]}>
 
             <KeyboardAvoidingView
-              style = {styles.keyboardAvoid}
-              behavior = "height"
+              style={styles.keyboardAvoid}
+              behavior="height"
               enabled
             >
-              <View style = {styles.modal}>
-                <View style = {[ styles.titleArea ]}>
+              <View style={styles.modal}>
+                <View style={[ styles.titleArea ]}>
                   {
                     title == null
                       ? null
-                      : <Text style = {[ styles.title ]}>{title}</Text>
+                      : <Text style={[ styles.title ]}>{title}</Text>
                   }
                   {
                     subtitle == null
                       ? null
-                      : <Text style = {[ styles.subtitle ]}>{subtitle}</Text>
+                      : <Text style={[ styles.subtitle ]}>{subtitle}</Text>
                   }
                 </View>
-                <View style = {[ styles.optionsArea ]}>
+                <View style={[ styles.optionsArea ]}>
                   {
                     this.state.indicator == true
                     ? null
                     : <TextInput
-                        style = {styles.input}
-                        maxLength = {6}
-                        contextMenuHidden = {true}
-                        autoCapitalize = "characters"
-                        autoCorrect = {false}
-                        onChangeText = {(value) => (this.changePassCode(doneFunc, value))}
-                        onSubmitEditing = {(event) => {
+                        style={styles.input}
+                        maxLength={6}
+                        contextMenuHidden={true}
+                        autoCapitalize="characters"
+                        autoCorrect={false}
+                        onChangeText={(value) => (this.changePassCode(doneFunc, value))}
+                        onSubmitEditing={(event) => {
                           this.validatePassCode(doneFunc, event.nativeEvent.text);
                         }}
-                        value = {this.state.PassCode}
-                        returnKeyType = "done"
+                        value={this.state.PassCode}
+                        returnKeyType="done"
                         autoFocus
                       />
                 }
                 {
                   this.state.indicator == true
                   ? <ActivityIndicator
-                      style = {styles.activity}
-                      size = "large"
-                      color = {GLOBALS.COLORS.BLACK}
+                      style={styles.activity}
+                      size="large"
+                      color={GLOBALS.COLORS.BLACK}
                     />
                   : <View
-                      style = {styles.fancyTextContainer}
+                      style={styles.fancyTextContainer}
                       pointerEvents="none"
                     >
-                      <View style = {styles.fancyTextView}>
-                        <Text style = {styles.fancyText}>{PassCodesegment[0]}</Text>
+                      <View style={styles.fancyTextView}>
+                        <Text style={styles.fancyText}>{PassCodesegment[0]}</Text>
                       </View>
-                      <View style = {styles.fancyTextView}>
-                        <Text style = {styles.fancyText}>{PassCodesegment[1]}</Text>
+                      <View style={styles.fancyTextView}>
+                        <Text style={styles.fancyText}>{PassCodesegment[1]}</Text>
                       </View>
-                      <View style = {styles.fancyTextView}>
-                        <Text style = {styles.fancyText}>{PassCodesegment[2]}</Text>
+                      <View style={styles.fancyTextView}>
+                        <Text style={styles.fancyText}>{PassCodesegment[2]}</Text>
                       </View>
-                      <View style = {styles.fancyTextView}>
-                        <Text style = {styles.fancyText}>{PassCodesegment[3]}</Text>
+                      <View style={styles.fancyTextView}>
+                        <Text style={styles.fancyText}>{PassCodesegment[3]}</Text>
                       </View>
-                      <View style = {styles.fancyTextView}>
-                        <Text style = {styles.fancyText}>{PassCodesegment[4]}</Text>
+                      <View style={styles.fancyTextView}>
+                        <Text style={styles.fancyText}>{PassCodesegment[4]}</Text>
                       </View>
-                      <View style = {styles.fancyTextView}>
-                        <Text style = {styles.fancyText}>{PassCodesegment[5]}</Text>
+                      <View style={styles.fancyTextView}>
+                        <Text style={styles.fancyText}>{PassCodesegment[5]}</Text>
                       </View>
                     </View>
                 }
                 </View>
-                <View style = {[ styles.cancelArea ]}>
+                <View style={[ styles.cancelArea ]}>
                   <TouchableHighlight
-                    style = {[ styles.cancel ]}
-                    underlayColor = {GLOBALS.COLORS.MID_GRAY}
-                    onPress = {closeFunc}
+                    style={[ styles.cancel ]}
+                    underlayColor={GLOBALS.COLORS.LIGHT_GRAY}
+                    onPress={closeFunc}
                   >
-                    <Text style = {[ styles.cancelText ]} >{closeTitle}</Text>
+                    <Text style={[ styles.cancelText ]} >{closeTitle}</Text>
                   </TouchableHighlight>
                 </View>
               </View>
