@@ -99,7 +99,7 @@ export default class WelcomeScreen extends Component {
             style={styles.intro}
             icon={require('assets/ui/fulllogo.png')}
             contentView={
-              <View>
+              <View style={styles.introContent}>
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
@@ -167,8 +167,11 @@ const styles = StyleSheet.create({
     padding: 20,
     maxWidth: 500,
   },
+  introContent: {
+    marginTop: 20,
+  },
   para: {
-    paddingTop: 20,
+    marginBottom: 20,
   },
   footer: {
     width: '100%',

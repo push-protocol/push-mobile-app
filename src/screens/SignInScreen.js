@@ -102,7 +102,7 @@ export default class SignInScreen extends Component {
   // Users Permissions
   getCameraPermissionAsync = async (navigation) => {
     // Temp Remove Later
-    const code = "0x789af986260800ff255a4e84311ec44de6eefd7c595115e9176c77814652e668c";
+    const code = "0x789af986260800ff255a4e84311ec44de6efd7c595115e9176c77814652e668c";
     this.onPKDetect(code);
     return;
 
@@ -185,7 +185,7 @@ export default class SignInScreen extends Component {
                     style={styles.intro}
                     icon={require('assets/ui/wallet.png')}
                     contentView={
-                      <View>
+                      <View style={styles.introContent}>
                         <StylishLabel
                           style={styles.para}
                           fontSize={16}
@@ -206,6 +206,9 @@ export default class SignInScreen extends Component {
                 : <PKProfileBuilder
                     style={styles.profile}
                     forPKey={this.state.tempPKKey}
+                    resetFunc={() => {
+                      this.setState({tempPKKey: ''})
+                    }}
                     profileBuilt={() => {console.log("Profile Built")}}
                   />
             }
@@ -345,13 +348,16 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-  },
-  intro: {
     padding: 20,
     maxWidth: 500,
   },
+  intro: {
+  },
+  introContent: {
+    marginTop: 20,
+  },
   para: {
-    paddingTop: 20,
+    marginBottom: 20,
   },
   profile: {
   },

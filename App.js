@@ -1,3 +1,5 @@
+import './web3globals.js'
+import './shim.js'
 import 'react-native-gesture-handler';
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';

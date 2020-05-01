@@ -169,37 +169,38 @@ export default class PrimaryButton extends Component {
     updatedButtonStyle.backgroundColor = this.state.bgColor;
 
     return (
-      <TouchableWithoutFeedback
-        style = {[ styles.outerContainer ]}
-        onPress = {onPress}
-        onPressIn = {() => this.toggleOverlay(true)}
-        onPressOut = {() => this.toggleOverlay(false)}
-        onPress = {onPress}
-        disabled = {disabled}
-      >
-        <Animated.View
-          style = {[
-            styles.innerContainer,
-            updatedButtonStyle,
-            animatedStyle
-          ]}
+      <View style={[ style, styles.outerContainer ]}>
+        <TouchableWithoutFeedback
+          onPress = {onPress}
+          onPressIn = {() => this.toggleOverlay(true)}
+          onPressOut = {() => this.toggleOverlay(false)}
+          onPress = {onPress}
+          disabled = {disabled}
         >
-          {
-            this.state.toggleOverlay == false
-              ? null
-              : <View style = {styles.overlayContainer}></View>
-          }
-          <Text style = {[styles.title, fontStyle ]}>{title}</Text>
-          {
-            this.renderIcon(
-              iconFactory,
-              icon,
-              this.state.fontColor,
-              iconSize,
-            )
-          }
-        </Animated.View>
-      </TouchableWithoutFeedback>
+          <Animated.View
+            style = {[
+              styles.innerContainer,
+              updatedButtonStyle,
+              animatedStyle
+            ]}
+          >
+            {
+              this.state.toggleOverlay == false
+                ? null
+                : <View style = {styles.overlayContainer}></View>
+            }
+            <Text style = {[styles.title, fontStyle ]}>{title}</Text>
+            {
+              this.renderIcon(
+                iconFactory,
+                icon,
+                this.state.fontColor,
+                iconSize,
+              )
+            }
+          </Animated.View>
+        </TouchableWithoutFeedback>
+      </View>
     );
   };
 }
