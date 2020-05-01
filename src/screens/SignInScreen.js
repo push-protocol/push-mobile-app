@@ -102,7 +102,7 @@ export default class SignInScreen extends Component {
   // Users Permissions
   getCameraPermissionAsync = async (navigation) => {
     // Temp Remove Later
-    const code = "0x789af986260800ff255a4e84311ec44de6efd7c595115e9176c77814652e668c";
+    const code = "";
     this.onPKDetect(code);
     return;
 
