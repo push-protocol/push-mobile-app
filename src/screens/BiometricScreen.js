@@ -98,11 +98,6 @@ export default class BiometricScreen extends Component {
 
   // Users Permissions
   getCameraPermissionAsync = async (navigation) => {
-    // Temp Remove Later
-    const code = "0x789af986260800ff255a4e84311ec44de6efd7c595115e9176c77814652e668c";
-    this.onPKDetect(code);
-    return;
-
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     if (status !== 'granted') {
       this.toggleNoticePrompt(
@@ -212,7 +207,7 @@ export default class BiometricScreen extends Component {
               this.state.pkey === ''
                 ? <DetailedInfoPresenter
                     style={styles.intro}
-                    icon={require('assets/ui/wallet.png')}
+                    icon={require('assets/ui/biometric.png')}
                     contentView={
                       <View style={styles.introContent}>
                         <StylishLabel
