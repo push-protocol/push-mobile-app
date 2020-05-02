@@ -5,6 +5,7 @@ import {
   Image,
   InteractionManager,
   Animated,
+  AsyncStorage,
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';

@@ -7,18 +7,20 @@ export default {
   // For Async Storage --> Represents Key and some Constants
   STORAGE: {
     IS_SIGNED_IN: 'IsUserSignedIn',
+    USER_LOCKED: 'UserLocked',
+    PASSCODE_ATTEMPTS: 'PasscodeAttempts',
 
+    GENERIC_WALLET_INFO: 'GenericWalletInfo',
+    ENCRYPTED_PKEY: 'EncryptedPrivateKey',
+
+    HASHED_PASSCODE: 'HashedPasscode',
   },
 
   ADJUSTMENTS: {
-    BORDER_MARGIN_TOP: 8,
-    BORDER_MARGIN_SIDE: 8,
-
-    BUTTONS_MARGIN_SIDE: 16,
   },
 
   CONSTANTS: {
-
+    WIPE_USER_AFTER_PASSCODE_ATTEMPTS: 5,
   },
 
   META: {

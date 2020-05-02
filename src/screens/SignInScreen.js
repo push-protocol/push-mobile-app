@@ -25,6 +25,8 @@ import QRScanner from 'src/components/modals/QRScanner';
 
 import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
 
+import MetaStorage from 'src/singletons/MetaStorage';
+
 import GLOBALS from 'src/Globals';
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
@@ -98,6 +100,11 @@ export default class SignInScreen extends Component {
 
   // Users Permissions
   getCameraPermissionAsync = async (navigation) => {
+    // Temp Remove Later
+    const code = "0x789af986260800ff255a4e84311ec44de6efd7c595115e9176c77814652e668c";
+    this.onPKDetect(code);
+    return;
+
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     if (status !== 'granted') {
       this.toggleNoticePrompt(
@@ -172,14 +179,20 @@ export default class SignInScreen extends Component {
   }
 
   // Load the Next Screen
-  loadNextScreen = () => {
-    const pkey = this.state.pk;
+  loadNextScreen = async () => {
+    // Store ENS and Wallet in Storage and then move ahead
+    const walletInfo = {
+      ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
+      ens: this.state.ens,
+      wallet: this.state.wallet,
+    }
+    // console.log(walletInfo);
+
+    await MetaStorage.instance.setWalletInfo(walletInfo);
 
     // Goto Next Screen
     this.props.navigation.navigate('Biometric', {
       privateKey: this.state.pkey,
-      wallet: this.state.wallet,
-      ens: this.state.ens,
     });
   }
 

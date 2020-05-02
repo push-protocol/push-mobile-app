@@ -5,6 +5,8 @@ import {
   StyleSheet,
 } from 'react-native';
 
+import MetaStorage from 'src/singletons/MetaStorage';
+
 import GLOBALS from 'src/Globals';
 
 export default class HomeScreen extends Component {

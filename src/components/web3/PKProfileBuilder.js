@@ -74,7 +74,7 @@ export default class PKProfileBuilder extends Component {
         ensFetched: 1,
         ens: ens
       }, () => {
-        if (this.props.profileInfoFetchedFunc()) {
+        if (this.props.profileInfoFetchedFunc) {
           this.props.profileInfoFetchedFunc(wallet, ens);
         }
       })
@@ -88,6 +88,7 @@ export default class PKProfileBuilder extends Component {
       style,
       forPKey,
       resetFunc,
+      profileInfoFetchedFunc
     } = this.props;
 
     return (

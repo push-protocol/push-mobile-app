@@ -5,6 +5,7 @@ import {
   TextInput,
   Image,
   InteractionManager,
+  ActivityIndicator,
   Keyboard,
   Animated,
   StyleSheet,
@@ -22,10 +23,9 @@ import PrimaryButton from 'src/components/buttons/PrimaryButton';
 
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 import NoticePrompt from 'src/components/modals/NoticePrompt';
-import PKEntryPrompt from 'src/components/modals/PKEntryPrompt';
-import QRScanner from 'src/components/modals/QRScanner';
 
-import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
+import CryptoHelper from 'src/helpers/CryptoHelper';
+import MetaStorage from 'src/singletons/MetaStorage';
 
 import GLOBALS from 'src/Globals';
 
@@ -73,16 +73,13 @@ export default class BiometricScreen extends Component {
       passcodeVerifyStep: false,
       passcodeConfirmedStep: false,
 
-      pkey: '',
-      wallet: '',
-      ens: '',
-      pkeyVerified: false,
+      pKeyEncrypted: false,
     }
   }
 
   // FUNCTIONS
   // Validate Pass Code
-  validatePassCode = (value) => {
+  validatePassCode = async (value) => {
     if (value.length != 6) {
       // if the value isn't equal to 6, it's not complete yet
       return;
@@ -99,9 +96,6 @@ export default class BiometricScreen extends Component {
       this.fadeInPasscode(callback);
     }
     else {
-      console.log(this.state.passcode);
-      console.log(this.state.passcodeMirror);
-
       if (this.state.passcode !== this.state.passcodeMirror) {
         // Password mismatch, re-enter
         this.fadeInPasscode(this.resetPassCode());
@@ -109,13 +103,27 @@ export default class BiometricScreen extends Component {
       else {
         Keyboard.dismiss();
 
+        // Encrypt Private Key and Do Hashing
+        const { privateKey } = this.props.route.params;
+        const encryptedPkey = CryptoHelper.encrypWithAES(privateKey, this.state.passcode);
+        const hashedCode = await CryptoHelper.hashWithSha256(this.state.passcode);
+        const decrypt = CryptoHelper.decryptWithAES(
+          'U2FsdGVkX1/MvNJhcMVylTvwAgjZDfk0i+t+nNopteCJKxZSGfNBG2fsmKfY2M8k9iGt0HwEldWCBbVaaAd5M6g9FqR0AQkfnVBdVtAOe9/YQAbsnzFadnDClB52D9zf',
+          '131185'
+        );
+        console.log(decrypt);
+        
+        // Store private key and hashed code and continue
+        await MetaStorage.instance.setEncryptedPKeyAndHashedPasscode(
+          encryptedPkey,
+          hashedCode,
+        );
+
         this.setState({
-          passcodeConfirmedStep: true
+          passcodeConfirmedStep: true,
+          pKeyEncrypted: true,
         });
       }
-
-
-
     }
   }
 
@@ -131,23 +139,24 @@ export default class BiometricScreen extends Component {
 
   // Set Pass Code
   changePassCode = (value) => {
-    // replace spaces
-    value = value.replace(/ /g,'');
+    // accept only digits
+    if (/^\d+$/.test(value) || value === '') {
+      if (this.state.passcodeVerifyStep == false) {
+        this.setState({
+          passcode: value
+        }, () => {
+          this.validatePassCode(value);
+        });
+      }
+      else {
+        this.setState({
+          passcodeMirror: value
+        }, () => {
+          this.validatePassCode(value);
+        });
+      }
+    }
 
-    if (this.state.passcodeVerifyStep == false) {
-      this.setState({
-        passcode: value
-      }, () => {
-        this.validatePassCode(value);
-      });
-    }
-    else {
-      this.setState({
-        passcodeMirror: value
-      }, () => {
-        this.validatePassCode(value);
-      });
-    }
   }
 
   fadeInPasscode = (callback) => {
@@ -178,18 +187,6 @@ export default class BiometricScreen extends Component {
     this.refs.NoticePrompt.changeRenderState(toggle, animate);
   }
 
-  // Open Text Prompt With Overlay Blur
-  toggleTextEntryPrompt = (toggle, animate) => {
-    // Set render state of this and the animate the blur modal in
-    this.refs.OverlayBlur.changeRenderState(toggle, animate);
-    this.refs.TextEntryPrompt.changeRenderState(toggle, animate);
-  }
-
-  // Open QR Scanner
-  toggleQRScanner = (toggle, navigation) => {
-    this.refs.QRScanner.changeRenderState(toggle, navigation);
-  }
-
   // Users Permissions
   getCameraPermissionAsync = async (navigation) => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
@@ -204,8 +201,8 @@ export default class BiometricScreen extends Component {
       );
     }
     else {
-      // All Clear, open QR Scanner
-      this.toggleQRScanner(true, navigation);
+      // All Clear, Proceed with storing Creds
+
     }
   }
 
@@ -300,14 +297,11 @@ export default class BiometricScreen extends Component {
       prompt = "[third:Re-enter your Passcode to verify]";
     }
 
-    // For AutoFocus
-    let autoFocus = "";
-    let dynamicProps = {};
-    if (this.state.detailedInfoPresetned) {
-      autoFocus = "autoFocus";
+    // For Keyboard Behavior
+    let keyboardAvoidBehavior = "padding";
+    if (Platform.OS === 'android') {
+      keyboardAvoidBehavior = "height";
     }
-
-    dynamicProps[autoFocus];
 
     return (
       <React.Fragment>
@@ -319,123 +313,134 @@ export default class BiometricScreen extends Component {
                 this.setState({
                   transitionFinished: true
                 });
+                this.refs.PasscodeInput.focus();
               }
             }
           />
 
         <Text style={styles.header}>Security</Text>
           <View style={styles.inner}>
-            {
-              this.state.passcodeConfirmedStep == false
-                ? <DetailedInfoPresenter
-                    style={styles.intro}
-                    icon={require('assets/ui/biometric.png')}
-                    contentView={
-                      <View style={styles.introContent}>
-                        <StylishLabel
-                          style={styles.para}
-                          fontSize={16}
-                          title='We need to create a [bold:Secure Vault] to store your [bold:Credentials].'
-                        />
-
-                      <Animated.View style={[
-                          styles.passcodeContainer,
-                          {opacity: this.state.passcodeFader}
-                        ]}
-                      >
+            <DetailedInfoPresenter
+              style={styles.intro}
+              icon={require('assets/ui/biometric.png')}
+              contentView={
+                <View style={styles.introContent}>
+                  {
+                    this.state.passcodeConfirmedStep == false
+                      ? <React.Fragment>
                           <StylishLabel
-                            style={styles.paracenter}
+                            style={styles.para}
                             fontSize={16}
-                            title={prompt}
+                            title='We need to create a [bold:Secure Vault] to store your [bold:Credentials].'
                           />
 
-                          <TextInput
+                          <Animated.View style={[
+                              styles.passcodeContainer,
+                              {opacity: this.state.passcodeFader}
+                            ]}
+                          >
+
+                            <StylishLabel
+                              style={[ styles.paracenter, styles.paraExtraMargin ]}
+                              fontSize={16}
+                              title={prompt}
+                            />
+
+                            <TextInput
+                              ref="PasscodeInput"
                               style={styles.input}
                               maxLength={6}
                               contextMenuHidden={true}
-                              autoCapitalize="characters"
+                              keyboardType={'numeric'}
                               autoCorrect={false}
                               onChangeText={(value) => (this.changePassCode(value))}
                               value={this.state.passcodeVerifyStep ? this.state.passcodeMirror : this.state.passcode}
-                              {...dynamicProps}
                             />
 
                             <View
                               style={styles.fancyTextContainer}
                               pointerEvents="none"
                             >
-                              <View style={styles.fancyTextView}>
-                                <Text style={styles.fancyText}>{passcodeSegment[0]}</Text>
+                              <View style={[ styles.fancyTextView, styles.fancyTextViewPrimary ]}>
+                                <Text style={[ styles.fancyText, styles.fancyTextPrimary ]}>{passcodeSegment[0]}</Text>
                               </View>
-                              <View style={styles.fancyTextView}>
-                                <Text style={styles.fancyText}>{passcodeSegment[1]}</Text>
+                              <View style={[ styles.fancyTextView, styles.fancyTextViewPrimary ]}>
+                                <Text style={[ styles.fancyText, styles.fancyTextPrimary ]}>{passcodeSegment[1]}</Text>
                               </View>
-                              <View style={styles.fancyTextView}>
-                                <Text style={styles.fancyText}>{passcodeSegment[2]}</Text>
+                              <View style={[ styles.fancyTextView, styles.fancyTextViewThird ]}>
+                                <Text style={[ styles.fancyText, styles.fancyTextThird ]}>{passcodeSegment[2]}</Text>
                               </View>
-                              <View style={styles.fancyTextView}>
-                                <Text style={styles.fancyText}>{passcodeSegment[3]}</Text>
+                              <View style={[ styles.fancyTextView, styles.fancyTextViewThird ]}>
+                                <Text style={[ styles.fancyText, styles.fancyTextThird ]}>{passcodeSegment[3]}</Text>
                               </View>
-                              <View style={styles.fancyTextView}>
-                                <Text style={styles.fancyText}>{passcodeSegment[4]}</Text>
+                              <View style={[ styles.fancyTextView, styles.fancyTextViewSecondary ]}>
+                                <Text style={[ styles.fancyText, styles.fancyTextSecondary ]}>{passcodeSegment[4]}</Text>
                               </View>
-                              <View style={styles.fancyTextView}>
-                                <Text style={styles.fancyText}>{passcodeSegment[5]}</Text>
+                              <View style={[ styles.fancyTextView, styles.fancyTextViewSecondary ]}>
+                                <Text style={[ styles.fancyText, styles.fancyTextSecondary ]}>{passcodeSegment[5]}</Text>
                               </View>
                             </View>
-                        </Animated.View>
+                          </Animated.View>
+                        </React.Fragment>
+                      : this.state.pKeyEncrypted == false
+                          ? <ActivityIndicator
+                              style = {styles.activity}
+                              size = "small"
+                              color = {GLOBALS.COLORS.GRADIENT_THIRD}
+                            />
+                          : <React.Fragment>
+                              <StylishLabel
+                                style={styles.para}
+                                fontSize={16}
+                                title="[third:Your Secure Vault is now protected by your Passcode!]"
+                              />
 
-                      </View>
-
-                    }
-                    animated={!this.state.detailedInfoPresetned}
-                    startAnimation={this.state.transitionFinished}
-                    animationCompleteCallback={() => {this.animationFinished()}}
-                  />
-                : <PKProfileBuilder
-                    style={styles.profile}
-                    forPKey={this.state.pkey}
-                    resetFunc={() => {this.resetPKey()}}
-                    profileInfoFetchedFunc={(wallet, ens) => {this.profileInfoFetched(wallet, ens)}}
-                  />
-            }
+                              <StylishLabel
+                                style={styles.para}
+                                fontSize={16}
+                                title="[default:Note:] This passcode is not the same as your device's. Losing this means re-importing your wallet to access EPNS."
+                              />
+                            </React.Fragment>
+                  }
+                </View>
+              }
+              animated={!this.state.detailedInfoPresetned}
+              startAnimation={this.state.transitionFinished}
+              animationCompleteCallback={() => {this.animationFinished()}}
+            />
           </View>
+
           <Animated.View style={[ styles.footer, {opacity: this.state.fader} ]}>
             {
-              this.state.passcodeConfirmedStep == false
+              this.state.pKeyEncrypted == false
                 ? null
                 : <View style={styles.verifyFooter}>
-                    {
-                      this.state.pkeyVerified == false
-                        ? null
-                        : <React.Fragment>
-                            <PrimaryButton
-                              iconFactory='Ionicons'
-                              icon='ios-refresh'
-                              iconSize={24}
-                              title='Reset / Use Different Wallet'
-                              fontSize={16}
-                              fontColor={GLOBALS.COLORS.WHITE}
-                              bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
-                              disabled={false}
-                              onPress={() => {this.resetPKey()}}
-                            />
-                            <View style={styles.divider}></View>
+                    <React.Fragment>
+                      <PrimaryButton
+                        iconFactory='Ionicons'
+                        icon='ios-refresh'
+                        iconSize={24}
+                        title='Continue without Biometrics'
+                        fontSize={16}
+                        fontColor={GLOBALS.COLORS.BLACK}
+                        bgColor={GLOBALS.COLORS.LIGHT_GRAY}
+                        disabled={false}
+                        onPress={() => {this.resetPKey()}}
+                      />
+                      <View style={styles.divider}></View>
 
-                            <PrimaryButton
-                              iconFactory='Ionicons'
-                              icon='ios-arrow-forward'
-                              iconSize={24}
-                              title="Continue"
-                              fontSize={16}
-                              fontColor={GLOBALS.COLORS.WHITE}
-                              bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
-                              disabled={false}
-                              onPress={() => {this.loadNextScreen()}}
-                            />
-                          </React.Fragment>
-                    }
-
+                      <PrimaryButton
+                        iconFactory='Ionicons'
+                        icon='ios-arrow-forward'
+                        iconSize={24}
+                        title="Enable Biometric and Continue"
+                        fontSize={16}
+                        fontColor={GLOBALS.COLORS.WHITE}
+                        bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
+                        disabled={false}
+                        onPress={() => {this.loadNextScreen()}}
+                      />
+                    </React.Fragment>
                   </View>
             }
 
@@ -443,15 +448,6 @@ export default class BiometricScreen extends Component {
             <GetScreenInsets />
           </Animated.View>
         </SafeAreaView>
-
-        <QRScanner
-          ref='QRScanner'
-          navigation={navigation}
-          doneFunc={(code) => {
-            this.onPKDetect(code)
-          }}
-          closeFunc={() => this.toggleQRScanner(false, navigation)}
-        />
 
         {/* Overlay Blur and Notice to show in case permissions for camera aren't given */}
         <OverlayBlur
@@ -462,18 +458,6 @@ export default class BiometricScreen extends Component {
           ref='NoticePrompt'
           closeTitle='OK'
           closeFunc={() => this.toggleNoticePrompt(false, true)}
-        />
-
-        <PKEntryPrompt
-          ref='TextEntryPrompt'
-          title='Enter Private Key'
-          subtitle='Please enter the Private Key of your Wallet.'
-          doneTitle='Verify!'
-          doneFunc={(code) => {
-            this.onPKDetect(code)
-          }}
-          closeTitle='Cancel'
-          closeFunc={() => this.toggleTextEntryPrompt(false, true)}
         />
 
       </React.Fragment>
@@ -496,12 +480,12 @@ const styles = StyleSheet.create({
   },
   inner: {
     position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
     top: 0,
     bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 20,
-    maxWidth: 540,
+    maxWidth: 540
   },
   intro: {
     alignItems: 'center',
@@ -510,11 +494,13 @@ const styles = StyleSheet.create({
   introContent: {
     marginTop: 20,
   },
+  paraExtraMargin: {
+    marginTop: 20,
+  },
   para: {
     marginBottom: 20,
   },
   paracenter: {
-    marginTop: 20,
     marginBottom: 20,
     alignItems: 'center',
     justifyContent: 'center',
@@ -527,7 +513,7 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
     borderBottomWidth: 2,
     borderColor: GLOBALS.COLORS.BLACK,
-    opacity: 0
+    opacity: 0,
   },
   fancyTextContainer: {
     ...StyleSheet.absoluteFill,
@@ -541,12 +527,30 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: GLOBALS.COLORS.BLACK,
   },
+  fancyTextViewPrimary: {
+    borderColor: GLOBALS.COLORS.GRADIENT_PRIMARY,
+  },
+  fancyTextViewSecondary: {
+    borderColor: GLOBALS.COLORS.GRADIENT_SECONDARY,
+  },
+  fancyTextViewThird: {
+    borderColor: GLOBALS.COLORS.GRADIENT_THIRD,
+  },
   fancyText: {
     fontSize: 28,
     minWidth: 24,
     minHeight: 36,
     textAlign: 'center',
     color: GLOBALS.COLORS.BLACK
+  },
+  fancyTextPrimary: {
+    color: GLOBALS.COLORS.GRADIENT_PRIMARY,
+  },
+  fancyTextSecondary: {
+    color: GLOBALS.COLORS.GRADIENT_SECONDARY,
+  },
+  fancyTextThird: {
+    color: GLOBALS.COLORS.GRADIENT_THIRD,
   },
   footer: {
     width: '100%',

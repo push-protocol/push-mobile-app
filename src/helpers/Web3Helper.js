@@ -1,13 +1,15 @@
 import ENS from 'ethereum-ens';
 import Web3 from 'web3';
 
+import CryptoHelper from 'src/helpers/CryptoHelper';
+import MetaStorage from 'src/singletons/MetaStorage';
+
 import ENV_CONFIG from 'root/env.config';
 
 // Web3 Helper Function
 const Web3Helper = {
   // To Get the Provider
   getWeb3Provider: function () {
-    console.log(ENV_CONFIG.INFURA_API );
     return new Web3.providers.HttpProvider(ENV_CONFIG.INFURA_API);
   },
   // To Get Web3
@@ -77,7 +79,30 @@ const Web3Helper = {
 
       return response;
     }
+  },
+  // To Return false or Decrypted Private Key from Encrypted Private Key, code and hashedcode
+  returnDecryptedPKey: async function(encryptedPKey, code, hashedCode) {
+    let response = false;
+
+    // Verify Hash Code
+    const result = CryptoHelper.verifyHash(code, hashedCode);
+    if (result) {
+      // Hash Verified, Decrypt PKey
+      const pKey = decryptWithAES(encryptedPKey, code);
+
+      // Now derive public address of this Private Key
+      const wallet = await Web3Helper.getWalletAddress(pKey);
+      const storedWallet = await MetaStorage.instance.getWalletInfo().wallet;
+
+      // Return Private Key if Wallet Matches
+      if (wallet === storedWallet) {
+        response = pKey;
+      }
+    }
+
+    return response;
   }
+
 }
 
 export default Web3Helper;

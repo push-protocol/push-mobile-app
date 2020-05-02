@@ -17,11 +17,17 @@ import BiometricScreen from "src/screens/BiometricScreen";
 import PushNotifyScreen from "src/screens/PushNotifyScreen";
 import SetupCompleteScreen from "src/screens/SetupCompleteScreen";
 
+import MetaStorage from "src/singletons/MetaStorage";
+
 import GLOBALS from 'src/Globals';
 
 const Stack = createStackNavigator();
 
 export default function App() {
+  // Initialize MetaStorage
+  MetaStorage.instance.initialize();
+
+  // State Settings
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 

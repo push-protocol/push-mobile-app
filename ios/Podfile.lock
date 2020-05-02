@@ -288,6 +288,8 @@ PODS:
     - React
   - RNScreens (2.7.0):
     - React
+  - RNSha256 (1.3.6):
+    - React
   - RNSVG (12.1.0):
     - React
   - TcpSockets (3.3.2):
@@ -369,6 +371,7 @@ DEPENDENCIES:
   - RNOS (from `../node_modules/react-native-os`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSha256 (from `../node_modules/react-native-sha256`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - TcpSockets (from `../node_modules/react-native-tcp`)
   - UMAppLoader (from `../node_modules/unimodules-app-loader/ios`)
@@ -490,6 +493,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSha256:
+    :path: "../node_modules/react-native-sha256"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   TcpSockets:
@@ -574,6 +579,7 @@ SPEC CHECKSUMS:
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: 955cf4068714003d2f1a6e2bae3fb1118f359aff
   RNScreens: cf198f915f8a2bf163de94ca9f5bfc8d326c3706
+  RNSha256: 22383f4a1ed2b38da9d642c608892a3ab4cad80a
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   TcpSockets: 8d839b9b14f6f344d98e4642ded13ab3112b462d
   UMAppLoader: 83885655be9ce3e5b3684d20f9973da67b78b3a9
