@@ -94,6 +94,21 @@ export default class CalendarEvents extends Component {
         renderText: this.renderStyles
       },
       {
+        pattern: /\[(secondary):([^\]]+)\]/i,
+        style: [styles.secondary, styles.bold],
+        renderText: this.renderStyles
+      },
+      {
+        pattern: /\[(third):([^\]]+)\]/i,
+        style: [styles.third, styles.bold],
+        renderText: this.renderStyles
+      },
+      {
+        pattern: /\[(error):([^\]]+)\]/i,
+        style: [styles.error, styles.bold],
+        renderText: this.renderStyles
+      },
+      {
         pattern: /\[(bold):([^\]]+)\]/i,
         style: styles.bold,
         renderText: this.renderStyles
@@ -168,6 +183,15 @@ const styles = StyleSheet.create({
   },
   primary: {
     color: GLOBALS.COLORS.GRADIENT_PRIMARY,
+  },
+  secondary: {
+    color: GLOBALS.COLORS.GRADIENT_SECONDARY,
+  },
+  third: {
+    color: GLOBALS.COLORS.GRADIENT_THIRD,
+  },
+  error: {
+    color: GLOBALS.COLORS.SUBLIME_RED,
   },
   white: {
     color: GLOBALS.COLORS.WHITE,

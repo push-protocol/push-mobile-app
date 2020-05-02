@@ -23,7 +23,7 @@ export default class PasswordPrompt extends Component {
       fader: new Animated.Value(0),
       render: false,
       indicator: false,
-      PassCode: '',
+      passcode: '',
     }
   }
 
@@ -35,7 +35,7 @@ export default class PasswordPrompt extends Component {
 
   resetPassCode = (value) => {
     this.setState({
-      PassCode: ''
+      passcode: ''
     });
   }
 
@@ -45,7 +45,7 @@ export default class PasswordPrompt extends Component {
     value = value.replace(/ /g,'');
 
     this.setState({
-      PassCode: value
+      passcode: value
     });
 
     if (value.length == 6) {
@@ -74,7 +74,7 @@ export default class PasswordPrompt extends Component {
   animateFadeIn = (animate) => {
     this.setState({
       render: true,
-      PassCode: '',
+      passcode: '',
       indicator: false
     });
 
@@ -125,7 +125,7 @@ export default class PasswordPrompt extends Component {
       closeFunc
     } = this.props;
 
-    let PassCodesegment = this.state.PassCode.split("");
+    let passcodeSegment = this.state.passcode.split("");
 
     return (
       this.state.render == false
@@ -165,7 +165,7 @@ export default class PasswordPrompt extends Component {
                         onSubmitEditing={(event) => {
                           this.validatePassCode(doneFunc, event.nativeEvent.text);
                         }}
-                        value={this.state.PassCode}
+                        value={this.state.passcode}
                         returnKeyType="done"
                         autoFocus
                       />
@@ -182,22 +182,22 @@ export default class PasswordPrompt extends Component {
                       pointerEvents="none"
                     >
                       <View style={styles.fancyTextView}>
-                        <Text style={styles.fancyText}>{PassCodesegment[0]}</Text>
+                        <Text style={styles.fancyText}>{passcodeSegment[0]}</Text>
                       </View>
                       <View style={styles.fancyTextView}>
-                        <Text style={styles.fancyText}>{PassCodesegment[1]}</Text>
+                        <Text style={styles.fancyText}>{passcodeSegment[1]}</Text>
                       </View>
                       <View style={styles.fancyTextView}>
-                        <Text style={styles.fancyText}>{PassCodesegment[2]}</Text>
+                        <Text style={styles.fancyText}>{passcodeSegment[2]}</Text>
                       </View>
                       <View style={styles.fancyTextView}>
-                        <Text style={styles.fancyText}>{PassCodesegment[3]}</Text>
+                        <Text style={styles.fancyText}>{passcodeSegment[3]}</Text>
                       </View>
                       <View style={styles.fancyTextView}>
-                        <Text style={styles.fancyText}>{PassCodesegment[4]}</Text>
+                        <Text style={styles.fancyText}>{passcodeSegment[4]}</Text>
                       </View>
                       <View style={styles.fancyTextView}>
-                        <Text style={styles.fancyText}>{PassCodesegment[5]}</Text>
+                        <Text style={styles.fancyText}>{passcodeSegment[5]}</Text>
                       </View>
                     </View>
                 }

@@ -14,7 +14,7 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import GLOBALS from 'src/Globals';
 
-const PK_LENGTH = 64;
+const PK_LENGTH = 66;
 
 export default class PKEntryPrompt extends Component {
   // Constructor

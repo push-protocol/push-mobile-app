@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
+  TextInput,
   Image,
   InteractionManager,
+  Keyboard,
   Animated,
   StyleSheet,
 } from 'react-native';
@@ -63,6 +65,14 @@ export default class BiometricScreen extends Component {
       detailedInfoPresetned: false,
 
       fader: new Animated.Value(0),
+      passcodeFader: new Animated.Value(1),
+
+      passcode: '',
+      passcodeMirror: '',
+      passcodeMismatched: false,
+      passcodeVerifyStep: false,
+      passcodeConfirmedStep: false,
+
       pkey: '',
       wallet: '',
       ens: '',
@@ -71,6 +81,90 @@ export default class BiometricScreen extends Component {
   }
 
   // FUNCTIONS
+  // Validate Pass Code
+  validatePassCode = (value) => {
+    if (value.length != 6) {
+      // if the value isn't equal to 6, it's not complete yet
+      return;
+    }
+
+    if (this.state.passcodeVerifyStep == false) {
+      const callback = () => {
+        this.setState({
+          passcodeMirror: '',
+          passcodeVerifyStep: true
+        });
+      }
+
+      this.fadeInPasscode(callback);
+    }
+    else {
+      console.log(this.state.passcode);
+      console.log(this.state.passcodeMirror);
+
+      if (this.state.passcode !== this.state.passcodeMirror) {
+        // Password mismatch, re-enter
+        this.fadeInPasscode(this.resetPassCode());
+      }
+      else {
+        Keyboard.dismiss();
+
+        this.setState({
+          passcodeConfirmedStep: true
+        });
+      }
+
+
+
+    }
+  }
+
+  resetPassCode = (value) => {
+    this.setState({
+      passcode: '',
+      passcodeMirror: '',
+      passcodeMismatched: true,
+      passcodeVerifyStep: false,
+      passcodeConfirmedStep: false,
+    });
+  }
+
+  // Set Pass Code
+  changePassCode = (value) => {
+    // replace spaces
+    value = value.replace(/ /g,'');
+
+    if (this.state.passcodeVerifyStep == false) {
+      this.setState({
+        passcode: value
+      }, () => {
+        this.validatePassCode(value);
+      });
+    }
+    else {
+      this.setState({
+        passcodeMirror: value
+      }, () => {
+        this.validatePassCode(value);
+      });
+    }
+  }
+
+  fadeInPasscode = (callback) => {
+    this.setState({
+      passcodeFader: new Animated.Value(0),
+    }, () => {
+      if (callback) {
+        callback();
+      }
+
+      Animated.timing(this.state.passcodeFader, {
+        toValue: 1,
+      	duration: 250
+      }).start();
+    })
+  }
+
   // Open Notice Prompt With Overlay Blur
   toggleNoticePrompt = (toggle, animate, title, subtitle, notice, showIndicator) => {
     // Set Notice First
@@ -187,6 +281,34 @@ export default class BiometricScreen extends Component {
   render() {
     const { navigation } = this.props;
 
+    // Pick Passcode
+    let passcodeSegment;
+
+    if (this.state.passcodeVerifyStep == false) {
+      passcodeSegment = this.state.passcode.split("");
+    }
+    else if (!this.state.passcodeConfirmedStep) {
+      passcodeSegment = this.state.passcodeMirror.split("");
+    }
+
+    // For Changing Text Prompt
+    let prompt = "[default:Pick a Passcode for your Vault]";
+    if (this.state.passcodeMismatched && !this.state.passcodeVerifyStep) {
+      prompt = "[error:Passcode Mismatch, Please Try Again]";
+    }
+    if (this.state.passcodeVerifyStep == true) {
+      prompt = "[third:Re-enter your Passcode to verify]";
+    }
+
+    // For AutoFocus
+    let autoFocus = "";
+    let dynamicProps = {};
+    if (this.state.detailedInfoPresetned) {
+      autoFocus = "autoFocus";
+    }
+
+    dynamicProps[autoFocus];
+
     return (
       <React.Fragment>
 
@@ -201,10 +323,10 @@ export default class BiometricScreen extends Component {
             }
           />
 
-          <Text style={styles.header}>Sign In!</Text>
+        <Text style={styles.header}>Security</Text>
           <View style={styles.inner}>
             {
-              this.state.pkey === ''
+              this.state.passcodeConfirmedStep == false
                 ? <DetailedInfoPresenter
                     style={styles.intro}
                     icon={require('assets/ui/biometric.png')}
@@ -213,15 +335,58 @@ export default class BiometricScreen extends Component {
                         <StylishLabel
                           style={styles.para}
                           fontSize={16}
-                          title='[bold:EPNS] requires your wallet credentials [italics:(Private Key)] to [bold:Verify You & Decrypt] your messages.'
+                          title='We need to create a [bold:Secure Vault] to store your [bold:Credentials].'
                         />
 
-                        <StylishLabel
-                          style={styles.para}
-                          fontSize={16}
-                          title='[default:Note:] At no time does your credentials goes out of the device for any purpose whatsoever.'
-                        />
+                      <Animated.View style={[
+                          styles.passcodeContainer,
+                          {opacity: this.state.passcodeFader}
+                        ]}
+                      >
+                          <StylishLabel
+                            style={styles.paracenter}
+                            fontSize={16}
+                            title={prompt}
+                          />
+
+                          <TextInput
+                              style={styles.input}
+                              maxLength={6}
+                              contextMenuHidden={true}
+                              autoCapitalize="characters"
+                              autoCorrect={false}
+                              onChangeText={(value) => (this.changePassCode(value))}
+                              value={this.state.passcodeVerifyStep ? this.state.passcodeMirror : this.state.passcode}
+                              {...dynamicProps}
+                            />
+
+                            <View
+                              style={styles.fancyTextContainer}
+                              pointerEvents="none"
+                            >
+                              <View style={styles.fancyTextView}>
+                                <Text style={styles.fancyText}>{passcodeSegment[0]}</Text>
+                              </View>
+                              <View style={styles.fancyTextView}>
+                                <Text style={styles.fancyText}>{passcodeSegment[1]}</Text>
+                              </View>
+                              <View style={styles.fancyTextView}>
+                                <Text style={styles.fancyText}>{passcodeSegment[2]}</Text>
+                              </View>
+                              <View style={styles.fancyTextView}>
+                                <Text style={styles.fancyText}>{passcodeSegment[3]}</Text>
+                              </View>
+                              <View style={styles.fancyTextView}>
+                                <Text style={styles.fancyText}>{passcodeSegment[4]}</Text>
+                              </View>
+                              <View style={styles.fancyTextView}>
+                                <Text style={styles.fancyText}>{passcodeSegment[5]}</Text>
+                              </View>
+                            </View>
+                        </Animated.View>
+
                       </View>
+
                     }
                     animated={!this.state.detailedInfoPresetned}
                     startAnimation={this.state.transitionFinished}
@@ -237,34 +402,8 @@ export default class BiometricScreen extends Component {
           </View>
           <Animated.View style={[ styles.footer, {opacity: this.state.fader} ]}>
             {
-              this.state.pkey === ''
-                ? <View style={styles.entryFooter}>
-                    <PrimaryButton
-                      iconFactory='Ionicons'
-                      icon='ios-qr-scanner'
-                      iconSize={24}
-                      title='Scan via QR Code'
-                      fontSize={16}
-                      fontColor={GLOBALS.COLORS.WHITE}
-                      bgColor={GLOBALS.COLORS.GRADIENT_SECONDARY}
-                      disabled={false}
-                      onPress={() => {this.getCameraPermissionAsync(navigation)}}
-                    />
-
-                    <View style={styles.divider}></View>
-
-                    <PrimaryButton
-                      iconFactory='Ionicons'
-                      icon='ios-code-working'
-                      iconSize={24}
-                      title='Enter Manually'
-                      fontSize={16}
-                      fontColor={GLOBALS.COLORS.WHITE}
-                      bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
-                      disabled={false}
-                      onPress={() => {this.toggleTextEntryPrompt(true, true)}}
-                    />
-                  </View>
+              this.state.passcodeConfirmedStep == false
+                ? null
                 : <View style={styles.verifyFooter}>
                     {
                       this.state.pkeyVerified == false
@@ -374,7 +513,40 @@ const styles = StyleSheet.create({
   para: {
     marginBottom: 20,
   },
-  profile: {
+  paracenter: {
+    marginTop: 20,
+    marginBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  passcodeContainer: {
+
+  },
+  input: {
+    paddingHorizontal: 15,
+    paddingVertical: 40,
+    borderBottomWidth: 2,
+    borderColor: GLOBALS.COLORS.BLACK,
+    opacity: 0
+  },
+  fancyTextContainer: {
+    ...StyleSheet.absoluteFill,
+    position: 'absolute',
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    flexDirection: 'row'
+  },
+  fancyTextView: {
+    borderBottomWidth: 1,
+    borderColor: GLOBALS.COLORS.BLACK,
+  },
+  fancyText: {
+    fontSize: 28,
+    minWidth: 24,
+    minHeight: 36,
+    textAlign: 'center',
+    color: GLOBALS.COLORS.BLACK
   },
   footer: {
     width: '100%',
