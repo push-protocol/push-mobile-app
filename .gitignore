@@ -163,3 +163,6 @@ RNTester/Pods/*
 # Visual studio
 .vscode
 .vs
+
+# Sensitive Files
+.env

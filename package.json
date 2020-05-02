@@ -1,5 +1,6 @@
 {
   "main": "index.js",
+  "name": "root",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -20,12 +21,15 @@
     "constants-browserify": "^1.0.0",
     "dns.js": "^1.0.1",
     "domain-browser": "^1.2.0",
+    "ethereum-ens": "^0.8.0",
+    "ethers": "^4.0.47",
     "events": "^1.1.1",
     "expo": "~37.0.3",
     "expo-av": "^8.1.0",
     "expo-barcode-scanner": "^8.1.0",
     "expo-blur": "^8.1.0",
     "expo-camera": "^8.2.0",
+    "expo-linear-gradient": "^8.1.0",
     "expo-permissions": "^8.1.0",
     "expo-updates": "~0.1.0",
     "https-browserify": "0.0.1",
@@ -69,7 +73,9 @@
   "devDependencies": {
     "@babel/core": "~7.9.0",
     "babel-jest": "~25.2.6",
+    "babel-preset-react-native": "^4.0.1",
     "jest": "~25.2.6",
+    "react-native-dotenv": "^0.2.0",
     "react-test-renderer": "~16.9.0",
     "rn-nodeify": "^10.2.0"
   },

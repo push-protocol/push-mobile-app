@@ -78,11 +78,6 @@ export default class CalendarEvents extends Component {
 
     let parseSettings = [
       {
-        type: 'phone',
-        style: styles.underline,
-        onPress: this.handlePhonePress
-      },
-      {
         type: 'email',
         style: [styles.link, styles.underline],
         onPress: this.handleEmailPress

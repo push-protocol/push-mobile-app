@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   },
   intro: {
     padding: 20,
-    maxWidth: 500,
+    maxWidth: 540,
   },
   introContent: {
     marginTop: 20,

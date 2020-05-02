@@ -64,9 +64,9 @@ export default class SignInScreen extends Component {
 
       fader: new Animated.Value(0),
       pkey: '',
-      tempPKKey: '',
+      wallet: '',
+      ens: '',
       pkeyVerified: false,
-      pkeyAcquired: false,
     }
   }
 
@@ -86,9 +86,6 @@ export default class SignInScreen extends Component {
 
   // Open Text Prompt With Overlay Blur
   toggleTextEntryPrompt = (toggle, animate) => {
-    // Clear Text Prompt
-
-
     // Set render state of this and the animate the blur modal in
     this.refs.OverlayBlur.changeRenderState(toggle, animate);
     this.refs.TextEntryPrompt.changeRenderState(toggle, animate);
@@ -101,11 +98,6 @@ export default class SignInScreen extends Component {
 
   // Users Permissions
   getCameraPermissionAsync = async (navigation) => {
-    // Temp Remove Later
-    const code = "";
-    this.onPKDetect(code);
-    return;
-
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     if (status !== 'granted') {
       this.toggleNoticePrompt(
@@ -123,11 +115,46 @@ export default class SignInScreen extends Component {
     }
   }
 
-  // Detect QR Code
+  // Detect PK Code
   onPKDetect = (code) => {
     this.setState({
-      tempPKKey: code,
+      pkey: code,
     })
+  }
+
+  // Reset PK Code
+  resetPKey = () => {
+    this.setState({
+      pkey: '',
+      pkeyVerified: false,
+
+      fader: new Animated.Value(0),
+    }, () => {
+      Animated.timing(
+        this.state.fader, {
+          toValue: 1,
+          duration: 250,
+        }
+      ).start();
+    });
+  }
+
+  // Handle Profile Info
+  profileInfoFetched = (wallet, ens) => {
+    this.setState({
+      wallet: wallet,
+      ens: ens,
+      pkeyVerified: true,
+
+      fader: new Animated.Value(0),
+    }, () => {
+      Animated.timing(
+        this.state.fader, {
+          toValue: 1,
+          duration: 250,
+        }
+      ).start();
+    });
   }
 
   // When Animation is Finished
@@ -148,14 +175,11 @@ export default class SignInScreen extends Component {
   loadNextScreen = () => {
     const pkey = this.state.pk;
 
-    this.setState({
-      pkey: null,
-      pkeyAcquired: true,
-    }, () => {
-      // Goto Next Screen
-      this.props.navigation.navigate('Biometric', {
-        privateKey: this.state.pkey
-      });
+    // Goto Next Screen
+    this.props.navigation.navigate('Biometric', {
+      privateKey: this.state.pkey,
+      wallet: this.state.wallet,
+      ens: this.state.ens,
     });
   }
 
@@ -180,7 +204,7 @@ export default class SignInScreen extends Component {
           <Text style={styles.header}>Sign In!</Text>
           <View style={styles.inner}>
             {
-              this.state.tempPKKey === ''
+              this.state.pkey === ''
                 ? <DetailedInfoPresenter
                     style={styles.intro}
                     icon={require('assets/ui/wallet.png')}
@@ -205,17 +229,15 @@ export default class SignInScreen extends Component {
                   />
                 : <PKProfileBuilder
                     style={styles.profile}
-                    forPKey={this.state.tempPKKey}
-                    resetFunc={() => {
-                      this.setState({tempPKKey: ''})
-                    }}
-                    profileBuilt={() => {console.log("Profile Built")}}
+                    forPKey={this.state.pkey}
+                    resetFunc={() => {this.resetPKey()}}
+                    profileInfoFetchedFunc={(wallet, ens) => {this.profileInfoFetched(wallet, ens)}}
                   />
             }
           </View>
           <Animated.View style={[ styles.footer, {opacity: this.state.fader} ]}>
             {
-              this.state.tempPKKey === ''
+              this.state.pkey === ''
                 ? <View style={styles.entryFooter}>
                     <PrimaryButton
                       iconFactory='Ionicons'
@@ -247,25 +269,18 @@ export default class SignInScreen extends Component {
                     {
                       this.state.pkeyVerified == false
                         ? null
-                        : <PrimaryButton
-                            iconFactory='Ionicons'
-                            icon='ios-refresh'
-                            iconSize={24}
-                            title='Reset / Use Different Wallet'
-                            fontSize={16}
-                            fontColor={GLOBALS.COLORS.WHITE}
-                            bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
-                            disabled={false}
-                            onPress={() => {
-                              this.setState({tempPKKey: ''})
-                            }}
-                          />
-                    }
-
-                    {
-                      this.state.pkeyAcquired == false
-                        ? null
-                        : <View style={styles.continueFooter}>
+                        : <React.Fragment>
+                            <PrimaryButton
+                              iconFactory='Ionicons'
+                              icon='ios-refresh'
+                              iconSize={24}
+                              title='Reset / Use Different Wallet'
+                              fontSize={16}
+                              fontColor={GLOBALS.COLORS.WHITE}
+                              bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
+                              disabled={false}
+                              onPress={() => {this.resetPKey()}}
+                            />
                             <View style={styles.divider}></View>
 
                             <PrimaryButton
@@ -277,9 +292,9 @@ export default class SignInScreen extends Component {
                               fontColor={GLOBALS.COLORS.WHITE}
                               bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
                               disabled={false}
-                              onPress={() => {this.toggleTextEntryPrompt(true, true)}}
+                              onPress={() => {this.loadNextScreen()}}
                             />
-                          </View>
+                          </React.Fragment>
                     }
 
                   </View>
@@ -346,12 +361,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     top: 0,
     bottom: 0,
-    left: 0,
-    right: 0,
     padding: 20,
-    maxWidth: 500,
+    maxWidth: 540,
   },
   intro: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   introContent: {
     marginTop: 20,
