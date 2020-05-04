@@ -79,6 +79,7 @@ export default class QRScanner extends Component {
       this.state.fader, {
         toValue: 1,
         duration: 250,
+        useNativeDriver: true,
       }
     ).start(() => {
       this.setState({
@@ -95,6 +96,7 @@ export default class QRScanner extends Component {
         this.state.fader, {
           toValue: 0,
           duration: 250,
+          useNativeDriver: true,
         }
       ).start(() => {
         this.setState({
@@ -148,37 +150,41 @@ export default class QRScanner extends Component {
     } = this.props;
 
     let paddingTop = getStatusBarHeight();
+    let backicon = 'ios-arrow-back';
+    if (Platform.OS == 'android') {
+      backicon = "md-arrow-back";
+    }
 
     return (
       this.state.render == false
         ? null
-        : <Animated.View style = {[ styles.container, {opacity: this.state.fader} ]}>
+        : <Animated.View style={[ styles.container, {opacity: this.state.fader} ]}>
             <StatusBar
-              animated = {true}
-              translucent = {true}
-              barStyle = "light-content"
-              backgroundColor = "#000000"
+              animated={true}
+              translucent={true}
+              barStyle="light-content"
+              backgroundColor="#000000"
             />
 
           {
             this.state.camrender == false
             ? null
             :  <Camera
-                onBarCodeScanned = {(scanned) => this.handleBarCodeScanned(scanned, navigation, doneFunc)}
-                style = {styles.preview}
+                onBarCodeScanned={(scanned) => this.handleBarCodeScanned(scanned, navigation, doneFunc)}
+                style={styles.preview}
               />
           }
 
             <SafeAreaView
-              forceInset = {{ top: 'never', bottom: 'always' }}
+              forceInset={{ top: 'never', bottom: 'always' }}
             >
 
-              <View style = {styles.focusContainer}>
-                <View style = {styles.focusView}>
-                  <View style = {[ styles.borderView, styles.leftTopBorder]}></View>
-                  <View style = {[ styles.borderView, styles.rightTopBorder]}></View>
-                  <View style = {[ styles.borderView, styles.leftBottomBorder]}></View>
-                  <View style = {[ styles.borderView, styles.rightBottomBorder]}></View>
+              <View style={styles.focusContainer}>
+                <View style={styles.focusView}>
+                  <View style={[ styles.borderView, styles.leftTopBorder]}></View>
+                  <View style={[ styles.borderView, styles.rightTopBorder]}></View>
+                  <View style={[ styles.borderView, styles.leftBottomBorder]}></View>
+                  <View style={[ styles.borderView, styles.rightBottomBorder]}></View>
                 </View>
                   <StylishLabel
                     style={styles.scannerText}
@@ -189,14 +195,14 @@ export default class QRScanner extends Component {
 
             </SafeAreaView>
 
-            <View style = {[ styles.topBar, {paddingTop: paddingTop} ]}>
+            <View style={[ styles.topBar, {paddingTop: paddingTop} ]}>
               <TouchableWithoutFeedback
-                onPressIn = {() => {
+                onPressIn={() => {
                   this.setState({
                     backButtonColor: GLOBALS.COLORS.LINKS
                   });
                 }}
-                onPressOut = {() => {
+                onPressOut={() => {
                   this.setState({
                     backButtonColor: GLOBALS.COLORS.WHITE
                   });
@@ -205,11 +211,11 @@ export default class QRScanner extends Component {
                   this.toggleQRScanner(closeFunc)
                 }}
               >
-                <View style = {[ styles.button, styles.back ]}>
+                <View style={[ styles.button, styles.back ]}>
                   <Ionicons
-                      name = "ios-arrow-back"
-                      color = {this.state.backButtonColor}
-                      size = {30}
+                      name={backicon}
+                      color={this.state.backButtonColor}
+                      size={30}
                   />
                 </View>
               </TouchableWithoutFeedback>
@@ -223,6 +229,7 @@ export default class QRScanner extends Component {
 
 const BORDER_GAP = 4;
 
+// Styling
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',

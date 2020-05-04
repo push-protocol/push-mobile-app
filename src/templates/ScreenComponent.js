@@ -21,6 +21,7 @@ const ComponentsScreen = ({ style }) => {
   );
 };
 
+// Styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,

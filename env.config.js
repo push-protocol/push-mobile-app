@@ -7,6 +7,7 @@ import {
 const IS_PROD_ENV = 0; // 1 is Production, 0 is testnet / development
 
 export default {
+  PROD_ENV: IS_PROD_ENV,
   INFURA_API: IS_PROD_ENV ? MAINNET_INFURA_API : TESTNET_INFURA_API,
 
   // ANALYTICS_KEY: Platform.select({

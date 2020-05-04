@@ -47,13 +47,7 @@ export default class PKProfileBuilder extends Component {
     // Get Wallet Address
     const response = await Web3Helper.getWalletAddress(forPKey, provider);
 
-    if (response.error) {
-      this.setState({
-        indicator: false,
-        errored: true,
-      });
-    }
-    else {
+    if (response.success) {
       // Get Identicon And try to fetch ENS
       const wallet = response.wallet;
 
@@ -66,7 +60,7 @@ export default class PKProfileBuilder extends Component {
       const ensResponse = await Web3Helper.getENSReverseDomain(wallet, provider);
       let ens = '';
 
-      if (!ensResponse.error) {
+      if (ensResponse.success) {
         ens = ensResponse.ens;
       }
 
@@ -78,6 +72,12 @@ export default class PKProfileBuilder extends Component {
           this.props.profileInfoFetchedFunc(wallet, ens);
         }
       })
+    }
+    else {
+      this.setState({
+        indicator: false,
+        errored: true,
+      });
     }
 
   }
@@ -155,6 +155,7 @@ export default class PKProfileBuilder extends Component {
   }
 }
 
+// Styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -165,6 +166,9 @@ const styles = StyleSheet.create({
   },
   para: {
     marginBottom: 20,
+  },
+  paraend: {
+    marginBottom: 0,
   },
   profile: {
     flex: 1,

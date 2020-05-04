@@ -36,6 +36,7 @@ export default class ClassComponent extends Component {
   }
 }
 
+// Styling
 const styles = StyleSheet.create({
   container: {
   },

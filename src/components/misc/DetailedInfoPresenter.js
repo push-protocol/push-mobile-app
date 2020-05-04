@@ -39,7 +39,8 @@ export default class DetailedInfoPresenter extends Component {
     }, () => {
       Animated.timing(this.state.ay, {
         toValue: halfH,
-      	duration: 0
+      	duration: 0,
+        useNativeDriver: true,
       }).start();
     });
   }
@@ -49,14 +50,16 @@ export default class DetailedInfoPresenter extends Component {
     Animated.parallel([
       Animated.timing(this.state.ay, {
         toValue: 0,
-        duration: 300
+        duration: 300,
+        useNativeDriver: true,
       }),
       Animated.sequence([
         Animated.delay(100),
         Animated.timing(this.state.fader, {
       		toValue: 1,
           easing: Easing.linear,
-      		duration: 250
+      		duration: 250,
+          useNativeDriver: true,
       	})
       ])
     ]).start(() => {
@@ -112,14 +115,23 @@ export default class DetailedInfoPresenter extends Component {
   }
 }
 
+// Styling
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
+
     justifyContent: 'center',
     alignItems: 'center',
   },
   logo: {
+    width: '100%',
+    alignItems: 'center',
   },
   content: {
+    width: '100%',
     paddingVertical: 10,
+
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });

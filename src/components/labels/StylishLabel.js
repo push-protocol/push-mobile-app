@@ -28,15 +28,15 @@ export default class CalendarEvents extends Component {
   }
 
   handlePhonePress(phone, matchIndex /*: number*/) {
-    console.log(`${phone} has been pressed!`);
+    // console.log(`${phone} has been pressed!`);
   }
 
   handleNamePress(name, matchIndex /*: number*/) {
-    console.log(`Hello ${name}`);
+    // console.log(`Hello ${name}`);
   }
 
   handleEmailPress(email, matchIndex /*: number*/) {
-    console.log(`send email to ${email}`);
+    // console.log(`send email to ${email}`);
   }
 
   handleAppSettings() {
@@ -169,6 +169,7 @@ export default class CalendarEvents extends Component {
   }
 }
 
+// Styling
 const styles = StyleSheet.create({
   container: {
   },

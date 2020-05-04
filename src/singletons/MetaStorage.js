@@ -4,7 +4,7 @@ import {
   Platform
 } from 'react-native';
 
-import Web3Helper from 'src/helpers/Web3Helper';
+import * as Keychain from 'react-native-keychain';
 
 import GLOBALS from 'src/Globals';
 
@@ -18,62 +18,52 @@ export default class MetaStorage {
   // INITIALIZE
   initialize = async () => {
     // For Initialization of anything, not needed right now
-    const encPkey = await MetaStorage.instance.getEncryptedPkey();
-    const hashedPCode = await MetaStorage.instance.getHashedPasscode();
-
-    console.log("Encrypted Private Key and Hash Code:");
-    console.log(encPkey);
-    console.log(hashedPCode);
+    // const encPkey = await MetaStorage.instance.getEncryptedPkey();
+    // const hashedPCode = await MetaStorage.instance.getHashedPasscode();
+    //
+    // console.log("Encrypted Private Key and Hash Code:");
+    // console.log(encPkey);
+    // console.log(hashedPCode);
   }
 
-  // DECRYPT ENCRYPTED KEY
-  getDecryptedPrivateKey = async () => {
-
-  }
-
-  // UPDATE ENS Record
-  updateENSRecord = async (walletInfo) => {
-    // Check for Time Stamp, if more than 24 hours than refresh ens records
-    const currentTime = new Date().getTime() / 1000;
-    const storedTime = walletInfo.ensRefreshTime == null ? 0 : walletInfo.ensRefreshTime;
-    if (walletInfo.wallet != null
-        && currentTime - walletInfo.ensRefreshTime > 1
-      ) {
-      const response = await Web3Helper.getENSReverseDomain();
-
-      let ens = '';
-      let timestamp = currentTime;
-
-      if (!response.error) {
-        // Update Time and exit
-        ens = response.ens;
-        updated = true;
-      }
-
-      walletInfo.ensRefreshTime = currentTime;
-      walletInfo.ens = ens;
-      await this.setWalletInfo(walletInfo);
-    }
-
-    return walletInfo;
-  }
-
-  // WIPE SIGNED IN USER
+  // WIPE SIGNED IN USER | LOCK DOWN RESET
   wipeSignedInUser = async () => {
+    // Set user locked to true
     await this.setUserLocked(true);
-    await MetaStorage.instance.removeSignedInUser();
+
+    // Call Remove User Process
+    await MetaStorage.instance.removeDataOfUser();
   }
 
-  // RESET LOCKED OR SIGNED OUT USER
+  // RESET LOCKED OR SIGNED OUT USER | GRACEFUL RESET
   resetSignedInUser = async () => {
+    // Set user locked to false, useful if user is locked
     await this.setUserLocked(false);
-    await MetaStorage.instance.removeSignedInUser();
+
+    // Set Signed Status as false also
+    await this.setIsSignedIn(false);
+
+    // Call Remove User Process
+    await MetaStorage.instance.removeDataOfUser();
+
+    // Set Passcode Attempts to MAX
+    await this.setRemainingPasscodeAttempts(GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS);
   }
 
   // REMOVE SIGNED IN USER
-  removeSignedInUser = async () => {
-    await this.setWalletInfo(null);
-    await this.resetSignedInStatus(false);
+  removeDataOfUser = async () => {
+    // Destroy Keychain
+    await Keychain.resetGenericPassword();
+
+    // Set Hashed Passcode and Encrypted PKey
+    await this.setEncryptedPKeyAndHashedPasscode('', '');
+
+    // Set Wallet Info Object As Null
+    await this.setStoredWallet({
+      ensRefreshTime: 0, // Time in epoch
+      ens: '',
+      wallet: '',
+    });
   }
 
   // GETTERS AND SETTERS STORAGE
@@ -118,37 +108,34 @@ export default class MetaStorage {
     }
 
   // FOR STORING USER WALLET, ENS AND TIMESTAMP
-  getWalletInfo = async () => {
+  getStoredWallet = async () => {
     try {
       // Then Fetch Wallet
-      let walletInfo = await AsyncStorage.getItem(GLOBALS.STORAGE.GENERIC_WALLET_INFO);
+      let walletObj = await AsyncStorage.getItem(GLOBALS.STORAGE.STORED_WALLET_OBJ);
 
       // Set Default Value
-      if (walletInfo == null) {
-        walletInfo = {
+      if (walletObj == null) {
+        walletObj = {
           ensRefreshTime: 0, // Time in epoch
           ens: '',
           wallet: '',
         }
 
-        await MetaStorage.instance.setWalletInfo(walletInfo);
-      }
-      else {
-        // Update ENS Record
-        walletInfo = await MetaStorage.instance.updateENSRecord(walletInfo);
+        await MetaStorage.instance.setStoredWallet(walletObj);
+        walletObj = JSON.stringify(walletObj);
       }
 
-      return JSON.parse(walletInfo);
+      return JSON.parse(walletObj);
     } catch (error) {
       console.warn(error);
       return false;
     }
   }
 
-  setWalletInfo = async (walletObject) => {
+  setStoredWallet = async (walletObject) => {
     try {
       await AsyncStorage.setItem(
-        GLOBALS.STORAGE.GENERIC_WALLET_INFO,
+        GLOBALS.STORAGE.STORED_WALLET_OBJ,
         JSON.stringify(walletObject)
       );
     } catch (error) {
@@ -159,14 +146,15 @@ export default class MetaStorage {
   }
 
   // GET NUMBER OF ATTEMPTS
-  getPasscodeAttempts = async () => {
+  getRemainingPasscodeAttempts = async () => {
     try {
       let passcodeAttempts = await AsyncStorage.getItem(GLOBALS.STORAGE.PASSCODE_ATTEMPTS);
 
       // Set Default Value
       if (passcodeAttempts == null) {
-        passcodeAttempts = 0;
-        await this.setPasscodeAttempts(0);
+        passcodeAttempts = GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS;
+        await this.setRemainingPasscodeAttempts(passcodeAttempts, true);
+        passcodeAttempts = JSON.stringify(passcodeAttempts);
       }
 
       return JSON.parse(passcodeAttempts);
@@ -176,7 +164,7 @@ export default class MetaStorage {
     }
   }
 
-  setPasscodeAttempts = async (attempts) => {
+  setRemainingPasscodeAttempts = async (attempts, settingDefault) => {
     try {
       let setting = attempts;
       if (attempts == null) {
@@ -188,10 +176,6 @@ export default class MetaStorage {
         JSON.stringify(attempts)
       );
 
-      if (attemps > GLOBALS.CONSTANTS.PASSCODE_ATTEMPTS) {
-        // Wipe Account
-        await MetaStorage.instance.wipeSignedInUser();
-      }
     } catch (error) {
       // Error saving data
       console.warn(error);
@@ -208,6 +192,7 @@ export default class MetaStorage {
       if (userLocked == null) {
         userLocked = false;
         await this.setUserLocked(userLocked);
+        userLocked = JSON.stringify(userLocked);
       }
 
       return JSON.parse(userLocked);
@@ -220,6 +205,7 @@ export default class MetaStorage {
   setUserLocked = async (userLocked) => {
     try {
       let setting = userLocked;
+
       if (userLocked == null) {
         setting = false;
       }
@@ -228,6 +214,10 @@ export default class MetaStorage {
         GLOBALS.STORAGE.USER_LOCKED,
         JSON.stringify(setting)
       );
+
+      if (userLocked == false) {
+        await this.setRemainingPasscodeAttempts(GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS);
+      }
     } catch (error) {
       // Error saving data
       console.warn(error);
@@ -243,7 +233,9 @@ export default class MetaStorage {
       // Set Default Value
       if (isSignedIn == null) {
         isSignedIn = false;
+
         await this.setIsSignedIn(isSignedIn);
+        isSignedIn = JSON.stringify(isSignedIn);
       }
 
       return JSON.parse(isSignedIn);
@@ -264,6 +256,7 @@ export default class MetaStorage {
         GLOBALS.STORAGE.IS_SIGNED_IN,
         JSON.stringify(setting)
       );
+
     } catch (error) {
       // Error saving data
       console.warn(error);

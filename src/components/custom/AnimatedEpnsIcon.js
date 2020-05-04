@@ -29,27 +29,32 @@ export default class AnimatedEpnsIcon extends Component {
       Animated.timing(this.state.rotateAnimation, {
           toValue: 1,
           duration: 40,
-          easing: Easing.spring
+          easing: Easing.spring,
+          useNativeDriver: true,
       }),
       Animated.timing(this.state.rotateAnimation, {
           toValue: -1,
           duration: 80,
-          easing: Easing.spring
+          easing: Easing.spring,
+          useNativeDriver: true,
       }),
       Animated.timing(this.state.rotateAnimation, {
           toValue: 0.5,
           duration: 60,
-          easing: Easing.spring
+          easing: Easing.spring,
+          useNativeDriver: true,
       }),
       Animated.timing(this.state.rotateAnimation, {
           toValue: -0.5,
           duration: 80,
-          easing: Easing.spring
+          easing: Easing.spring,
+          useNativeDriver: true,
       }),
       Animated.timing(this.state.rotateAnimation, {
           toValue: 0,
           duration: 40,
-          easing: Easing.spring
+          easing: Easing.spring,
+          useNativeDriver: true,
       }),
       Animated.delay(100),
     ]).start(() => {
@@ -103,6 +108,7 @@ export default class AnimatedEpnsIcon extends Component {
   }
 }
 
+// Styling
 const styles = StyleSheet.create({
   container: {
     width: '100%',

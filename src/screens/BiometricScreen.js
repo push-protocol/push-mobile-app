@@ -7,15 +7,20 @@ import {
   InteractionManager,
   ActivityIndicator,
   Keyboard,
+  KeyboardAvoidingView,
   Animated,
   StyleSheet,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
+
+import messaging from '@react-native-firebase/messaging';
+
 import { BlurView } from 'expo-blur';
+import * as LocalAuthentication from 'expo-local-authentication';
 import * as Permissions from 'expo-permissions';
 
-import { useFocusEffect } from '@react-navigation/native';
-import { useHeaderHeight } from '@react-navigation/stack';
+import * as Keychain from 'react-native-keychain';
 
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
@@ -25,6 +30,7 @@ import OverlayBlur from 'src/components/modals/OverlayBlur';
 import NoticePrompt from 'src/components/modals/NoticePrompt';
 
 import CryptoHelper from 'src/helpers/CryptoHelper';
+import BiometricHelper from 'src/helpers/BiometricHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 import GLOBALS from 'src/Globals';
@@ -73,7 +79,11 @@ export default class BiometricScreen extends Component {
       passcodeVerifyStep: false,
       passcodeConfirmedStep: false,
 
-      pKeyEncrypted: false,
+      pkeyEncrypted: false,
+      encryptedPKey: '',
+
+      biometricSupported: false, // false or as per LocalAuthentication
+      biometricEnabled: false,
     }
   }
 
@@ -90,6 +100,10 @@ export default class BiometricScreen extends Component {
         this.setState({
           passcodeMirror: '',
           passcodeVerifyStep: true
+        }, () => {
+          if (this.refs.PasscodeInput) {
+            this.refs.PasscodeInput.focus();
+          }
         });
       }
 
@@ -107,21 +121,22 @@ export default class BiometricScreen extends Component {
         const { privateKey } = this.props.route.params;
         const encryptedPkey = CryptoHelper.encrypWithAES(privateKey, this.state.passcode);
         const hashedCode = await CryptoHelper.hashWithSha256(this.state.passcode);
-        const decrypt = CryptoHelper.decryptWithAES(
-          'U2FsdGVkX1/MvNJhcMVylTvwAgjZDfk0i+t+nNopteCJKxZSGfNBG2fsmKfY2M8k9iGt0HwEldWCBbVaaAd5M6g9FqR0AQkfnVBdVtAOe9/YQAbsnzFadnDClB52D9zf',
-          '131185'
-        );
-        console.log(decrypt);
-        
+
         // Store private key and hashed code and continue
         await MetaStorage.instance.setEncryptedPKeyAndHashedPasscode(
           encryptedPkey,
           hashedCode,
         );
 
+        // Check if biometric is available
+        const biometricSupported = await BiometricHelper.getSupportedBiometric();
+
         this.setState({
           passcodeConfirmedStep: true,
-          pKeyEncrypted: true,
+          pkeyEncrypted: true,
+          encryptedPKey: encryptedPkey,
+
+          biometricSupported: biometricSupported,
         });
       }
     }
@@ -169,7 +184,8 @@ export default class BiometricScreen extends Component {
 
       Animated.timing(this.state.passcodeFader, {
         toValue: 1,
-      	duration: 250
+      	duration: 250,
+        useNativeDriver: true,
       }).start();
     })
   }
@@ -185,25 +201,6 @@ export default class BiometricScreen extends Component {
     // Set render state of this and the animate the blur modal in
     this.refs.OverlayBlur.changeRenderState(toggle, animate);
     this.refs.NoticePrompt.changeRenderState(toggle, animate);
-  }
-
-  // Users Permissions
-  getCameraPermissionAsync = async (navigation) => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    if (status !== 'granted') {
-      this.toggleNoticePrompt(
-        true,
-        true,
-        'Camera Access',
-        'Need Camera Permissions for scanning QR Code',
-        'Please enable Camera Permissions from [appsettings:App Settings] to continue',
-        false
-      );
-    }
-    else {
-      // All Clear, Proceed with storing Creds
-
-    }
   }
 
   // Detect PK Code
@@ -225,24 +222,7 @@ export default class BiometricScreen extends Component {
         this.state.fader, {
           toValue: 1,
           duration: 250,
-        }
-      ).start();
-    });
-  }
-
-  // Handle Profile Info
-  profileInfoFetched = (wallet, ens) => {
-    this.setState({
-      wallet: wallet,
-      ens: ens,
-      pkeyVerified: true,
-
-      fader: new Animated.Value(0),
-    }, () => {
-      Animated.timing(
-        this.state.fader, {
-          toValue: 1,
-          duration: 250,
+          useNativeDriver: true,
         }
       ).start();
     });
@@ -257,26 +237,96 @@ export default class BiometricScreen extends Component {
         this.state.fader, {
           toValue: 1,
           duration: 250,
+          useNativeDriver: true,
         }
       ).start();
     })
   }
 
   // Load the Next Screen
-  loadNextScreen = () => {
-    const pkey = this.state.pk;
+  loadNextScreenAfterAdditionalSetup = async () => {
+    // Check if biometric is present, if so present authentication
+    // If authenticated, store the passcode on secure chain
+    if (this.state.biometricSupported) {
+      let biometricType = "Null";
 
+      if (this.state.biometricSupported == LocalAuthentication.AuthenticationType.FINGERPRINT) {
+        biometricType = "TouchID";
+      }
+      else if (this.state.biometricSupported == LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION) {
+        biometricType = "FaceID";
+      }
+
+      const options = {};
+      options.promptMessage = `Allow ${biometricType} to Authenticate you quickly and securely.`;
+      options.cancelLabel = 'Skip for Now';
+      options.fallbackLabel = '';
+
+      const response = await LocalAuthentication.authenticateAsync(options);
+
+      let biometricEnabled = false;
+      if (response.success) {
+        biometricEnabled = true;
+      }
+
+      if (biometricEnabled) {
+        // Store passcode and encrypted private key in keychain
+        const username = String(this.state.passcode);
+        const password = String(this.state.encryptedPKey);
+        const AUTH_OPTIONS = {
+         accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
+         accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
+        }
+
+        await Keychain.setGenericPassword(
+          username,
+          password,
+          AUTH_OPTIONS
+        );
+
+        this.loadNextScreen();
+      }
+      else {
+        // Display enabling push notification message and move on
+        this.toggleNoticePrompt(
+          true,
+          true,
+          `${biometricType} Skipped`,
+          `${biometricType} is recommended for added security and to quickly authenticate you`,
+          `If you wish to enable ${biometricType} in the future, you can do so from the [appsettings:App Settings]`,
+          false
+        );
+      }
+    }
+    else {
+      this.loadNextScreen();
+    }
+  }
+
+  loadNextScreen = async () => {
     // Goto Next Screen
-    this.props.navigation.navigate('Biometric', {
-      privateKey: this.state.pkey,
-      wallet: this.state.wallet,
-      ens: this.state.ens,
-    });
+    // Check if the push notification permission is waiting for first grant
+    // If not, skip this step completely as user either gave permission or denied it
+    const authorizationStatus = await messaging().hasPermission();
+
+    if (authorizationStatus == messaging.AuthorizationStatus.NOT_DETERMINED) {
+      this.props.navigation.navigate('PushNotify');
+    }
+    else {
+      this.props.navigation.navigate('SetupComplete');
+    }
+
   }
 
   // RETURN
   render() {
     const { navigation } = this.props;
+
+    // Keyboard Behavior
+    let keyboardAvoidBehavior = "padding";
+    if (Platform.OS === 'android') {
+      keyboardAvoidBehavior = "height";
+    }
 
     // Pick Passcode
     let passcodeSegment;
@@ -297,10 +347,25 @@ export default class BiometricScreen extends Component {
       prompt = "[third:Re-enter your Passcode to verify]";
     }
 
-    // For Keyboard Behavior
-    let keyboardAvoidBehavior = "padding";
-    if (Platform.OS === 'android') {
-      keyboardAvoidBehavior = "height";
+    // For Biometric Optional Prompt
+    let continuePrompt = "Continue";
+    let continueIcon = 'ios-arrow-forward';
+
+    let biometricType = "Null";
+    let biometricPrompt = '';
+
+    if (this.state.biometricSupported) {
+      if (this.state.biometricSupported == LocalAuthentication.AuthenticationType.FINGERPRINT) {
+        biometricType = "TouchID";
+      }
+      else if (this.state.biometricSupported == LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION) {
+        biometricType = "FaceID";
+      }
+
+      continueIcon = 'md-finger-print';
+      continuePrompt = `Enable ${biometricType} and Continue`;
+
+      biometricPrompt = `Enabling [bold:${biometricType} is optional] but further improves your security. It also gives you [default:fast and secure access].`
     }
 
     return (
@@ -313,7 +378,10 @@ export default class BiometricScreen extends Component {
                 this.setState({
                   transitionFinished: true
                 });
-                this.refs.PasscodeInput.focus();
+
+                if (this.refs.PasscodeInput) {
+                  this.refs.PasscodeInput.focus();
+                }
               }
             }
           />
@@ -327,7 +395,11 @@ export default class BiometricScreen extends Component {
                 <View style={styles.introContent}>
                   {
                     this.state.passcodeConfirmedStep == false
-                      ? <React.Fragment>
+                      ? <KeyboardAvoidingView
+                          style={styles.keyboardAvoid}
+                          behavior={keyboardAvoidBehavior}
+                          enabled
+                        >
                           <StylishLabel
                             style={styles.para}
                             fontSize={16}
@@ -381,8 +453,8 @@ export default class BiometricScreen extends Component {
                               </View>
                             </View>
                           </Animated.View>
-                        </React.Fragment>
-                      : this.state.pKeyEncrypted == false
+                        </KeyboardAvoidingView>
+                      : this.state.pkeyEncrypted == false
                           ? <ActivityIndicator
                               style = {styles.activity}
                               size = "small"
@@ -390,16 +462,24 @@ export default class BiometricScreen extends Component {
                             />
                           : <React.Fragment>
                               <StylishLabel
-                                style={styles.para}
-                                fontSize={16}
-                                title="[third:Your Secure Vault is now protected by your Passcode!]"
+                                style={styles.paracenter}
+                                fontSize={24}
+                                title="[Third:Passcode Set!]"
                               />
-
                               <StylishLabel
-                                style={styles.para}
+                                style={styles.paraend}
                                 fontSize={16}
-                                title="[default:Note:] This passcode is not the same as your device's. Losing this means re-importing your wallet to access EPNS."
+                                title="[default:Note:] Your passcode encrypts your data and even we can't recover it, Losing this means re-importing your wallet to access EPNS."
                               />
+                              {
+                                this.state.biometric == false
+                                  ? null
+                                  : <StylishLabel
+                                      style={styles.para}
+                                      fontSize={16}
+                                      title={biometricPrompt}
+                                    />
+                              }
                             </React.Fragment>
                   }
                 </View>
@@ -412,33 +492,20 @@ export default class BiometricScreen extends Component {
 
           <Animated.View style={[ styles.footer, {opacity: this.state.fader} ]}>
             {
-              this.state.pKeyEncrypted == false
+              this.state.pkeyEncrypted == false
                 ? null
                 : <View style={styles.verifyFooter}>
                     <React.Fragment>
                       <PrimaryButton
                         iconFactory='Ionicons'
-                        icon='ios-refresh'
+                        icon={continueIcon}
                         iconSize={24}
-                        title='Continue without Biometrics'
-                        fontSize={16}
-                        fontColor={GLOBALS.COLORS.BLACK}
-                        bgColor={GLOBALS.COLORS.LIGHT_GRAY}
-                        disabled={false}
-                        onPress={() => {this.resetPKey()}}
-                      />
-                      <View style={styles.divider}></View>
-
-                      <PrimaryButton
-                        iconFactory='Ionicons'
-                        icon='ios-arrow-forward'
-                        iconSize={24}
-                        title="Enable Biometric and Continue"
+                        title={continuePrompt}
                         fontSize={16}
                         fontColor={GLOBALS.COLORS.WHITE}
                         bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
                         disabled={false}
-                        onPress={() => {this.loadNextScreen()}}
+                        onPress={() => {this.loadNextScreenAfterAdditionalSetup()}}
                       />
                     </React.Fragment>
                   </View>
@@ -449,7 +516,7 @@ export default class BiometricScreen extends Component {
           </Animated.View>
         </SafeAreaView>
 
-        {/* Overlay Blur and Notice to show in case permissions for camera aren't given */}
+        {/* Overlay Blur and Notice to show in case biometric is skipped */}
         <OverlayBlur
           ref='OverlayBlur'
         />
@@ -457,7 +524,10 @@ export default class BiometricScreen extends Component {
         <NoticePrompt
           ref='NoticePrompt'
           closeTitle='OK'
-          closeFunc={() => this.toggleNoticePrompt(false, true)}
+          closeFunc={() => {
+            this.toggleNoticePrompt(false, true);
+            this.loadNextScreen();
+          }}
         />
 
       </React.Fragment>
@@ -465,6 +535,7 @@ export default class BiometricScreen extends Component {
   }
 }
 
+// Styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -490,6 +561,7 @@ const styles = StyleSheet.create({
   intro: {
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: GLOBALS.COLORS.WHITE,
   },
   introContent: {
     marginTop: 20,
@@ -504,6 +576,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  paraend: {
+    marginBottom: 0,
   },
   passcodeContainer: {
 
@@ -541,7 +616,7 @@ const styles = StyleSheet.create({
     minWidth: 24,
     minHeight: 36,
     textAlign: 'center',
-    color: GLOBALS.COLORS.BLACK
+    color: GLOBALS.COLORS.TRANSPARENT,
   },
   fancyTextPrimary: {
     color: GLOBALS.COLORS.GRADIENT_PRIMARY,

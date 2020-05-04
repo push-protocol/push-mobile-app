@@ -105,6 +105,7 @@ export default class ENSButton extends Component<Prop> {
   };
 }
 
+// Styling
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',

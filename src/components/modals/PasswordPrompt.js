@@ -83,6 +83,7 @@ export default class PasswordPrompt extends Component {
         this.state.fader, {
           toValue: 1,
           duration: 250,
+          useNativeDriver: true,
         }
       ).start();
     }
@@ -100,6 +101,7 @@ export default class PasswordPrompt extends Component {
         this.state.fader, {
           toValue: 0,
           duration: 250,
+          useNativeDriver: true,
         }
       ).start(() => {
         this.setState({
@@ -219,6 +221,7 @@ export default class PasswordPrompt extends Component {
   }
 }
 
+// Styling
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFill,

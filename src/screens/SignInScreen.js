@@ -7,12 +7,10 @@ import {
   Animated,
   StyleSheet,
 } from 'react-native';
-import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
-import { BlurView } from 'expo-blur';
-import * as Permissions from 'expo-permissions';
-
 import { useFocusEffect } from '@react-navigation/native';
-import { useHeaderHeight } from '@react-navigation/stack';
+import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
+
+import * as Permissions from 'expo-permissions';
 
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
@@ -100,11 +98,6 @@ export default class SignInScreen extends Component {
 
   // Users Permissions
   getCameraPermissionAsync = async (navigation) => {
-    // Temp Remove Later
-    const code = "0x789af986260800ff255a4e84311ec44de6efd7c595115e9176c77814652e668c";
-    this.onPKDetect(code);
-    return;
-
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     if (status !== 'granted') {
       this.toggleNoticePrompt(
@@ -141,6 +134,7 @@ export default class SignInScreen extends Component {
         this.state.fader, {
           toValue: 1,
           duration: 250,
+          useNativeDriver: true,
         }
       ).start();
     });
@@ -159,6 +153,7 @@ export default class SignInScreen extends Component {
         this.state.fader, {
           toValue: 1,
           duration: 250,
+          useNativeDriver: true,
         }
       ).start();
     });
@@ -173,6 +168,7 @@ export default class SignInScreen extends Component {
         this.state.fader, {
           toValue: 1,
           duration: 250,
+          useNativeDriver: true,
         }
       ).start();
     })
@@ -181,14 +177,14 @@ export default class SignInScreen extends Component {
   // Load the Next Screen
   loadNextScreen = async () => {
     // Store ENS and Wallet in Storage and then move ahead
-    const walletInfo = {
+    const walletObj = {
       ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
       ens: this.state.ens,
       wallet: this.state.wallet,
     }
-    // console.log(walletInfo);
+    // console.log(walletObj);
 
-    await MetaStorage.instance.setWalletInfo(walletInfo);
+    await MetaStorage.instance.setStoredWallet(walletObj);
 
     // Goto Next Screen
     this.props.navigation.navigate('Biometric', {
@@ -230,7 +226,7 @@ export default class SignInScreen extends Component {
                         />
 
                         <StylishLabel
-                          style={styles.para}
+                          style={styles.paraend}
                           fontSize={16}
                           title='[default:Note:] At no time does your credentials goes out of the device for any purpose whatsoever.'
                         />
@@ -355,6 +351,7 @@ export default class SignInScreen extends Component {
   }
 }
 
+// Styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -386,6 +383,9 @@ const styles = StyleSheet.create({
   },
   para: {
     marginBottom: 20,
+  },
+  paraend: {
+    marginBottom: 0,
   },
   profile: {
   },

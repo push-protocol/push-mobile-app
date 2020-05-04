@@ -8,19 +8,24 @@ export default {
   STORAGE: {
     IS_SIGNED_IN: 'IsUserSignedIn',
     USER_LOCKED: 'UserLocked',
-    PASSCODE_ATTEMPTS: 'PasscodeAttempts',
+    PASSCODE_ATTEMPTS: 'MaxPasscodeAttempts',
 
-    GENERIC_WALLET_INFO: 'GenericWalletInfo',
+    STORED_WALLET_OBJ: 'StoredWalletObject',
     ENCRYPTED_PKEY: 'EncryptedPrivateKey',
 
     HASHED_PASSCODE: 'HashedPasscode',
+
+    PUSH_BADGE: 'PushNotificationBadge',
+    PUSH_PAYLOADS_OBJ: 'PushNotificationPayloadsObject',
+    PUSH_TOKEN: 'PushNotificationToken',
+    PUSH_TOKEN_RESET_FLAG: 'PushNotificationTokenResetSignal'
   },
 
   ADJUSTMENTS: {
   },
 
   CONSTANTS: {
-    WIPE_USER_AFTER_PASSCODE_ATTEMPTS: 5,
+    MAX_PASSCODE_ATTEMPTS: 5,
   },
 
   META: {
@@ -35,6 +40,8 @@ export default {
     GRADIENT_PRIMARY: 'rgba(226.0, 8.0, 128.0, 1.0)',
     GRADIENT_SECONDARY: 'rgba(53.0, 197.0, 243.0, 1.0)',
     GRADIENT_THIRD: 'rgba(103.0, 76.0, 159.0, 1.0)',
+
+    TRANSPARENT: 'transparent',
 
     WHITE: 'rgba(255.0, 255.0, 255.0, 1.0)',
     DARK_WHITE: 'rgba(255.0, 255.0, 255.0, 0.75)',

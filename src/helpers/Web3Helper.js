@@ -1,7 +1,6 @@
 import ENS from 'ethereum-ens';
 import Web3 from 'web3';
 
-import CryptoHelper from 'src/helpers/CryptoHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 import ENV_CONFIG from 'root/env.config';
@@ -33,6 +32,7 @@ const Web3Helper = {
     try {
       const pkToAcc = await web3.eth.accounts.privateKeyToAccount(pkey);
       const response = {
+        success: true,
         wallet: pkToAcc.address
       }
 
@@ -40,7 +40,7 @@ const Web3Helper = {
     }
     catch (e) {
       const response = {
-        error: true,
+        success: false,
         info: e
       }
 
@@ -57,7 +57,7 @@ const Web3Helper = {
       const ens = Web3Helper.getENS(provider);
       const name = await ens.reverse(wallet).name();
 
-      console.log("Fetched Name... Forward Checking now: " + name);
+      // console.log("Fetched Name... Forward Checking now: " + name);
 
       if (wallet != await ens.resolver(name).addr()) {
         name = null;
@@ -65,6 +65,7 @@ const Web3Helper = {
       }
       else {
         const response = {
+          success: true,
           ens: name
         }
 
@@ -73,35 +74,45 @@ const Web3Helper = {
     }
     catch (e) {
       const response = {
-        error: true,
+        success: false,
         info: e
       }
 
       return response;
     }
   },
-  // To Return false or Decrypted Private Key from Encrypted Private Key, code and hashedcode
-  returnDecryptedPKey: async function(encryptedPKey, code, hashedCode) {
-    let response = false;
+  // Update ENS Record
+  updateENSAndFetchWalletInfoObject: async () => {
+    // Get Wallet Info for MetaStorage
+    let storedWalletObject = await MetaStorage.instance.getStoredWallet();
 
-    // Verify Hash Code
-    const result = CryptoHelper.verifyHash(code, hashedCode);
-    if (result) {
-      // Hash Verified, Decrypt PKey
-      const pKey = decryptWithAES(encryptedPKey, code);
+    // Check for Time Stamp, if more than 24 hours than refresh ens records
+    const currentTime = new Date().getTime() / 1000;
+    const storedTime = storedWalletObject.ensRefreshTime == null ? 0 : storedWalletObject.ensRefreshTime;
+    if (storedWalletObject.wallet != null
+        && currentTime - storedWalletObject.ensRefreshTime > 1
+      ) {
+      const response = await Web3Helper.getENSReverseDomain();
 
-      // Now derive public address of this Private Key
-      const wallet = await Web3Helper.getWalletAddress(pKey);
-      const storedWallet = await MetaStorage.instance.getWalletInfo().wallet;
+      let ens = '';
+      let timestamp = currentTime;
 
-      // Return Private Key if Wallet Matches
-      if (wallet === storedWallet) {
-        response = pKey;
+      if (response.success) {
+        // Update Time and exit
+        ens = response.ens;
+        updated = true;
       }
+
+      storedWalletObject.ensRefreshTime = currentTime;
+      storedWalletObject.ens = ens;
     }
 
-    return response;
-  }
+    // Set New Info on the Wallet
+    await MetaStorage.instance.setStoredWallet(storedWalletObject);
+
+    // Finally return Wallet Info
+    return storedWalletObject;
+  },
 
 }
 

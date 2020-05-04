@@ -8,9 +8,8 @@ import {
   AsyncStorage,
   StyleSheet,
 } from 'react-native';
-import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
-import { useHeaderHeight } from '@react-navigation/stack';
+import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
 
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
@@ -67,6 +66,7 @@ export default class WelcomeScreen extends Component {
         this.state.fader, {
           toValue: 1,
           duration: 250,
+          useNativeDriver: true,
         }
       ).start();
     })
@@ -112,7 +112,7 @@ export default class WelcomeScreen extends Component {
                   title='[bold:EPNS] is a an innovative way to recieve notifications from different [bolditalics:dApps] or [bolditalics:Smart Contracts]. Think notifications but coming from blockchain ecosystem.'
                 />
                 <StylishLabel
-                  style={styles.para}
+                  style={styles.paraend}
                   fontSize={16}
                   title='Visit [url:epns.io||https://epns.io] to learn more about it.'
                 />
@@ -142,6 +142,7 @@ export default class WelcomeScreen extends Component {
   }
 }
 
+// Styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -173,6 +174,9 @@ const styles = StyleSheet.create({
   },
   para: {
     marginBottom: 20,
+  },
+  paraend: {
+    marginBottom: 0,
   },
   footer: {
     width: '100%',

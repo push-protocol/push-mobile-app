@@ -41,6 +41,9 @@ target 'epns' do
   # Automatically detect installed unimodules
   use_unimodules!
 
+  # The community version of use_unimodules (used for react-native-firebase)
+  use_native_modules!
+
   # react-native-cli autolinking
   use_native_modules!
 

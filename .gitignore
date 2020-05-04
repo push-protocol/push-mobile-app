@@ -166,3 +166,5 @@ RNTester/Pods/*
 
 # Sensitive Files
 .env
+google-services.json
+GoogleService-Info.plist

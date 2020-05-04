@@ -85,7 +85,8 @@ export default class PrimaryButton extends Component {
       Animated.timing(this.AnimatedColor, {
         toValue: 100,
         Easing: Easing.easeInOut,
-        duration: animTime
+        duration: animTime,
+        useNativeDriver: true,
       }).start(() => {
 
         this.setState({
@@ -205,6 +206,7 @@ export default class PrimaryButton extends Component {
   };
 }
 
+// Styling
 const styles = StyleSheet.create({
   outerContainer: {
     justifyContent: 'center',

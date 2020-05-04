@@ -144,6 +144,7 @@ class Blockies extends Component {
   }
 }
 
+// Styling
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
