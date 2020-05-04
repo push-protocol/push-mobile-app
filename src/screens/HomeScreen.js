@@ -19,12 +19,19 @@ export default class HomeScreen extends Component {
   }
 
   // COMPONENT MOUNTED
-  async omponentDidMount() {
-    // Since User is logged in, reset passcode attempts
-    await MetaStorage.instance.setRemainingPasscodeAttempts(GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS);
+  async componentDidMount() {
+    await this.maintener();
   }
 
   // FUNCTIONS
+  // Authentication, etc Maintainer Function
+  maintener = async () => {
+    // Since User is logged in, reset passcode attempts
+    await MetaStorage.instance.setRemainingPasscodeAttempts(
+      GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
+    );
+
+  }
 
   // RESET WALLET
   resetWallet = async () => {

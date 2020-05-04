@@ -67,6 +67,41 @@ export default class MetaStorage {
   }
 
   // GETTERS AND SETTERS STORAGE
+  //
+
+  // STORE OBJECT OF NOTIFICATION OBJECTS
+  getAllNotificationsObjects = async () => {
+    try {
+      let allNotificationsObj = await AsyncStorage.getItem(GLOBALS.STORAGE.PUSH_PAYLOADS_OBJ);
+
+      // Set Default Value
+      if (allNotificationsObj == null) {
+        // Prepare Games Object
+        const setAllNotificationsObjects = {};
+        this.setAllGamesObject(allNotificationsObj);
+        allNotificationsObj = JSON.stringify(allNotificationsObj);
+      }
+
+      return JSON.parse(allNotificationsObj);
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
+  }
+
+  setAllNotificationsObjects = async (entireObject) => {
+    try {
+      await AsyncStorage.setItem(
+        GLOBALS.STORAGE.PUSH_PAYLOADS_OBJ,
+        JSON.stringify(entireObject)
+      );
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  }
+
   // FOR STORING ENCRYPTED PKEY AND HASHED PASSCODE
   getEncryptedPkey = async () => {
     try {

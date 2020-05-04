@@ -80,10 +80,21 @@ export default class PushNotifyScreen extends Component {
   // Open Notice Prompt With Overlay Blur
   toggleNoticePrompt = (toggle, animate, title, subtitle, notice, showIndicator) => {
     // Set Notice First
-    this.refs.NoticePrompt.changeTitle(title);
-    this.refs.NoticePrompt.changeSubtitle(subtitle);
-    this.refs.NoticePrompt.changeNotice(notice);
-    this.refs.NoticePrompt.changeIndicator(showIndicator);
+    if (title) {
+      this.refs.NoticePrompt.changeTitle(title);
+    }
+
+    if (subtitle) {
+      this.refs.NoticePrompt.changeSubtitle(subtitle);
+    }
+
+    if (notice) {
+      this.refs.NoticePrompt.changeNotice(notice);
+    }
+
+    if (showIndicator) {
+      this.refs.NoticePrompt.changeIndicator(showIndicator);
+    }
 
     // Set render state of this and the animate the blur modal in
     this.refs.OverlayBlur.changeRenderState(toggle, animate);
@@ -111,6 +122,10 @@ export default class PushNotifyScreen extends Component {
   }
 
   // Load real next screen
+  loadNextScreenSequential = () => {
+    this.loadNextScreen();
+  }
+
   loadNextScreen = async () => {
     // Goto Next Screen
     this.props.navigation.navigate('SetupComplete');
@@ -180,7 +195,7 @@ export default class PushNotifyScreen extends Component {
           closeTitle='OK'
           closeFunc={() => {
             this.toggleNoticePrompt(false, true);
-            this.loadNextScreen();
+            this.loadNextScreenSequential();
           }}
         />
       </SafeAreaView>

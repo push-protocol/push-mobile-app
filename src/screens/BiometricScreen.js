@@ -193,10 +193,21 @@ export default class BiometricScreen extends Component {
   // Open Notice Prompt With Overlay Blur
   toggleNoticePrompt = (toggle, animate, title, subtitle, notice, showIndicator) => {
     // Set Notice First
-    this.refs.NoticePrompt.changeTitle(title);
-    this.refs.NoticePrompt.changeSubtitle(subtitle);
-    this.refs.NoticePrompt.changeNotice(notice);
-    this.refs.NoticePrompt.changeIndicator(showIndicator);
+    if (title) {
+      this.refs.NoticePrompt.changeTitle(title);
+    }
+
+    if (subtitle) {
+      this.refs.NoticePrompt.changeSubtitle(subtitle);
+    }
+
+    if (notice) {
+      this.refs.NoticePrompt.changeNotice(notice);
+    }
+
+    if (showIndicator) {
+      this.refs.NoticePrompt.changeIndicator(showIndicator);
+    }
 
     // Set render state of this and the animate the blur modal in
     this.refs.OverlayBlur.changeRenderState(toggle, animate);
@@ -301,6 +312,10 @@ export default class BiometricScreen extends Component {
     else {
       this.loadNextScreen();
     }
+  }
+
+  loadNextScreenSequential = () => {
+    this.loadNextScreen();
   }
 
   loadNextScreen = async () => {
@@ -526,7 +541,7 @@ export default class BiometricScreen extends Component {
           closeTitle='OK'
           closeFunc={() => {
             this.toggleNoticePrompt(false, true);
-            this.loadNextScreen();
+            this.loadNextScreenSequential();
           }}
         />
 
