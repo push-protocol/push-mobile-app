@@ -32,6 +32,7 @@ const CryptoHelper = {
   // To Return false or Decrypted Private Key from Encrypted Private Key, code and hashedcode
   returnDecryptedPKey: async function(encryptedPKey, code) {
     let response = {};
+    response.success = false;
 
     try {
       // Get Stored Hash Code
@@ -48,13 +49,11 @@ const CryptoHelper = {
         if (walletObject.success) {
           const storedWalletObject = await MetaStorage.instance.getStoredWallet();
           if (walletObject.wallet === storedWalletObject.wallet) {
-            response = pkey;
+            response.success = true;
+            response.pkey = pkey;
           }
         }
       }
-
-      response.success = true;
-      response.pkey = pkey;
     }
     catch(e) {
       response.success = false;
