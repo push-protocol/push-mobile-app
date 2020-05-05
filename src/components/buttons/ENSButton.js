@@ -34,6 +34,8 @@ export default class ENSButton extends Component<Prop> {
   render() {
     const {
       style,
+      innerStyle,
+      forProfile,
       loading,
       ens,
       wallet,
@@ -53,18 +55,59 @@ export default class ENSButton extends Component<Prop> {
       icon = 'ios-arrow-up';
     }
 
+    // Set number of lines and font size
+    let numberOfLines = 0;
+
+    // Set Gradient to show
+    let gradient = [
+      GLOBALS.COLORS.GRADIENT_PRIMARY,
+      GLOBALS.COLORS.GRADIENT_SECONDARY,
+    ]
+
+    // To set header text style
+    let headerTextStyle = {
+      fontWeight: 'bold'
+    }
+
+    // To override loading style if need be
+    let loadingContainerStyle = {};
+
+    // If For Profile, then change few visuals
+    // Focus on ENS Name, Make address as single line, etc
+    let headerStyle = {};
+    if (forProfile) {
+      numberOfLines = 1;
+      headerStyle.marginRight = 0;
+
+      if (!showENS && !loading) {
+        gradient = [
+          GLOBALS.COLORS.MID_GRAY,
+          GLOBALS.COLORS.LIGHT_GRAY,
+        ]
+
+        headerTextStyle={
+          color: GLOBALS.COLORS.DARK_BLACK_TRANS,
+          fontWeight: '300',
+        }
+      }
+
+      if (loading) {
+        loadingContainerStyle = {
+          paddingVertical: 8,
+          borderRadius: 18,
+        }
+      }
+    }
+
     return (
       <View style={[ styles.container, style ]}>
         <TouchableOpacity
           onPress = {this.onPress}
-          disabled={!showENS}
+          disabled={!showENS || forProfile}
         >
           <LinearGradient
-            colors={[
-              GLOBALS.COLORS.GRADIENT_PRIMARY,
-              GLOBALS.COLORS.GRADIENT_SECONDARY,
-            ]}
-            style={styles.ensbox}
+            colors={gradient}
+            style={[ styles.ensbox, innerStyle, loadingContainerStyle ]}
             start={[0.1, 0.3]}
             end={[1, 1]}
           >
@@ -76,24 +119,43 @@ export default class ENSButton extends Component<Prop> {
                     color = {GLOBALS.COLORS.WHITE}
                   />
                 : showENS == false
-                  ? <Text style={[ styles.ensName, { fontSize: fontSize} ]}>{title}</Text>
+                  ? <Text
+                      style={[ styles.ensName, { fontSize: fontSize}, headerTextStyle ]}
+                      numberOfLines={numberOfLines}
+                      ellipsizeMode="middle"
+                    >
+                      {title}
+                    </Text>
                   : <View
                       style={styles.ensContainer}
                     >
-                      <View style={styles.ensHeader}>
-                        <Text style={[ styles.ensName, { fontSize: fontSize} ]}>{title}</Text>
-                        <Ionicons
-                          style={styles.ensIcon}
-                          name={icon}
-                          color={GLOBALS.COLORS.WHITE}
-                          size={fontSize * 1.2}
-                        />
+                      <View style={[ styles.ensHeader, headerStyle ]}>
+                        <Text
+                          style={[ styles.ensName, { fontSize: fontSize} ]}
+                          numberOfLines={numberOfLines}
+                        >
+                          {title}
+                        </Text>
+                        {
+                          forProfile == true
+                            ? null
+                            : <Ionicons
+                                style={styles.ensIcon}
+                                name={icon}
+                                color={GLOBALS.COLORS.WHITE}
+                                size={fontSize * 1.2}
+                              />
+                        }
                       </View>
                       {
                         this.state.active == false
                           ? null
                           : <View style={styles.ensContent}>
-                              <Text style={[ styles.ensContentInner, { fontSize: fontSize} ]}>{wallet}</Text>
+                              <Text
+                                style={[ styles.ensContentInner, { fontSize: fontSize} ]}
+                              >
+                                {wallet}
+                              </Text>
                             </View>
                       }
                     </View>
@@ -110,12 +172,12 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 20,
   },
   ensbox: {
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
-    marginBottom: 20,
   },
   ensName: {
     fontSize: 16,
@@ -141,7 +203,7 @@ const styles = StyleSheet.create({
   ensContent: {
     backgroundColor: GLOBALS.COLORS.LIGHT_GRAY,
     padding: 10,
-    borderRadius: 10,
+    borderRadius: GLOBALS.ADJUSTMENTS.DEFAULT_BIG_RADIUS,
     marginVertical: 5,
   },
   ensContentInner: {

@@ -1,0 +1,100 @@
+import React from 'react';
+import {
+  View,
+  ActivityIndicator,
+  Platform,
+  StyleSheet,
+} from 'react-native';
+
+import MaskedView from '@react-native-community/masked-view';
+import { LinearGradient } from 'expo-linear-gradient';
+
+import GLOBALS from 'src/Globals';
+
+const EPNSActivity = ({ style, size }) => {
+  return (
+
+    <View
+      style={[
+        styles.container,
+        style,
+        (size === "small") ? styles.small : styles.big
+      ]}
+    >
+      {
+        Platform.OS == 'android'
+          ? <ActivityIndicator
+              style={styles.activity}
+              size={size}
+              color={GLOBALS.COLORS.BLACK}
+            />
+          : <MaskedView
+              style={styles.maskedView}
+              maskElement={
+                <View style={styles.maskedElementView}>
+                  <ActivityIndicator
+                    style={styles.activity}
+                    size={size}
+                    color={GLOBALS.COLORS.BLACK}
+                  />
+                </View>
+              }
+            ><ActivityIndicator
+              style={styles.activity}
+              size={size}
+              color={GLOBALS.COLORS.WHITE}
+            />
+              <LinearGradient
+                colors={[
+                  GLOBALS.COLORS.GRADIENT_PRIMARY,
+                  GLOBALS.COLORS.GRADIENT_SECONDARY,
+                ]}
+                style={[
+                  styles.fullgradient,
+                  (size === "small") ? styles.small : styles.big
+                ]}
+                start={[0.1, 0.3]}
+                end={[1, 1]}
+              >
+              </LinearGradient>
+            </MaskedView>
+      }
+    </View>
+
+  );
+};
+
+// Styling
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  small: {
+    width: 20,
+    height: 20,
+  },
+  big: {
+    height: 36,
+    width: 36,
+  },
+  maskedView: {
+    flex: 1,
+    flexDirection: 'row',
+    height: '100%',
+  },
+  maskedElementView: {
+    backgroundColor: 'transparent',
+    flex: 1,
+    alignItems: 'center',
+  },
+  maskedTitle: {
+    color: 'black',
+    fontWeight: 'bold'
+  },
+  fullgradient: {
+    width: '100%',
+  },
+});
+
+export default EPNSActivity;

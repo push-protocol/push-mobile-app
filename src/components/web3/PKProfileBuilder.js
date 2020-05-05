@@ -159,6 +159,8 @@ export default class PKProfileBuilder extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignSelf: 'center',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   paratop: {

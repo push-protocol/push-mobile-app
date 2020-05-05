@@ -18,12 +18,6 @@ export default class MetaStorage {
   // INITIALIZE
   initialize = async () => {
     // For Initialization of anything, not needed right now
-    // const encPkey = await MetaStorage.instance.getEncryptedPkey();
-    // const hashedPCode = await MetaStorage.instance.getHashedPasscode();
-    //
-    // console.log("Encrypted Private Key and Hash Code:");
-    // console.log(encPkey);
-    // console.log(hashedPCode);
   }
 
   // WIPE SIGNED IN USER | LOCK DOWN RESET
@@ -64,10 +58,138 @@ export default class MetaStorage {
       ens: '',
       wallet: '',
     });
+
+    // Reset Push Notifications
+    await this.setPushTokenResetFlag(true);
+    await this.setPushToken('');
+    await this.setCurrentAndPreviousBadgeCount(0, 0);
   }
 
   // GETTERS AND SETTERS STORAGE
-  //
+  // PUSH TOKEN
+  getPushToken = async () => {
+    try {
+      let token = await AsyncStorage.getItem(GLOBALS.STORAGE.PUSH_TOKEN);
+
+      // Set Default Value
+      if (token == null) {
+        token = '';
+      }
+
+      return token;
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
+  }
+
+  setPushToken = async (newToken) => {
+    try {
+      let token = newToken;
+      if (newToken == null) {
+        token = false;
+      }
+
+      await AsyncStorage.setItem(
+        GLOBALS.STORAGE.PUSH_TOKEN,
+        JSON.stringify(token)
+      );
+
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  }
+
+  // PUSH TOKEN RESET FLAG
+  getPushTokenResetFlag = async () => {
+    try {
+      let resetFlag = await AsyncStorage.getItem(GLOBALS.STORAGE.PUSH_TOKEN_RESET_FLAG);
+
+      // Set Default Value
+      if (resetFlag == null) {
+        resetFlag = false;
+
+        await this.setIsSignedIn(resetFlag);
+        resetFlag = JSON.stringify(resetFlag);
+      }
+
+      return JSON.parse(resetFlag);
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
+  }
+
+  setPushTokenResetFlag = async (resetFlag) => {
+    try {
+      let setting = resetFlag;
+      if (isSignedIn == null) {
+        setting = false;
+      }
+
+      await AsyncStorage.setItem(
+        GLOBALS.STORAGE.PUSH_TOKEN_RESET_FLAG,
+        JSON.stringify(setting)
+      );
+
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  }
+
+  // STORE NOTIFICATION BADGE
+  getBadgeCount = async () => {
+    try {
+      let badge = await AsyncStorage.getItem(GLOBALS.STORAGE.PUSH_BADGE_COUNT);
+      if (badge == null) {
+        badge = 0;
+        badge = JSON.stringify(badge);
+      }
+
+      return JSON.parse(badge);
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
+  }
+
+  getPreviousBadgeCount = async () => {
+    try {
+      let badge = await AsyncStorage.getItem(GLOBALS.STORAGE.PUSH_BADGE_COUNT_PREVIOUS);
+      if (badge == null) {
+        badge = 0;
+        badge = JSON.stringify(badge);
+      }
+
+      return JSON.parse(badge);
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
+  }
+
+  setCurrentAndPreviousBadgeCount = async (currentBadge, previousBadge) => {
+    // Swap if custom photo
+    const items = [
+      [GLOBALS.STORAGE.PUSH_BADGE_COUNT, JSON.stringify(currentBadge)],
+      [GLOBALS.STORAGE.PUSH_BADGE_COUNT_PREVIOUS, JSON.stringify(previousBadge)]
+    ];
+
+    try {
+      return await AsyncStorage.multiSet(items, () => {
+        // console.log("Encrypted Key and Hashed Passcode");
+        // console.log(encryptedPKey + "|" + hashedPasscode);
+      });
+    }
+    catch (error) {
+      console.warn(error);
+      return false;
+    }
+  }
 
   // STORE OBJECT OF NOTIFICATION OBJECTS
   getAllNotificationsObjects = async () => {
@@ -124,23 +246,23 @@ export default class MetaStorage {
   }
 
   setEncryptedPKeyAndHashedPasscode = async (encryptedPKey, hashedPasscode) => {
-      // Swap if custom photo
-      const items = [
-        [GLOBALS.STORAGE.ENCRYPTED_PKEY, encryptedPKey],
-        [GLOBALS.STORAGE.HASHED_PASSCODE, hashedPasscode]
-      ];
+    // Swap if custom photo
+    const items = [
+      [GLOBALS.STORAGE.ENCRYPTED_PKEY, encryptedPKey],
+      [GLOBALS.STORAGE.HASHED_PASSCODE, hashedPasscode]
+    ];
 
-      try {
-        return await AsyncStorage.multiSet(items, () => {
-          // console.log("Encrypted Key and Hashed Passcode");
-          // console.log(encryptedPKey + "|" + hashedPasscode);
-        });
-      }
-      catch (error) {
-        console.warn(error);
-        return false;
-      }
+    try {
+      return await AsyncStorage.multiSet(items, () => {
+        // console.log("Encrypted Key and Hashed Passcode");
+        // console.log(encryptedPKey + "|" + hashedPasscode);
+      });
     }
+    catch (error) {
+      console.warn(error);
+      return false;
+    }
+  }
 
   // FOR STORING USER WALLET, ENS AND TIMESTAMP
   getStoredWallet = async () => {

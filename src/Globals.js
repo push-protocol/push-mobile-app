@@ -15,13 +15,20 @@ export default {
 
     HASHED_PASSCODE: 'HashedPasscode',
 
-    PUSH_BADGE: 'PushNotificationBadge',
-    PUSH_PAYLOADS_OBJ: 'PushNotificationPayloadsObject',
     PUSH_TOKEN: 'PushNotificationToken',
-    PUSH_TOKEN_RESET_FLAG: 'PushNotificationTokenResetSignal'
+    PUSH_TOKEN_RESET_FLAG: 'PushNotificationTokenResetSignal',
+
+    PUSH_BADGE_COUNT: 'PushNotificationBadgeCount',
+    PUSH_BADGE_COUNT_PREVIOUS: 'PreviousPushNotificationBadgeCount',
+
   },
 
   ADJUSTMENTS: {
+    SCREEN_GAP_HORIZONTAL: 10,
+    SCREEN_GAP_VERTICAL: 10,
+
+    DEFAULT_BIG_RADIUS: 10,
+    DEFAULT_MID_RADIUS: 8,
   },
 
   CONSTANTS: {

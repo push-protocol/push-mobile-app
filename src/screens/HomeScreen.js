@@ -4,10 +4,16 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import SafeAreaView from 'react-native-safe-area-view';
 
-import MetaStorage from 'src/singletons/MetaStorage';
+import ProfileDisplayer from 'src/components/ui/ProfileDisplayer';
+import ImageButton from 'src/components/buttons/ImageButton';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
+
+import OverlayBlur from 'src/components/modals/OverlayBlur';
+
+import Web3Helper from 'src/helpers/Web3Helper';
+import MetaStorage from 'src/singletons/MetaStorage';
 
 import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
 import GLOBALS from 'src/Globals';
@@ -33,57 +39,67 @@ export default class HomeScreen extends Component {
 
   }
 
-  // RESET WALLET
-  resetWallet = async () => {
-    await MetaStorage.instance.resetSignedInUser();
-
-    const { handleAppAuthState } = this.context;
-    handleAppAuthState(APP_AUTH_STATES.INITIALIZING, '');
-  }
-
-  // LOCK ACCOUNT
-  secureApp = async () => {
-    const { handleAppAuthState } = this.context;
-    handleAppAuthState(APP_AUTH_STATES.ONBOARDED, '');
+  // Overlay Blur exit intent
+  exitIntentOnOverleyBlur = () => {
+    this.refs.ProfileDisplayer.toggleActive(false);
   }
 
   // RENDER
   render() {
     const {
+      navigation,
     } = this.props;
 
     const {
+      wallet,
       pkey
     } = this.props.route.params;
 
     return (
-      <View style = { styles.container }>
-        <SafeAreaView>
-          <Text>Hello World!</Text>
-          <PrimaryButton
-            iconFactory='Ionicons'
-            icon='ios-refresh'
-            iconSize={24}
-            title='Reset / Use New Wallet'
-            fontSize={16}
-            fontColor={GLOBALS.COLORS.WHITE}
-            bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
-            disabled={false}
-            onPress={() => {this.resetWallet()}}
-          />
-          <PrimaryButton
-            iconFactory='Ionicons'
-            icon='ios-power'
-            iconSize={24}
-            title='Secure App'
-            fontSize={16}
-            fontColor={GLOBALS.COLORS.WHITE}
-            bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
-            disabled={false}
-            onPress={() => {this.secureApp()}}
-          />
-        <Text>Pkey is {pkey}</Text>
+      <View style={styles.container}>
+        <SafeAreaView style={styles.headerContainer}>
+          <View style={styles.header}>
+            {/* Header Comes Here */}
+            <ProfileDisplayer
+              ref="ProfileDisplayer"
+              style={styles.profile}
+              wallet={wallet}
+              lockApp={() => {
+                const { handleAppAuthState } = this.context;
+                handleAppAuthState(APP_AUTH_STATES.ONBOARDED);
+              }}
+              toggleBlur={(toggle, animate) => {
+                this.refs.OverlayBlur.changeRenderState(toggle, animate);
+              }}
+            />
+
+            <ImageButton
+              style={styles.settings}
+              src={require('assets/ui/settings.png')}
+              onPress={() => {
+                navigation.navigate('Settings', {
+
+                });
+              }}
+            />
+          </View>
         </SafeAreaView>
+
+        <SafeAreaView style={styles.container}>
+          <View style={styles.content}>
+            <Text>Hello World!</Text>
+          </View>
+        </SafeAreaView>
+
+        {/* Overlay Blur to show incase need to emphasize on something */}
+        <OverlayBlur
+          ref='OverlayBlur'
+          onPress={
+            ()=>{
+              this.exitIntentOnOverleyBlur()
+            }
+          }
+        />
       </View>
     );
   }
@@ -95,10 +111,37 @@ HomeScreen.contextType = AuthContext;
 // Styling
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
-    width: '100%',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: GLOBALS.COLORS.WHITE,
   },
+  headerContainer: {
+    flex: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    zIndex: 999,
+  },
+  header: {
+    flexDirection: 'row',
+    marginLeft: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL/2, // For Profile Adjustment
+    marginRight: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
+    marginBottom: GLOBALS.ADJUSTMENTS.SCREEN_GAP_VERTICAL,
+    marginHorizontal: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
+
+    zIndex: 999,
+  },
+  profile: {
+
+  },
+  settings: {
+    marginTop: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
+    width: 28,
+    height: 28,
+  },
+  content: {
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+  }
 });

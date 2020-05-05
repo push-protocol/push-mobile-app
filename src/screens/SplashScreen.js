@@ -67,7 +67,7 @@ export default class SplashScreen extends Component {
       this.refs.bellicon.animateBell(
         () => {
           const { handleAppAuthState } = this.context;
-          handleAppAuthState(APP_AUTH_STATES.ONBOARDING, '');
+          handleAppAuthState(APP_AUTH_STATES.ONBOARDING);
         }
       );
     }
@@ -106,7 +106,7 @@ export default class SplashScreen extends Component {
       this.refs.bellicon.animateBell(
         () => {
           const { handleAppAuthState } = this.context;
-          handleAppAuthState(APP_AUTH_STATES.AUTHENTICATED, response.pkey);
+          handleAppAuthState(APP_AUTH_STATES.AUTHENTICATED, response.wallet, response.pkey);
         }
       );
     }
@@ -159,11 +159,12 @@ export default class SplashScreen extends Component {
         if (credentials) {
           // console.log('Credentials successfully loaded for user ' + credentials.username + "|" + credentials.password);
 
-          const pkyeyDecryptResponse = await CryptoHelper.returnDecryptedPKey(credentials.password, credentials.username);
+          const authResponse = await CryptoHelper.returnDecryptedPKey(credentials.password, credentials.username);
 
-          if (pkyeyDecryptResponse.success) {
+          if (authResponse.success) {
             response.success = true;
-            response.pkey = pkyeyDecryptResponse.pkey;
+            response.wallet = authResponse.wallet;
+            response.pkey = authResponse.pkey;
           }
           else {
             response.success = false;
@@ -208,7 +209,7 @@ export default class SplashScreen extends Component {
 
     if (response.success) {
       const { handleAppAuthState } = this.context;
-      handleAppAuthState(APP_AUTH_STATES.AUTHENTICATED, response.pkey);
+      handleAppAuthState(APP_AUTH_STATES.AUTHENTICATED, response.wallet, response.pkey);
     }
     else {
       // Passcode Attempt Failed
@@ -380,7 +381,7 @@ export default class SplashScreen extends Component {
     await MetaStorage.instance.resetSignedInUser();
 
     const { handleAppAuthState } = this.context;
-    handleAppAuthState(APP_AUTH_STATES.ONBOARDING, '');
+    handleAppAuthState(APP_AUTH_STATES.ONBOARDING);
   }
 
   // RENDER

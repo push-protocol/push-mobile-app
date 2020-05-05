@@ -45,3 +45,32 @@ The push notification handling (for when the app is open) will also be built to 
 
 #### Fetching Previous Notifications of the User
 TBA, We are still contemplating storing a cache on the epns server or handle it alternatively.
+
+### Payloads
+**Incoming Notification Payload**
+| Name  | Type | Description | In Case of Encryption |
+| ------------- | ------------- | ------------- |  ------------- |
+| title | *string* | App Owner Name - Title of message | App Owner Name has sent you a message! |
+| body | *string* | The intended message | Please open EPNS app to view it. |
+| icon | *url* | The App Owner Icon | Not Applicable |
+| data | *json* | The data payload that will be handled by EPNS App | Some Parts are encrypted |
+
+**JSON Payload (data of Incoming Notification Payload)**
+| Name  | Type | Description | In Case of Encryption |
+| ------------- | ------------- | ------------- |  ------------- |
+| name | *string* | The name of app owner | Not Applicable |
+| icon | *url* | The icon of app owner | Not Applicable |
+| type | *integer* | (1 - Not Encrypted, 2 - Encrypted) | Not Applicable |
+| title | *string (Optional)* | Title of message | Encrypted |
+| msg | *string* | The intended of message | Encrypted |
+| cta | *url (Optional)* | The call to action url (if any) | Encrypred |
+| img | *url (Optional)* | The image to display with the message (if any) | Encrypted |
+| time | *integer* | The timestamp in epoch when retrieved from blockchain | Not Applicable |
+
+**Proposed DB (Mobile Device) to Handle Incoming Payloads**
+| Name  | Type | Description |
+| ------------- | ------------- | ------------- |
+| name | *string* | The name of the app owner |
+| icon | *string (url)* | The icon of the app owner |
+| payload | *json* | The entire JSON payload as described above |
+| timestamp | *timestamp* | The timestamp of the message |

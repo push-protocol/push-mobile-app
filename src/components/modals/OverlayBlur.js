@@ -4,7 +4,7 @@ import {
   ActivityIndicator,
   View,
   Text,
-  TouchableOpacity,
+  TouchableWithoutFeedback,
   Animated
 } from 'react-native';
 import { BlurView } from 'expo-blur';
@@ -58,7 +58,7 @@ export default class OverlayBlur extends Component {
     }
     else {
       this.setState({
-          fader: new Animated.Value(1)
+        fader: new Animated.Value(1)
       })
     }
 
@@ -80,40 +80,62 @@ export default class OverlayBlur extends Component {
     }
     else {
       this.setState({
-          fader: new Animated.Value(0),
-          render: false
+        fader: new Animated.Value(0),
+        render: false
       })
     }
   }
 
   //Render
   render() {
-    const { tint } = this.props;
+    const { tint, intensity, onPress } = this.props;
+
+    let tinting = "light";
+    if (tint) {
+      tinting = tint;
+    }
+
+    let intense = 130;
+    if (intensity) {
+      intense = intensity;
+    }
+
+    let disabled = true;
+    let pressFunc = null;
+    if (onPress) {
+      disabled = false;
+      pressFunc = onPress;
+    }
 
     return (
       this.state.render == false
         ? null
-        : <Animated.View
-            style = {[ styles.container, {opacity: this.state.fader} ]}>
+        : <TouchableWithoutFeedback
+            style={[ styles.container ]}
+            onPress={pressFunc}
+            disabled={disabled}
+          >
+            <Animated.View
+              style={[ styles.container, {opacity: this.state.fader} ]}>
 
-            <BlurView
-              tint="light"
-              intensity = {130}
-              style={[ styles.container ]}>
+              <BlurView
+                tint={tinting}
+                intensity={intense}
+                style={[ styles.container ]}>
 
-              {
-                this.state.indicator == false
-                ? null
-                : <ActivityIndicator
-                    style = {styles.activity}
-                    size = "large"
-                    color = {GLOBALS.COLORS.BLACK}
-                  />
-              }
+                {
+                  this.state.indicator == false
+                  ? null
+                  : <ActivityIndicator
+                      style={styles.activity}
+                      size="small"
+                      color={GLOBALS.COLORS.BLACK}
+                    />
+                }
+              </BlurView>
 
-            </BlurView>
-
-          </Animated.View>
+            </Animated.View>
+          </TouchableWithoutFeedback>
     );
   }
 }

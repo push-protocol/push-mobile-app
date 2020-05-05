@@ -50,6 +50,7 @@ const CryptoHelper = {
           const storedWalletObject = await MetaStorage.instance.getStoredWallet();
           if (walletObject.wallet === storedWalletObject.wallet) {
             response.success = true;
+            response.wallet = walletObject.wallet;
             response.pkey = pkey;
           }
         }

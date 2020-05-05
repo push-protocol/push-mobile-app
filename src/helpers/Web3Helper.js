@@ -89,11 +89,12 @@ const Web3Helper = {
     // Check for Time Stamp, if more than 24 hours than refresh ens records
     const currentTime = new Date().getTime() / 1000;
     const storedTime = storedWalletObject.ensRefreshTime == null ? 0 : storedWalletObject.ensRefreshTime;
+
     if (storedWalletObject.wallet != null
         && currentTime - storedWalletObject.ensRefreshTime > 1
       ) {
-      const response = await Web3Helper.getENSReverseDomain();
-
+      const response = await Web3Helper.getENSReverseDomain(storedWalletObject.wallet);
+      
       let ens = '';
       let timestamp = currentTime;
 

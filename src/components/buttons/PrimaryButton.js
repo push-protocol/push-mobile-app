@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 15,
-    borderRadius: 8,
+    borderRadius: GLOBALS.ADJUSTMENTS.DEFAULT_MID_RADIUS,
     overflow: 'hidden',
     width: '100%',
   },

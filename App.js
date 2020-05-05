@@ -11,7 +11,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import SplashScreen from "src/screens/SplashScreen";
+
 import HomeScreen from "src/screens/HomeScreen";
+import SettingsScreen from "src/screens/SettingsScreen";
 
 import WelcomeScreen from "src/screens/WelcomeScreen";
 import SignInScreen from "src/screens/SignInScreen";
@@ -41,12 +43,14 @@ export default function App({ navigation }) {
   // State Settings
   // VALID APP AUTH STATES
   const [appAuthState, setAppAuthState] = useState(APP_AUTH_STATES.INITIALIZING);
+  const [userWallet, setUserWallet] = useState('');
   const [userPKey, setUserPKey] = useState('');
 
   // Handle App State
   const handleAppStateChange = (state: any) => {
     if (state !== "active") {
       // Lock App
+      // setUserWallet('');
       // setUserPKey('');
       // setAppAuthState(APP_AUTH_STATES.ONBOARDED);
     }
@@ -63,7 +67,8 @@ export default function App({ navigation }) {
   // Handle Auth Flow
   const authContext = React.useMemo(
     () => ({
-      handleAppAuthState: (newAuthState, pkey) => {
+      handleAppAuthState: (newAuthState, wallet, pkey) => {
+        setUserWallet(wallet);
         setUserPKey(pkey);
         setAppAuthState(newAuthState);
       },
@@ -83,7 +88,28 @@ export default function App({ navigation }) {
             options = {{
               headerShown: false,
             }}
-            initialParams={{ pkey: userPKey }}
+            initialParams={{
+              wallet: userWallet,
+              pkey: userPKey
+            }}
+          />
+
+          <Stack.Screen
+            name="Settings"
+            component={SettingsScreen}
+            options = {{
+              title: 'Settings',
+              headerStyle: {
+                backgroundColor: GLOBALS.COLORS.WHITE,
+                shadowColor: GLOBALS.COLORS.TRANSPARENT,
+                shadowRadius: 0,
+                shadowOffset: {
+                    height: 0,
+                },
+                elevation: 0
+              },
+              headerTintColor: GLOBALS.COLORS.MID_GRAY,
+            }}
           />
         </React.Fragment>
       );
