@@ -15,11 +15,12 @@ export default {
 
     HASHED_PASSCODE: 'HashedPasscode',
 
-    PUSH_TOKEN: 'PushNotificationToken',
-    PUSH_TOKEN_RESET_FLAG: 'PushNotificationTokenResetSignal',
+    PUSH_TOKEN: 'PushToken',
+    PUSH_TOKEN_SENT_TO_SERVER_FLAG: 'PushTokenSentToServer',
+    PUSH_TOKEN_RESET_FLAG: 'PushTokenResetSignal',
 
-    PUSH_BADGE_COUNT: 'PushNotificationBadgeCount',
-    PUSH_BADGE_COUNT_PREVIOUS: 'PreviousPushNotificationBadgeCount',
+    PUSH_BADGE_COUNT: 'PushBadgeCount',
+    PUSH_BADGE_COUNT_PREVIOUS: 'PreviousPushBadgeCount',
 
   },
 

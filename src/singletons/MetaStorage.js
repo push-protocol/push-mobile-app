@@ -61,6 +61,7 @@ export default class MetaStorage {
 
     // Reset Push Notifications
     await this.setPushTokenResetFlag(true);
+    await this.setPushTokenSentToServerFlag(false);
     await this.setPushToken('');
     await this.setCurrentAndPreviousBadgeCount(0, 0);
   }
@@ -102,6 +103,45 @@ export default class MetaStorage {
     }
   }
 
+  // PUSH TOKEN SENT TO SERVER FLAG
+  getPushTokenSentToServerFlag = async () => {
+    try {
+      let flag = await AsyncStorage.getItem(GLOBALS.STORAGE.PUSH_TOKEN_SENT_TO_SERVER_FLAG);
+
+      // Set Default Value
+      if (flag == null) {
+        flag = false;
+
+        await this.setPushTokenSentToServerFlag(flag);
+        flag = JSON.stringify(flag);
+      }
+
+      return JSON.parse(flag);
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
+  }
+
+  setPushTokenSentToServerFlag = async (flag) => {
+    try {
+      let setting = flag;
+      if (flag == null) {
+        setting = false;
+      }
+
+      await AsyncStorage.setItem(
+        GLOBALS.STORAGE.PUSH_TOKEN_SENT_TO_SERVER_FLAG,
+        JSON.stringify(setting)
+      );
+
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  }
+
   // PUSH TOKEN RESET FLAG
   getPushTokenResetFlag = async () => {
     try {
@@ -111,7 +151,7 @@ export default class MetaStorage {
       if (resetFlag == null) {
         resetFlag = false;
 
-        await this.setIsSignedIn(resetFlag);
+        await this.setPushTokenResetFlag(resetFlag);
         resetFlag = JSON.stringify(resetFlag);
       }
 
@@ -125,7 +165,7 @@ export default class MetaStorage {
   setPushTokenResetFlag = async (resetFlag) => {
     try {
       let setting = resetFlag;
-      if (isSignedIn == null) {
+      if (resetFlag == null) {
         setting = false;
       }
 
@@ -172,6 +212,25 @@ export default class MetaStorage {
     }
   }
 
+  setBadgeCount = async (badge) => {
+    try {
+      let count = badge;
+      if (count == null) {
+        count = 0;
+      }
+
+      await AsyncStorage.setItem(
+        GLOBALS.STORAGE.PUSH_BADGE_COUNT,
+        JSON.stringify(count)
+      );
+
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  }
+
   setCurrentAndPreviousBadgeCount = async (currentBadge, previousBadge) => {
     // Swap if custom photo
     const items = [
@@ -186,39 +245,6 @@ export default class MetaStorage {
       });
     }
     catch (error) {
-      console.warn(error);
-      return false;
-    }
-  }
-
-  // STORE OBJECT OF NOTIFICATION OBJECTS
-  getAllNotificationsObjects = async () => {
-    try {
-      let allNotificationsObj = await AsyncStorage.getItem(GLOBALS.STORAGE.PUSH_PAYLOADS_OBJ);
-
-      // Set Default Value
-      if (allNotificationsObj == null) {
-        // Prepare Games Object
-        const setAllNotificationsObjects = {};
-        this.setAllGamesObject(allNotificationsObj);
-        allNotificationsObj = JSON.stringify(allNotificationsObj);
-      }
-
-      return JSON.parse(allNotificationsObj);
-    } catch (error) {
-      console.warn(error);
-      return false;
-    }
-  }
-
-  setAllNotificationsObjects = async (entireObject) => {
-    try {
-      await AsyncStorage.setItem(
-        GLOBALS.STORAGE.PUSH_PAYLOADS_OBJ,
-        JSON.stringify(entireObject)
-      );
-    } catch (error) {
-      // Error saving data
       console.warn(error);
       return false;
     }

@@ -17,12 +17,22 @@ export default ImageButton = ({ style, src, onPress }) => {
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  button: {
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  button: {
+  inner: {
+    flex: 1,
     alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   image: {
     flex: 1,

@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 
-export default class AnimatedEpnsIcon extends Component {
+export default class AnimatedEPNSIcon extends Component {
   // CONSTRUCTOR
   constructor(props) {
     super(props);
@@ -69,6 +69,7 @@ export default class AnimatedEpnsIcon extends Component {
   render() {
     const {
       style,
+      withoutRinger
     } = this.props;
 
     var rotateProp = this.state.rotateAnimation.interpolate({
@@ -94,10 +95,14 @@ export default class AnimatedEpnsIcon extends Component {
           />
         </Animated.View>
 
-          <Image
-            style={[ styles.ringer, styles.absimg ]}
-            source={require('assets/ui/ring.png')}
-          />
+          {
+            withoutRinger == true
+              ? null
+              : <Image
+                  style={[ styles.ringer, styles.absimg ]}
+                  source={require('assets/ui/ring.png')}
+                />
+          }
 
           <Image
             style={[ styles.bellball, styles.absimg  ]}
@@ -111,7 +116,8 @@ export default class AnimatedEpnsIcon extends Component {
 // Styling
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    flex: 1,
+    justifyContent: 'center',
   },
   bell: {
     width: '100%',

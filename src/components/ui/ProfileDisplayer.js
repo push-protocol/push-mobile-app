@@ -101,25 +101,13 @@ export default class ProfileDisplayer extends Component {
           this.state.active == false
             ? null
             : <View style={ styles.activeProfile }>
-                <TouchableOpacity
-                  style={[ styles.header, styles.headerActive ]}
-                  onPress={() => {
-                    this.toggleActive(!this.state.active);
-                  }}
-                  disabled={true}
-                >
-                  <Blockies
-                    style={[ styles.blockies, styles.blockiesActive ]}
-                    seed={wallet.toLowerCase()} //string content to generate icon
-                    dimension={32} // blocky icon size
-                  />
-                  <Text style={styles.title}>User Profile</Text>
-                </TouchableOpacity>
+
+                <View style={styles.upArrow} />
+
 
                 <View style={styles.content}>
 
                   <View style={styles.walletInfo}>
-                    <View style={styles.upArrow} />
                     <StylishLabel
                       style={styles.para}
                       fontSize={16}
@@ -170,7 +158,7 @@ export default class ProfileDisplayer extends Component {
                       title='Lock App'
                       fontSize={16}
                       fontColor={GLOBALS.COLORS.WHITE}
-                      bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
+                      bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
                       disabled={false}
                       onPress={() => {lockApp()}}
                     />
@@ -220,7 +208,8 @@ const styles = StyleSheet.create({
   activeProfile: {
     position: 'absolute',
     backgroundColor: GLOBALS.COLORS.WHITE,
-    top: GLOBALS.ADJUSTMENTS.SCREEN_GAP_VERTICAL/2,
+    top: 65,
+    left: 15,
     borderRadius: 10,
     shadowColor: GLOBALS.COLORS.BLACK,
     shadowOffset: {
@@ -255,16 +244,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   content: {
-    marginTop: GLOBALS.ADJUSTMENTS.SCREEN_GAP_VERTICAL * 2,
+    marginTop: GLOBALS.ADJUSTMENTS.SCREEN_GAP_VERTICAL,
     marginBottom: GLOBALS.ADJUSTMENTS.SCREEN_GAP_VERTICAL,
     marginHorizontal: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
-  },
-  seperator: {
-    alignSelf: 'center',
-    width: '80%',
-    height: 1,
-    backgroundColor: GLOBALS.COLORS.LIGHT_GRAY,
-    margin: GLOBALS.ADJUSTMENTS.SCREEN_GAP_VERTICAL,
   },
   walletInfo: {
     padding: 10,
@@ -274,8 +256,8 @@ const styles = StyleSheet.create({
   },
   upArrow: {
     position: 'absolute',
-    top: -9,
-    left: 8,
+    top: -8,
+    left: 3,
     width: 0,
     height: 0,
     backgroundColor: 'transparent',
@@ -285,7 +267,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 10,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: GLOBALS.COLORS.LIGHT_GRAY,
+    borderBottomColor: GLOBALS.COLORS.WHITE,
   },
   walletText: {
     marginTop: 10,

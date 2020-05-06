@@ -10,6 +10,8 @@ import { AppState, AsyncStorage } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
+import messaging from '@react-native-firebase/messaging';
+
 import SplashScreen from "src/screens/SplashScreen";
 
 import HomeScreen from "src/screens/HomeScreen";
@@ -28,7 +30,6 @@ import ENV_CONFIG from 'root/env.config';
 import GLOBALS from 'src/Globals';
 
 
-
 // Assign console.log to nothing
 if (ENV_CONFIG.PROD_ENV) {
   console.log = () => {};
@@ -36,6 +37,22 @@ if (ENV_CONFIG.PROD_ENV) {
 
 // Create Stack Navigator
 const Stack = createStackNavigator();
+
+// TO SAVE DEVICE TOKENS
+async function saveDeviceToken(token) {
+  // Add the token to the users datastore
+  const previousToken = await MetaStorage.instance.getPushToken();
+  if (previousToken !== token) {
+    // This is a new token, save it
+    await MetaStorage.instance.setPushToken(token);
+
+    // Also flag for server
+    await MetaStorage.instance.setPushTokenSentToServerFlag(false);
+
+    console.log("Token: " + token);
+  }
+}
+
 
 export default function App({ navigation }) {
   // AsyncStorage.clear();
@@ -46,7 +63,38 @@ export default function App({ navigation }) {
   const [userWallet, setUserWallet] = useState('');
   const [userPKey, setUserPKey] = useState('');
 
-  // Handle App State
+  // HANDLE NOTIFICATIONS REGISTRATION
+  React.useEffect(() => {
+    async function runAsynTasks() {
+      // First check and reset device token if flag is set to true
+      const deleteFlag = await MetaStorage.instance.getPushTokenResetFlag();
+
+      if (deleteFlag) {
+        const response = await messaging().deleteToken();
+        console.log(response);
+        
+        await MetaStorage.instance.setPushTokenResetFlag(false);
+      }
+
+      // Get the device token
+      messaging()
+        .getToken()
+        .then(token => {
+          return saveDeviceToken(token);
+        });
+
+      // Listen to whether the token changes
+      return messaging().onTokenRefresh(token => {
+        saveDeviceToken(token);
+      });
+    }
+
+    // Execute the created function directly
+    runAsynTasks();
+
+  }, []);
+
+  // HANDLE APP STATE
   const handleAppStateChange = (state: any) => {
     if (state !== "active") {
       // Lock App
@@ -64,7 +112,7 @@ export default function App({ navigation }) {
     })
   }, []);
 
-  // Handle Auth Flow
+  // HANDLE AUTH FLOW
   const authContext = React.useMemo(
     () => ({
       handleAppAuthState: (newAuthState, wallet, pkey) => {

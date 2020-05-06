@@ -85,7 +85,7 @@ export default class SetupCompleteScreen extends Component {
     await MetaStorage.instance.setRemainingPasscodeAttempts(GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS);
 
     // Set Push Notification Badge
-    await this.setCurrentAndPreviousBadgeCount(1, 0);
+    await MetaStorage.instance.setCurrentAndPreviousBadgeCount(1, 0);
 
     // Handle App Auth Flow
     const { handleAppAuthState } = this.context;

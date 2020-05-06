@@ -48,6 +48,7 @@ const EPNSActivity = ({ style, size }) => {
                 colors={[
                   GLOBALS.COLORS.GRADIENT_PRIMARY,
                   GLOBALS.COLORS.GRADIENT_SECONDARY,
+                  GLOBALS.COLORS.GRADIENT_THIRD,
                 ]}
                 style={[
                   styles.fullgradient,
@@ -68,10 +69,10 @@ const EPNSActivity = ({ style, size }) => {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
   },
   small: {
-    width: 20,
+    width: 40,
     height: 20,
   },
   big: {
@@ -93,6 +94,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   fullgradient: {
+    alignItems: 'flex-end',
     width: '100%',
   },
 });

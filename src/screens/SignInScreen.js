@@ -98,11 +98,6 @@ export default class SignInScreen extends Component {
 
   // Users Permissions
   getCameraPermissionAsync = async (navigation) => {
-    // Temp Remove Later
-    const code = "0x789af986260800ff255a4e84311ec44de6efd7c595115e9176c77814652e668c";
-    this.onPKDetect(code);
-    return;
-    
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     if (status !== 'granted') {
       this.toggleNoticePrompt(

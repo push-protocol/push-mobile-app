@@ -1,5 +1,5 @@
 import CryptoJS from "react-native-crypto-js";
-import { sha256 } from 'react-native-sha256';
+import { JSHash, CONSTANTS } from 'react-native-hash';
 
 import Web3Helper from 'src/helpers/Web3Helper';
 import MetaStorage from 'src/singletons/MetaStorage';
@@ -17,11 +17,17 @@ const CryptoHelper = {
   },
   // To Hash with SHA256
   hashWithSha256: async function(code) {
-    return await sha256(code);
+    const hashAlgorithm = CONSTANTS.HashAlgorithms.sha256;
+    const hash = await JSHash(code, hashAlgorithm);
+
+    return hash;
   },
   // To Verify SHA256 Match
   verifyHash: async function(code, existingHash) {
-    const hash = await CryptoHelper.hashWithSha256(code);
+    const hashAlgorithm = CONSTANTS.HashAlgorithms.sha256;
+
+    const hash = await JSHash(code, hashAlgorithm);
+
     if (hash === existingHash) {
       return true;
     }

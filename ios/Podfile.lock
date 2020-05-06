@@ -319,6 +319,8 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
   - React-jsinspector (0.61.5)
+  - react-native-hash (1.2.6):
+    - React
   - react-native-randombytes (3.5.3):
     - React
   - react-native-safe-area-context (0.7.3):
@@ -387,7 +389,7 @@ PODS:
     - React
   - RNScreens (2.7.0):
     - React
-  - RNSha256 (1.3.6):
+  - RNSecp256k1 (1.0.0):
     - React
   - RNSqlite2 (1.0.0):
     - React
@@ -453,6 +455,7 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
+  - react-native-hash (from `../node_modules/react-native-hash`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-udp (from `../node_modules/react-native-udp`)
@@ -477,7 +480,7 @@ DEPENDENCIES:
   - RNOS (from `../node_modules/react-native-os`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
-  - RNSha256 (from `../node_modules/react-native-sha256`)
+  - RNSecp256k1 (from `../node_modules/react-native-secp256k1/ios`)
   - RNSqlite2 (from `../node_modules/react-native-sqlite-2`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - TcpSockets (from `../node_modules/react-native-tcp`)
@@ -579,6 +582,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
+  react-native-hash:
+    :path: "../node_modules/react-native-hash"
   react-native-randombytes:
     :path: "../node_modules/react-native-randombytes"
   react-native-safe-area-context:
@@ -625,8 +630,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
-  RNSha256:
-    :path: "../node_modules/react-native-sha256"
+  RNSecp256k1:
+    :path: "../node_modules/react-native-secp256k1/ios"
   RNSqlite2:
     :path: "../node_modules/react-native-sqlite-2"
   RNSVG:
@@ -710,6 +715,7 @@ SPEC CHECKSUMS:
   React-jsi: cb2cd74d7ccf4cffb071a46833613edc79cdf8f7
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
+  react-native-hash: c66948010974722739fc666c33494854dc5f4f7c
   react-native-randombytes: 991545e6eaaf700b4ee384c291ef3d572e0b2ca8
   react-native-safe-area-context: 8260e5157617df4b72865f44006797f895b2ada7
   react-native-udp: ccbd878f0f3b968217fc7e3d5eb5839fcaab8b6c
@@ -733,7 +739,7 @@ SPEC CHECKSUMS:
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: 955cf4068714003d2f1a6e2bae3fb1118f359aff
   RNScreens: cf198f915f8a2bf163de94ca9f5bfc8d326c3706
-  RNSha256: 22383f4a1ed2b38da9d642c608892a3ab4cad80a
+  RNSecp256k1: 20096878ad37110b712ba3fdb651b0701b44aef2
   RNSqlite2: 038cbebb953f80432db480c5ac5fd8ae427f8446
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   TcpSockets: 8d839b9b14f6f344d98e4642ded13ab3112b462d
@@ -753,6 +759,6 @@ SPEC CHECKSUMS:
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 7182e3755c9758b944516ed74f26b36ae6c9d867
+PODFILE CHECKSUM: f551bb89079aae6be0640e07cd5372f4c37432ac
 
 COCOAPODS: 1.9.0

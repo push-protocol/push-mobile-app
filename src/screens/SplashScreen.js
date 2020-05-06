@@ -17,7 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as Keychain from 'react-native-keychain';
 
-import AnimatedEpnsIcon from 'src/components/custom/AnimatedEpnsIcon';
+import AnimatedEPNSIcon from 'src/components/custom/AnimatedEPNSIcon';
 
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
@@ -420,7 +420,7 @@ export default class SplashScreen extends Component {
               }
             ]}
           >
-            <AnimatedEpnsIcon
+            <AnimatedEPNSIcon
               ref='bellicon'
               style={styles.logo}
             />

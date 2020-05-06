@@ -13,6 +13,10 @@ const Web3Helper = {
   },
   // To Get Web3
   getWeb3: function(provider) {
+    if (!provider) {
+      provider = Web3Helper.getWeb3Provider();
+    }
+
     return new Web3(provider);
   },
   // To Get ENS
@@ -94,7 +98,7 @@ const Web3Helper = {
         && currentTime - storedWalletObject.ensRefreshTime > 1
       ) {
       const response = await Web3Helper.getENSReverseDomain(storedWalletObject.wallet);
-      
+
       let ens = '';
       let timestamp = currentTime;
 
@@ -114,7 +118,6 @@ const Web3Helper = {
     // Finally return Wallet Info
     return storedWalletObject;
   },
-
 }
 
 export default Web3Helper;
