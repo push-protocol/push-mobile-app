@@ -58,19 +58,30 @@ TBA, We are still contemplating storing a cache on the epns server or handle it 
 **JSON Payload (data of Incoming Notification Payload)**
 | Name  | Type | Description | In Case of Encryption |
 | ------------- | ------------- | ------------- |  ------------- |
-| name | *string* | The name of app owner | Not Applicable |
-| icon | *url* | The icon of app owner | Not Applicable |
 | type | *integer* | (1 - Not Encrypted, 2 - Encrypted) | Not Applicable |
-| title | *string (Optional)* | Title of message | Encrypted |
-| msg | *string* | The intended of message | Encrypted |
-| cta | *url (Optional)* | The call to action url (if any) | Encrypred |
-| img | *url (Optional)* | The image to display with the message (if any) | Encrypted |
-| time | *integer* | The timestamp in epoch when retrieved from blockchain | Not Applicable |
+| epoch | *integer* | The timestamp in epoch when retrieved from blockchain | Not Applicable |
+| app | *string* | The name of app owner | Not Applicable |
+| icon | *url* | The icon of app owner | Not Applicable |
+| url | *url* | The url of app owner | Not Applicable |
+| secret | *string* | The secret protected by public key encryption, can't be more than 15 characters | Encrypted |
+| msgdata | *json (stringified)* | Push Notification real data send either encrypted or unencrypted | Encrypted |
+| >>sub | *string (Optional)* | Subject of message | Encrypted |
+| >>msg | *string* | The intended of message | Encrypted |
+| >>cta | *url (Optional)* | The call to action url (if any) | Encrypted |
+| >>img | *url (Optional)* | The image to display with the message (if any) | Encrypted |
+
+**Note:** The entire load is encrypted if notification type is 2 (Encrypted)
 
 **Proposed DB (Mobile Device) to Handle Incoming Payloads**
 | Name  | Type | Description |
 | ------------- | ------------- | ------------- |
-| name | *string* | The name of the app owner |
+| nid | *integer | Primary Key Not Null Integer |
+| app | *string* | The name of the app owner |
 | icon | *string (url)* | The icon of the app owner |
-| payload | *json* | The entire JSON payload as described above |
-| timestamp | *timestamp* | The timestamp of the message |
+| url | *url* | The url of app owner |
+| type | *integer* | The type of notification (1 is unencrypted, 2 is encrypted) |
+| appbot | *bool* | The message is sent from inside the app or from push notification |
+| secret | *string* | The secret which needs to be decrypted and used as seed for AES encrypted msgdata |
+| msgdata | *json* | The entire JSON payload as described above |
+| hidden | *bool* | The message if hidden from device |
+| epoch | *integer* | The timestamp of the message |

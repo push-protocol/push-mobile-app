@@ -8,8 +8,6 @@ import {
 import SafeAreaView from 'react-native-safe-area-view';
 import { useFocusEffect } from '@react-navigation/native';
 
-import EthCrypto from 'eth-crypto';
-
 import ProfileDisplayer from 'src/components/ui/ProfileDisplayer';
 import EPNSNotifierIcon from 'src/components/custom/EPNSNotifierIcon';
 import ImageButton from 'src/components/buttons/ImageButton';
@@ -17,7 +15,8 @@ import PrimaryButton from 'src/components/buttons/PrimaryButton';
 
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 
-import Web3Helper from 'src/helpers/Web3Helper';
+import FeedDBHelper from "src/helpers/FeedDBHelper";
+import Notifications from "src/singletons/Notifications";
 import MetaStorage from 'src/singletons/MetaStorage';
 
 import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
@@ -52,7 +51,6 @@ export default class HomeScreen extends Component {
   async componentDidMount() {
     await this.maintainer();
 
-
   }
 
   // COMPONENT LOADED
@@ -62,34 +60,16 @@ export default class HomeScreen extends Component {
     await MetaStorage.instance.setRemainingPasscodeAttempts(
       GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
     );
+
+    // Get Wallet
+    const wallet = this.props.route.params.wallet;
+    Notifications.instance.associateToken(wallet); // While an async function, there is no need to wait
   }
 
   // Run After Transition is finished
   afterTransitionMaintainer = async () => {
     // Check Notifier
     await this.refs.EPNSNotifier.getBadgeCountAndRefresh();
-  }
-
-
-  test = async () => {
-    const privateKey = this.props.route.params.pkey;
-
-    const bob = {
-      privateKey: this.props.route.params.pkey,
-      publicKey: EthCrypto.publicKeyByPrivateKey(this.props.route.params.pkey)
-    }
-
-
-    const encryptedObject = await EthCrypto.cipher.parse(
-      "fbe911bfb2fde6cd2ef16040b615f2cc02296dc24b8e00bf95409e815636118fc9261ed9b5d6aedff46b3ba21bd5e7f3c6341191dba67508635ce5a8904a6f0ca73170d68c53cd86a1c45d22598f4c428b08c8af4204dd9a2575812174e3f9e332759a7a6a47dcf269a07e843606036cfd6e68f28ee252ecd991f03bf4437b0dcf"
-    );
-
-
-    const message = await EthCrypto.decryptWithPrivateKey(
-      "0x789af986260800ff255a4e84311ec44de6efd7c595115e9176c77814652e668c", // privateKey
-      encryptedObject
-    );
-    console.log(message);
   }
 
   // FUNCTIONS

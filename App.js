@@ -2,10 +2,9 @@ import './web3globals.js'
 import './shim.js'
 import 'react-native-gesture-handler';
 
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-
 import React, {useState} from 'react';
-import { AppState, AsyncStorage } from 'react-native';
+import { AppState, AppRegistry, AsyncStorage } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -24,11 +23,11 @@ import PushNotifyScreen from "src/screens/PushNotifyScreen";
 import SetupCompleteScreen from "src/screens/SetupCompleteScreen";
 
 import MetaStorage from "src/singletons/MetaStorage";
+import Notifications from "src/singletons/Notifications";
 
 import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
 import ENV_CONFIG from 'root/env.config';
 import GLOBALS from 'src/Globals';
-
 
 // Assign console.log to nothing
 if (ENV_CONFIG.PROD_ENV) {
@@ -37,22 +36,6 @@ if (ENV_CONFIG.PROD_ENV) {
 
 // Create Stack Navigator
 const Stack = createStackNavigator();
-
-// TO SAVE DEVICE TOKENS
-async function saveDeviceToken(token) {
-  // Add the token to the users datastore
-  const previousToken = await MetaStorage.instance.getPushToken();
-  if (previousToken !== token) {
-    // This is a new token, save it
-    await MetaStorage.instance.setPushToken(token);
-
-    // Also flag for server
-    await MetaStorage.instance.setPushTokenSentToServerFlag(false);
-
-    console.log("Token: " + token);
-  }
-}
-
 
 export default function App({ navigation }) {
   // AsyncStorage.clear();
@@ -63,53 +46,16 @@ export default function App({ navigation }) {
   const [userWallet, setUserWallet] = useState('');
   const [userPKey, setUserPKey] = useState('');
 
-  // HANDLE NOTIFICATIONS REGISTRATION
+  // HANDLE ON APP START
   React.useEffect(() => {
-    async function runAsynTasks() {
-      // First check and reset device token if flag is set to true
-      const deleteFlag = await MetaStorage.instance.getPushTokenResetFlag();
+    // PUSH NOTIFICATIONS HANDLING
+    // Request Device Token and save it if need be
+    Notifications.instance.requestDeviceToken();
 
-      if (deleteFlag) {
-        const response = await messaging().deleteToken();
-        console.log(response);
-        
-        await MetaStorage.instance.setPushTokenResetFlag(false);
-      }
-
-      // Get the device token
-      messaging()
-        .getToken()
-        .then(token => {
-          return saveDeviceToken(token);
-        });
-
-      // Listen to whether the token changes
-      return messaging().onTokenRefresh(token => {
-        saveDeviceToken(token);
-      });
-    }
-
-    // Execute the created function directly
-    runAsynTasks();
-
-  }, []);
-
-  // HANDLE APP STATE
-  const handleAppStateChange = (state: any) => {
-    if (state !== "active") {
-      // Lock App
-      // setUserWallet('');
-      // setUserPKey('');
-      // setAppAuthState(APP_AUTH_STATES.ONBOARDED);
-    }
-  }
-
-  React.useEffect(() => {
-    AppState.addEventListener('change', handleAppStateChange);
-
-    return (() => {
-      AppState.removeEventListener('change', handleAppStateChange);
-    })
+    // Listen to whether the token changes
+    return messaging().onTokenRefresh(token => {
+      Notifications.instance.saveDeviceToken(token);
+    });
   }, []);
 
   // HANDLE AUTH FLOW

@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Keyboard,
   KeyboardAvoidingView,
+  Vibration,
   Animated,
   StyleSheet,
 } from 'react-native';
@@ -112,6 +113,7 @@ export default class BiometricScreen extends Component {
     else {
       if (this.state.passcode !== this.state.passcodeMirror) {
         // Password mismatch, re-enter
+        Vibration.vibrate();
         this.fadeInPasscode(this.resetPassCode());
       }
       else {
@@ -119,7 +121,7 @@ export default class BiometricScreen extends Component {
 
         // Encrypt Private Key and Do Hashing
         const { privateKey } = this.props.route.params;
-        const encryptedPkey = CryptoHelper.encrypWithAES(privateKey, this.state.passcode);
+        const encryptedPkey = CryptoHelper.encryptWithAES(privateKey, this.state.passcode);
         const hashedCode = await CryptoHelper.hashWithSha256(this.state.passcode);
 
         // Store private key and hashed code and continue

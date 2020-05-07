@@ -16,7 +16,7 @@ export default {
     HASHED_PASSCODE: 'HashedPasscode',
 
     PUSH_TOKEN: 'PushToken',
-    PUSH_TOKEN_SENT_TO_SERVER_FLAG: 'PushTokenSentToServer',
+    PUSH_TOKEN_SERVER_SYNCED: 'PushTokenServerSynced',
     PUSH_TOKEN_RESET_FLAG: 'PushTokenResetSignal',
 
     PUSH_BADGE_COUNT: 'PushBadgeCount',

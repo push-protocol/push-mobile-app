@@ -4,7 +4,7 @@ import {
   Platform
 } from 'react-native';
 
-import * as Keychain from 'react-native-keychain';
+import FeedDBHelper from 'src/helpers/FeedDBHelper';
 
 import GLOBALS from 'src/Globals';
 
@@ -18,52 +18,6 @@ export default class MetaStorage {
   // INITIALIZE
   initialize = async () => {
     // For Initialization of anything, not needed right now
-  }
-
-  // WIPE SIGNED IN USER | LOCK DOWN RESET
-  wipeSignedInUser = async () => {
-    // Set user locked to true
-    await this.setUserLocked(true);
-
-    // Call Remove User Process
-    await MetaStorage.instance.removeDataOfUser();
-  }
-
-  // RESET LOCKED OR SIGNED OUT USER | GRACEFUL RESET
-  resetSignedInUser = async () => {
-    // Set user locked to false, useful if user is locked
-    await this.setUserLocked(false);
-
-    // Set Signed Status as false also
-    await this.setIsSignedIn(false);
-
-    // Call Remove User Process
-    await MetaStorage.instance.removeDataOfUser();
-
-    // Set Passcode Attempts to MAX
-    await this.setRemainingPasscodeAttempts(GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS);
-  }
-
-  // REMOVE SIGNED IN USER
-  removeDataOfUser = async () => {
-    // Destroy Keychain
-    await Keychain.resetGenericPassword();
-
-    // Set Hashed Passcode and Encrypted PKey
-    await this.setEncryptedPKeyAndHashedPasscode('', '');
-
-    // Set Wallet Info Object As Null
-    await this.setStoredWallet({
-      ensRefreshTime: 0, // Time in epoch
-      ens: '',
-      wallet: '',
-    });
-
-    // Reset Push Notifications
-    await this.setPushTokenResetFlag(true);
-    await this.setPushTokenSentToServerFlag(false);
-    await this.setPushToken('');
-    await this.setCurrentAndPreviousBadgeCount(0, 0);
   }
 
   // GETTERS AND SETTERS STORAGE
@@ -88,12 +42,12 @@ export default class MetaStorage {
     try {
       let token = newToken;
       if (newToken == null) {
-        token = false;
+        token = '';
       }
 
       await AsyncStorage.setItem(
         GLOBALS.STORAGE.PUSH_TOKEN,
-        JSON.stringify(token)
+        token
       );
 
     } catch (error) {
@@ -106,13 +60,13 @@ export default class MetaStorage {
   // PUSH TOKEN SENT TO SERVER FLAG
   getPushTokenSentToServerFlag = async () => {
     try {
-      let flag = await AsyncStorage.getItem(GLOBALS.STORAGE.PUSH_TOKEN_SENT_TO_SERVER_FLAG);
+      let flag = await AsyncStorage.getItem(GLOBALS.STORAGE.PUSH_TOKEN_SERVER_SYNCED);
 
       // Set Default Value
       if (flag == null) {
         flag = false;
 
-        await this.setPushTokenSentToServerFlag(flag);
+        await this.setTokenServerSynced(flag);
         flag = JSON.stringify(flag);
       }
 
@@ -123,7 +77,7 @@ export default class MetaStorage {
     }
   }
 
-  setPushTokenSentToServerFlag = async (flag) => {
+  setTokenServerSynced = async (flag) => {
     try {
       let setting = flag;
       if (flag == null) {
@@ -131,7 +85,7 @@ export default class MetaStorage {
       }
 
       await AsyncStorage.setItem(
-        GLOBALS.STORAGE.PUSH_TOKEN_SENT_TO_SERVER_FLAG,
+        GLOBALS.STORAGE.PUSH_TOKEN_SERVER_SYNCED,
         JSON.stringify(setting)
       );
 

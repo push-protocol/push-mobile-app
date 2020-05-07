@@ -13,6 +13,7 @@ import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 
 import Web3Helper from 'src/helpers/Web3Helper';
+import AuthenticationHelper from 'src/helpers/AuthenticationHelper'
 import MetaStorage from 'src/singletons/MetaStorage';
 
 import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
@@ -32,7 +33,7 @@ export default class SettingsScreen extends Component {
   // FUNCTIONS
   // TO RESET WALLET
   resetWallet = async () => {
-    await MetaStorage.instance.resetSignedInUser();
+    await AuthenticationHelper.resetSignedInUser();
 
     const { handleAppAuthState } = this.context;
     handleAppAuthState(APP_AUTH_STATES.INITIALIZING);

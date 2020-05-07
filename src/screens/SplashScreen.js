@@ -9,6 +9,7 @@ import {
   Platform,
   Keyboard,
   KeyboardAvoidingView,
+  Vibration,
   InteractionManager,
   StyleSheet,
 } from 'react-native';
@@ -23,7 +24,7 @@ import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 
-import CryptoHelper from 'src/helpers/CryptoHelper';
+import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
 import BiometricHelper from 'src/helpers/BiometricHelper';
 import MetaStorage from "src/singletons/MetaStorage";
 
@@ -111,6 +112,9 @@ export default class SplashScreen extends Component {
       );
     }
     else {
+      // Vibrate to indicate incorrect attempt
+      Vibration.vibrate();
+
       // Verify
       const passcodeAttemptsPending = await this.checkAndTakeActionOnAttempts(true);
 
@@ -158,8 +162,12 @@ export default class SplashScreen extends Component {
 
         if (credentials) {
           // console.log('Credentials successfully loaded for user ' + credentials.username + "|" + credentials.password);
-
-          const authResponse = await CryptoHelper.returnDecryptedPKey(credentials.password, credentials.username);
+          const hashedCode = await MetaStorage.instance.getHashedPasscode();
+          const authResponse = await AuthenticationHelper.returnDecryptedPKey(
+            credentials.password,
+            credentials.username,
+            hashedCode
+          );
 
           if (authResponse.success) {
             response.success = true;
@@ -205,7 +213,13 @@ export default class SplashScreen extends Component {
 
     // Check if Passcode decrypts the key
     const encryptedPKey = await MetaStorage.instance.getEncryptedPkey();
-    const response = await CryptoHelper.returnDecryptedPKey(encryptedPKey, value);
+    const hashedCode = await MetaStorage.instance.getHashedPasscode();
+
+    const response = await AuthenticationHelper.returnDecryptedPKey(
+      encryptedPKey,
+      value,
+      hashedCode
+    );
 
     if (response.success) {
       const { handleAppAuthState } = this.context;
@@ -285,7 +299,7 @@ export default class SplashScreen extends Component {
 
     if (remainingAttempts <= 0) {
       // Lock User Account
-      await MetaStorage.instance.wipeSignedInUser();
+      await AuthenticationHelper.wipeSignedInUser();
 
       this.setState({
         signedIn: false,
@@ -378,7 +392,7 @@ export default class SplashScreen extends Component {
 
   // Reset Wallet
   resetWallet = async () => {
-    await MetaStorage.instance.resetSignedInUser();
+    await AuthenticationHelper.resetSignedInUser();
 
     const { handleAppAuthState } = this.context;
     handleAppAuthState(APP_AUTH_STATES.ONBOARDING);
