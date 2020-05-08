@@ -64,11 +64,10 @@ TBA, We are still contemplating storing a cache on the epns server or handle it 
 | icon | *url* | The icon of app owner | Not Applicable |
 | url | *url* | The url of app owner | Not Applicable |
 | secret | *string* | The secret protected by public key encryption, can't be more than 15 characters | Encrypted |
-| msgdata | *json (stringified)* | Push Notification real data send either encrypted or unencrypted | Encrypted |
-| >>sub | *string (Optional)* | Subject of message | Encrypted |
-| >>msg | *string* | The intended of message | Encrypted |
-| >>cta | *url (Optional)* | The call to action url (if any) | Encrypted |
-| >>img | *url (Optional)* | The image to display with the message (if any) | Encrypted |
+| asub | *string (Optional)* | Subject of message | Encrypted |
+| amsg | *string* | The intended of message | Encrypted |
+| acta | *url (Optional)* | The call to action url (if any) | Encrypted |
+| aimg | *url (Optional)* | The image to display with the message (if any) | Encrypted |
 
 **Note:** The entire load is encrypted if notification type is 2 (Encrypted)
 
@@ -82,6 +81,9 @@ TBA, We are still contemplating storing a cache on the epns server or handle it 
 | type | *integer* | The type of notification (1 is unencrypted, 2 is encrypted) |
 | appbot | *bool* | The message is sent from inside the app or from push notification |
 | secret | *string* | The secret which needs to be decrypted and used as seed for AES encrypted msgdata |
-| msgdata | *json* | The entire JSON payload as described above |
+| asub | *string (Optional)* | Subject of message |
+| amsg | *string* | The intended of message |
+| acta | *url (Optional)* | The call to action url (if any) |
+| aimg | *url (Optional)* | The image to display with the message (if any) |
 | hidden | *bool* | The message if hidden from device |
 | epoch | *integer* | The timestamp of the message |

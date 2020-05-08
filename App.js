@@ -3,7 +3,7 @@ import './shim.js'
 import 'react-native-gesture-handler';
 
 import React, {useState} from 'react';
-import { AppState, AppRegistry, AsyncStorage } from 'react-native';
+import { Alert, AsyncStorage } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -57,6 +57,15 @@ export default function App({ navigation }) {
       Notifications.instance.saveDeviceToken(token);
     });
   }, []);
+
+  React.useEffect(() => {
+    // Listen for incoming messages
+    const handleForegroundPush = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      Notifications.instance.handleIncomingPushAppOpened();
+    });
+    return handleForegroundPush;
+    }, []);
 
   // HANDLE AUTH FLOW
   const authContext = React.useMemo(

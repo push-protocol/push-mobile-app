@@ -4,8 +4,6 @@ import {
   Platform
 } from 'react-native';
 
-import FeedDBHelper from 'src/helpers/FeedDBHelper';
-
 import GLOBALS from 'src/Globals';
 
 // STATIC SINGLETON
@@ -86,45 +84,6 @@ export default class MetaStorage {
 
       await AsyncStorage.setItem(
         GLOBALS.STORAGE.PUSH_TOKEN_SERVER_SYNCED,
-        JSON.stringify(setting)
-      );
-
-    } catch (error) {
-      // Error saving data
-      console.warn(error);
-      return false;
-    }
-  }
-
-  // PUSH TOKEN RESET FLAG
-  getPushTokenResetFlag = async () => {
-    try {
-      let resetFlag = await AsyncStorage.getItem(GLOBALS.STORAGE.PUSH_TOKEN_RESET_FLAG);
-
-      // Set Default Value
-      if (resetFlag == null) {
-        resetFlag = false;
-
-        await this.setPushTokenResetFlag(resetFlag);
-        resetFlag = JSON.stringify(resetFlag);
-      }
-
-      return JSON.parse(resetFlag);
-    } catch (error) {
-      console.warn(error);
-      return false;
-    }
-  }
-
-  setPushTokenResetFlag = async (resetFlag) => {
-    try {
-      let setting = resetFlag;
-      if (resetFlag == null) {
-        setting = false;
-      }
-
-      await AsyncStorage.setItem(
-        GLOBALS.STORAGE.PUSH_TOKEN_RESET_FLAG,
         JSON.stringify(setting)
       );
 

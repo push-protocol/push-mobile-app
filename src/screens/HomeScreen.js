@@ -51,6 +51,8 @@ export default class HomeScreen extends Component {
   async componentDidMount() {
     await this.maintainer();
 
+    // Testing Feed DB
+    FeedDBHelper.getFeeds(0, 10);
   }
 
   // COMPONENT LOADED

@@ -112,9 +112,6 @@ export default class SplashScreen extends Component {
       );
     }
     else {
-      // Vibrate to indicate incorrect attempt
-      Vibration.vibrate();
-
       // Verify
       const passcodeAttemptsPending = await this.checkAndTakeActionOnAttempts(true);
 
@@ -227,6 +224,11 @@ export default class SplashScreen extends Component {
     }
     else {
       // Passcode Attempt Failed
+
+      // Vibrate to indicate incorrect attempt
+      Vibration.vibrate();
+
+      // decrement the remaining attempts
       const remainingAttempts = this.state.remainingAttempts - 1;
 
       await MetaStorage.instance.setRemainingPasscodeAttempts(remainingAttempts);

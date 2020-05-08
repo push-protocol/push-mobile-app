@@ -5,7 +5,7 @@ import {
 
 import SQLite from "react-native-sqlite-2";
 
-import CryptoHelper from 'src/helpers/CryptoHelper';
+import MetaStorage from 'src/singletons/MetaStorage';
 
 import GLOBALS from 'src/Globals';
 
@@ -34,12 +34,15 @@ const FeedDBHelper = {
     const url = "url TEXT NOT NULL";
     const appbot = "appbot BOOL";
     const secret = "secret TEXT";
-    const msgdata = "msgdata TEXT NOT NULL";
+    const asub = "asub TEXT";
+    const amsg = "amsg TEXT NOT NULL";
+    const acta = "acta TEXT";
+    const aimg = "aimg TEXT";
     const hidden = "hidden BOOL";
     const epoch = "epoch INTEGER";
 
     const dropTable = `DROP TABLE IF EXISTS ${table}`;
-    const createTable = `CREATE TABLE IF NOT EXISTS ${table} (${nid}, ${type}, ${app}, ${icon}, ${url}, ${appbot}, ${secret} ${msgdata}, ${hidden}, ${epoch})`;
+    const createTable = `CREATE TABLE IF NOT EXISTS ${table} (${nid}, ${type}, ${app}, ${icon}, ${url}, ${appbot}, ${secret}, ${asub}, ${amsg}, ${acta}, ${aimg}, ${hidden}, ${epoch})`;
 
     db.transaction(function(txn) {
       txn.executeSql(dropTable, []);
@@ -70,37 +73,44 @@ const FeedDBHelper = {
     let response = [];
 
     // Prepare statement
-    const statement = `SELECT * FROM ${table} WHERE HIDDEN=FALSE LIMIT ${startIndex}, ${numRows}`;
-    txn.executeSql(statement, [], function(tx, res) {
-      for (let i = 0; i < res.rows.length; ++i) {
-        const feedItem = res.rows.item(i);
-        console.log("item: ", feedItem);
+    const statement = `SELECT * FROM ${table} WHERE hidden=FALSE LIMIT ${startIndex}, ${numRows}`;
+    db.transaction(function(txn) {
+      txn.executeSql(statement, [], function(tx, res) {
+        console.log(res);
+        console.log("rese");
+        for (let i = 0; i < res.rows.length; ++i) {
+          const feedItem = res.rows.item(i);
+          console.log("item: ", feedItem);
 
-        // Create object
-        let obj = {
-          notificationID: feedItem.nid,
-          notificationType: feedItem.type,
-          appName: feedItem.app,
-          appIcon: feedItem.icon,
-          appURL: feedItem.url,
-          appbot: feedItem.appbot,
-          secret: feedItem.secret,
-          msgData: feedItem.msgdata,
-          timeInEpoch: feedItem.epoch,
-        };
+          // Create object
+          let obj = {
+            notificationID: feedItem.nid,
+            notificationType: feedItem.type,
+            appName: feedItem.app,
+            appIcon: feedItem.icon,
+            appURL: feedItem.url,
+            appbot: feedItem.appbot,
+            secret: feedItem.secret,
+            asub: feedItem.asub,
+            amsg: feedItem.amsg,
+            acta: feedItem.acta,
+            aimg: feedItem.aimg,
+            timeInEpoch: feedItem.epoch,
+          };
 
-        response.push(obj);
-      }
+          response.push(obj);
+        }
+      });
     });
 
     return response;
   },
   // To Add Feed coming from Notification or Appbot
-  addFeedFromPayload: function(typeVal, appVal, iconVal, urlVal, appbotVal, secretVal, msgdataVal, epochVal) {
-    FeedDBHelper.addRawFeed(typeVal, appVal, iconVal, urlVal, appbotVal, secretVal, msgdataVal, false, epochVal);
+  addFeedFromPayload: function(typeV, appV, iconV, urlV, appbotV, secretV, asubV, amsgV, actaV, aimgV, epochV) {
+    FeedDBHelper.addRawFeed(typeV, appV, iconV, urlV, appbotV, secretV,  asubV, amsgV, actaV, aimgV, false, epochV);
   },
   // To Add Raw Feed
-  addRawFeed: function(typeV, appV, iconV, appbotV, secretV, msgdataV, hiddenV, epochV) {
+  addRawFeed: async function(typeV, appV, iconV, appbotV, secretV, asubV, amsgV, actaV, aimgV, hiddenV, epochV) {
     const db = FeedDBHelper.getDB();
     const table = FeedDBHelper.getTable();
 
@@ -111,33 +121,28 @@ const FeedDBHelper = {
     const url = "url";
     const appbot = "appbot";
     const secret = "secret";
-    const msgdata = "msgdata";
+    const asub = "asub";
+    const amsg = "amsg";
+    const acta = "acta";
+    const aimg = "aimg";
     const hidden = "hidden";
     const epoch = "epoch";
 
-    const insertRows = `${type}, ${app}, ${icon}, ${url}, ${appbot}, ${secret}, ${msgdata}, ${hidden}, ${epoch}`;
+    const insertRows = `${type}, ${app}, ${icon}, ${url}, ${appbot}, ${secret}, ${asub}, ${amsg}, ${acta}, ${aimg}, ${hidden}, ${epoch}`;
 
-    const statement = `INSERT INTO ${table} (${insertRows}) VALUES (${typeV}, ${appV}, ${iconV}, ${urlV}, ${appbotV}, ${secretV}, ${msgdataV}, ${hiddenV}, ${epochV})`;
+    const statement = `INSERT INTO ${table} (${insertRows}) VALUES (${typeV}, ${appV}, ${iconV}, ${urlV}, ${appbotV}, ${secretV}, ${asubV}, ${amsgV}, ${actaV}, ${aimgV}, ${hiddenV}, ${epochV})`;
 
     db.transaction(function(txn) {
       txn.executeSql(statement, []);
     });
+
+    // Finally update badge
+    const currentBadge = await MetaStorage.getBadgeCount();
+    await MetaStorage.setBadgeCount(currentBadge + 1);
   },
   // To Create Feed Internal Payload
   createFeedInternalPayload: function(type, name, icon, url, appbot, secret, sub, msg, cta, img, epoch) {
     // Prepare msg data first
-    const msgPayload = {
-      sub: sub,
-      msg: msg,
-      cta: cta,
-      img: img,
-    };
-
-    let msgdata = JSON.stringify(msgPayload);
-    if (type == 2) {
-      // Message is aes encrypted
-      msgdata = CryptoHelper.encryptWithAES(msgdata);
-    }
 
     // Then prepare payload
     const payload = {
@@ -147,7 +152,10 @@ const FeedDBHelper = {
       url: url,
       appbot: appbot,
       secret: secret,
-      msgdata: msgdata,
+      sub: sub,
+      msg: msg,
+      cta: cta,
+      img: img,
       hidden: false,
       epoch: epoch,
     };
@@ -163,7 +171,10 @@ const FeedDBHelper = {
       payload.url,
       payload.appbot,
       payload.secret,
-      payload.msgdata,
+      payload.asub,
+      payload.amsg,
+      payload.aimg,
+      payload.acta,
       payload.hidden,
       payload.epoch,
     );
