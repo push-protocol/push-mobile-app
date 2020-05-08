@@ -13,7 +13,14 @@ import GLOBALS from 'src/Globals';
 const FeedDBHelper = {
   // To Get DB Connection
   getDB: function () {
-    const db = SQLite.openDatabase("feedDB.sqlite", "1.0", "", 1);
+    const db = SQLite.openDatabase(
+      "feedDB.db",
+      "1.0",
+      "Feed DB",
+      1,
+      FeedDBHelper.openCB,
+      FeedDBHelper.errorCB
+      );
     return db;
   },
   // To Get the table name
@@ -29,24 +36,34 @@ const FeedDBHelper = {
     // Prepare statement
     const nid = "nid INTEGER PRIMARY KEY NOT NULL";
     const type = "type INTEGER NOT NULL";
-    const app = "app VARCHAR(40) NOT NULL";
+    const app = "app TEXT NOT NULL";
     const icon = "icon TEXT NOT NULL";
     const url = "url TEXT NOT NULL";
     const appbot = "appbot BOOL";
-    const secret = "secret TEXT";
+    const secret = "secret INTEGER";
     const asub = "asub TEXT";
     const amsg = "amsg TEXT NOT NULL";
     const acta = "acta TEXT";
     const aimg = "aimg TEXT";
-    const hidden = "hidden BOOL";
+    const hidden = "hidden INTEGER";
     const epoch = "epoch INTEGER";
 
     const dropTable = `DROP TABLE IF EXISTS ${table}`;
     const createTable = `CREATE TABLE IF NOT EXISTS ${table} (${nid}, ${type}, ${app}, ${icon}, ${url}, ${appbot}, ${secret}, ${asub}, ${amsg}, ${acta}, ${aimg}, ${hidden}, ${epoch})`;
 
     db.transaction(function(txn) {
-      txn.executeSql(dropTable, []);
-      txn.executeSql(createTable, []);
+      txn.executeSql(
+        dropTable,
+        [],
+        FeedDBHelper.successCB,
+        FeedDBHelper.errorCB
+      );
+      txn.executeSql(
+        createTable,
+        [],
+        FeedDBHelper.successCB,
+        FeedDBHelper.errorCB
+      );
     });
   },
   // To get Feeds, return Object of Objects
@@ -73,44 +90,113 @@ const FeedDBHelper = {
     let response = [];
 
     // Prepare statement
-    const statement = `SELECT * FROM ${table} WHERE hidden=FALSE LIMIT ${startIndex}, ${numRows}`;
+    const statement = `SELECT * FROM ${table} WHERE hidden=0 ORDER BY epoch DESC LIMIT ${startIndex}, ${numRows}`;
     db.transaction(function(txn) {
-      txn.executeSql(statement, [], function(tx, res) {
-        console.log(res);
-        console.log("rese");
-        for (let i = 0; i < res.rows.length; ++i) {
-          const feedItem = res.rows.item(i);
-          console.log("item: ", feedItem);
+      txn.executeSql(
+        statement,
+        [],
+        function(tx, res) {
+          for (let i = 0; i < res.rows.length; ++i) {
+            const feedItem = res.rows.item(i);
 
-          // Create object
-          let obj = {
-            notificationID: feedItem.nid,
-            notificationType: feedItem.type,
-            appName: feedItem.app,
-            appIcon: feedItem.icon,
-            appURL: feedItem.url,
-            appbot: feedItem.appbot,
-            secret: feedItem.secret,
-            asub: feedItem.asub,
-            amsg: feedItem.amsg,
-            acta: feedItem.acta,
-            aimg: feedItem.aimg,
-            timeInEpoch: feedItem.epoch,
-          };
+            // Create object
+            let obj = {
+              notificationID: feedItem.nid,
+              notificationType: feedItem.type,
+              appName: feedItem.app,
+              appIcon: feedItem.icon,
+              appURL: feedItem.url,
+              appbot: feedItem.appbot,
+              secret: feedItem.secret,
+              asub: feedItem.asub,
+              amsg: feedItem.amsg,
+              acta: feedItem.acta,
+              aimg: feedItem.aimg,
+              timeInEpoch: feedItem.epoch,
+            };
 
-          response.push(obj);
-        }
-      });
+            response.push(obj);
+          }
+
+          // console.log(`Response of Select from ${startIndex} to ${endIndex}`);
+          // console.log(response);
+        },
+        FeedDBHelper.errorCB
+      );
     });
 
     return response;
   },
   // To Add Feed coming from Notification or Appbot
-  addFeedFromPayload: function(typeV, appV, iconV, urlV, appbotV, secretV, asubV, amsgV, actaV, aimgV, epochV) {
-    FeedDBHelper.addRawFeed(typeV, appV, iconV, urlV, appbotV, secretV,  asubV, amsgV, actaV, aimgV, false, epochV);
+  addFeedFromPayload: function(
+    typeV,
+    appV,
+    iconV,
+    urlV,
+    appbotV,
+    secretV,
+    asubV,
+    amsgV,
+    actaV,
+    aimgV,
+    epochV
+  ) {
+    FeedDBHelper.addRawFeed(
+      typeV,
+      appV,
+      iconV,
+      urlV,
+      appbotV,
+      secretV,
+      asubV,
+      amsgV,
+      actaV,
+      aimgV,
+      0,
+      epochV
+    );
   },
   // To Add Raw Feed
-  addRawFeed: async function(typeV, appV, iconV, appbotV, secretV, asubV, amsgV, actaV, aimgV, hiddenV, epochV) {
+  addRawFeed: async function(
+    typeV,
+    appV,
+    iconV,
+    urlV,
+    appbotV,
+    secretV,
+    asubV,
+    amsgV,
+    actaV,
+    aimgV,
+    hiddenV,
+    epochV
+  ) {
+    // Everything is assumed as string so convert them if undefined
+    typeV = typeV == undefined ? 0 : parseInt(typeV);
+    appV = appV == undefined ? '' : appV;
+    iconV = iconV == undefined ? '' : iconV;
+    urlV = urlV == undefined ? '' : urlV;
+    appbotV = (appbotV == undefined || parseInt(appbotV) == 0) ? 0 : 1;
+    secretV = secretV == undefined ? '' : secretV;
+    asubV = asubV == undefined ? '' : asubV;
+    amsgV = amsgV == undefined ? '' : amsgV;
+    actaV = actaV == undefined ? '' : actaV;
+    aimgV = aimgV == undefined ? '' : aimgV;
+    hiddenV = (hiddenV == undefined || parseInt(hiddenV) == 0) ? 0 : 1;
+    epochV = epochV == undefined ? (parseInt(new Date().getTime()) / 1000) : parseInt(epochV);
+
+    // Checks first
+    let shouldProceed = true;
+    if (
+      appV.length == 0
+      || iconV.length == 0
+      || urlV.length == 0
+      || amsgV.length == 0
+    ) {
+      shouldProceed = false;
+    }
+
+    // DB Related
     const db = FeedDBHelper.getDB();
     const table = FeedDBHelper.getTable();
 
@@ -130,19 +216,59 @@ const FeedDBHelper = {
 
     const insertRows = `${type}, ${app}, ${icon}, ${url}, ${appbot}, ${secret}, ${asub}, ${amsg}, ${acta}, ${aimg}, ${hidden}, ${epoch}`;
 
-    const statement = `INSERT INTO ${table} (${insertRows}) VALUES (${typeV}, ${appV}, ${iconV}, ${urlV}, ${appbotV}, ${secretV}, ${asubV}, ${amsgV}, ${actaV}, ${aimgV}, ${hiddenV}, ${epochV})`;
+    const statement = `INSERT INTO ${table} (${insertRows}) VALUES (${typeV}, '${appV}', '${iconV}', '${urlV}', ${appbotV}, '${secretV}', '${asubV}', '${amsgV}', '${actaV}', '${aimgV}', ${hiddenV}, ${epochV})`;
 
-    db.transaction(function(txn) {
-      txn.executeSql(statement, []);
-    });
+    if (shouldProceed) {
+      db.transaction(function(txn) {
+        txn.executeSql(
+          statement,
+          [],
+          FeedDBHelper.successCB,
+          FeedDBHelper.errorCB
+        );
+      });
 
-    // Finally update badge
-    const currentBadge = await MetaStorage.getBadgeCount();
-    await MetaStorage.setBadgeCount(currentBadge + 1);
+      // Finally update badge
+      const currentBadge = await MetaStorage.instance.getBadgeCount();
+      await MetaStorage.instance.setBadgeCount(currentBadge + 1);
+
+      // And iOS Badge as well
+
+    }
+    else {
+      console.log("Valdiation Failed!!!");
+      console.log("--------------------");
+
+      console.log("type ==> '" + typeV + "' (" + typeof(typeV) + ")");
+      console.log("app ==> '" + appV + "' (" + typeof(appV) + ")" + "(Length: " + appV.length + ")");
+      console.log("icon ==> '" + iconV + "' (" + typeof(iconV) + ")" + "(Length: " + iconV.length + ")");
+      console.log("url ==> '" + urlV + "' (" + typeof(urlV) + ")" + "(Length: " + urlV.length + ")");
+      console.log("appbot ==> '" + appbotV + "' (" + typeof(appbotV) + ")");
+      console.log("secret ==> '" + secretV + "' (" + typeof(secretV) + ")");
+      console.log("asub ==> '" + asubV + "' (" + typeof(asubV) + ")");
+      console.log("amsg ==> '" + amsgV + "' (" + typeof(amsgV) + ")" + "(Length: " + amsgV.length + ")");
+      console.log("acta ==> '" + actaV + "' (" + typeof(actaV) + ")");
+      console.log("aimg ==> '" + aimgV + "' (" + typeof(aimgV) + ")");
+      console.log("hidden ==> '" + hiddenV + "' (" + typeof(hiddenV) + ")");
+      console.log("epoch ==> '" + epochV + "' (" + typeof(epochV) + ")");
+    }
+
+
   },
   // To Create Feed Internal Payload
-  createFeedInternalPayload: function(type, name, icon, url, appbot, secret, sub, msg, cta, img, epoch) {
-    // Prepare msg data first
+  createFeedInternalPayload: function(
+    type,
+    name,
+    icon,
+    url,
+    appbot,
+    secret,
+    sub,
+    msg,
+    cta,
+    img,
+    epoch
+  ) {
 
     // Then prepare payload
     const payload = {
@@ -156,7 +282,7 @@ const FeedDBHelper = {
       msg: msg,
       cta: cta,
       img: img,
-      hidden: false,
+      hidden: 0,
       epoch: epoch,
     };
 
@@ -171,14 +297,15 @@ const FeedDBHelper = {
       payload.url,
       payload.appbot,
       payload.secret,
-      payload.asub,
-      payload.amsg,
-      payload.aimg,
-      payload.acta,
+      payload.sub,
+      payload.msg,
+      payload.img,
+      payload.cta,
       payload.hidden,
       payload.epoch,
     );
   },
+  // To add a specific feed
   hideFeed: function(nid) {
     const db = FeedDBHelper.getDB();
     const table = FeedDBHelper.getTable();
@@ -187,31 +314,79 @@ const FeedDBHelper = {
     const statement = `UPDATE ${table} SET hidden=TRUE WHERE nid=${nid}`;
 
     db.transaction(function(txn) {
-      txn.executeSql(statement, []);
+      txn.executeSql(
+        statement,
+        [],
+        FeedDBHelper.successCB,
+        FeedDBHelper.errorCB
+      );
     });
   },
+  // to unhide all feeds
   unhideAllFeeds: function() {
     const db = FeedDBHelper.getDB();
     const table = FeedDBHelper.getTable();
 
     // prepare
-    const statement = `UPDATE ${table} SET hidden=FALSE WHERE hidden=TRUE`;
+    const statement = `UPDATE ${table} SET hidden=0 WHERE hidden=1`;
 
     db.transaction(function(txn) {
-      txn.executeSql(statement, []);
+      txn.executeSql(
+        statement,
+        [],
+        FeedDBHelper.successCB,
+        FeedDBHelper.errorCB
+      );
     });
   },
+  // to delete specific feed
   deleteFeed: function(nid) {
     const db = FeedDBHelper.getDB();
     const table = FeedDBHelper.getTable();
 
     // prepare
     const statement = `DELETE FROM ${table} WHERE nid=${nid}`;
-    txn.executeSql(statement);
+    db.transaction(function(txn) {
+      txn.executeSql(
+        statement,
+        [],
+        FeedDBHelper.successCB,
+        FeedDBHelper.errorCB
+      );
+    });
   },
+  // to create dummy feed
   createDummyFeed: function() {
 
-  }
+  },
+  // Helper Function to validate item, check empty, trim, null, etc
+  validateItem: (item) => {
+    const str = item.trim();
+    return (str && str.length > 0);
+  },
+  // Logging and testing functions below
+  addLog: (msg, info) => {
+    console.log(msg)
+
+    if (info) {
+      console.log(info);
+    }
+  },
+  // error callback
+  errorCB: (err) => {
+    console.error('error:', err)
+    FeedDBHelper.addLog('Error: ', (err.message || err))
+
+    return false
+  },
+  // On success callback
+  successCB: () => {
+    // FeedDBHelper.addLog('SQL Executed...')
+  },
+  // On open callback
+  openCB: () => {
+    // FeedDBHelper.addLog('Database OPEN')
+  },
 }
 
 export default FeedDBHelper;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, TouchableOpacity, Image, StyleSheet } from 'react-native';
 
-export default ImageButton = ({ style, src, onPress }) => {
+export default ImageButton = ({ style, src, iconSize, onPress }) => {
   // Rendor
   return (
     <View style={[ styles.container, style ]}>
@@ -9,7 +9,7 @@ export default ImageButton = ({ style, src, onPress }) => {
         style={[ styles.button ]}
         onPress={onPress}
       >
-        <Image style={styles.image} source={src} />
+        <Image style={[ styles.image, {width: iconSize, height: iconSize} ]} source={src} />
       </TouchableOpacity>
     </View>
   );
@@ -18,6 +18,7 @@ export default ImageButton = ({ style, src, onPress }) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    height: '100%',
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
@@ -28,14 +29,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  inner: {
-    flex: 1,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   image: {
-    flex: 1,
     resizeMode: 'contain',
   }
 });

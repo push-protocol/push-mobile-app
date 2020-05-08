@@ -4,6 +4,7 @@ import {
   TouchableWithoutFeedback,
   Text,
   Animated,
+  ActivityIndicator,
   Easing,
   StyleSheet
 } from 'react-native';
@@ -145,10 +146,11 @@ export default class PrimaryButton extends Component {
       iconSize,
       title,
       fontSize,
+      loading,
       disabled,
       onPress
     } = this.props;
-
+    
     // for updating style
     let updatedButtonStyle = {};
 
@@ -176,7 +178,7 @@ export default class PrimaryButton extends Component {
           onPressIn = {() => this.toggleOverlay(true)}
           onPressOut = {() => this.toggleOverlay(false)}
           onPress = {onPress}
-          disabled = {disabled}
+          disabled = {disabled || loading}
         >
           <Animated.View
             style = {[
@@ -190,15 +192,27 @@ export default class PrimaryButton extends Component {
                 ? null
                 : <View style = {styles.overlayContainer}></View>
             }
-            <Text style = {[styles.title, fontStyle ]}>{title}</Text>
+
             {
-              this.renderIcon(
-                iconFactory,
-                icon,
-                this.state.fontColor,
-                iconSize,
-              )
+              loading == true
+                ? <ActivityIndicator
+                    style={styles.activity}
+                    size="small"
+                    color={GLOBALS.COLORS.WHITE}
+                  />
+                : <React.Fragment>
+                    <Text style = {[styles.title, fontStyle ]}>{title}</Text>
+                    {
+                      this.renderIcon(
+                        iconFactory,
+                        icon,
+                        this.state.fontColor,
+                        iconSize,
+                      )
+                    }
+                  </React.Fragment>
             }
+
           </Animated.View>
         </TouchableWithoutFeedback>
       </View>

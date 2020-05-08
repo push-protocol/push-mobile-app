@@ -11,7 +11,7 @@ export default class Notifications {
 
   // VARIBALES
   state = {
-
+    notificationListenerCB: null
   }
 
   // INITIALIZE
@@ -65,41 +65,48 @@ export default class Notifications {
 
   // Handle incoming notification Foreground
   handleIncomingPushAppOpened = async (remoteMessage) => {
-    console.log("Notification Handled From Background!");
+    console.log("Notification Handled From Foreground!");
     this.handleIncomingPush(remoteMessage);
 
     // Listen for callbacks, etc as well
-
+    if (this.state.notificationListenerCB) {
+      this.state.notificationListenerCB();
+    }
   }
 
   // Handle incoming notification Background
   handleIncomingPushAppInBG = async (remoteMessage) => {
-    console.log("Notification Handled From Foreground!");
+    console.log("Notification Handled From Background!");
     this.handleIncomingPush(remoteMessage);
   }
 
   // Default behavior for any incoming notification
   handleIncomingPush = async (remoteMessage) => {
     // Check if the payload has data
-    const payload = remoteMessage.data;
-    if (payload.type) {
+    const payload = remoteMessage["data"];
+    if (payload["type"]) {
       // Assume message exists and proceed
-      FeedHelper.addFeedFromPayload(
-        payload.type,
-        payload.app,
-        payload.icon,
-        payload.url,
+      FeedDBHelper.addFeedFromPayload(
+        payload["type"],
+        payload["app"],
+        payload["icon"],
+        payload["url"],
         false,
-        payload.secret,
-        payload.asub,
-        payload.amsg,
-        payload.acta,
-        payload.aimg,
-        payload.epoch,
+        payload["secret"],
+        payload["asub"],
+        payload["amsg"],
+        payload["acta"],
+        payload["aimg"],
+        payload["epoch"],
       );
     }
 
     console.log("Notification Handled!");
     console.log(remoteMessage);
+  }
+
+  // To subscribe to notification recieved
+  setNotificationListenerCallback = (callback) => {
+    this.state.notificationListenerCB = callback;
   }
 }

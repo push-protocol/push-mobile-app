@@ -15,6 +15,7 @@ import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 
+import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
@@ -55,6 +56,7 @@ export default class SetupCompleteScreen extends Component {
       transitionFinished: false,
       detailedInfoPresetned: false,
 
+      singingUserIn: false,
       fader: new Animated.Value(0)
     }
   }
@@ -78,14 +80,42 @@ export default class SetupCompleteScreen extends Component {
   // Load the Next Screen
   loadNextScreen = async () => {
     // Nothing to load, Basically Signing is completed
+    // All done, set to true
+    this.setState({
+      singingUserIn: true
+    });
+
     // Set SignedIn to true
     await MetaStorage.instance.setIsSignedIn(true);
+
+    // Set First Sign in to true
+    await MetaStorage.instance.setFirstSignInByUser(true);
 
     // Reset number of passcode attempts since it's a valid login
     await MetaStorage.instance.setRemainingPasscodeAttempts(GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS);
 
     // Set Push Notification Badge
-    await MetaStorage.instance.setCurrentAndPreviousBadgeCount(1, 0);
+    await MetaStorage.instance.setCurrentAndPreviousBadgeCount(0, 0);
+
+    // Create / Recreate Feed
+    FeedDBHelper.createTable();
+
+    // Set welcome message as well
+    const payload = FeedDBHelper.createFeedInternalPayload(
+      "1", // Unencrypted Message
+      GLOBALS.LINKS.APPBOT_NAME, // Name of app owner is app bot
+      "AppBotPicksFromSystem.jpg", // The image is picked automatically by feed
+      GLOBALS.LINKS.APP_WEBSITE, // the app url
+      "1", // THe message is from app bot or outside
+      "", // The secret if message is encrypted, it's not
+      "Welcome to EPNS App", // The Subject of message
+      "Test", // The message, this uses stylish label internally so can go nuts
+      "https://epns.io", // The call to action button
+      "", // The image to the story
+      0, // 0 as this is the last message ever
+    );
+
+    FeedDBHelper.addFeedFromInternalPayload(payload);
 
     // Handle App Auth Flow
     const { handleAppAuthState } = this.context;
@@ -148,6 +178,7 @@ export default class SetupCompleteScreen extends Component {
             fontColor={GLOBALS.COLORS.WHITE}
             bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
             disabled={false}
+            loading={this.state.singingUserIn}
             onPress={() => {this.loadNextScreen()}}
           />
           <GetScreenInsets />

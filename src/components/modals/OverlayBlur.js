@@ -61,7 +61,6 @@ export default class OverlayBlur extends Component {
         fader: new Animated.Value(1)
       })
     }
-
   }
 
   animateFadeOut = (animate) => {

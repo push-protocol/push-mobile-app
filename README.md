@@ -58,8 +58,8 @@ TBA, We are still contemplating storing a cache on the epns server or handle it 
 **JSON Payload (data of Incoming Notification Payload)**
 | Name  | Type | Description | In Case of Encryption |
 | ------------- | ------------- | ------------- |  ------------- |
-| type | *integer* | (1 - Not Encrypted, 2 - Encrypted) | Not Applicable |
-| epoch | *integer* | The timestamp in epoch when retrieved from blockchain | Not Applicable |
+| type | *string (integer)* | (1 - Not Encrypted, 2 - Encrypted) | Not Applicable |
+| epoch | *string (integer)* | The timestamp in epoch when retrieved from blockchain | Not Applicable |
 | app | *string* | The name of app owner | Not Applicable |
 | icon | *url* | The icon of app owner | Not Applicable |
 | url | *url* | The url of app owner | Not Applicable |
@@ -74,16 +74,16 @@ TBA, We are still contemplating storing a cache on the epns server or handle it 
 **Proposed DB (Mobile Device) to Handle Incoming Payloads**
 | Name  | Type | Description |
 | ------------- | ------------- | ------------- |
-| nid | *integer | Primary Key Not Null Integer |
+| nid | *string* | Primary Key Not Null Integer |
 | app | *string* | The name of the app owner |
 | icon | *string (url)* | The icon of the app owner |
 | url | *url* | The url of app owner |
 | type | *integer* | The type of notification (1 is unencrypted, 2 is encrypted) |
-| appbot | *bool* | The message is sent from inside the app or from push notification |
+| appbot | *integer* | The message is sent from inside the app or from push notification, 0 or 1 |
 | secret | *string* | The secret which needs to be decrypted and used as seed for AES encrypted fields |
 | asub | *string (Optional)* | Subject of message |
 | amsg | *string* | The intended of message |
 | acta | *url (Optional)* | The call to action url (if any) |
 | aimg | *url (Optional)* | The image to display with the message (if any) |
-| hidden | *bool* | The message if hidden from device |
+| hidden | *integer* | The message if hidden from device, 0 or 1 |
 | epoch | *integer* | The timestamp of the message |

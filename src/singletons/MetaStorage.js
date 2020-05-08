@@ -321,6 +321,45 @@ export default class MetaStorage {
     }
   }
 
+  // FIRST SIGN IN BY USER
+  getFirstSignInByUser = async () => {
+    try {
+      let firstSignIn = await AsyncStorage.getItem(GLOBALS.STORAGE.FIRST_SIGN_IN);
+
+      // Set Default Value
+      if (firstSignIn == null) {
+        firstSignIn = true;
+
+        await this.setIsSignedIn(firstSignIn);
+        firstSignIn = JSON.stringify(firstSignIn);
+      }
+
+      return JSON.parse(firstSignIn);
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
+  }
+
+  setFirstSignInByUser = async (firstSignIn) => {
+    try {
+      let setting = firstSignIn;
+      if (firstSignIn == null) {
+        setting = false;
+      }
+
+      await AsyncStorage.setItem(
+        GLOBALS.STORAGE.FIRST_SIGN_IN,
+        JSON.stringify(setting)
+      );
+
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  }
+
   // IS USER SIGNED IN
   getIsSignedIn = async () => {
     try {

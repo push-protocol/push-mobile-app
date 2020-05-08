@@ -8,6 +8,8 @@ import {
 import SafeAreaView from 'react-native-safe-area-view';
 import { useFocusEffect } from '@react-navigation/native';
 
+import messaging from '@react-native-firebase/messaging';
+
 import ProfileDisplayer from 'src/components/ui/ProfileDisplayer';
 import EPNSNotifierIcon from 'src/components/custom/EPNSNotifierIcon';
 import ImageButton from 'src/components/buttons/ImageButton';
@@ -23,13 +25,6 @@ import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
 import GLOBALS from 'src/Globals';
 
 import CryptoHelper from 'src/helpers/CryptoHelper';
-const SECRET = "Random15Pass";
-const SUBJECT = "Hey this is subject";
-const MESSAGE = "This message can go up to 200 letters I think, This message can go up to 200 letters I think";
-const CALL_TO_ACTION = "https://someurl.com/";
-const IMAGE_URL = "https://venturebeat.com/wp-content/uploads/2020/01/doom-eternal-4.jpg?w=1200&strip=all"
-
-
 
 function ScreenFinishedTransition({ runAfterScreenTransition }) {
   useFocusEffect(
@@ -61,37 +56,10 @@ export default class HomeScreen extends Component {
     await this.maintainer();
 
     // Testing Feed DB
-    //FeedDBHelper.getFeeds(0, 10);
+    FeedDBHelper.getFeeds(0, 10);
 
-    // Output AES
-    console.log("[AES ENCRYTED FORMAT (" + new Date() + ")");
-    console.log("---------------------");
-    console.log("secret --> ");
-    const secretEncrypted = await CryptoHelper.encryptWithECIES(SECRET, this.props.route.params.pkey);
-    const asubE = CryptoHelper.encryptWithAES(SUBJECT, SECRET);
-    const amsgE = CryptoHelper.encryptWithAES(MESSAGE, SECRET);
-    const actaE = CryptoHelper.encryptWithAES(CALL_TO_ACTION, SECRET);
-    const aimgE = CryptoHelper.encryptWithAES(IMAGE_URL, SECRET);
-
-    console.log(secretEncrypted);
-    console.log("asub --> ");
-    console.log(asubE);
-    console.log("amsg --> ");
-    console.log(amsgE);
-    console.log("acta --> ");
-    console.log(actaE);
-    console.log("aimg --> ");
-    console.log(aimgE);
-    console.log("decrypted secret --> ");
-    console.log(await CryptoHelper.decryptWithECIES(secretEncrypted, this.props.route.params.pkey));
-    console.log("decrypted asub --> ");
-    console.log(CryptoHelper.decryptWithAES(asubE, SECRET));
-    console.log("decrypted amsg --> ");
-    console.log(CryptoHelper.decryptWithAES(amsgE, SECRET));
-    console.log("decrypted acta --> ");
-    console.log(CryptoHelper.decryptWithAES(actaE, SECRET));
-    console.log("decrypted aimg --> ");
-    console.log(CryptoHelper.decryptWithAES(aimgE, SECRET));
+    // To Output msg payload for testing
+    // this.outputSecretMsgPayload();
   }
 
   // COMPONENT LOADED
@@ -101,6 +69,7 @@ export default class HomeScreen extends Component {
     await MetaStorage.instance.setRemainingPasscodeAttempts(
       GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
     );
+    
   }
 
   // Run After Transition is finished
@@ -111,13 +80,42 @@ export default class HomeScreen extends Component {
     // Get Wallet
     const wallet = this.props.route.params.wallet;
     Notifications.instance.associateToken(wallet); // While an async function, there is no need to wait
+
+    // First sign in by user
+    const firstSignIn = await MetaStorage.instance.getFirstSignInByUser();
+    if (firstSignIn) {
+      // Set it to false for future
+      await MetaStorage.instance.setFirstSignInByUser(false);
+    }
+    else {
+      // Refresh feed automatically
+      this.refreshFeeds();
+    }
   }
 
   // FUNCTIONS
 
+  // To refresh the Feeds
+  refreshFeeds = () => {
+
+  }
+
   // Overlay Blur exit intent
   exitIntentOnOverleyBlur = () => {
     this.refs.ProfileDisplayer.toggleActive(false);
+  }
+
+  // To output secret msg payload, only used in testing
+  outputSecretMsgPayload = async () => {
+    const pkey = this.props.route.params.pkey; // The private key used
+
+    const secret = "Random15Pass"; // 15 or less characters
+    const sub = "Hey this is subject"; // This is subject
+    const msg = "This message can go up to 200 letters I think, This message can go up to 200 letters I think"; // The intended msg
+    const cta = "https://someurl.com/"; // the call to action
+    const imgurl = "https://someimageurl.com/image.jpeg" // the url of image
+
+    CryptoHelper.outputMsgPayload(secret, sub, msg, cta, imgurl, pkey);
   }
 
   // RENDER
@@ -177,6 +175,7 @@ export default class HomeScreen extends Component {
             <ImageButton
               style={styles.settings}
               src={require('assets/ui/settings.png')}
+              iconSize={24}
               onPress={() => {
                 navigation.navigate('Settings', {
 
@@ -220,7 +219,8 @@ const styles = StyleSheet.create({
     flex: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 999,
+    zIndex: 99,
+    height: 60,
   },
   header: {
     flexDirection: 'row',
@@ -228,8 +228,6 @@ const styles = StyleSheet.create({
     marginRight: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
     marginBottom: GLOBALS.ADJUSTMENTS.SCREEN_GAP_VERTICAL,
     marginHorizontal: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
-
-    zIndex: 999,
   },
   profile: {
 
@@ -241,7 +239,6 @@ const styles = StyleSheet.create({
   settings: {
     marginTop: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
     width: 24,
-    height: 24,
   },
   content: {
     flex: 1,

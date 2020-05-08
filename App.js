@@ -61,11 +61,11 @@ export default function App({ navigation }) {
   React.useEffect(() => {
     // Listen for incoming messages
     const handleForegroundPush = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-      Notifications.instance.handleIncomingPushAppOpened();
+      Notifications.instance.handleIncomingPushAppOpened(remoteMessage);
     });
+
     return handleForegroundPush;
-    }, []);
+  }, []);
 
   // HANDLE AUTH FLOW
   const authContext = React.useMemo(

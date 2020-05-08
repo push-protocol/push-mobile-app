@@ -1,12 +1,14 @@
 export default {
 
   LINKS: {
-
+    APPBOT_NAME: 'App Bot',
+    APP_WEBSITE: 'https://epns.io',
   },
 
   // For Async Storage --> Represents Key and some Constants
   STORAGE: {
     IS_SIGNED_IN: 'IsUserSignedIn',
+    FIRST_SIGN_IN: 'FirstSignInByUser',
     USER_LOCKED: 'UserLocked',
     PASSCODE_ATTEMPTS: 'MaxPasscodeAttempts',
 
@@ -17,11 +19,15 @@ export default {
 
     PUSH_TOKEN: 'PushToken',
     PUSH_TOKEN_SERVER_SYNCED: 'PushTokenServerSynced',
-    PUSH_TOKEN_RESET_FLAG: 'PushTokenResetSignal',
-
     PUSH_BADGE_COUNT: 'PushBadgeCount',
     PUSH_BADGE_COUNT_PREVIOUS: 'PreviousPushBadgeCount',
+  },
 
+  CONSTANTS: {
+    MAX_PASSCODE_ATTEMPTS: 5,
+
+    PUSH_TYPE_NORMAL_MSG: 1,
+    PUSH_TYPE_ENCRYPTED_MSG: 2,
   },
 
   ADJUSTMENTS: {
@@ -30,14 +36,6 @@ export default {
 
     DEFAULT_BIG_RADIUS: 10,
     DEFAULT_MID_RADIUS: 8,
-  },
-
-  CONSTANTS: {
-    MAX_PASSCODE_ATTEMPTS: 5,
-  },
-
-  META: {
-
   },
 
   COLORS: {

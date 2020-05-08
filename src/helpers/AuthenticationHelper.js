@@ -24,8 +24,6 @@ const AuthenticationHelper = {
         // Hash Verified, Decrypt PKey
         const pkey = CryptoHelper.decryptWithAES(encryptedPKey, code);
 
-        console.log(pkey);
-
         // Now derive public address of this Private Key
         const walletObject = await Web3Helper.getWalletAddress(pkey);
 

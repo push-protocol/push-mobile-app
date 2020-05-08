@@ -25,42 +25,24 @@ import Web3Helper from 'src/helpers/Web3Helper';
 import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
 import GLOBALS from 'src/Globals';
 
-export default class ProfileDisplayer extends Component {
+export default class ActiveProfileDisplayer extends Component {
   // CONSTRUCTOR
   constructor(props) {
     super(props);
 
     this.state = {
-      ens: '',
-      loading: true,
-      active: false,
+      fader: new Animated.Value(0),
+      render: false,
+
+      indicator: true,
     }
   }
 
   // COMPONENT MOUNTED
   async componentDidMount() {
-    const walletObject = await Web3Helper.updateENSAndFetchWalletInfoObject();
-    let ens = '';
-
-    if (walletObject.ens !== '') {
-      ens = walletObject.ens;
-    }
-
     this.setState({
-      ens: ens,
-      loading: false,
+      indicator: false,
     })
-  }
-
-  // To toggle Active Status
-  toggleActive = (toggle) => {
-    this.setState({
-      active: toggle
-    })
-
-    if (this.props.toggleBlur) {
-      this.props.toggleBlur(toggle, true);
-    }
   }
 
   // RENDER
@@ -76,31 +58,8 @@ export default class ProfileDisplayer extends Component {
       <View
         style={[ styles.container, style ]}
       >
-        <TouchableOpacity
-          style={[ styles.header ]}
-          onPress={() => {
-            this.toggleActive(!this.state.active);
-          }}
-        >
-
-          <Blockies
-            style={styles.blockies}
-            seed={wallet.toLowerCase()} //string content to generate icon
-            dimension={40} // blocky icon size
-          />
-          <ENSButton
-            style={styles.ens}
-            innerStyle={styles.ensbox}
-            loading={this.state.loading}
-            ens={this.state.ens}
-            wallet={wallet}
-            fontSize={14}
-            forProfile={true}
-            />
-
-        </TouchableOpacity>
         {
-          this.state.active == false
+          this.state.render == false
             ? null
             : <View
                 style={ styles.activeProfile }

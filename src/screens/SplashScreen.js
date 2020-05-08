@@ -653,6 +653,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   para: {
+    width: '100%',
     marginBottom: 20,
   },
   paracenter: {
@@ -665,6 +666,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   paraend: {
+    width: '100%',
     marginBottom: 0,
   },
   input: {

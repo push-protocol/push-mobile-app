@@ -171,6 +171,38 @@ const CryptoHelper = {
       encryptedBuffer
     ).then(decryptedBuffer => decryptedBuffer.toString());
   },
+  // To output messge payload if required
+  outputMsgPayload: async (secret, subject, message, calltoaction, imageurl, pkey) => {
+    // Output AES
+    console.log("[AES ENCRYTED FORMAT (" + new Date() + ")");
+    console.log("---------------------");
+    console.log("secret --> ");
+    const secretEncrypted = await CryptoHelper.encryptWithECIES(secret, pkey);
+    const asubE = CryptoHelper.encryptWithAES(subject, secret);
+    const amsgE = CryptoHelper.encryptWithAES(message, secret);
+    const actaE = CryptoHelper.encryptWithAES(calltoaction, secret);
+    const aimgE = CryptoHelper.encryptWithAES(imageurl, secret);
+
+    console.log(secretEncrypted);
+    console.log("asub --> ");
+    console.log(asubE);
+    console.log("amsg --> ");
+    console.log(amsgE);
+    console.log("acta --> ");
+    console.log(actaE);
+    console.log("aimg --> ");
+    console.log(aimgE);
+    console.log("decrypted secret --> ");
+    console.log(await CryptoHelper.decryptWithECIES(secretEncrypted, pkey));
+    console.log("decrypted asub --> ");
+    console.log(CryptoHelper.decryptWithAES(asubE, secret));
+    console.log("decrypted amsg --> ");
+    console.log(CryptoHelper.decryptWithAES(amsgE, secret));
+    console.log("decrypted acta --> ");
+    console.log(CryptoHelper.decryptWithAES(actaE, secret));
+    console.log("decrypted aimg --> ");
+    console.log(CryptoHelper.decryptWithAES(aimgE, secret));
+  }
 }
 
 export default CryptoHelper;
