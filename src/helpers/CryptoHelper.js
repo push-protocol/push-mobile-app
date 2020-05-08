@@ -9,26 +9,26 @@ import { publicKeyConvert, publicKeyVerify } from 'secp256k1';
 // Crypographic Helper Function
 const CryptoHelper = {
   // To Encrypt with AES
-  encryptWithAES: function (key, code) {
-    return CryptoJS.AES.encrypt(key, code).toString();
+  encryptWithAES: function (message, key) {
+    return CryptoJS.AES.encrypt(message, key).toString();
   },
   // To Decrypt with AES
-  decryptWithAES: function(key, code) {
-    let bytes  = CryptoJS.AES.decrypt(key, code);
+  decryptWithAES: function(message, key) {
+    let bytes  = CryptoJS.AES.decrypt(message, key);
     return bytes.toString(CryptoJS.enc.Utf8);
   },
   // To Hash with SHA256
-  hashWithSha256: async function(code) {
+  hashWithSha256: async function(message) {
     const hashAlgorithm = CONSTANTS.HashAlgorithms.sha256;
-    const hash = await JSHash(code, hashAlgorithm);
+    const hash = await JSHash(message, hashAlgorithm);
 
     return hash;
   },
   // To Verify SHA256 Match
-  verifyHash: async function(code, existingHash) {
+  verifyHash: async function(message, existingHash) {
     const hashAlgorithm = CONSTANTS.HashAlgorithms.sha256;
 
-    const hash = await JSHash(code, hashAlgorithm);
+    const hash = await JSHash(message, hashAlgorithm);
 
     if (hash === existingHash) {
       return true;
@@ -36,6 +36,18 @@ const CryptoHelper = {
     else {
       return false;
     }
+  },
+  // To Form Encryted Secret, no more than 15 characters supported
+  encryptWithECIES: async (message, privateKey) => {
+    const publicKey = EthCrypto.publicKeyByPrivateKey(privateKey);
+    const compressedKey = EthCrypto.publicKey.compress(publicKey);
+
+    const encryptedSecret = await CryptoHelper.encryptWithPublicKey(message, compressedKey);
+    return encryptedSecret;
+  },
+  // To Form Decrypted Secret, no more than 15 characters supported
+  decryptWithECIES: async (message, privateKey) => {
+    return await CryptoHelper.decryptWithPrivateKey(message, privateKey);
   },
   // Testing of Encryption and Decryption
   encryptionDecryptionTest: async (privateKey) => {
@@ -49,9 +61,9 @@ const CryptoHelper = {
     const bytesCompKey = Uint8Array.from(compressedKey);
     //console.log(bytesCompKey);
 
-    const msgToEncryp = "PartialStringAS";
-    const msg = await CryptoHelper.encryptWithPublicKey(compressedKey, msgToEncryp);
-     console.log("Encryped Message:" + msg);
+    const msgToEncrypt = "PartialStringAS";
+    const msg = await CryptoHelper.encryptWithPublicKey(msgToEncrypt, compressedKey);
+    console.log("Encryped Message:" + msg);
 
     const encryptionTime = new Date().getTime() - startTime.getTime();
     console.log("[ENCRYPTION / DECRYPTION ENCRYPTION DONE] - " + encryptionTime / 1000 + " secs");
@@ -64,7 +76,7 @@ const CryptoHelper = {
     console.log("[ENCRYPTION / DECRYPTION DECRYPTION DONE] - " + decryptionTime / 1000 + " secs");
   },
   // Encryption with public key
-  encryptWithPublicKey: async (publicKey, message) => {
+  encryptWithPublicKey: async (message, publicKey) => {
     // Convert compressed public key, starts with 03 or 04
     const pubKeyUint8Array = Uint8Array.from(
       new Buffer(publicKey, 'hex')
@@ -118,7 +130,8 @@ const CryptoHelper = {
     });
   },
   // Decryption with public key
-  decryptWithPrivateKey: async (privateKey, encrypted) => {
+  decryptWithPrivateKey: async (message, privateKey) => {
+    let encrypted = message;
     const buf = new Buffer(encrypted, 'hex');
     // console.log("[DECRYPTION] Buffer Passed: " + buf);
 

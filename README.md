@@ -80,7 +80,7 @@ TBA, We are still contemplating storing a cache on the epns server or handle it 
 | url | *url* | The url of app owner |
 | type | *integer* | The type of notification (1 is unencrypted, 2 is encrypted) |
 | appbot | *bool* | The message is sent from inside the app or from push notification |
-| secret | *string* | The secret which needs to be decrypted and used as seed for AES encrypted msgdata |
+| secret | *string* | The secret which needs to be decrypted and used as seed for AES encrypted fields |
 | asub | *string (Optional)* | Subject of message |
 | amsg | *string* | The intended of message |
 | acta | *url (Optional)* | The call to action url (if any) |

@@ -22,6 +22,15 @@ import MetaStorage from 'src/singletons/MetaStorage';
 import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
 import GLOBALS from 'src/Globals';
 
+import CryptoHelper from 'src/helpers/CryptoHelper';
+const SECRET = "Random15Pass";
+const SUBJECT = "Hey this is subject";
+const MESSAGE = "This message can go up to 200 letters I think, This message can go up to 200 letters I think";
+const CALL_TO_ACTION = "https://someurl.com/";
+const IMAGE_URL = "https://venturebeat.com/wp-content/uploads/2020/01/doom-eternal-4.jpg?w=1200&strip=all"
+
+
+
 function ScreenFinishedTransition({ runAfterScreenTransition }) {
   useFocusEffect(
     React.useCallback(() => {
@@ -52,7 +61,37 @@ export default class HomeScreen extends Component {
     await this.maintainer();
 
     // Testing Feed DB
-    FeedDBHelper.getFeeds(0, 10);
+    //FeedDBHelper.getFeeds(0, 10);
+
+    // Output AES
+    console.log("[AES ENCRYTED FORMAT (" + new Date() + ")");
+    console.log("---------------------");
+    console.log("secret --> ");
+    const secretEncrypted = await CryptoHelper.encryptWithECIES(SECRET, this.props.route.params.pkey);
+    const asubE = CryptoHelper.encryptWithAES(SUBJECT, SECRET);
+    const amsgE = CryptoHelper.encryptWithAES(MESSAGE, SECRET);
+    const actaE = CryptoHelper.encryptWithAES(CALL_TO_ACTION, SECRET);
+    const aimgE = CryptoHelper.encryptWithAES(IMAGE_URL, SECRET);
+
+    console.log(secretEncrypted);
+    console.log("asub --> ");
+    console.log(asubE);
+    console.log("amsg --> ");
+    console.log(amsgE);
+    console.log("acta --> ");
+    console.log(actaE);
+    console.log("aimg --> ");
+    console.log(aimgE);
+    console.log("decrypted secret --> ");
+    console.log(await CryptoHelper.decryptWithECIES(secretEncrypted, this.props.route.params.pkey));
+    console.log("decrypted asub --> ");
+    console.log(CryptoHelper.decryptWithAES(asubE, SECRET));
+    console.log("decrypted amsg --> ");
+    console.log(CryptoHelper.decryptWithAES(amsgE, SECRET));
+    console.log("decrypted acta --> ");
+    console.log(CryptoHelper.decryptWithAES(actaE, SECRET));
+    console.log("decrypted aimg --> ");
+    console.log(CryptoHelper.decryptWithAES(aimgE, SECRET));
   }
 
   // COMPONENT LOADED
@@ -62,16 +101,16 @@ export default class HomeScreen extends Component {
     await MetaStorage.instance.setRemainingPasscodeAttempts(
       GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
     );
-
-    // Get Wallet
-    const wallet = this.props.route.params.wallet;
-    Notifications.instance.associateToken(wallet); // While an async function, there is no need to wait
   }
 
   // Run After Transition is finished
   afterTransitionMaintainer = async () => {
     // Check Notifier
     await this.refs.EPNSNotifier.getBadgeCountAndRefresh();
+
+    // Get Wallet
+    const wallet = this.props.route.params.wallet;
+    Notifications.instance.associateToken(wallet); // While an async function, there is no need to wait
   }
 
   // FUNCTIONS
