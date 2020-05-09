@@ -102,6 +102,7 @@ export default class SetupCompleteScreen extends Component {
 
     // Set welcome message as well
     const payload = FeedDBHelper.createFeedInternalPayload(
+      "-1", // Always -1 for Internal Payload
       "1", // Unencrypted Message
       GLOBALS.LINKS.APPBOT_NAME, // Name of app owner is app bot
       "AppBotPicksFromSystem.jpg", // The image is picked automatically by feed

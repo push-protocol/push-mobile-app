@@ -64,6 +64,24 @@ export default function App({ navigation }) {
       Notifications.instance.handleIncomingPushAppOpened(remoteMessage);
     });
 
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      // The below code gets never executed
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage,
+      );
+    });
+
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        console.log(remoteMessage); // always prints null
+        if (remoteMessage) {
+          // Never reached
+
+        }
+      });
+
     return handleForegroundPush;
   }, []);
 

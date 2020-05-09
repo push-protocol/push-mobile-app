@@ -20,6 +20,8 @@ import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 import NoticePrompt from 'src/components/modals/NoticePrompt';
 
+import Notifications from 'src/singletons/Notifications';
+
 import GLOBALS from 'src/Globals';
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
@@ -127,6 +129,9 @@ export default class PushNotifyScreen extends Component {
   }
 
   loadNextScreen = async () => {
+    // Save Device Token
+    Notifications.instance.requestDeviceToken();
+
     // Goto Next Screen
     this.props.navigation.navigate('SetupComplete');
   }

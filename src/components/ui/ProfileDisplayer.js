@@ -5,8 +5,10 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  Dimensions,
   StyleSheet,
 } from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
 
 import { Ionicons } from '@expo/vector-icons';
 
@@ -17,6 +19,7 @@ import StylishLabel from 'src/components/labels/StylishLabel';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 
+import OverlayBlur from 'src/components/modals/OverlayBlur';
 import Blockies from 'src/components/web3/Blockies';
 import ENSButton from 'src/components/buttons/ENSButton';
 
@@ -24,6 +27,8 @@ import Web3Helper from 'src/helpers/Web3Helper';
 
 import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
 import GLOBALS from 'src/Globals';
+
+const MARGIN_RIGHT = 120;
 
 export default class ProfileDisplayer extends Component {
   // CONSTRUCTOR
@@ -58,9 +63,7 @@ export default class ProfileDisplayer extends Component {
       active: toggle
     })
 
-    if (this.props.toggleBlur) {
-      this.props.toggleBlur(toggle, true);
-    }
+    this.refs.OverlayBlur.changeRenderState(toggle, true);
   }
 
   // RENDER
@@ -69,109 +72,131 @@ export default class ProfileDisplayer extends Component {
       style,
       wallet,
       lockApp,
-      toggleBlur
     } = this.props;
 
     return (
       <View
         style={[ styles.container, style ]}
+        pointerEvents="box-none"
       >
-        <TouchableOpacity
-          style={[ styles.header ]}
-          onPress={() => {
-            this.toggleActive(!this.state.active);
-          }}
+        <SafeAreaView
+          style={[ styles.container, styles.safeContainer ]}
         >
 
-          <Blockies
-            style={styles.blockies}
-            seed={wallet.toLowerCase()} //string content to generate icon
-            dimension={40} // blocky icon size
-          />
-          <ENSButton
-            style={styles.ens}
-            innerStyle={styles.ensbox}
-            loading={this.state.loading}
-            ens={this.state.ens}
-            wallet={wallet}
-            fontSize={14}
-            forProfile={true}
-            />
+          <View
+            style={[ styles.innerContainer ]}
+          >
+            <TouchableOpacity
+              style={[ styles.header ]}
+              onPress={() => {
+                this.toggleActive(!this.state.active);
+              }}
+              pointerEvents="auto"
+            >
 
-        </TouchableOpacity>
-        {
-          this.state.active == false
-            ? null
-            : <View
-                style={ styles.activeProfile }
-                pointerEvents='box-none'
-              >
+              <Blockies
+                style={styles.blockies}
+                seed={wallet.toLowerCase()} //string content to generate icon
+                dimension={40} // blocky icon size
+              />
+              <ENSButton
+                style={styles.ens}
+                innerStyle={styles.ensbox}
+                loading={this.state.loading}
+                ens={this.state.ens}
+                wallet={wallet}
+                fontSize={14}
+                forProfile={true}
+                />
 
-                <View style={styles.upArrow} />
+            </TouchableOpacity>
+            {
+              this.state.active == false
+                ? null
+                : <View
+                    style={ styles.activeProfile }
+                    pointerEvents='box-none'
+                  >
 
+                    <View style={styles.upArrow} />
+                    <View style={styles.content}>
 
-                <View style={styles.content}>
+                      <View style={styles.walletInfo}>
+                        <StylishLabel
+                          style={styles.para}
+                          fontSize={16}
+                          title='[third:Connected Wallet]'
+                        />
+                        <Text style={styles.walletText}>
+                          {wallet}
+                        </Text>
+                      </View>
 
-                  <View style={styles.walletInfo}>
-                    <StylishLabel
-                      style={styles.para}
-                      fontSize={16}
-                      title='[third:Connected Wallet]'
-                    />
-                    <Text style={styles.walletText}>
-                      {wallet}
-                    </Text>
-                  </View>
+                      <View style={styles.interestEarned}>
+                        <View style={styles.interestEarnedTitle}>
+                          <MaskedView
+                            style={styles.maskedView}
+                            maskElement={
+                              <View style={styles.maskedElementView}>
+                                <Text style={styles.maskedTitle}>
+                                  Interest Earned
+                                </Text>
+                              </View>
+                            }
+                          >
+                            <LinearGradient
+                              colors={[
+                                GLOBALS.COLORS.GRADIENT_PRIMARY,
+                                GLOBALS.COLORS.GRADIENT_SECONDARY,
+                              ]}
+                              style={styles.fullgradient}
+                              start={[0.1, 0.3]}
+                              end={[1, 1]}
+                            >
+                            </LinearGradient>
+                          </MaskedView>
+                        </View>
+                        <View style={styles.interestEarnedText}>
+                          <EPNSActivity
+                            style={styles.activity}
+                            size="small"
+                          />
+                        </View>
+                      </View>
 
-                  <View style={styles.interestEarned}>
-                    <View style={styles.interestEarnedTitle}>
-                      <MaskedView
-                        style={styles.maskedView}
-                        maskElement={
-                          <View style={styles.maskedElementView}>
-                            <Text style={styles.maskedTitle}>
-                              Interest Earned
-                            </Text>
-                          </View>
-                        }
-                      >
-                        <LinearGradient
-                          colors={[
-                            GLOBALS.COLORS.GRADIENT_PRIMARY,
-                            GLOBALS.COLORS.GRADIENT_SECONDARY,
-                          ]}
-                          style={styles.fullgradient}
-                          start={[0.1, 0.3]}
-                          end={[1, 1]}
-                        >
-                        </LinearGradient>
-                      </MaskedView>
+                      <View style={styles.settings}>
+                        <PrimaryButton
+                          iconFactory='Ionicons'
+                          icon='md-lock'
+                          iconSize={24}
+                          title='Lock App'
+                          fontSize={16}
+                          fontColor={GLOBALS.COLORS.WHITE}
+                          bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
+                          disabled={false}
+                          onPress={() => {lockApp()}}
+                        />
+                      </View>
                     </View>
-                    <View style={styles.interestEarnedText}>
-                      <EPNSActivity
-                        style={styles.activity}
-                        size="small"
-                      />
-                    </View>
                   </View>
+            }
+          </View>
+        </SafeAreaView>
 
-                  <View style={styles.settings}>
-                    <PrimaryButton
-                      iconFactory='Ionicons'
-                      icon='md-lock'
-                      iconSize={24}
-                      title='Lock App'
-                      fontSize={16}
-                      fontColor={GLOBALS.COLORS.WHITE}
-                      bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
-                      disabled={false}
-                      onPress={() => {lockApp()}}
-                    />
-                  </View>
-                </View>
-              </View>
-        }
+        {/* Overlay Blur to show incase need to emphasize on something */}
+        <OverlayBlur
+          ref='OverlayBlur'
+          onPress={
+            ()=>{
+              // Exit Intent
+              this.toggleActive(!this.state.active);
+            }
+          }
+          pointerEvents='box-only'
+        />
       </View>
+
+
     );
   }
 };
@@ -180,18 +205,22 @@ export default class ProfileDisplayer extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    justifyContent: 'center',
-
-    marginRight: 20,
-    maxWidth: 540,
+  },
+  safeContainer: {
+    width: '100%',
+    alignSelf: 'flex-start',
+    zIndex: 3,
   },
   header: {
+    width: Math.round(Dimensions.get('window').width) - MARGIN_RIGHT,
     flexDirection: 'row',
+    alignSelf: 'flex-start',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: GLOBALS.ADJUSTMENTS.SCREEN_GAP_VERTICAL,
-    marginLeft: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL/2,
+    paddingHorizontal: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
   },
   blockies: {
     borderRadius: 32,
@@ -212,9 +241,10 @@ const styles = StyleSheet.create({
   },
   activeProfile: {
     position: 'absolute',
+    width: Math.round(Dimensions.get('window').width) - MARGIN_RIGHT,
     backgroundColor: GLOBALS.COLORS.WHITE,
-    top: 65,
-    left: 15,
+    top: 70,
+    left: 20,
     borderRadius: 10,
     shadowColor: GLOBALS.COLORS.BLACK,
     shadowOffset: {
@@ -225,6 +255,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
 
     elevation: 10,
+    zIndex: 2,
   },
   title: {
     fontSize: 24,

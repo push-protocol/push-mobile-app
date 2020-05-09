@@ -69,7 +69,7 @@ export default class HomeScreen extends Component {
     await MetaStorage.instance.setRemainingPasscodeAttempts(
       GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
     );
-    
+
   }
 
   // Run After Transition is finished
@@ -144,22 +144,20 @@ export default class HomeScreen extends Component {
           }
         />
 
-        <SafeAreaView style={styles.headerContainer}>
+        {/* Has absolute Header so goes on top */}
+        <ProfileDisplayer
+          ref="ProfileDisplayer"
+          style={styles.profile}
+          wallet={wallet}
+          lockApp={() => {
+            const { handleAppAuthState } = this.context;
+            handleAppAuthState(APP_AUTH_STATES.ONBOARDED);
+          }}
+        />
+
+        <SafeAreaView style={styles.container}>
           <View style={styles.header}>
             {/* Header Comes Here */}
-            <ProfileDisplayer
-              ref="ProfileDisplayer"
-              style={styles.profile}
-              wallet={wallet}
-              lockApp={() => {
-                const { handleAppAuthState } = this.context;
-                handleAppAuthState(APP_AUTH_STATES.ONBOARDED);
-              }}
-              toggleBlur={(toggle, animate) => {
-                this.refs.OverlayBlur.changeRenderState(toggle, animate);
-              }}
-            />
-
             <EPNSNotifierIcon
               ref='EPNSNotifier'
               style={styles.notifier}
@@ -183,9 +181,6 @@ export default class HomeScreen extends Component {
               }}
             />
           </View>
-        </SafeAreaView>
-
-        <SafeAreaView style={styles.container}>
           <View style={styles.content}>
             <Text>Hello World!</Text>
           </View>
@@ -212,25 +207,26 @@ HomeScreen.contextType = AuthContext;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  headerContainer: {
-    flex: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 99,
-    height: 60,
+  profile: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    left: 0,
+    bottom: 0,
+    zIndex: 99
   },
   header: {
     flexDirection: 'row',
-    marginLeft: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL/2, // For Profile Adjustment
-    marginRight: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
-    marginBottom: GLOBALS.ADJUSTMENTS.SCREEN_GAP_VERTICAL,
+    alignSelf: 'stretch',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     marginHorizontal: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
-  },
-  profile: {
-
+    zIndex: 99,
+    height: 55,
   },
   notifier: {
     marginTop: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
@@ -242,7 +238,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    alignContent: 'center',
+    width: '100%',
+    alignItems: 'center',
     justifyContent: 'center',
   }
 });

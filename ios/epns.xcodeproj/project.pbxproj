@@ -173,8 +173,8 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle Expo Assets */,
-				AB51F79B65BDAB582E26C3D5 /* [CP-User] [RNFB] Core Configuration */,
 				1E8DAFBB246500D000053652 /* Embed App Extensions */,
+				711C25E530C68EC40BEDB5C9 /* [CP-User] [RNFB] Core Configuration */,
 			);
 			buildRules = (
 			);
@@ -339,7 +339,7 @@
 			shellPath = /bin/sh;
 			shellScript = "../node_modules/expo-updates/bundle-expo-assets.sh\n";
 		};
-		AB51F79B65BDAB582E26C3D5 /* [CP-User] [RNFB] Core Configuration */ = {
+		711C25E530C68EC40BEDB5C9 /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (

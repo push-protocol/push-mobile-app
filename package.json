@@ -11,7 +11,8 @@
   "dependencies": {
     "@expo/vector-icons": "^10.1.0",
     "@react-native-community/masked-view": "0.1.10",
-    "@react-native-firebase/app": "^6.7.1",
+    "@react-native-firebase/analytics": "6.7.2",
+    "@react-native-firebase/app": "6.7.1",
     "@react-native-firebase/messaging": "^6.7.1",
     "@react-navigation/native": "^5.1.7",
     "@react-navigation/stack": "^5.2.14",
@@ -59,7 +60,6 @@
     "react-native-safe-area-context": "^0.7.3",
     "react-native-safe-area-view": "^1.1.1",
     "react-native-screens": "^2.7.0",
-    "react-native-secp256k1": "git+https://github.com/HarshRajat/react-native-secp256k1.git",
     "react-native-sqlite-2": "3.0.1",
     "react-native-status-bar-height": "^2.5.0",
     "react-native-svg": "^12.1.0",

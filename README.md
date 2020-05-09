@@ -59,6 +59,7 @@ TBA, We are still contemplating storing a cache on the epns server or handle it 
 | Name  | Type | Description | In Case of Encryption |
 | ------------- | ------------- | ------------- |  ------------- |
 | type | *string (integer)* | (1 - Not Encrypted, 2 - Encrypted) | Not Applicable |
+| sid | *string* | The id associated with the message on the server
 | epoch | *string (integer)* | The timestamp in epoch when retrieved from blockchain | Not Applicable |
 | app | *string* | The name of app owner | Not Applicable |
 | icon | *url* | The icon of app owner | Not Applicable |
@@ -75,6 +76,7 @@ TBA, We are still contemplating storing a cache on the epns server or handle it 
 | Name  | Type | Description |
 | ------------- | ------------- | ------------- |
 | nid | *string* | Primary Key Not Null Integer |
+| sid | *string* | Id of message stored on the server |
 | app | *string* | The name of the app owner |
 | icon | *string (url)* | The icon of the app owner |
 | url | *url* | The url of app owner |

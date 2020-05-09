@@ -22,11 +22,14 @@ export default class Notifications {
 
   // Request Device Token
   requestDeviceToken = async () => {
-    messaging()
-      .getToken()
-      .then(token => {
-        this.saveDeviceToken(token);
-      });
+    const status = await messaging().hasPermission();
+    if (status == messaging.AuthorizationStatus.AUTHORIZED) {
+      messaging()
+        .getToken()
+        .then(token => {
+          this.saveDeviceToken(token);
+        });
+      }
   }
 
   // Save Device Token

@@ -35,6 +35,7 @@ const FeedDBHelper = {
 
     // Prepare statement
     const nid = "nid INTEGER PRIMARY KEY NOT NULL";
+    const sid = "sid INTEGER";
     const type = "type INTEGER NOT NULL";
     const app = "app TEXT NOT NULL";
     const icon = "icon TEXT NOT NULL";
@@ -49,7 +50,7 @@ const FeedDBHelper = {
     const epoch = "epoch INTEGER";
 
     const dropTable = `DROP TABLE IF EXISTS ${table}`;
-    const createTable = `CREATE TABLE IF NOT EXISTS ${table} (${nid}, ${type}, ${app}, ${icon}, ${url}, ${appbot}, ${secret}, ${asub}, ${amsg}, ${acta}, ${aimg}, ${hidden}, ${epoch})`;
+    const createTable = `CREATE TABLE IF NOT EXISTS ${table} (${nid}, ${sid}, ${type}, ${app}, ${icon}, ${url}, ${appbot}, ${secret}, ${asub}, ${amsg}, ${acta}, ${aimg}, ${hidden}, ${epoch})`;
 
     db.transaction(function(txn) {
       txn.executeSql(
@@ -102,6 +103,7 @@ const FeedDBHelper = {
             // Create object
             let obj = {
               notificationID: feedItem.nid,
+              serverID: feedItem.sid,
               notificationType: feedItem.type,
               appName: feedItem.app,
               appIcon: feedItem.icon,
@@ -129,6 +131,7 @@ const FeedDBHelper = {
   },
   // To Add Feed coming from Notification or Appbot
   addFeedFromPayload: function(
+    sidV,
     typeV,
     appV,
     iconV,
@@ -142,6 +145,7 @@ const FeedDBHelper = {
     epochV
   ) {
     FeedDBHelper.addRawFeed(
+      sidV,
       typeV,
       appV,
       iconV,
@@ -158,6 +162,7 @@ const FeedDBHelper = {
   },
   // To Add Raw Feed
   addRawFeed: async function(
+    sidV,
     typeV,
     appV,
     iconV,
@@ -172,6 +177,7 @@ const FeedDBHelper = {
     epochV
   ) {
     // Everything is assumed as string so convert them if undefined
+    sidV = sidV == undefined ? 0 : parseInt(sidV);
     typeV = typeV == undefined ? 0 : parseInt(typeV);
     appV = appV == undefined ? '' : appV;
     iconV = iconV == undefined ? '' : iconV;
@@ -201,6 +207,7 @@ const FeedDBHelper = {
     const table = FeedDBHelper.getTable();
 
     // prepare
+    const sid = "sid";
     const type = "type";
     const app = "app";
     const icon = "icon";
@@ -214,9 +221,9 @@ const FeedDBHelper = {
     const hidden = "hidden";
     const epoch = "epoch";
 
-    const insertRows = `${type}, ${app}, ${icon}, ${url}, ${appbot}, ${secret}, ${asub}, ${amsg}, ${acta}, ${aimg}, ${hidden}, ${epoch}`;
+    const insertRows = `${sid}, ${type}, ${app}, ${icon}, ${url}, ${appbot}, ${secret}, ${asub}, ${amsg}, ${acta}, ${aimg}, ${hidden}, ${epoch}`;
 
-    const statement = `INSERT INTO ${table} (${insertRows}) VALUES (${typeV}, '${appV}', '${iconV}', '${urlV}', ${appbotV}, '${secretV}', '${asubV}', '${amsgV}', '${actaV}', '${aimgV}', ${hiddenV}, ${epochV})`;
+    const statement = `INSERT INTO ${table} (${insertRows}) VALUES (${sidV}, ${typeV}, '${appV}', '${iconV}', '${urlV}', ${appbotV}, '${secretV}', '${asubV}', '${amsgV}', '${actaV}', '${aimgV}', ${hiddenV}, ${epochV})`;
 
     if (shouldProceed) {
       db.transaction(function(txn) {
@@ -239,6 +246,7 @@ const FeedDBHelper = {
       console.log("Valdiation Failed!!!");
       console.log("--------------------");
 
+      console.log("sid ==> '" + sidV + "' (" + typeof(sidV) + ")");
       console.log("type ==> '" + typeV + "' (" + typeof(typeV) + ")");
       console.log("app ==> '" + appV + "' (" + typeof(appV) + ")" + "(Length: " + appV.length + ")");
       console.log("icon ==> '" + iconV + "' (" + typeof(iconV) + ")" + "(Length: " + iconV.length + ")");
@@ -257,6 +265,7 @@ const FeedDBHelper = {
   },
   // To Create Feed Internal Payload
   createFeedInternalPayload: function(
+    sid,
     type,
     name,
     icon,
@@ -272,6 +281,7 @@ const FeedDBHelper = {
 
     // Then prepare payload
     const payload = {
+      sid: sid,
       type: type,
       app: name,
       icon: icon,
@@ -291,6 +301,7 @@ const FeedDBHelper = {
   // To add Feed from Internal Payload
   addFeedFromInternalPayload: function(payload) {
     FeedDBHelper.addRawFeed(
+      payload.sid,
       payload.type,
       payload.app,
       payload.icon,
@@ -381,11 +392,11 @@ const FeedDBHelper = {
   },
   // On success callback
   successCB: () => {
-    // FeedDBHelper.addLog('SQL Executed...')
+    FeedDBHelper.addLog('SQL Executed...')
   },
   // On open callback
   openCB: () => {
-    // FeedDBHelper.addLog('Database OPEN')
+    FeedDBHelper.addLog('Database OPEN')
   },
 }
 
