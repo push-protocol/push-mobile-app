@@ -1,5 +1,5 @@
 import { registerRootComponent } from 'expo';
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { AppRegistry } from 'react-native';
 
 import messaging from '@react-native-firebase/messaging';
@@ -15,6 +15,14 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 });
 
 function HeadlessCheck({ isHeadless }) {
+  useEffect(
+    React.useCallback(()=>{
+      (async()=>{
+        console.log("registration", await messaging().registerDeviceForRemoteMessages());
+      })()
+    })
+  )
+
   if (isHeadless) {
     // App has been launched in the background by iOS, ignore
     return null;

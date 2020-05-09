@@ -90,6 +90,7 @@ export default class Notifications {
     if (payload["type"]) {
       // Assume message exists and proceed
       FeedDBHelper.addFeedFromPayload(
+        payload["sid"],
         payload["type"],
         payload["app"],
         payload["icon"],
@@ -100,16 +101,29 @@ export default class Notifications {
         payload["amsg"],
         payload["acta"],
         payload["aimg"],
+        "0",
         payload["epoch"],
       );
     }
 
-    console.log("Notification Handled!");
-    console.log(remoteMessage);
+    // console.log("Notification Handled!");
+    // console.log(remoteMessage);
+
+    // Trigger Notification Callback
+    this.triggerNotificationListenerCallback();
   }
 
   // To subscribe to notification recieved
   setNotificationListenerCallback = (callback) => {
     this.state.notificationListenerCB = callback;
+  }
+
+  // Trigger Notication Listener Callback
+  triggerNotificationListenerCallback = () => {
+    if (this.state.notificationListenerCB) {
+      // Callback
+      console.log("Callbakc)");
+      this.state.notificationListenerCB();
+    }
   }
 }

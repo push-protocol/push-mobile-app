@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Platform
 } from 'react-native';
+import { Notifications } from 'expo';
 
 import SQLite from "react-native-sqlite-2";
 
@@ -68,7 +69,7 @@ const FeedDBHelper = {
     });
   },
   // To get Feeds, return Object of Objects
-  getFeeds: function(startIndex, numRows) {
+  getFeeds: async function(db, startIndex, numRows) {
     // RETURN ARRAY OF OBJECTS (JSON) or empty array if no feed remaining
     // JSON FORMAT OF OBJECT
     // {
@@ -83,98 +84,53 @@ const FeedDBHelper = {
     //   timeInEpoch: Integer
     // }
 
-    const endIndex = startIndex + numRows;
-
-    const db = FeedDBHelper.getDB();
     const table = FeedDBHelper.getTable();
 
     let response = [];
 
     // Prepare statement
-    const statement = `SELECT * FROM ${table} WHERE hidden=0 ORDER BY epoch DESC LIMIT ${startIndex}, ${numRows}`;
-    db.transaction(function(txn) {
-      txn.executeSql(
-        statement,
-        [],
-        function(tx, res) {
-          for (let i = 0; i < res.rows.length; ++i) {
-            const feedItem = res.rows.item(i);
+    const query = `SELECT * FROM ${table} WHERE hidden=0 ORDER BY epoch DESC LIMIT ${startIndex}, ${numRows}`;
+    const res = await FeedDBHelper.runQuery(db, query, response);
 
-            // Create object
-            let obj = {
-              notificationID: feedItem.nid,
-              serverID: feedItem.sid,
-              notificationType: feedItem.type,
-              appName: feedItem.app,
-              appIcon: feedItem.icon,
-              appURL: feedItem.url,
-              appbot: feedItem.appbot,
-              secret: feedItem.secret,
-              asub: feedItem.asub,
-              amsg: feedItem.amsg,
-              acta: feedItem.acta,
-              aimg: feedItem.aimg,
-              timeInEpoch: feedItem.epoch,
-            };
+    const feedItems = res.rows;
+    for (let i = 0; i < feedItems.length; ++i) {
 
-            response.push(obj);
-          }
+      const feedItem = feedItems.item(i);
 
-          // console.log(`Response of Select from ${startIndex} to ${endIndex}`);
-          // console.log(response);
-        },
-        FeedDBHelper.errorCB
-      );
-    });
+      // Create object
+      let obj = {
+        notificationID: feedItem.nid,
+        serverID: feedItem.sid,
+        notificationType: feedItem.type,
+        appName: feedItem.app,
+        appIcon: feedItem.icon,
+        appURL: feedItem.url,
+        appbot: feedItem.appbot,
+        secret: feedItem.secret,
+        asub: feedItem.asub,
+        amsg: feedItem.amsg,
+        acta: feedItem.acta,
+        aimg: feedItem.aimg,
+        timeInEpoch: feedItem.epoch,
+      };
+
+      response.push(obj);
+    }
 
     return response;
   },
   // To Add Feed coming from Notification or Appbot
   addFeedFromPayload: function(
-    sidV,
-    typeV,
-    appV,
-    iconV,
-    urlV,
-    appbotV,
-    secretV,
-    asubV,
-    amsgV,
-    actaV,
-    aimgV,
-    epochV
+    sidV, typeV, appV, iconV, urlV, appbotV, secretV, asubV, amsgV, actaV, aimgV, hiddenV, epochV
   ) {
+
     FeedDBHelper.addRawFeed(
-      sidV,
-      typeV,
-      appV,
-      iconV,
-      urlV,
-      appbotV,
-      secretV,
-      asubV,
-      amsgV,
-      actaV,
-      aimgV,
-      0,
-      epochV
+      sidV, typeV, appV, iconV, urlV, appbotV, secretV, asubV, amsgV, actaV, aimgV, hiddenV, epochV
     );
   },
   // To Add Raw Feed
   addRawFeed: async function(
-    sidV,
-    typeV,
-    appV,
-    iconV,
-    urlV,
-    appbotV,
-    secretV,
-    asubV,
-    amsgV,
-    actaV,
-    aimgV,
-    hiddenV,
-    epochV
+    sidV, typeV, appV, iconV, urlV, appbotV, secretV, asubV, amsgV, actaV, aimgV, hiddenV, epochV
   ) {
     // Everything is assumed as string so convert them if undefined
     sidV = sidV == undefined ? 0 : parseInt(sidV);
@@ -223,26 +179,27 @@ const FeedDBHelper = {
 
     const insertRows = `${sid}, ${type}, ${app}, ${icon}, ${url}, ${appbot}, ${secret}, ${asub}, ${amsg}, ${acta}, ${aimg}, ${hidden}, ${epoch}`;
 
-    const statement = `INSERT INTO ${table} (${insertRows}) VALUES (${sidV}, ${typeV}, '${appV}', '${iconV}', '${urlV}', ${appbotV}, '${secretV}', '${asubV}', '${amsgV}', '${actaV}', '${aimgV}', ${hiddenV}, ${epochV})`;
+    const query = `INSERT INTO ${table} (${insertRows}) VALUES (${sidV}, ${typeV}, '${appV}', '${iconV}', '${urlV}', ${appbotV}, '${secretV}', '${asubV}', '${amsgV}', '${actaV}', '${aimgV}', ${hiddenV}, ${epochV})`;
 
     if (shouldProceed) {
-      db.transaction(function(txn) {
-        txn.executeSql(
-          statement,
-          [],
-          FeedDBHelper.successCB,
-          FeedDBHelper.errorCB
-        );
-      });
+      const res = await FeedDBHelper.runQuery(db, query);
 
-      // Finally update badge
-      const currentBadge = await MetaStorage.instance.getBadgeCount();
-      await MetaStorage.instance.setBadgeCount(currentBadge + 1);
+      if (res) {
+        // Finally update badge
+        const currentBadge = await MetaStorage.instance.getBadgeCount();
+        await MetaStorage.instance.setBadgeCount(currentBadge + 1);
 
-      // And iOS Badge as well
+        // And iOS Badge as well
+        if (Platform.OS ===  "ios") {
 
+        }
+      }
+      else {
+        shouldProceed = false;
+      }
     }
-    else {
+
+    if (!shouldProceed) {
       console.log("Valdiation Failed!!!");
       console.log("--------------------");
 
@@ -260,43 +217,6 @@ const FeedDBHelper = {
       console.log("hidden ==> '" + hiddenV + "' (" + typeof(hiddenV) + ")");
       console.log("epoch ==> '" + epochV + "' (" + typeof(epochV) + ")");
     }
-
-
-  },
-  // To Create Feed Internal Payload
-  createFeedInternalPayload: function(
-    sid,
-    type,
-    name,
-    icon,
-    url,
-    appbot,
-    secret,
-    sub,
-    msg,
-    cta,
-    img,
-    epoch
-  ) {
-
-    // Then prepare payload
-    const payload = {
-      sid: sid,
-      type: type,
-      app: name,
-      icon: icon,
-      url: url,
-      appbot: appbot,
-      secret: secret,
-      sub: sub,
-      msg: msg,
-      cta: cta,
-      img: img,
-      hidden: 0,
-      epoch: epoch,
-    };
-
-    return payload;
   },
   // To add Feed from Internal Payload
   addFeedFromInternalPayload: function(payload) {
@@ -375,6 +295,15 @@ const FeedDBHelper = {
     const str = item.trim();
     return (str && str.length > 0);
   },
+  // Helper function to return promise of sql statement, 1 transaction only
+  runQuery(db, query, args = []) {
+      return new Promise((resolve, reject) => {
+        db.transaction(async (tx) => {
+          tx.executeSql(query, args, (tx, res) => resolve(res), reject);
+        });
+      });
+    }
+  ,
   // Logging and testing functions below
   addLog: (msg, info) => {
     console.log(msg)

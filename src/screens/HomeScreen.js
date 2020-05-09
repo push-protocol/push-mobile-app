@@ -55,31 +55,39 @@ export default class HomeScreen extends Component {
   async componentDidMount() {
     await this.maintainer();
 
-    // Testing Feed DB
-    FeedDBHelper.getFeeds(0, 10);
-
     // To Output msg payload for testing
     // this.outputSecretMsgPayload();
+
+    // Testing Feed DB
+    const db = FeedDBHelper.getDB();
+    const feeds = await FeedDBHelper.getFeeds(db, 0, 10);
+    console.log(feeds);
+
   }
 
   // COMPONENT LOADED
   // Run as soon as loaded
   maintainer = async () => {
+    // Set Notification Listener
+    Notifications.instance.setNotificationListenerCallback(() => {
+      console.log("update ringer");
+      this.onNotificationListenerUpdate()
+    });
+
     // Since User is logged in, reset passcode attempts
     await MetaStorage.instance.setRemainingPasscodeAttempts(
       GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
     );
-
   }
 
   // Run After Transition is finished
   afterTransitionMaintainer = async () => {
-    // Check Notifier
-    await this.refs.EPNSNotifier.getBadgeCountAndRefresh();
-
     // Get Wallet
     const wallet = this.props.route.params.wallet;
     Notifications.instance.associateToken(wallet); // While an async function, there is no need to wait
+
+    // Trigger Notification Update
+    await this.onNotificationListenerUpdate();
 
     // First sign in by user
     const firstSignIn = await MetaStorage.instance.getFirstSignInByUser();
@@ -93,10 +101,22 @@ export default class HomeScreen extends Component {
     }
   }
 
+  // Component Unmounted
+  componentWillUnmount() {
+    // Reset Callback of notification
+    Notifications.instance.setNotificationListenerCallback(null);
+  }
+
   // FUNCTIONS
 
+  // To refresh the bell badge
+  onNotificationListenerUpdate = async () => {
+    // Check Notifier
+    await this.refs.EPNSNotifier.getBadgeCountAndRefresh();
+  }
+
   // To refresh the Feeds
-  refreshFeeds = () => {
+  refreshFeeds = async () => {
 
   }
 
