@@ -9,20 +9,16 @@ import App from './App';
 
 // Register background handler
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log('Message handled in the background!', remoteMessage);
-  console.log('BACKGROUND', JSON.stringify(remoteMessage));
-  Notifications.instance.handleIncomingPushAppInBG(remoteMessage);
+  return new Promise(async (resolve, reject) => {
+    console.log('Message handled in the background!', remoteMessage);
+    console.log('BACKGROUND', JSON.stringify(remoteMessage));
+    await Notifications.instance.handleIncomingPushAppInBG(remoteMessage);
+
+    resolve(true);
+  });
 });
 
 function HeadlessCheck({ isHeadless }) {
-  useEffect(
-    React.useCallback(()=>{
-      (async()=>{
-        console.log("registration", await messaging().registerDeviceForRemoteMessages());
-      })()
-    })
-  )
-
   if (isHeadless) {
     // App has been launched in the background by iOS, ignore
     return null;

@@ -21,7 +21,16 @@ export default class Notifications {
   }
 
   // Request Device Token
-  requestDeviceToken = async () => {
+  requestDeviceToken = async (onlySignedIn) => {
+    if (onlySignedIn) {
+      const signedin = await MetaStorage.instance.getIsSignedIn();
+
+      if (!signedin) {
+        return false;
+      }
+    }
+
+
     const status = await messaging().hasPermission();
     if (status == messaging.AuthorizationStatus.AUTHORIZED) {
       messaging()
@@ -61,6 +70,10 @@ export default class Notifications {
   // Disassociate Generated Token
   dissaociateToken = async (wallet) => {
     // Dissassociate token with server
+    // Reset Push Notifications
+    await MetaStorage.instance.setTokenServerSynced(false);
+    await MetaStorage.instance.setPushToken('');
+    await MetaStorage.instance.setCurrentAndPreviousBadgeCount(0, 0);
 
     // Set Token Server Status as False
     await MetaStorage.instance.setTokenServerSynced(false);
@@ -69,7 +82,7 @@ export default class Notifications {
   // Handle incoming notification Foreground
   handleIncomingPushAppOpened = async (remoteMessage) => {
     console.log("Notification Handled From Foreground!");
-    this.handleIncomingPush(remoteMessage);
+    await this.handleIncomingPush(remoteMessage);
 
     // Listen for callbacks, etc as well
     if (this.state.notificationListenerCB) {
@@ -80,7 +93,7 @@ export default class Notifications {
   // Handle incoming notification Background
   handleIncomingPushAppInBG = async (remoteMessage) => {
     console.log("Notification Handled From Background!");
-    this.handleIncomingPush(remoteMessage);
+    await this.handleIncomingPush(remoteMessage);
   }
 
   // Default behavior for any incoming notification
@@ -89,7 +102,7 @@ export default class Notifications {
     const payload = remoteMessage["data"];
     if (payload["type"]) {
       // Assume message exists and proceed
-      FeedDBHelper.addFeedFromPayload(
+      await FeedDBHelper.addFeedFromPayload(
         payload["sid"],
         payload["type"],
         payload["app"],
@@ -122,7 +135,6 @@ export default class Notifications {
   triggerNotificationListenerCallback = () => {
     if (this.state.notificationListenerCB) {
       // Callback
-      console.log("Callbakc)");
       this.state.notificationListenerCB();
     }
   }

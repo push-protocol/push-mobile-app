@@ -7,6 +7,11 @@
 
 #import "AppDelegate.h"
 
+// CUSTOM CODE
+#import <FirebaseMessaging.h>
+#import <React/RCTLog.h>
+// ---
+
 #import <Firebase.h>
 
 #import <React/RCTBundleURLProvider.h>
@@ -15,6 +20,9 @@
 #import <UMCore/UMModuleRegistry.h>
 #import <UMReactNativeAdapter/UMNativeModulesProxy.h>
 #import <UMReactNativeAdapter/UMModuleRegistryAdapter.h>
+#import <React/RCTBridgeDelegate.h>
+#import <UIKit/UIKit.h>
+#import <FirebaseMessaging.h>
 
 @interface AppDelegate ()
 
@@ -31,6 +39,11 @@
   if ([FIRApp defaultApp] == nil) {
     [FIRApp configure];
   }
+
+  // CUSTOM CODE
+  [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
+  [[UIApplication sharedApplication] registerForRemoteNotifications];
+  // ----
   
   self.moduleRegistryAdapter = [[UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[UMModuleRegistryProvider alloc] init]];
   self.launchOptions = launchOptions;
@@ -48,6 +61,13 @@
 
   return YES;
 }
+
+// CUSTOM CODE
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+  [FIRMessaging messaging].APNSToken = deviceToken;
+}
+//----
 
 - (RCTBridge *)initializeReactNativeApp
 {

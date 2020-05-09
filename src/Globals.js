@@ -28,6 +28,8 @@ export default {
 
     PUSH_TYPE_NORMAL_MSG: 1,
     PUSH_TYPE_ENCRYPTED_MSG: 2,
+
+    FEED_ITEMS_TO_PULL: 20,
   },
 
   ADJUSTMENTS: {

@@ -97,11 +97,15 @@ export default class SetupCompleteScreen extends Component {
     // Set Push Notification Badge
     await MetaStorage.instance.setCurrentAndPreviousBadgeCount(0, 0);
 
+    // Create DB connection
+    const db = FeedDBHelper.getDB();
+
     // Create / Recreate Feed
-    FeedDBHelper.createTable();
+    FeedDBHelper.createTable(db);
 
     // Set welcome message as well
-    const payload = FeedDBHelper.createFeedInternalPayload(
+    const payload = FeedDBHelper.addFeedFromPayload(
+      db,
       "-1", // Always -1 for Internal Payload
       "1", // Unencrypted Message
       GLOBALS.LINKS.APPBOT_NAME, // Name of app owner is app bot
@@ -116,7 +120,7 @@ export default class SetupCompleteScreen extends Component {
       0, // 0 as this is the last message ever
     );
 
-    FeedDBHelper.addFeedFromInternalPayload(payload);
+    await FeedDBHelper.addFeedFromPayload(db, payload);
 
     // Handle App Auth Flow
     const { handleAppAuthState } = this.context;

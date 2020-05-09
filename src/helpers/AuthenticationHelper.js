@@ -70,12 +70,7 @@ const AuthenticationHelper = {
   _removeDataOfUser: async () => {
     // First pull the wallet info to disassociate token
     const wallet = await MetaStorage.instance.getStoredWallet();
-    await Notifications.instance.dissaociateToken(wallet.wallet);
-
-    // Reset Push Notifications
-    await MetaStorage.instance.setTokenServerSynced(false);
-    await MetaStorage.instance.setPushToken('');
-    await MetaStorage.instance.setCurrentAndPreviousBadgeCount(0, 0);
+    await Notifications.instance.dissaociateToken(wallet.wallet); // takes care of deleting push as well
 
     // Destroy Keychain
     await Keychain.resetGenericPassword();
@@ -91,7 +86,8 @@ const AuthenticationHelper = {
     });
 
     // Reset Feed DB, create table purges it as well
-    FeedDBHelper.createTable();
+    const db = FeedDBHelper.getDB();
+    FeedDBHelper.createTable(db);
   }
 }
 

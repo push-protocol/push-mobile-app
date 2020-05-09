@@ -2,7 +2,7 @@ import './web3globals.js'
 import './shim.js'
 import 'react-native-gesture-handler';
 
-import React, {useState} from 'react';
+import React, { useState, useCallback } from 'react';
 import { Alert, AsyncStorage } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -49,8 +49,8 @@ export default function App({ navigation }) {
   // HANDLE ON APP START
   React.useEffect(() => {
     // PUSH NOTIFICATIONS HANDLING
-    // Request Device Token and save it if need be
-    Notifications.instance.requestDeviceToken();
+    // Request Device Token and save it user is signed in
+    Notifications.instance.requestDeviceToken(true);
 
     // Listen to whether the token changes
     return messaging().onTokenRefresh(token => {
@@ -65,20 +65,14 @@ export default function App({ navigation }) {
     });
 
     messaging().onNotificationOpenedApp(remoteMessage => {
-      // The below code gets never executed
-      console.log(
-        'Notification caused app to open from background state:',
-        remoteMessage,
-      );
+      Notifications.instance.triggerNotificationListenerCallback();
     });
 
     messaging()
       .getInitialNotification()
       .then(remoteMessage => {
-        console.log(remoteMessage); // always prints null
         if (remoteMessage) {
-          // Never reached
-
+          Notifications.instance.triggerNotificationListenerCallback();
         }
       });
 

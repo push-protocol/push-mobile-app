@@ -12,10 +12,13 @@ import messaging from '@react-native-firebase/messaging';
 
 import ProfileDisplayer from 'src/components/ui/ProfileDisplayer';
 import EPNSNotifierIcon from 'src/components/custom/EPNSNotifierIcon';
+import FeedsDisplayer from 'src/components/ui/FeedsDisplayer';
+
 import ImageButton from 'src/components/buttons/ImageButton';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
-
 import OverlayBlur from 'src/components/modals/OverlayBlur';
+
+import { ToasterOptions, Toaster } from 'src/components/indicators/Toaster';
 
 import FeedDBHelper from "src/helpers/FeedDBHelper";
 import Notifications from "src/singletons/Notifications";
@@ -59,9 +62,6 @@ export default class HomeScreen extends Component {
     // this.outputSecretMsgPayload();
 
     // Testing Feed DB
-    const db = FeedDBHelper.getDB();
-    const feeds = await FeedDBHelper.getFeeds(db, 0, 10);
-    console.log(feeds);
 
   }
 
@@ -70,7 +70,6 @@ export default class HomeScreen extends Component {
   maintainer = async () => {
     // Set Notification Listener
     Notifications.instance.setNotificationListenerCallback(() => {
-      console.log("update ringer");
       this.onNotificationListenerUpdate()
     });
 
@@ -117,7 +116,7 @@ export default class HomeScreen extends Component {
 
   // To refresh the Feeds
   refreshFeeds = async () => {
-
+    this.refs.FeedsDisplayer.triggerGetFeedItemsDromDB();
   }
 
   // Overlay Blur exit intent
@@ -136,6 +135,11 @@ export default class HomeScreen extends Component {
     const imgurl = "https://someimageurl.com/image.jpeg" // the url of image
 
     CryptoHelper.outputMsgPayload(secret, sub, msg, cta, imgurl, pkey);
+  }
+
+  // TO SHOW TOASTER
+  showToaster = (msg, icon, type) => {
+    this.refs.Toaster.showToaster(msg, icon, type);
   }
 
   // RENDER
@@ -183,9 +187,12 @@ export default class HomeScreen extends Component {
               style={styles.notifier}
               iconSize={32}
               onPress={() => {
-
+                // Refresh the feeds
+                //this.refreshFeeds();
+                this.showToaster("End of Feed", '', ToasterOptions.TYPE.GRADIENT_THIRD);
               }}
               onNewNotifications={() => {
+                // Do nothing for now, bell is ringing in the module anyway
 
               }}
             />
@@ -202,7 +209,15 @@ export default class HomeScreen extends Component {
             />
           </View>
           <View style={styles.content}>
-            <Text>Hello World!</Text>
+
+            <FeedsDisplayer
+              ref='FeedsDisplayer'
+              style={styles.feedDisplayer}
+              onFeedRefreshed={() => {
+                this.onNotificationListenerUpdate();
+              }}
+            />
+
           </View>
         </SafeAreaView>
 
@@ -215,6 +230,12 @@ export default class HomeScreen extends Component {
             }
           }
         />
+
+      {/* Toaster Always goes here in the end after safe area */}
+      <Toaster
+        ref = 'Toaster'
+      />
+
       </View>
     );
   }
@@ -261,5 +282,10 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  feedDisplayer: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: 'red',
   }
 });

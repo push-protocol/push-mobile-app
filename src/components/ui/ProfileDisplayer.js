@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  Animated,
   Dimensions,
   StyleSheet,
 } from 'react-native';
@@ -39,6 +40,8 @@ export default class ProfileDisplayer extends Component {
       ens: '',
       loading: true,
       active: false,
+
+      fader: new Animated.Value(0),
     }
   }
 
@@ -64,6 +67,27 @@ export default class ProfileDisplayer extends Component {
     })
 
     this.refs.OverlayBlur.changeRenderState(toggle, true);
+
+    if (toggle) {
+      // Fade In
+      Animated.timing(
+        this.state.fader, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: true,
+        }
+      ).start();
+    }
+    else {
+      // Fade Out
+      Animated.timing(
+        this.state.fader, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }
+      ).start();
+    }
   }
 
   // RENDER
@@ -113,8 +137,8 @@ export default class ProfileDisplayer extends Component {
             {
               this.state.active == false
                 ? null
-                : <View
-                    style={ styles.activeProfile }
+                : <Animated.View
+                    style={[ styles.activeProfile, {opacity: this.state.fader} ]}
                     pointerEvents='box-none'
                   >
 
@@ -178,7 +202,7 @@ export default class ProfileDisplayer extends Component {
                         />
                       </View>
                     </View>
-                  </View>
+                  </Animated.View>
             }
           </View>
         </SafeAreaView>

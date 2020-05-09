@@ -432,7 +432,7 @@ export default class SplashScreen extends Component {
                        outputRange: [-SLIDE_UP_THRESHOLD * 1.25, 0]
                      })
                    }
-                 ]
+                ]
               }
             ]}
           >

@@ -21,17 +21,16 @@ const FeedDBHelper = {
       1,
       FeedDBHelper.openCB,
       FeedDBHelper.errorCB
-      );
+    );
     return db;
   },
   // To Get the table name
-  getTable: function() {
+  getTable: () => {
     const tableName = "feed";
     return tableName;
   },
   // To Create Table, can also be used to purge
-  createTable: function () {
-    const db = FeedDBHelper.getDB();
+  createTable: async (db) => {
     const table = FeedDBHelper.getTable();
 
     // Prepare statement
@@ -53,23 +52,11 @@ const FeedDBHelper = {
     const dropTable = `DROP TABLE IF EXISTS ${table}`;
     const createTable = `CREATE TABLE IF NOT EXISTS ${table} (${nid}, ${sid}, ${type}, ${app}, ${icon}, ${url}, ${appbot}, ${secret}, ${asub}, ${amsg}, ${acta}, ${aimg}, ${hidden}, ${epoch})`;
 
-    db.transaction(function(txn) {
-      txn.executeSql(
-        dropTable,
-        [],
-        FeedDBHelper.successCB,
-        FeedDBHelper.errorCB
-      );
-      txn.executeSql(
-        createTable,
-        [],
-        FeedDBHelper.successCB,
-        FeedDBHelper.errorCB
-      );
-    });
+    await FeedDBHelper.runQuery(db, dropTable);
+    await FeedDBHelper.runQuery(db, createTable);
   },
   // To get Feeds, return Object of Objects
-  getFeeds: async function(db, startIndex, numRows) {
+  getFeeds: async (db, startIndex, numRows, isHistorical) => {
     // RETURN ARRAY OF OBJECTS (JSON) or empty array if no feed remaining
     // JSON FORMAT OF OBJECT
     // {
@@ -88,8 +75,13 @@ const FeedDBHelper = {
 
     let response = [];
 
+    let order = 'DESC'; // Pulling latest feed item
+    if (isHistorical) {
+      order = 'ASC'; // Pulling history
+    }
+
     // Prepare statement
-    const query = `SELECT * FROM ${table} WHERE hidden=0 ORDER BY epoch DESC LIMIT ${startIndex}, ${numRows}`;
+    const query = `SELECT * FROM ${table} WHERE hidden=0 ORDER BY epoch ${order} LIMIT ${startIndex}, ${numRows}`;
     const res = await FeedDBHelper.runQuery(db, query, response);
 
     const feedItems = res.rows;
@@ -119,19 +111,38 @@ const FeedDBHelper = {
 
     return response;
   },
+  // To add Feed from Payload Object
+  addFeedFromPayloadObject: async (db, payload) => {
+    FeedDBHelper.addFeedFromPayload(
+      db,
+      payload.sid,
+      payload.type,
+      payload.app,
+      payload.icon,
+      payload.url,
+      payload.appbot,
+      payload.secret,
+      payload.sub,
+      payload.msg,
+      payload.img,
+      payload.cta,
+      payload.hidden,
+      payload.epoch,
+    );
+  },
   // To Add Feed coming from Notification or Appbot
-  addFeedFromPayload: function(
-    sidV, typeV, appV, iconV, urlV, appbotV, secretV, asubV, amsgV, actaV, aimgV, hiddenV, epochV
-  ) {
+  addFeedFromPayload: async (
+    db, sidV, typeV, appV, iconV, urlV, appbotV, secretV, asubV, amsgV, actaV, aimgV, hiddenV, epochV
+  ) => {
 
-    FeedDBHelper.addRawFeed(
-      sidV, typeV, appV, iconV, urlV, appbotV, secretV, asubV, amsgV, actaV, aimgV, hiddenV, epochV
+    await FeedDBHelper.addRawFeed(
+      db, sidV, typeV, appV, iconV, urlV, appbotV, secretV, asubV, amsgV, actaV, aimgV, hiddenV, epochV
     );
   },
   // To Add Raw Feed
-  addRawFeed: async function(
-    sidV, typeV, appV, iconV, urlV, appbotV, secretV, asubV, amsgV, actaV, aimgV, hiddenV, epochV
-  ) {
+  addRawFeed: async (
+    db, sidV, typeV, appV, iconV, urlV, appbotV, secretV, asubV, amsgV, actaV, aimgV, hiddenV, epochV
+  ) => {
     // Everything is assumed as string so convert them if undefined
     sidV = sidV == undefined ? 0 : parseInt(sidV);
     typeV = typeV == undefined ? 0 : parseInt(typeV);
@@ -159,7 +170,6 @@ const FeedDBHelper = {
     }
 
     // DB Related
-    const db = FeedDBHelper.getDB();
     const table = FeedDBHelper.getTable();
 
     // prepare
@@ -218,76 +228,32 @@ const FeedDBHelper = {
       console.log("epoch ==> '" + epochV + "' (" + typeof(epochV) + ")");
     }
   },
-  // To add Feed from Internal Payload
-  addFeedFromInternalPayload: function(payload) {
-    FeedDBHelper.addRawFeed(
-      payload.sid,
-      payload.type,
-      payload.app,
-      payload.icon,
-      payload.url,
-      payload.appbot,
-      payload.secret,
-      payload.sub,
-      payload.msg,
-      payload.img,
-      payload.cta,
-      payload.hidden,
-      payload.epoch,
-    );
-  },
-  // To add a specific feed
-  hideFeed: function(nid) {
-    const db = FeedDBHelper.getDB();
+  // To add a specific feed Item
+  hideFeedItem: async (db, nid) => {
     const table = FeedDBHelper.getTable();
 
     // prepare
-    const statement = `UPDATE ${table} SET hidden=TRUE WHERE nid=${nid}`;
-
-    db.transaction(function(txn) {
-      txn.executeSql(
-        statement,
-        [],
-        FeedDBHelper.successCB,
-        FeedDBHelper.errorCB
-      );
-    });
+    const query = `UPDATE ${table} SET hidden=TRUE WHERE nid=${nid}`;
+    await FeedDBHelper.runQuery(db, query);
   },
   // to unhide all feeds
-  unhideAllFeeds: function() {
-    const db = FeedDBHelper.getDB();
+  unhideAllFeedItems: async (db) => {
     const table = FeedDBHelper.getTable();
 
     // prepare
-    const statement = `UPDATE ${table} SET hidden=0 WHERE hidden=1`;
-
-    db.transaction(function(txn) {
-      txn.executeSql(
-        statement,
-        [],
-        FeedDBHelper.successCB,
-        FeedDBHelper.errorCB
-      );
-    });
+    const query = `UPDATE ${table} SET hidden=0 WHERE hidden=1`;
+    await FeedDBHelper.runQuery(db, query);
   },
   // to delete specific feed
-  deleteFeed: function(nid) {
-    const db = FeedDBHelper.getDB();
+  deleteFeed: async (db, nid) => {
     const table = FeedDBHelper.getTable();
 
     // prepare
-    const statement = `DELETE FROM ${table} WHERE nid=${nid}`;
-    db.transaction(function(txn) {
-      txn.executeSql(
-        statement,
-        [],
-        FeedDBHelper.successCB,
-        FeedDBHelper.errorCB
-      );
-    });
+    const query = `DELETE FROM ${table} WHERE nid=${nid}`;
+    await FeedDBHelper.runQuery(db, query);
   },
   // to create dummy feed
-  createDummyFeed: function() {
+  createDummyFeed: async (db) => {
 
   },
   // Helper Function to validate item, check empty, trim, null, etc
@@ -321,11 +287,11 @@ const FeedDBHelper = {
   },
   // On success callback
   successCB: () => {
-    FeedDBHelper.addLog('SQL Executed...')
+    //FeedDBHelper.addLog('SQL Executed...')
   },
   // On open callback
   openCB: () => {
-    FeedDBHelper.addLog('Database OPEN')
+    //FeedDBHelper.addLog('Database OPEN')
   },
 }
 

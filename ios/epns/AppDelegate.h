@@ -5,14 +5,35 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
 #import <UMReactNativeAdapter/UMModuleRegistryAdapter.h>
 #import <React/RCTBridgeDelegate.h>
+
+// CUSTOM CODE
+#import <UIKit/UIKit.h>
+#import <FirebaseMessaging.h>
+// ----
+
 #import <UMCore/UMAppDelegateWrapper.h>
 
 #import <EXUpdates/EXUpdatesAppController.h>
 
-@interface AppDelegate : UMAppDelegateWrapper <RCTBridgeDelegate, EXUpdatesAppControllerDelegate>
+@import UserNotifications;
+
+// EXPO CODE COMMENTED OUT
+// @interface AppDelegate : UMAppDelegateWrapper <RCTBridgeDelegate, EXUpdatesAppControllerDelegate>
+// REAL CODE LOOKED LIKE THIS
+// @interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate>
+
+// CUSTOM CODE OG
+// @interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate, UNUserNotificationCenterDelegate, FIRMessagingDelegate>
+
+// NCURRENTLY USED CUSTOM CODE
+// @interface AppDelegate : UMAppDelegateWrapper <RCTBridgeDelegate, EXUpdatesAppControllerDelegate, UNUserNotificationCenterDelegate, FIRMessagingDelegate>
+// ----
+
+// CUSTOM CODE MODIFIED
+@interface AppDelegate : UMAppDelegateWrapper <RCTBridgeDelegate, EXUpdatesAppControllerDelegate, UNUserNotificationCenterDelegate, FIRMessagingDelegate>
+// ----
 
 @property (nonatomic, strong) UMModuleRegistryAdapter *moduleRegistryAdapter;
 @property (nonatomic, strong) UIWindow *window;
