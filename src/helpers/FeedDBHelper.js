@@ -81,32 +81,14 @@ const FeedDBHelper = {
     }
 
     // Prepare statement
-    const query = `SELECT * FROM ${table} WHERE hidden=0 ORDER BY epoch ${order} LIMIT ${startIndex}, ${numRows}`;
+    const query = `SELECT * FROM ${table} ORDER BY epoch ${order}, nid ${order} LIMIT ${numRows} OFFSET ${startIndex}`;
     const res = await FeedDBHelper.runQuery(db, query, response);
 
     const feedItems = res.rows;
     for (let i = 0; i < feedItems.length; ++i) {
 
       const feedItem = feedItems.item(i);
-
-      // Create object
-      let obj = {
-        notificationID: feedItem.nid,
-        serverID: feedItem.sid,
-        notificationType: feedItem.type,
-        appName: feedItem.app,
-        appIcon: feedItem.icon,
-        appURL: feedItem.url,
-        appbot: feedItem.appbot,
-        secret: feedItem.secret,
-        asub: feedItem.asub,
-        amsg: feedItem.amsg,
-        acta: feedItem.acta,
-        aimg: feedItem.aimg,
-        timeInEpoch: feedItem.epoch,
-      };
-
-      response.push(obj);
+      response.push(feedItem);
     }
 
     return response;
@@ -124,8 +106,8 @@ const FeedDBHelper = {
       payload.secret,
       payload.sub,
       payload.msg,
-      payload.img,
       payload.cta,
+      payload.img,
       payload.hidden,
       payload.epoch,
     );
@@ -156,7 +138,7 @@ const FeedDBHelper = {
     actaV = actaV == undefined ? '' : actaV;
     aimgV = aimgV == undefined ? '' : aimgV;
     hiddenV = (hiddenV == undefined || parseInt(hiddenV) == 0) ? 0 : 1;
-    epochV = epochV == undefined ? (parseInt(new Date().getTime()) / 1000) : parseInt(epochV);
+    epochV = epochV == undefined ? parseInt(new Date().getTime()) : parseInt(epochV);
 
     // Checks first
     let shouldProceed = true;
@@ -232,8 +214,8 @@ const FeedDBHelper = {
   hideFeedItem: async (db, nid) => {
     const table = FeedDBHelper.getTable();
 
-    // prepare
-    const query = `UPDATE ${table} SET hidden=TRUE WHERE nid=${nid}`;
+    // prepare, this should be 1 change it once done testing
+    const query = `UPDATE ${table} SET hidden=0 WHERE nid=${nid}`;
     await FeedDBHelper.runQuery(db, query);
   },
   // to unhide all feeds

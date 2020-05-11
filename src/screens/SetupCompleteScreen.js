@@ -15,6 +15,7 @@ import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 
+import CryptoHelper from 'src/helpers/CryptoHelper';
 import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 
@@ -98,29 +99,123 @@ export default class SetupCompleteScreen extends Component {
     await MetaStorage.instance.setCurrentAndPreviousBadgeCount(0, 0);
 
     // Create DB connection
-    const db = FeedDBHelper.getDB();
+    const db = await FeedDBHelper.getDB();
 
     // Create / Recreate Feed
-    FeedDBHelper.createTable(db);
+    await FeedDBHelper.createTable(db);
 
-    // Set welcome message as well
-    const payload = FeedDBHelper.addFeedFromPayload(
-      db,
-      "-1", // Always -1 for Internal Payload
-      "1", // Unencrypted Message
-      GLOBALS.LINKS.APPBOT_NAME, // Name of app owner is app bot
-      "AppBotPicksFromSystem.jpg", // The image is picked automatically by feed
-      GLOBALS.LINKS.APP_WEBSITE, // the app url
-      "1", // THe message is from app bot or outside
-      "", // The secret if message is encrypted, it's not
-      "Welcome to EPNS App", // The Subject of message
-      "Test", // The message, this uses stylish label internally so can go nuts
-      "https://epns.io", // The call to action button
-      "", // The image to the story
-      0, // 0 as this is the last message ever
-    );
+    // Form payload template
+    const appName = GLOBALS.LINKS.APPBOT_NAME;
+    const appURL = GLOBALS.LINKS.APP_WEBSITE;
 
-    await FeedDBHelper.addFeedFromPayload(db, payload);
+    let payload = {
+      sid: -1, // Always -1 for Internal Payload
+      type: 1, // Unencrypted Message (1) or Encrypted Message (2)
+      app: appName,
+      icon: 'na',
+      url: appURL,
+      appbot: "1",
+      secret: '',
+      sub: '',
+      msg: '',
+      cta: '',
+      img: '',
+      hidden: "0",
+      epoch: new Date().getTime(),
+    };
+
+    // Set last message first
+    // 6. Secret Message Test
+    const { privateKey } = this.props.route.params;
+    const plainSecret = "EPNSRocks!";
+    const encryptedSecret = await CryptoHelper.encryptWithECIES(plainSecret, privateKey);
+
+    let sub = "Secret Message Test";
+    let msg = "х│┬│KKK@J┌√⌠└z▒є╒ё@▓┴└└┴∙┤Zk@ё┬┘\n\n[bold:just kidding], the above text is what everyone who's not you will see.\n\nIf you haven't already, then visit [url:app.epns.io||https://aap.epns.io] from a [bold:Web3 Enabled Browser] to subscribe to your favorite [bold:dApps].";
+    let cta = '';
+    let img = '';
+    let epoch = new Date().getTime();
+
+    secret = encryptedSecret;
+    sub = CryptoHelper.encryptWithAES(sub, plainSecret);
+    msg = CryptoHelper.encryptWithAES(msg, plainSecret);
+    cta = CryptoHelper.encryptWithAES(cta, plainSecret);
+    img = CryptoHelper.encryptWithAES(img, plainSecret);
+
+    payload.secret = secret;
+    payload.type = 2;
+    payload.sub = sub;
+    payload.msg = msg;
+    payload.cta = cta;
+    payload.img = img;
+    payload.epoch = epoch;
+
+    // Add to Feed DB
+    await FeedDBHelper.addFeedFromPayloadObject(db, payload);
+
+    // 5. Secrets... shhh!!!
+    sub = "Secrets... shhh!!!";
+    msg = "The [default:coolest type] of messages are [third:secrets]. They are indicated by the [bolditalics:shush gradient] on the top left of the message box.\n\nThey are always [default:encrypted] and [bold:only you] can see them.";
+    cta = '';
+    img = '';
+    epoch = new Date().getTime();
+
+    sub = CryptoHelper.encryptWithAES(sub, plainSecret);
+    msg = CryptoHelper.encryptWithAES(msg, plainSecret);
+    cta = CryptoHelper.encryptWithAES(cta, plainSecret);
+    img = CryptoHelper.encryptWithAES(img, plainSecret);
+
+    payload.type = 2;
+    payload.sub = sub;
+    payload.msg = msg;
+    payload.cta = cta;
+    payload.img = img;
+    payload.epoch = epoch;
+
+    // Add to Feed DB
+    await FeedDBHelper.addFeedFromPayloadObject(db, payload);
+    payload.secret = ''; // don't need to use secret anymore
+    payload.type = 1; // reset payload type as well
+
+    // 4. Notification Types
+    payload.sub = "Nofications Types";
+    payload.msg = "[default:Notifications] are [bold:never boring] in EPNS. Images speak a 1000 chars ([italics: Also, you can ahead and tap on the image]).\n\nThe messages with [bold:blueish outlines] are links that the [bold:dApp] has provided you. \n\n[default:Tapping the message opens it.]";
+    payload.cta = 'https://epns.io';
+    payload.img = '';
+    payload.epoch = new Date().getTime();
+
+    // Add to Feed DB
+    await FeedDBHelper.addFeedFromPayloadObject(db, payload);
+
+    // 3. Ring the Bell
+    payload.sub = "Ring the Bell";
+    payload.msg = "The [default:Bell] on the [bold:top right] keeps track of any incoming messages and will inform you about it.\n\nClicking on the [bold:bell] will update your feed [italics:(Alternatively, pull me down to refresh)]";
+    payload.cta = '';
+    payload.img = 'https://i.ibb.co/m6LC8f3/welcome-Cover-App.jpg';
+    payload.epoch = new Date().getTime();
+
+    // Add to Feed DB
+    await FeedDBHelper.addFeedFromPayloadObject(db, payload);
+
+    // 2. About dApps
+    payload.sub = "About dApps";
+    payload.msg = "You will often get notifications from [bold:different dApps]. The [default:Top Section] of the message contains information about these dApps.\n\n[default:Clicking on it] will take you to their [bold:website].";
+    payload.cta = '';
+    payload.img = '';
+    payload.epoch = new Date().getTime();
+
+    // Add to Feed DB
+    await FeedDBHelper.addFeedFromPayloadObject(db, payload);
+
+    // 1. Welcome to EPNS
+    payload.sub = "Welcome to EPNS";
+    payload.msg = "[bold:Greetings] fellow users! Welcome aboard!\n\nI am your personalized [default:App Bot] whose sole purpose is to teach you about the app.\n\nTo get started! [bold:Swipe Right to Archive this.]";
+    payload.cta = '';
+    payload.img = '';
+    payload.epoch = new Date().getTime();
+
+    // Add to Feed DB
+    await FeedDBHelper.addFeedFromPayloadObject(db, payload);
 
     // Handle App Auth Flow
     const { handleAppAuthState } = this.context;
@@ -162,7 +257,7 @@ export default class SetupCompleteScreen extends Component {
                 />
 
                 <StylishLabel
-                  style={styles.paraend}
+                  style={styles.para}
                   fontSize={16}
                   title='Visit [url:app.epns.io||https://aap.epns.io] from a [bold:Web3 Enabled Browser] to subscribe to your favorite [bold:dApps] or [bold:Smart Contract].'
                 />

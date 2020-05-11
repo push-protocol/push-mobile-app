@@ -60,7 +60,7 @@ TBA, We are still contemplating storing a cache on the epns server or handle it 
 | ------------- | ------------- | ------------- |  ------------- |
 | type | *string (integer)* | (1 - Not Encrypted, 2 - Encrypted) | Not Applicable |
 | sid | *string* | The id associated with the message on the server
-| epoch | *string (integer)* | The timestamp in epoch when retrieved from blockchain | Not Applicable |
+| epoch | *string (integer)* | The timestamp in epoch when retrieved from blockchain (with milliseconds) | Not Applicable |
 | app | *string* | The name of app owner | Not Applicable |
 | icon | *url* | The icon of app owner | Not Applicable |
 | url | *url* | The url of app owner | Not Applicable |
@@ -88,4 +88,4 @@ TBA, We are still contemplating storing a cache on the epns server or handle it 
 | acta | *url (Optional)* | The call to action url (if any) |
 | aimg | *url (Optional)* | The image to display with the message (if any) |
 | hidden | *integer* | The message if hidden from device, 0 or 1 |
-| epoch | *integer* | The timestamp of the message |
+| epoch | *integer* | The timestamp of the message (with milliseconds) |

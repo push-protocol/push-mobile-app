@@ -38,8 +38,6 @@ if (ENV_CONFIG.PROD_ENV) {
 const Stack = createStackNavigator();
 
 export default function App({ navigation }) {
-  // AsyncStorage.clear();
-
   // State Settings
   // VALID APP AUTH STATES
   const [appAuthState, setAppAuthState] = useState(APP_AUTH_STATES.INITIALIZING);
@@ -53,12 +51,10 @@ export default function App({ navigation }) {
     Notifications.instance.requestDeviceToken(true);
 
     // Listen to whether the token changes
-    return messaging().onTokenRefresh(token => {
+    const onTokenRefresh = messaging().onTokenRefresh(token => {
       Notifications.instance.saveDeviceToken(token);
     });
-  }, []);
 
-  React.useEffect(() => {
     // Listen for incoming messages
     const handleForegroundPush = messaging().onMessage(async remoteMessage => {
       Notifications.instance.handleIncomingPushAppOpened(remoteMessage);
@@ -76,7 +72,24 @@ export default function App({ navigation }) {
         }
       });
 
-    return handleForegroundPush;
+    return () => {
+      onTokenRefresh;
+      handleForegroundPush;
+    }
+  }, []);
+
+  React.useEffect(() => {
+
+
+
+    //
+    // messaging()
+    //   .getInitialNotification()
+    //   .then(remoteMessage => {
+    //     if (remoteMessage) {
+    //       Notifications.instance.triggerNotificationListenerCallback();
+    //     }
+    //   });
   }, []);
 
   // HANDLE AUTH FLOW

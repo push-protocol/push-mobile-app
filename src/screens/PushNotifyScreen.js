@@ -132,8 +132,12 @@ export default class PushNotifyScreen extends Component {
     // Save Device Token
     Notifications.instance.requestDeviceToken();
 
+    const { privateKey } = this.props.route.params;
+
     // Goto Next Screen
-    this.props.navigation.navigate('SetupComplete');
+    this.props.navigation.navigate('SetupComplete', {
+      privateKey: privateKey,
+    });
   }
 
   // RETURN

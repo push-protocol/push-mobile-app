@@ -421,173 +421,178 @@ export default class SplashScreen extends Component {
         <View style={styles.container}>
 
           {/* SignedInView or Default View, not in safe view to match splash screen */}
-          <Animated.View style={[
-              styles.inner, styles.signedInView,
-              {
-                opacity: this.state.signedInFader,
-                transform: [
-                   {
-                     translateY: this.state.signedInFader.interpolate({
-                       inputRange: [0, 1],
-                       outputRange: [-SLIDE_UP_THRESHOLD * 1.25, 0]
-                     })
-                   }
-                ]
-              }
-            ]}
-          >
-            <AnimatedEPNSIcon
-              ref='bellicon'
-              style={styles.logo}
-            />
-          </Animated.View>
-
-          <View style={styles.safeContainer}>
-
-            {/* passcode view */}
+          <View style={styles.innerWrapper}>
             <Animated.View style={[
-                styles.inner, styles.passcodePromptView,
+                styles.inner, styles.signedInView,
                 {
-                  opacity: this.state.passcodePromptFader,
+                  opacity: this.state.signedInFader,
                   transform: [
                      {
-                       translateY: this.state.passcodePromptFader.interpolate({
-                         inputRange: [0.4, 1],
-                         outputRange: [SLIDE_UP_THRESHOLD, 0]
+                       translateY: this.state.signedInFader.interpolate({
+                         inputRange: [0, 1],
+                         outputRange: [-SLIDE_UP_THRESHOLD * 1.25, 0]
                        })
                      }
-                   ]
-                }
-              ]}
-            >
-
-              <DetailedInfoPresenter
-                style={styles.intro}
-                icon={require('assets/ui/biometric.png')}
-                contentView={
-                  <View style={styles.introContent}>
-                    <Animated.View
-                      style={styles.passcodeContainer}
-                    >
-                      <KeyboardAvoidingView
-                        style={styles.keyboardAvoid}
-                        behavior={keyboardAvoidBehavior}
-                        enabled
-                      >
-                      <View style={styles.introContentInner}>
-                        <StylishLabel
-                          style={[ styles.paracenter, styles.paraExtraMargin ]}
-                          fontSize={16}
-                          title={prompt}
-                        />
-
-                        <TextInput
-                          ref="PasscodeInput"
-                          style={styles.input}
-                          maxLength={6}
-                          contextMenuHidden={true}
-                          keyboardType={'numeric'}
-                          autoCorrect={false}
-                          onChangeText={(value) => (this.changePassCode(value))}
-                          value={this.state.passcode}
-                        />
-
-                        <View
-                          style={styles.fancyTextContainer}
-                          pointerEvents="none"
-                        >
-                          <View style={[ styles.fancyTextView, styles.fancyTextViewPrimary ]}>
-                            <Text style={[ styles.fancyText, styles.fancyTextPrimary ]}>{passcodeSegment[0]}</Text>
-                          </View>
-                          <View style={[ styles.fancyTextView, styles.fancyTextViewPrimary ]}>
-                            <Text style={[ styles.fancyText, styles.fancyTextPrimary ]}>{passcodeSegment[1]}</Text>
-                          </View>
-                          <View style={[ styles.fancyTextView, styles.fancyTextViewThird ]}>
-                            <Text style={[ styles.fancyText, styles.fancyTextThird ]}>{passcodeSegment[2]}</Text>
-                          </View>
-                          <View style={[ styles.fancyTextView, styles.fancyTextViewThird ]}>
-                            <Text style={[ styles.fancyText, styles.fancyTextThird ]}>{passcodeSegment[3]}</Text>
-                          </View>
-                          <View style={[ styles.fancyTextView, styles.fancyTextViewSecondary ]}>
-                            <Text style={[ styles.fancyText, styles.fancyTextSecondary ]}>{passcodeSegment[4]}</Text>
-                          </View>
-                          <View style={[ styles.fancyTextView, styles.fancyTextViewSecondary ]}>
-                            <Text style={[ styles.fancyText, styles.fancyTextSecondary ]}>{passcodeSegment[5]}</Text>
-                          </View>
-                        </View>
-                      </View>
-                    </KeyboardAvoidingView>
-                  </Animated.View>
-                </View>
-                }
-                animated={false}
-                startAnimation={false}
-              />
-            </Animated.View>
-
-            {/* locked user view */}
-            <Animated.View style={[
-                styles.inner, styles.userLockedView,
-                {
-                  opacity: this.state.userLockedFader,
-                  transform: [
-                    {
-                      translateY: this.state.userLockedFader.interpolate({
-                        inputRange: [0.4, 1],
-                        outputRange: [SLIDE_UP_THRESHOLD, 0]
-                      })
-                    }
                   ]
                 }
               ]}
             >
-
-              <DetailedInfoPresenter
-                style={styles.intro}
-                icon={require('assets/ui/brokenkey.png')}
-                contentView={
-                  <View style={styles.introContent}>
-                    <StylishLabel
-                      style={styles.paracenter}
-                      fontSize={24}
-                      title='[third:Credentials Wiped]'
-                    />
-                    <StylishLabel
-                      style={styles.para}
-                      fontSize={16}
-                      title='You ([default:or someone else]) exceeded the [bold:passcode limit] to access your credentials.'
-                    />
-                    <StylishLabel
-                      style={styles.para}
-                      fontSize={16}
-                      title='EPNS has [default:completely wiped] your credentials in order to preserve the integrity of your wallet.'
-                    />
-                    <StylishLabel
-                      style={styles.paraend}
-                      fontSize={16}
-                      title="[default:Don't Sweat!:] Your messages are on [third:blockchain :)]. Just sign back in to gain access to them."
-                    />
-                  </View>
-                }
-                animated={false}
-                startAnimation={false}
-              />
-
-              {/* For the Footer Area */}
-              <PrimaryButton
-                style={styles.resetButton}
-                iconFactory='Ionicons'
-                icon='ios-refresh'
-                iconSize={24}
-                title='Reset / Use Different Wallet'
-                fontSize={16}
-                fontColor={GLOBALS.COLORS.WHITE}
-                bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
-                disabled={false}
-                onPress={() => {this.resetWallet()}}
+              <AnimatedEPNSIcon
+                ref='bellicon'
+                style={styles.logo}
               />
             </Animated.View>
+          </View>
 
+          <View style={styles.safeContainer}>
+
+            {/* passcode view */}
+            <View style={styles.innerWrapper}>
+              <Animated.View style={[
+                  styles.inner, styles.passcodePromptView,
+                  {
+                    opacity: this.state.passcodePromptFader,
+                    transform: [
+                       {
+                         translateY: this.state.passcodePromptFader.interpolate({
+                           inputRange: [0.4, 1],
+                           outputRange: [SLIDE_UP_THRESHOLD, 0]
+                         })
+                       }
+                     ]
+                  }
+                ]}
+              >
+
+                <DetailedInfoPresenter
+                  style={styles.intro}
+                  icon={require('assets/ui/biometric.png')}
+                  contentView={
+                    <View style={styles.introContent}>
+                      <Animated.View
+                        style={styles.passcodeContainer}
+                      >
+                        <KeyboardAvoidingView
+                          style={styles.keyboardAvoid}
+                          behavior={keyboardAvoidBehavior}
+                          enabled
+                        >
+                        <View style={styles.introContentInner}>
+                          <StylishLabel
+                            style={[ styles.paracenter, styles.paraExtraMargin ]}
+                            fontSize={16}
+                            title={prompt}
+                          />
+
+                          <TextInput
+                            ref="PasscodeInput"
+                            style={styles.input}
+                            maxLength={6}
+                            contextMenuHidden={true}
+                            keyboardType={'numeric'}
+                            autoCorrect={false}
+                            onChangeText={(value) => (this.changePassCode(value))}
+                            value={this.state.passcode}
+                          />
+
+                          <View
+                            style={styles.fancyTextContainer}
+                            pointerEvents="none"
+                          >
+                            <View style={[ styles.fancyTextView, styles.fancyTextViewPrimary ]}>
+                              <Text style={[ styles.fancyText, styles.fancyTextPrimary ]}>{passcodeSegment[0]}</Text>
+                            </View>
+                            <View style={[ styles.fancyTextView, styles.fancyTextViewPrimary ]}>
+                              <Text style={[ styles.fancyText, styles.fancyTextPrimary ]}>{passcodeSegment[1]}</Text>
+                            </View>
+                            <View style={[ styles.fancyTextView, styles.fancyTextViewThird ]}>
+                              <Text style={[ styles.fancyText, styles.fancyTextThird ]}>{passcodeSegment[2]}</Text>
+                            </View>
+                            <View style={[ styles.fancyTextView, styles.fancyTextViewThird ]}>
+                              <Text style={[ styles.fancyText, styles.fancyTextThird ]}>{passcodeSegment[3]}</Text>
+                            </View>
+                            <View style={[ styles.fancyTextView, styles.fancyTextViewSecondary ]}>
+                              <Text style={[ styles.fancyText, styles.fancyTextSecondary ]}>{passcodeSegment[4]}</Text>
+                            </View>
+                            <View style={[ styles.fancyTextView, styles.fancyTextViewSecondary ]}>
+                              <Text style={[ styles.fancyText, styles.fancyTextSecondary ]}>{passcodeSegment[5]}</Text>
+                            </View>
+                          </View>
+                        </View>
+                      </KeyboardAvoidingView>
+                    </Animated.View>
+                  </View>
+                  }
+                  animated={false}
+                  startAnimation={false}
+                />
+              </Animated.View>
+            </View>
+
+            {/* locked user view */}
+            <View style={styles.innerWrapper}>
+              <Animated.View style={[
+                  styles.inner, styles.userLockedView,
+                  {
+                    opacity: this.state.userLockedFader,
+                    transform: [
+                      {
+                        translateY: this.state.userLockedFader.interpolate({
+                          inputRange: [0.4, 1],
+                          outputRange: [SLIDE_UP_THRESHOLD, 0]
+                        })
+                      }
+                    ]
+                  }
+                ]}
+              >
+
+                <DetailedInfoPresenter
+                  style={styles.intro}
+                  icon={require('assets/ui/brokenkey.png')}
+                  contentView={
+                    <View style={styles.introContent}>
+                      <StylishLabel
+                        style={styles.paracenter}
+                        fontSize={24}
+                        title='[third:Credentials Wiped]'
+                      />
+                      <StylishLabel
+                        style={styles.para}
+                        fontSize={16}
+                        title='You ([default:or someone else]) exceeded the [bold:passcode limit] to access your credentials.'
+                      />
+                      <StylishLabel
+                        style={styles.para}
+                        fontSize={16}
+                        title='EPNS has [default:completely wiped] your credentials in order to preserve the integrity of your wallet.'
+                      />
+                      <StylishLabel
+                        style={styles.paraend}
+                        fontSize={16}
+                        title="[default:Don't Sweat!:] Your messages are on [third:blockchain :)]. Just sign back in to gain access to them."
+                      />
+                    </View>
+                  }
+                  animated={false}
+                  startAnimation={false}
+                />
+
+                {/* For the Footer Area */}
+                <PrimaryButton
+                  style={styles.resetButton}
+                  iconFactory='Ionicons'
+                  icon='ios-refresh'
+                  iconSize={24}
+                  title='Reset / Use Different Wallet'
+                  fontSize={16}
+                  fontColor={GLOBALS.COLORS.WHITE}
+                  bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
+                  disabled={false}
+                  onPress={() => {this.resetWallet()}}
+                />
+              </Animated.View>
+            </View>
 
 
           </View>
@@ -607,6 +612,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: GLOBALS.COLORS.WHITE,
   },
   logo: {
     width: 96,
@@ -616,18 +622,27 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
   },
-  inner: {
+  innerWrapper: {
     position: 'absolute',
+    ...StyleSheet.absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    right: 0,
+  },
+  inner: {
+    flexGrow: 1,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 20,
     maxWidth: 540,
   },
+  signedInView: {
+  },
   passcodePromptView: {
+    width: '100%',
+  },
+  userLockedView: {
+    width: '100%',
   },
   intro: {
     alignItems: 'center',

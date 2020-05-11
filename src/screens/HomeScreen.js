@@ -23,6 +23,7 @@ import { ToasterOptions, Toaster } from 'src/components/indicators/Toaster';
 import FeedDBHelper from "src/helpers/FeedDBHelper";
 import Notifications from "src/singletons/Notifications";
 import MetaStorage from 'src/singletons/MetaStorage';
+import Utilities from "src/singletons/Utilities";
 
 import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
 import GLOBALS from 'src/Globals';
@@ -77,6 +78,9 @@ export default class HomeScreen extends Component {
     await MetaStorage.instance.setRemainingPasscodeAttempts(
       GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
     );
+
+    // Initialize Utilities
+    Utilities.instance.initialize();
   }
 
   // Run After Transition is finished
@@ -94,10 +98,9 @@ export default class HomeScreen extends Component {
       // Set it to false for future
       await MetaStorage.instance.setFirstSignInByUser(false);
     }
-    else {
-      // Refresh feed automatically
-      this.refreshFeeds();
-    }
+
+    // Refresh feed automatically
+    this.refreshFeeds();
   }
 
   // Component Unmounted
@@ -116,7 +119,8 @@ export default class HomeScreen extends Component {
 
   // To refresh the Feeds
   refreshFeeds = async () => {
-    this.refs.FeedsDisplayer.triggerGetFeedItemsDromDB();
+    //this.refs.FeedsDisplayer.resetFeedState();
+    await this.refs.FeedsDisplayer.triggerGetItemsFromDB();
   }
 
   // Overlay Blur exit intent
@@ -188,8 +192,7 @@ export default class HomeScreen extends Component {
               iconSize={32}
               onPress={() => {
                 // Refresh the feeds
-                //this.refreshFeeds();
-                this.showToaster("End of Feed", '', ToasterOptions.TYPE.GRADIENT_THIRD);
+                this.refreshFeeds();
               }}
               onNewNotifications={() => {
                 // Do nothing for now, bell is ringing in the module anyway
@@ -202,9 +205,7 @@ export default class HomeScreen extends Component {
               src={require('assets/ui/settings.png')}
               iconSize={24}
               onPress={() => {
-                navigation.navigate('Settings', {
-
-                });
+                navigation.navigate('Settings', {});
               }}
             />
           </View>
@@ -216,6 +217,8 @@ export default class HomeScreen extends Component {
               onFeedRefreshed={() => {
                 this.onNotificationListenerUpdate();
               }}
+              showToast={(msg, icon, type) => {this.showToaster(msg, icon, type)}}
+              privateKey={this.props.route.params.pkey}
             />
 
           </View>
@@ -251,6 +254,7 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: GLOBALS.COLORS.WHITE,
   },
   profile: {
     position: 'absolute',

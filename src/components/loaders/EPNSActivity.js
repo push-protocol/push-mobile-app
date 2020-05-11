@@ -11,7 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import GLOBALS from 'src/Globals';
 
-const EPNSActivity = ({ style, size }) => {
+const EPNSActivity = ({ style, size, color }) => {
   return (
 
     <View
@@ -22,11 +22,11 @@ const EPNSActivity = ({ style, size }) => {
       ]}
     >
       {
-        Platform.OS == 'android'
+        Platform.OS == 'android' || color
           ? <ActivityIndicator
               style={styles.activity}
               size={size}
-              color={GLOBALS.COLORS.BLACK}
+              color={color ? color : GLOBALS.COLORS.GRADIENT_THIRD}
             />
           : <MaskedView
               style={styles.maskedView}
@@ -68,6 +68,7 @@ const EPNSActivity = ({ style, size }) => {
 // Styling
 const styles = StyleSheet.create({
   container: {
+    alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'flex-end',
   },

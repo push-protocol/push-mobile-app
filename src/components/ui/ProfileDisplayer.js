@@ -280,6 +280,7 @@ const styles = StyleSheet.create({
 
     elevation: 10,
     zIndex: 2,
+    maxWidth: 440,
   },
   title: {
     fontSize: 24,
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
   },
   walletText: {
     marginTop: 10,
-    color: GLOBALS.COLORS.DARK_GRAY,
+    color: GLOBALS.COLORS.DARKER_GRAY,
     marginBottom: 5,
   },
   interestEarned: {

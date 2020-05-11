@@ -21,7 +21,7 @@ export default class PrimaryButton extends Component {
 
     this.state = {
       bgColor: GLOBALS.COLORS.BLACK,
-      fadeColor: GLOBALS.COLORS.DARK_GRAY,
+      fadeColor: GLOBALS.COLORS.DARKER_GRAY,
 
       fontColor: GLOBALS.COLORS.WHITE,
       toggleOverlay: false,
@@ -150,7 +150,7 @@ export default class PrimaryButton extends Component {
       disabled,
       onPress
     } = this.props;
-    
+
     // for updating style
     let updatedButtonStyle = {};
 

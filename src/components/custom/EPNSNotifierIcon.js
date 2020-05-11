@@ -44,8 +44,9 @@ export default class EPNSNotifierIcon extends Component {
           }
         }
       );
-      this.setAndAnimatedBadge(newBadge - prevBadge, prevBadge);
     }
+
+    this.setAndAnimatedBadge(newBadge - prevBadge, prevBadge);
   }
 
   // To Animate and show badge count

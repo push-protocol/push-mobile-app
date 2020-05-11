@@ -325,12 +325,17 @@ export default class BiometricScreen extends Component {
     // Check if the push notification permission is waiting for first grant
     // If not, skip this step completely as user either gave permission or denied it
     const authorizationStatus = await messaging().hasPermission();
+    const { privateKey } = this.props.route.params;
 
     if (authorizationStatus == messaging.AuthorizationStatus.NOT_DETERMINED) {
-      this.props.navigation.navigate('PushNotify');
+      this.props.navigation.navigate('PushNotify', {
+        privateKey: privateKey,
+      });
     }
     else {
-      this.props.navigation.navigate('SetupComplete');
+      this.props.navigation.navigate('SetupComplete', {
+        privateKey: privateKey,
+      });
     }
 
   }

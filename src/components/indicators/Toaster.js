@@ -116,7 +116,8 @@ class Toaster extends Component<Prop> {
       this.state.translateY, {
         toValue: 1,
         easing: Easing.easeInOut,
-        duration: 300
+        duration: 300,
+        seNativeDriver: true,
       }
     ).start(() => {
       if (this.props.onDidshowToasterCallback) {

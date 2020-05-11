@@ -23,6 +23,8 @@ PODS:
   - EXConstants (9.0.0):
     - UMConstantsInterface
     - UMCore
+  - EXDevice (2.1.0):
+    - UMCore
   - EXErrorRecovery (1.1.0):
     - UMCore
   - EXFileSystem (8.1.0):
@@ -49,6 +51,9 @@ PODS:
   - EXPermissions (8.1.0):
     - UMCore
     - UMPermissionsInterface
+  - EXSharing (8.1.0):
+    - UMCore
+    - UMFileSystemInterface
   - EXSQLite (8.1.0):
     - UMCore
     - UMFileSystemInterface
@@ -426,6 +431,7 @@ DEPENDENCIES:
   - EXBlur (from `../node_modules/expo-blur/ios`)
   - EXCamera (from `../node_modules/expo-camera/ios`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
+  - EXDevice (from `../node_modules/expo-device/ios`)
   - EXErrorRecovery (from `../node_modules/expo-error-recovery/ios`)
   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - EXFont (from `../node_modules/expo-font/ios`)
@@ -435,6 +441,7 @@ DEPENDENCIES:
   - EXLocalAuthentication (from `../node_modules/expo-local-authentication/ios`)
   - EXLocation (from `../node_modules/expo-location/ios`)
   - EXPermissions (from `../node_modules/expo-permissions/ios`)
+  - EXSharing (from `../node_modules/expo-sharing/ios`)
   - EXSQLite (from `../node_modules/expo-sqlite/ios`)
   - EXUpdates (from `../node_modules/expo-updates/ios`)
   - EXWebBrowser (from `../node_modules/expo-web-browser/ios`)
@@ -529,6 +536,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-camera/ios"
   EXConstants:
     :path: "../node_modules/expo-constants/ios"
+  EXDevice:
+    :path: "../node_modules/expo-device/ios"
   EXErrorRecovery:
     :path: "../node_modules/expo-error-recovery/ios"
   EXFileSystem:
@@ -547,6 +556,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-location/ios"
   EXPermissions:
     :path: "../node_modules/expo-permissions/ios"
+  EXSharing:
+    :path: "../node_modules/expo-sharing/ios"
   EXSQLite:
     :path: "../node_modules/expo-sqlite/ios"
   EXUpdates:
@@ -670,6 +681,7 @@ SPEC CHECKSUMS:
   EXBlur: bcc7a55f55c2915ffd7662449e89ecbdd6bf91b9
   EXCamera: e7e250c78f26468028c3866bb5c27e046f2b7b49
   EXConstants: 9f18e9ef229706394f41735d9c7f309d479b36c0
+  EXDevice: a06de8965c975fbd549c40317905811755a140d9
   EXErrorRecovery: 88541714d9bbf8a823f4ee0b7078a92d3e0e42d2
   EXFileSystem: b82693d78de152efe10a77d4aac781f782e10916
   EXFont: af4c3281cac0bf6ccd8b8a534e9bce6437cc2e17
@@ -679,6 +691,7 @@ SPEC CHECKSUMS:
   EXLocalAuthentication: 238cc8f7d647e7676fba045420266da80bf7c2b2
   EXLocation: 0397e4f11666d6ceb026b6424fdf66995c604964
   EXPermissions: d2cafee9c72578ecc9ca121481e6c4a04a798861
+  EXSharing: a86c6e6fc6168b5b843c7765ae2e3e028f3d25c8
   EXSQLite: 15268ec49f859e4594fe5b0a1c7a47913da0b67e
   EXUpdates: 73400517f57f10b5df8efeaf5bf802b27fceb912
   EXWebBrowser: 8594074f3dadff27967001304c14d29c4089bcc6

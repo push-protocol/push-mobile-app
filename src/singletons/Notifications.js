@@ -26,10 +26,9 @@ export default class Notifications {
       const signedin = await MetaStorage.instance.getIsSignedIn();
 
       if (!signedin) {
-        return false;
+        return;
       }
     }
-
 
     const status = await messaging().hasPermission();
     if (status == messaging.AuthorizationStatus.AUTHORIZED) {
@@ -81,7 +80,7 @@ export default class Notifications {
 
   // Handle incoming notification Foreground
   handleIncomingPushAppOpened = async (remoteMessage) => {
-    console.log("Notification Handled From Foreground!");
+    //console.log("Notification Handled From Foreground!");
     await this.handleIncomingPush(remoteMessage);
 
     // Listen for callbacks, etc as well
@@ -100,15 +99,18 @@ export default class Notifications {
   handleIncomingPush = async (remoteMessage) => {
     // Check if the payload has data
     const payload = remoteMessage["data"];
+    const db = await FeedDBHelper.getDB();
+
     if (payload["type"]) {
       // Assume message exists and proceed
       await FeedDBHelper.addFeedFromPayload(
+        db,
         payload["sid"],
         payload["type"],
         payload["app"],
         payload["icon"],
         payload["url"],
-        false,
+        null,
         payload["secret"],
         payload["asub"],
         payload["amsg"],

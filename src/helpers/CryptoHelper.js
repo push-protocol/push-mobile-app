@@ -69,7 +69,7 @@ const CryptoHelper = {
     console.log("[ENCRYPTION / DECRYPTION ENCRYPTION DONE] - " + encryptionTime / 1000 + " secs");
 
     // Decrypt this message
-    const decryptMsg = await CryptoHelper.decryptWithPrivateKey(privateKey, msg);
+    const decryptMsg = await CryptoHelper.decryptWithPrivateKey(msg, privateKey);
     console.log("[ENCRYPTION / DECRYPTION DECRYPTED MESSAGE] - '" + decryptMsg + "'");
 
     const decryptionTime = new Date().getTime() - startTime.getTime() - encryptionTime;

@@ -38,6 +38,7 @@ export default {
 
     DEFAULT_BIG_RADIUS: 10,
     DEFAULT_MID_RADIUS: 8,
+    FEED_ITEM_RADIUS: 8,
   },
 
   COLORS: {
@@ -56,10 +57,12 @@ export default {
     MID_WHITE: 'rgba(255.0, 255.0, 255.0, 0.5)',
     LIGHT_WHITE: 'rgba(255.0, 255.0, 255.0, 0.25)',
 
+    SLIGTER_GRAY: 'rgba(250.0, 250.0, 250.0, 1)',
     SLIGHT_GRAY: 'rgba(231.0, 231.0, 231.0, 1)',
     LIGHT_GRAY: 'rgba(225.0, 225.0, 225.0, 1)',
     MID_GRAY: 'rgba(200.0, 200.0, 200.0, 1)',
-    DARK_GRAY: 'rgba(100.0, 100.0, 100.0, 1)',
+    DARK_GRAY: 'rgba(160.0, 160.0, 160.0, 1)',
+    DARKER_GRAY: 'rgba(100.0, 100.0, 100.0, 1)',
 
     LIGHT_BLACK_TRANS: 'rgba(0.0, 0.0, 0.0, 0.1)',
     SEMI_MID_BLACK_TRANS: 'rgba(0.0, 0.0, 0.0, 0.25)',

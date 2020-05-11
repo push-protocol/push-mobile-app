@@ -8,8 +8,8 @@
 #import "AppDelegate.h"
 
 // CUSTOM CODE
-#import <FirebaseMessaging.h>
-#import <React/RCTLog.h>
+//#import <FirebaseMessaging.h>
+//#import <React/RCTLog.h>
 // ---
 
 #import <Firebase.h>
@@ -41,8 +41,8 @@
   }
 
   // CUSTOM CODE
-  [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
-  [[UIApplication sharedApplication] registerForRemoteNotifications];
+//  [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
+//  [[UIApplication sharedApplication] registerForRemoteNotifications];
   // ----
   
   self.moduleRegistryAdapter = [[UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[UMModuleRegistryProvider alloc] init]];
@@ -63,10 +63,10 @@
 }
 
 // CUSTOM CODE
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
-{
-  [FIRMessaging messaging].APNSToken = deviceToken;
-}
+//- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+//{
+//  [FIRMessaging messaging].APNSToken = deviceToken;
+//}
 //----
 
 - (RCTBridge *)initializeReactNativeApp

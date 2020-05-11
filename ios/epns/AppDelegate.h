@@ -17,7 +17,7 @@
 
 #import <EXUpdates/EXUpdatesAppController.h>
 
-@import UserNotifications;
+//@import UserNotifications;
 
 // EXPO CODE COMMENTED OUT
 // @interface AppDelegate : UMAppDelegateWrapper <RCTBridgeDelegate, EXUpdatesAppControllerDelegate>
@@ -32,7 +32,7 @@
 // ----
 
 // CUSTOM CODE MODIFIED
-@interface AppDelegate : UMAppDelegateWrapper <RCTBridgeDelegate, EXUpdatesAppControllerDelegate, UNUserNotificationCenterDelegate, FIRMessagingDelegate>
+@interface AppDelegate : UMAppDelegateWrapper <RCTBridgeDelegate, EXUpdatesAppControllerDelegate>
 // ----
 
 @property (nonatomic, strong) UMModuleRegistryAdapter *moduleRegistryAdapter;

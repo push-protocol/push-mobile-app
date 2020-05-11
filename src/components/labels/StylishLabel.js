@@ -133,6 +133,21 @@ export default class CalendarEvents extends Component {
         style: [styles.white, styles.bold],
         renderText: this.renderStyles
       },
+      {
+        pattern: /\[(midgray):([^\]]+)\]/i,
+        style: [styles.midgray],
+        renderText: this.renderStyles
+      },
+      {
+        pattern: /\[(darkgray):([^\]]+)\]/i,
+        style: [styles.darkgray],
+        renderText: this.renderStyles
+      },
+      {
+        pattern: /\[(darkergray):([^\]]+)\]/i,
+        style: [styles.darkergray],
+        renderText: this.renderStyles
+      },
     ];
 
     if (Platform.OS === 'ios') {
@@ -196,6 +211,15 @@ const styles = StyleSheet.create({
   },
   white: {
     color: GLOBALS.COLORS.WHITE,
+  },
+  midgray: {
+    color: GLOBALS.COLORS.MID_GRAY,
+  },
+  darkgray: {
+    color: GLOBALS.COLORS.DARK_GRAY,
+  },
+  darkergray: {
+    color: GLOBALS.COLORS.DARKER_GRAY,
   },
   link: {
     color: GLOBALS.COLORS.GRADIENT_PRIMARY,
