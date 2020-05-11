@@ -9,7 +9,7 @@ export default ImageTitleButton = ({ img, title, onPress }) => {
       <TouchableHighlight
         style = {styles.container}
         onPress = {onPress}
-        underlayColor = {GLOBALS.COLORS.DARK_GRAY}
+        underlayColor = {GLOBALS.COLORS.SLIGHT_GRAY}
       >
         <View style = {styles.childContainer}>
           <Image style = {styles.image} source = {img} />
@@ -21,19 +21,30 @@ export default ImageTitleButton = ({ img, title, onPress }) => {
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderBottomWidth: 1,
+    borderColor: GLOBALS.COLORS.LIGHT_GRAY,
   },
   childContainer: {
     flexDirection: 'row',
+    alignSelf: 'stretch',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    marginVertical: 10,
+    marginHorizontal: 15,
   },
   image: {
-    width: 60,
-    height: 60,
+    width: 24,
+    height: 24,
+    marginRight: 5,
+    resizeMode: 'contain',
   },
   title: {
+    margin: 10,
     fontSize: 14,
-    fontWeight: 'bold',
-    color: GLOBALS.COLORS.WHITE
+    fontWeight: '400',
   }
 });

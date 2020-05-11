@@ -129,12 +129,6 @@ export default function App({ navigation }) {
               title: 'Settings',
               headerStyle: {
                 backgroundColor: GLOBALS.COLORS.WHITE,
-                shadowColor: GLOBALS.COLORS.TRANSPARENT,
-                shadowRadius: 0,
-                shadowOffset: {
-                    height: 0,
-                },
-                elevation: 0
               },
               headerTintColor: GLOBALS.COLORS.MID_GRAY,
             }}

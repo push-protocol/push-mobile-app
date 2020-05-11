@@ -350,6 +350,7 @@ class Toaster extends Component<Prop> {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
+    alignSelf: 'center',
     bottom: 50,
     zIndex: 9999,
 

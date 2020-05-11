@@ -354,6 +354,5 @@ const styles = StyleSheet.create({
   },
   feed: {
     width: '100%',
-    backgroundColor: 'red',
   }
 });

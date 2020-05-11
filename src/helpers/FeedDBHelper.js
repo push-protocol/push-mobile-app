@@ -215,7 +215,7 @@ const FeedDBHelper = {
     const table = FeedDBHelper.getTable();
 
     // prepare, this should be 1 change it once done testing
-    const query = `UPDATE ${table} SET hidden=0 WHERE nid=${nid}`;
+    const query = `UPDATE ${table} SET hidden=1 WHERE nid=${nid}`;
     await FeedDBHelper.runQuery(db, query);
   },
   // to unhide all feeds
