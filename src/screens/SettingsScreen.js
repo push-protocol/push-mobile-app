@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
+  FlatList,
   StyleSheet,
 } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
@@ -9,6 +10,9 @@ import SafeAreaView from 'react-native-safe-area-view';
 import ProfileDisplayer from 'src/components/ui/ProfileDisplayer';
 import ImageButton from 'src/components/buttons/ImageButton';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
+
+import ImageTitleButton from 'src/components/buttons/ImageTitleButton';
+import ImageTitleSwitchButton from 'src/components/buttons/ImageTitleSwitchButton';
 
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 
@@ -39,22 +43,68 @@ export default class SettingsScreen extends Component {
     handleAppAuthState(APP_AUTH_STATES.INITIALIZING);
   }
 
+  renderItem = ({item}) => {
+    if (item.type === 'button') {
+      return (
+        <ImageTitleButton
+          title = {item.title}
+          img = {item.img}
+          onPress = {item.func}
+        />
+      );
+    }
+    else if (item.type === 'switch') {
+      return (
+        <ImageTitleSwitchButton
+          title = {item.title}
+          img = {item.img}
+          onPress = {item.func}
+          isOn = {item.isOn}
+          onSwitchOnFunc = {item.onSwitchOnFunc}
+          onSwitchOffFunc = {item.onSwitchOffFunc}
+        />
+      );
+    }
+    else {
+      return null;
+    }
+  }
+
   // RENDER
   render() {
+
+    // CONSTANTS
+    const settingsOptions = [
+      {
+        title: 'Unarchive Messages',
+        img: require('assets/ui/unlink.png'),
+        func: () => {
+
+        },
+        type: 'button',
+      }, {
+        title: 'Swipe / Reset Wallet',
+        img: require('assets/ui/unarchive.png'),
+        func: () => {
+          this.resetWallet();
+        },
+        type: 'button',
+      }
+    ];
+
     return (
       <View style={styles.container}>
         <SafeAreaView style={styles.container}>
-          <PrimaryButton
-            iconFactory='Ionicons'
-            icon='ios-refresh'
-            iconSize={24}
-            title='Reset / Use New Wallet'
-            fontSize={16}
-            fontColor={GLOBALS.COLORS.WHITE}
-            bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
-            disabled={false}
-            onPress={() => {this.resetWallet()}}
-          />
+          <View
+            style = {styles.settingsContainer}
+          >
+            <FlatList
+              bounces = {false}
+              data = {settingsOptions}
+              keyExtractor = {item => item.title}
+              renderItem = {this.renderItem}
+            />
+          </View>
         </SafeAreaView>
 
         {/* Overlay Blur to show incase need to emphasize on something */}

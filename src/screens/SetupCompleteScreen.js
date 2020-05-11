@@ -125,13 +125,13 @@ export default class SetupCompleteScreen extends Component {
     };
 
     // Set last message first
-    // 6. Secret Message Test
+    // 5. Secrets... shhh!!!
     const { privateKey } = this.props.route.params;
     const plainSecret = "EPNSRocks!";
     const encryptedSecret = await CryptoHelper.encryptWithECIES(plainSecret, privateKey);
 
-    let sub = "Secret Message Test";
-    let msg = "х│┬│KKK@J┌√⌠└z▒є╒ё@▓┴└└┴∙┤Zk@ё┬┘\n\n[bold:just kidding], the above text is what everyone who's not you will see.\n\nIf you haven't already, then visit [url:app.epns.io||https://aap.epns.io] from a [bold:Web3 Enabled Browser] to subscribe to your favorite [bold:dApps].";
+    let sub = "Secrets... shhh!!!";
+    let msg = "The [default:coolest type] of messages are [third:secrets]. They are indicated by the [bolditalics:shush gradient] on the top left of the message box.\n\nThey are always [default:encrypted] and [bold:only you] can see them.";
     let cta = '';
     let img = '';
     let epoch = new Date().getTime();
@@ -152,34 +152,12 @@ export default class SetupCompleteScreen extends Component {
 
     // Add to Feed DB
     await FeedDBHelper.addFeedFromPayloadObject(db, payload);
-
-    // 5. Secrets... shhh!!!
-    sub = "Secrets... shhh!!!";
-    msg = "The [default:coolest type] of messages are [third:secrets]. They are indicated by the [bolditalics:shush gradient] on the top left of the message box.\n\nThey are always [default:encrypted] and [bold:only you] can see them.";
-    cta = '';
-    img = '';
-    epoch = new Date().getTime();
-
-    sub = CryptoHelper.encryptWithAES(sub, plainSecret);
-    msg = CryptoHelper.encryptWithAES(msg, plainSecret);
-    cta = CryptoHelper.encryptWithAES(cta, plainSecret);
-    img = CryptoHelper.encryptWithAES(img, plainSecret);
-
-    payload.type = 2;
-    payload.sub = sub;
-    payload.msg = msg;
-    payload.cta = cta;
-    payload.img = img;
-    payload.epoch = epoch;
-
-    // Add to Feed DB
-    await FeedDBHelper.addFeedFromPayloadObject(db, payload);
     payload.secret = ''; // don't need to use secret anymore
     payload.type = 1; // reset payload type as well
 
     // 4. Notification Types
     payload.sub = "Nofications Types";
-    payload.msg = "[default:Notifications] are [bold:never boring] in EPNS. Images speak a 1000 chars ([italics: Also, you can ahead and tap on the image]).\n\nThe messages with [bold:blueish outlines] are links that the [bold:dApp] has provided you. \n\n[default:Tapping the message opens it.]";
+    payload.msg = "Notifications are [bold:never boring] in EPNS.\n\nThe messages with [bold:blueish outlines] are links that the [bold:dApp] has provided you. \n\n[default:Tapping the message opens it.]";
     payload.cta = 'https://epns.io';
     payload.img = '';
     payload.epoch = new Date().getTime();

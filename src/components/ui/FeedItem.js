@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   msgSub: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '300',
     color: GLOBALS.COLORS.MID_BLACK_TRANS,
     paddingVertical: 10,
