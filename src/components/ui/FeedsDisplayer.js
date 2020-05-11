@@ -318,7 +318,6 @@ export default class FeedsDisplayer extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 15,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
@@ -326,6 +325,7 @@ const styles = StyleSheet.create({
   feedScrollContainer: {
     width: '100%',
     flex: 1,
+    marginTop: 10,
   },
   feedScrollContent: {
     flexGrow: 1,

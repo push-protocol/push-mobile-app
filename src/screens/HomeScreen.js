@@ -274,11 +274,11 @@ const styles = StyleSheet.create({
     height: 55,
   },
   notifier: {
-    marginTop: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
+    marginTop: 5,
     marginRight: 10,
   },
   settings: {
-    marginTop: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
+    marginTop: 5,
     width: 24,
   },
   content: {
@@ -290,6 +290,5 @@ const styles = StyleSheet.create({
   feedDisplayer: {
     flex: 1,
     width: '100%',
-    backgroundColor: 'red',
   }
 });
