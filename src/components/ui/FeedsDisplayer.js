@@ -155,12 +155,12 @@ export default class FeedsDisplayer extends Component {
     //const newForwardPointer = !isHistorical ? this.state.forwardPointer + totalCount : this.state.forwardPointer;
 
     const newBackwardPointer = this.state.backwardPointer + totalCount;
-    console.log("ForwardPointer: " + newForwardPointer);
-    console.log("Forward NID: " + fNid);
-    console.log("BackwardPointer: " + newBackwardPointer);
-    console.log("Backward NID: " + bNid);
-    console.log("limit: " + limit);
-    console.log("is Historical: " + isHistorical);
+    // console.log("ForwardPointer: " + newForwardPointer);
+    // console.log("Forward NID: " + fNid);
+    // console.log("BackwardPointer: " + newBackwardPointer);
+    // console.log("Backward NID: " + bNid);
+    // console.log("limit: " + limit);
+    // console.log("is Historical: " + isHistorical);
 
     this.setState({
       items: storedFeed,

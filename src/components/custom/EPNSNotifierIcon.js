@@ -91,6 +91,16 @@ export default class EPNSNotifierIcon extends Component {
     }
   }
 
+  // Handle Press
+  handleOnPress = async (onPressFunc) => {
+    if (onPressFunc) {
+      onPressFunc();
+    }
+
+    // Reset Badge Count to 0 and Previous to 0
+    this.setAndAnimatedBadge(0, 0);
+  }
+
   // RENDER
   render() {
     const {
@@ -112,13 +122,8 @@ export default class EPNSNotifierIcon extends Component {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            // Reset Badge Count to 0 and Previous to 0
-            this.setAndAnimatedBadge(0, 0);
-
-            // Forward it
-            if (onPress) {
-              onPress();
-            }
+            // Handle on press
+            this.handleOnPress(onPressFunc);
           }}
         >
           <Animated.View

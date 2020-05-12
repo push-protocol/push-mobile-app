@@ -102,8 +102,6 @@ export default class HomeScreen extends Component {
 
     // Refresh feed automatically
     await this.refreshFeeds();
-
-    await AppBadgeHelper.registerForPushNotificationsAsync();
   }
 
   // Component Unmounted
