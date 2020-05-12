@@ -6,8 +6,8 @@ import MetaStorage from 'src/singletons/MetaStorage';
 import GLOBALS from 'src/Globals';
 
 // STATIC SINGLETON
-export default class Notifications {
-  static instance = Notifications.instance || new Notifications();
+export default class Notify {
+  static instance = Notify.instance || new Notify();
 
   // VARIBALES
   state = {

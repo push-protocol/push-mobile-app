@@ -2,10 +2,10 @@ import React from 'react';
 import {
   Platform
 } from 'react-native';
-import { Notifications } from 'expo';
 
 import SQLite from "react-native-sqlite-2";
 
+import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 import GLOBALS from 'src/Globals';
@@ -179,12 +179,11 @@ const FeedDBHelper = {
       if (res) {
         // Finally update badge
         const currentBadge = await MetaStorage.instance.getBadgeCount();
-        await MetaStorage.instance.setBadgeCount(currentBadge + 1);
+        const newBadge = currentBadge + 1;
+        await MetaStorage.instance.setBadgeCount(newBadge);
 
-        // And iOS Badge as well
-        if (Platform.OS ===  "ios") {
-
-        }
+        // And App Badge as well
+        await AppBadgeHelper.setAppBadgeCount(newBadge);
       }
       else {
         shouldProceed = false;

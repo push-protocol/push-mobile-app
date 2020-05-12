@@ -20,7 +20,7 @@ import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 import NoticePrompt from 'src/components/modals/NoticePrompt';
 
-import Notifications from 'src/singletons/Notifications';
+import Notify from 'src/singletons/Notify';
 
 import GLOBALS from 'src/Globals';
 
@@ -130,7 +130,7 @@ export default class PushNotifyScreen extends Component {
 
   loadNextScreen = async () => {
     // Save Device Token
-    Notifications.instance.requestDeviceToken();
+    Notify.instance.requestDeviceToken();
 
     const { privateKey } = this.props.route.params;
 

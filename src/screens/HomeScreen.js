@@ -21,7 +21,7 @@ import OverlayBlur from 'src/components/modals/OverlayBlur';
 import { ToasterOptions, Toaster } from 'src/components/indicators/Toaster';
 
 import FeedDBHelper from "src/helpers/FeedDBHelper";
-import Notifications from "src/singletons/Notifications";
+import Notify from "src/singletons/Notify";
 import MetaStorage from 'src/singletons/MetaStorage';
 import Utilities from "src/singletons/Utilities";
 
@@ -70,7 +70,7 @@ export default class HomeScreen extends Component {
   // Run as soon as loaded
   maintainer = async () => {
     // Set Notification Listener
-    Notifications.instance.setNotificationListenerCallback(() => {
+    Notify.instance.setNotificationListenerCallback(() => {
       this.onNotificationListenerUpdate()
     });
 
@@ -87,7 +87,7 @@ export default class HomeScreen extends Component {
   afterTransitionMaintainer = async () => {
     // Get Wallet
     const wallet = this.props.route.params.wallet;
-    Notifications.instance.associateToken(wallet); // While an async function, there is no need to wait
+    Notify.instance.associateToken(wallet); // While an async function, there is no need to wait
 
     // Trigger Notification Update
     await this.onNotificationListenerUpdate();
@@ -100,13 +100,13 @@ export default class HomeScreen extends Component {
     }
 
     // Refresh feed automatically
-    this.refreshFeeds();
+    await this.refreshFeeds();
   }
 
   // Component Unmounted
   componentWillUnmount() {
     // Reset Callback of notification
-    Notifications.instance.setNotificationListenerCallback(null);
+    Notify.instance.setNotificationListenerCallback(null);
   }
 
   // FUNCTIONS

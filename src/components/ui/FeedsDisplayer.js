@@ -179,11 +179,6 @@ export default class FeedsDisplayer extends Component {
     // Feeds pulled after logic
     if (!isHistorical) {
       await MetaStorage.instance.setCurrentAndPreviousBadgeCount(0, 0);
-
-      // Adjust iOS Badge as well
-      if (Platform.OS ===  "ios") {
-
-      }
     }
 
     // Show Toast

@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import AnimatedEPNSIcon from 'src/components/custom/AnimatedEPNSIcon';
+import AppBadgeHelper from "src/helpers/AppBadgeHelper";
 import MetaStorage from 'src/singletons/MetaStorage';
 
 import GLOBALS from 'src/Globals';
@@ -54,6 +55,9 @@ export default class EPNSNotifierIcon extends Component {
   setAndAnimatedBadge = async (badgeCount, prevBadgeCount) => {
     // Update on Meta Storage as well
     await MetaStorage.instance.setCurrentAndPreviousBadgeCount(badgeCount, prevBadgeCount);
+
+    // Set app badge count as well
+    AppBadgeHelper.setAppBadgeCount(badgeCount);
 
     // Open / Animation logic
     let shouldOpen = false;

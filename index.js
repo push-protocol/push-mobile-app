@@ -1,9 +1,9 @@
-import { registerRootComponent } from 'expo';
-import React, { useEffect, useCallback } from 'react';
+// import { registerRootComponent } from 'expo';
+import React from 'react';
 import { AppRegistry } from 'react-native';
 
 import messaging from '@react-native-firebase/messaging';
-import Notifications from 'src/singletons/Notifications';
+import Notifications from 'src/singletons/Notify';
 
 import App from './App';
 

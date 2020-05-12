@@ -4,7 +4,7 @@ import CryptoHelper from 'src/helpers/CryptoHelper';
 import Web3Helper from 'src/helpers/Web3Helper';
 import FeedDBHelper from 'src/helpers/FeedDBHelper';
 
-import Notifications from 'src/singletons/Notifications';
+import Notify from 'src/singletons/Notify';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 import GLOBALS from 'src/Globals';
@@ -70,7 +70,7 @@ const AuthenticationHelper = {
   _removeDataOfUser: async () => {
     // First pull the wallet info to disassociate token
     const wallet = await MetaStorage.instance.getStoredWallet();
-    await Notifications.instance.dissaociateToken(wallet.wallet); // takes care of deleting push as well
+    await Notify.instance.dissaociateToken(wallet.wallet); // takes care of deleting push as well
 
     // Destroy Keychain
     await Keychain.resetGenericPassword();

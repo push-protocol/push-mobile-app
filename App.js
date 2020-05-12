@@ -23,7 +23,7 @@ import PushNotifyScreen from "src/screens/PushNotifyScreen";
 import SetupCompleteScreen from "src/screens/SetupCompleteScreen";
 
 import MetaStorage from "src/singletons/MetaStorage";
-import Notifications from "src/singletons/Notifications";
+import Notifications from "src/singletons/Notify";
 
 import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
 import ENV_CONFIG from 'root/env.config';
