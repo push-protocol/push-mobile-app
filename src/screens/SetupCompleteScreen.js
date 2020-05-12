@@ -187,7 +187,7 @@ export default class SetupCompleteScreen extends Component {
 
     // 1. Welcome to EPNS
     payload.sub = "Welcome to EPNS";
-    payload.msg = "[bold:Greetings] fellow users! Welcome aboard!\n\nI am your personalized [default:App Bot] whose sole purpose is to teach you about the app.\n\nTo get started! [bold:Swipe Right to Archive this.]";
+    payload.msg = "[bold:Greetings] fellow users! Welcome aboard!\n\nI am your personalized [default:App Bot] whose sole purpose is to guide you about the app.\n\nTo get started! [bold:Swipe Right to Archive this.]";
     payload.cta = '';
     payload.img = '';
     payload.epoch = new Date().getTime();

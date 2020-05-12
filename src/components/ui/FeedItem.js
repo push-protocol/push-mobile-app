@@ -100,7 +100,7 @@ export default class FeedItem extends Component {
   // For on Press
   onPress = (url, showToast) => {
 
-    if (this.validURL(url)) {
+    if (this.validURL(url) || 1) { // Bypassing the check so that custom app domains can be opened
       Linking.canOpenURL(url).then(supported => {
         if (supported) {
           Linking.openURL(url);

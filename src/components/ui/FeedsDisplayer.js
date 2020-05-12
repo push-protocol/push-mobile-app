@@ -31,7 +31,9 @@ export default class FeedsDisplayer extends Component {
     this.state = {
       items: [],
       forwardPointer: 0,
+      forwardNid: -1,
       backwardPointer: 0,
+      backwardNid: -1,
       visibleItemCount: 0,
       feedEnded: false,
       feedQueried: false,
@@ -62,7 +64,9 @@ export default class FeedsDisplayer extends Component {
     this.setState({
       items: [],
       forwardPointer: 0,
+      forwardNid: -1,
       backwardPointer: 0,
+      backwardNid: -1,
       visibleItemCount: 0,
       feedEnded: false,
       feedQueried: false,
@@ -71,22 +75,6 @@ export default class FeedsDisplayer extends Component {
     }, () => {
       this.triggerGetItemsFromDB();
     })
-  }
-
-  resetForwardPointer = (newPointerIndex) => {
-    this.setState({
-      forwardPointer: newPointerIndex,
-    })
-
-    this.triggerGetItemsFromDB();
-  }
-
-  resetBackwardPointer = (newPointerIndex) => {
-    this.setState({
-      backwardPointer: newPointerIndex,
-    })
-
-    this.triggerGetItemsFromDB(true);
   }
 
   // trigger getting feed items
@@ -114,7 +102,7 @@ export default class FeedsDisplayer extends Component {
     const diff = newBadge - prevBadge;
 
     if (diff > limit) {
-      diff = limit;
+      limit = diff;
     }
 
     const fetcheditems = await FeedDBHelper.getFeeds(this._db, fromPointer, limit, isHistorical);
@@ -122,18 +110,57 @@ export default class FeedsDisplayer extends Component {
 
     let visibleItemCount = this.state.visibleItemCount;
     let totalCount = 0;
+    let forwardNid = -1;
+    let backwardNid = -1;
+
+    const fNid = this.state.forwardNid;
+    const bNid = this.state.backwardNid;
+    const feedQueried = this.state.feedQueried;
 
     fetcheditems.forEach(function (item, index) {
+      let itemValid = true;
+
+      if (isHistorical) {
+        if (bNid > item["nid"]) {
+          storedFeed = [item, ...storedFeed];
+        }
+        else {
+          itemValid = false;
+        }
+      }
+      else {
+        if (fNid < item["nid"] || fNid == -1) {
+          storedFeed = feedQueried ? [item, ...storedFeed] : [...storedFeed, item];
+        }
+        else {
+          itemValid = false;
+        }
+      }
+
+      if (totalCount == 0) {
+        forwardNid = item["nid"];
+      }
+      backwardNid = item["nid"];
+
       if (item["hidden"] != 1) {
-        storedFeed = [...storedFeed, item];
         visibleItemCount = visibleItemCount + 1;
       }
 
-      totalCount = totalCount + 1;
+      if (itemValid) {
+        totalCount = totalCount + 1;
+      }
     });
 
-    const newForwardPointer = !isHistorical ? this.state.forwardPointer + totalCount : this.state.forwardPointer;
-    const newBackwardPointer = isHistorical ? this.state.backwardPointer + totalCount : this.state.backwardPointer;
+    const newForwardPointer = 0 // Since this is reverse, it will not affect the forward pointer
+    //const newForwardPointer = !isHistorical ? this.state.forwardPointer + totalCount : this.state.forwardPointer;
+
+    const newBackwardPointer = this.state.backwardPointer + totalCount;
+    console.log("ForwardPointer: " + newForwardPointer);
+    console.log("Forward NID: " + fNid);
+    console.log("BackwardPointer: " + newBackwardPointer);
+    console.log("Backward NID: " + bNid);
+    console.log("limit: " + limit);
+    console.log("is Historical: " + isHistorical);
 
     this.setState({
       items: storedFeed,
@@ -143,7 +170,10 @@ export default class FeedsDisplayer extends Component {
       feedEnded: fetcheditems ? false : true,
 
       forwardPointer: newForwardPointer,
+      forwardNid: forwardNid,
+
       backwardPointer: newBackwardPointer,
+      backwardNid: backwardNid,
     })
 
     // Feeds pulled after logic
@@ -187,7 +217,7 @@ export default class FeedsDisplayer extends Component {
   archiveItem = (nid) => {
     this.setState({
       visibleItemCount: this.state.visibleItemCount - 1,
-      items: this.state.items.filter(i => i["nid"] !== nid)
+      // items: this.state.items.filter(i => i["nid"] !== nid) // don't remove so it's better after unarchive
     });
 
   }

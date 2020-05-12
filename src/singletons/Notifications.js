@@ -80,7 +80,7 @@ export default class Notifications {
 
   // Handle incoming notification Foreground
   handleIncomingPushAppOpened = async (remoteMessage) => {
-    //console.log("Notification Handled From Foreground!");
+    console.log("Notification Handled From Foreground!");
     await this.handleIncomingPush(remoteMessage);
 
     // Listen for callbacks, etc as well

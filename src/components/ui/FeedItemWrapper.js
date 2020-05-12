@@ -31,6 +31,8 @@ export default class FeedItemWrapper extends Component {
       deleting: false,
       scale: new Animated.Value(100),
       layourHeight: 0,
+
+      hidden: false,
     }
   }
 
@@ -94,6 +96,10 @@ export default class FeedItemWrapper extends Component {
       duration: 250,
       seNativeDriver: true,
     }).start(() => {
+      this.setState({
+        hidden: true,
+      })
+
       // Perform Event Edited Callback
       if (itemArchivedFunc) {
         itemArchivedFunc(nid);
@@ -116,9 +122,7 @@ export default class FeedItemWrapper extends Component {
 
     return (
       <View
-        style={[
-          styles.actionView
-        ]}>
+        style={[ styles.actionView ]}>
           {
           this.state.deleting
             ? <Animated.View
@@ -175,6 +179,11 @@ export default class FeedItemWrapper extends Component {
       privateKey,
     } = this.props;
 
+    let displayStyle = {};
+    if (item["hidden"] || this.state.hidden) {
+      displayStyle.display = 'none';
+    }
+
     return (
       <Swipeable
         ref="SwipeRight"
@@ -190,6 +199,7 @@ export default class FeedItemWrapper extends Component {
         <Animated.View
           style = {[
             styles.container,
+            displayStyle,
             {
               transform: [
                 {

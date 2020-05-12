@@ -376,8 +376,7 @@ const styles = StyleSheet.create({
   },
   message: {
     color: GLOBALS.COLORS.WHITE,
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 14,
   },
   iconstyle: {
     backgroundColor: GLOBALS.COLORS.WHITE,
