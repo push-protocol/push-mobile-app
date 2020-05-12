@@ -21,7 +21,7 @@
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>UNNotificationExtensionCategory</key>
-	<string>io.epns.epns</string>
+	<string>withappicon</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionAttributes</key>

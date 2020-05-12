@@ -22,6 +22,7 @@ import { ToasterOptions, Toaster } from 'src/components/indicators/Toaster';
 
 import FeedDBHelper from "src/helpers/FeedDBHelper";
 import Notify from "src/singletons/Notify";
+import AppBadgeHelper from "src/helpers/AppBadgeHelper";
 import MetaStorage from 'src/singletons/MetaStorage';
 import Utilities from "src/singletons/Utilities";
 
@@ -101,6 +102,8 @@ export default class HomeScreen extends Component {
 
     // Refresh feed automatically
     await this.refreshFeeds();
+
+    await AppBadgeHelper.registerForPushNotificationsAsync();
   }
 
   // Component Unmounted

@@ -2,7 +2,7 @@
 import {
   Platform
 } from 'react-native';
-import { Notifications } from 'expo';
+// import { Notifications } from 'expo';
 
 import GLOBALS from 'src/Globals';
 
@@ -10,14 +10,42 @@ import GLOBALS from 'src/Globals';
 const AppBadgeHelper = {
   // To Get App Badge Count
   getAppBadgeCount: async () => {
-    return await Notifications.getBadgeNumberAsync();
+    // return await Notifications.getBadgeNumberAsync();
   },
   // To Set App Badge Count
   setAppBadgeCount: async (badgeNumber) => {
-    if (Platform.OS ===  "ios") {
-      await Notifications.setBadgeNumberAsync(badgeNumber);
-    }
+    // if (Platform.OS ===  "ios") {
+    //   await Notifications.setBadgeNumberAsync(badgeNumber);
+    // }
   },
+  registerForPushNotificationsAsync: async () => {
+    // if (Constants.isDevice) {
+    //   const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+    //   let finalStatus = existingStatus;
+    //   if (existingStatus !== 'granted') {
+    //     const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    //     finalStatus = status;
+    //   }
+    //   if (finalStatus !== 'granted') {
+    //     alert('Failed to get push token for push notification!');
+    //     return;
+    //   }
+    //   token = await Notifications.getExpoPushTokenAsync();
+    //   console.log(token);
+    //   this.setState({ expoPushToken: token });
+    // } else {
+    //   alert('Must use physical device for Push Notifications');
+    // }
+    //
+    // if (Platform.OS === 'android') {
+    //   Notifications.createChannelAndroidAsync('default', {
+    //     name: 'default',
+    //     sound: true,
+    //     priority: 'max',
+    //     vibrate: [0, 250, 250, 250],
+    //   });
+    // }
+  }
 }
 
 export default AppBadgeHelper;

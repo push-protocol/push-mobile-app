@@ -274,6 +274,7 @@ export default class BiometricScreen extends Component {
       options.promptMessage = `Allow ${biometricType} to Authenticate you quickly and securely.`;
       options.cancelLabel = 'Skip for Now';
       options.fallbackLabel = '';
+      options.disableDeviceFallback = true;
 
       const response = await LocalAuthentication.authenticateAsync(options);
 
