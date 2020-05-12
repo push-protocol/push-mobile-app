@@ -489,7 +489,7 @@ export default class BiometricScreen extends Component {
                                 title="[Third:Passcode Set!]"
                               />
                               <StylishLabel
-                                style={styles.paraend}
+                                style={styles.para}
                                 fontSize={16}
                                 title="[default:Note:] Your passcode encrypts your data and even we can't recover it, Losing this means re-importing your wallet to access EPNS."
                               />

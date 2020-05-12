@@ -170,11 +170,35 @@ export default class FeedItem extends Component {
 
     // Finally mark if the device is a tablet or a phone
     let contentInnerStyle = {};
-    let contentInnerImgStyle = {};
-    let contentInnerMsgStyle = {};
+    let contentImgStyle = {};
+    let contentMsgImgStyle = {}
+    let contentBodyStyle = {};
+    let containMode = 'contain';
     if (Utilities.instance.getDeviceType() == Device.DeviceType.TABLET) {
       // Change the style to better suit tablet
 
+      contentInnerStyle = {
+        flexDirection: 'row',
+        alignItems: 'center',
+      };
+
+      contentImgStyle = {
+        width: '25%',
+        aspectRatio: 1,
+      };
+
+      contentMsgImgStyle = {
+        margin: 20,
+        marginRight: 5,
+        borderRadius: 10,
+        borderWidth: 0,
+      };
+
+      contentBodyStyle = {
+        flex: 1,
+      };
+
+      containMode = 'cover';
     }
 
     return (
@@ -252,16 +276,16 @@ export default class FeedItem extends Component {
                     size="small"
                   />
 
-                : <View style={[ styles.contentInner ]}>
+                : <View style={[ styles.contentInner, contentInnerStyle ]}>
                   {
                   !this.state.img
                     ? null
-                    : <View style={[ styles.contentImg ]}>
+                    : <View style={[ styles.contentImg, contentImgStyle ]}>
                         <ImageDownloadWithIndicator
-                          style={styles.msgImg}
+                          style={[ styles.msgImg, contentMsgImgStyle ]}
                           fileURL={this.state.img}
                           imgsrc={false}
-                          resizeMode="contain"
+                          resizeMode={containMode}
                           onPress={(fileURL) => {
                             onImagePreview(fileURL)
                           }}
@@ -269,7 +293,7 @@ export default class FeedItem extends Component {
                       </View>
                   }
 
-                    <View style={[ styles.contentBody ]}>
+                    <View style={[ styles.contentBody, styles.contentBodyStyle ]}>
                       {
                         !this.state.sub
                           ? null
@@ -368,10 +392,10 @@ const styles = StyleSheet.create({
     aspectRatio: 2,
   },
   msgImg: {
-
     borderColor: GLOBALS.COLORS.SLIGHT_GRAY,
     backgroundColor: GLOBALS.COLORS.SLIGTER_GRAY,
     borderBottomWidth: 1,
+    resizeMode: 'contain',
   },
   contentBody: {
     paddingHorizontal: 15,

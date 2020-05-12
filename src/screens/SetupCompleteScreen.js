@@ -167,9 +167,9 @@ export default class SetupCompleteScreen extends Component {
 
     // 3. Ring the Bell
     payload.sub = "Ring the Bell";
-    payload.msg = "The [default:Bell] on the [bold:top right] keeps track of any incoming messages and will inform you about it.\n\nClicking on the [bold:bell] will update your feed [italics:(Alternatively, pull me down to refresh)]";
+    payload.msg = "The [default:Bell] on the [bold:top right] keeps track of any incoming messages and will inform you about it.\n\nClicking on the [bold:bell] will update your feed [italics:(Alternatively, pull feed down to refresh)]";
     payload.cta = '';
-    payload.img = 'https://i.ibb.co/m6LC8f3/welcome-Cover-App.jpg';
+    payload.img = 'https://i.ibb.co/SvYGCY9/epnsappbellturorial.jpg';
     payload.epoch = new Date().getTime();
 
     // Add to Feed DB

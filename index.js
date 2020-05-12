@@ -10,8 +10,7 @@ import App from './App';
 // Register background handler
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   return new Promise(async (resolve, reject) => {
-    console.log('Message handled in the background!', remoteMessage);
-    console.log('BACKGROUND', JSON.stringify(remoteMessage));
+    //console.log('Message handled in the background!', remoteMessage);
     await Notifications.instance.handleIncomingPushAppInBG(remoteMessage);
 
     resolve(true);
