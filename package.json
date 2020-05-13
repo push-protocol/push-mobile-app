@@ -13,6 +13,7 @@
   "dependencies": {
     "@expo/vector-icons": "^10.1.0",
     "@react-native-community/masked-view": "0.1.10",
+    "@react-native-community/push-notification-ios": "1.2.0",
     "@react-native-firebase/analytics": "6.7.2",
     "@react-native-firebase/app": "6.7.1",
     "@react-native-firebase/messaging": "^6.7.1",

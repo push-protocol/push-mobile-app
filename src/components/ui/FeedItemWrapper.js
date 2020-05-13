@@ -30,8 +30,8 @@ export default class FeedItemWrapper extends Component {
       scale: new Animated.Value(100),
       height: null,
       adjustedH: 0,
-
-      fader: new Animated.Value(0),
+      collapsedH: null,
+      initialized: false,
 
       collapsing: false,
       undo: false,
@@ -51,10 +51,12 @@ export default class FeedItemWrapper extends Component {
   findDimensions = (layout) => {
     const {height} = layout;
 
-    if (this.state.adjustedH < height) {
+    if (this.state.adjustedH < height && this.state.initialized == false) {
       this.setState({
         adjustedH: height,
         height: new Animated.Value(0),
+        collapsedH: new Animated.Value(0),
+        initialized: true,
       }, () => {
         Animated.timing(this.state.height, {
           toValue: height,

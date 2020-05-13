@@ -3,7 +3,7 @@ import {
   Platform
 } from 'react-native';
 
-// import { Notifications } from 'expo';
+import PushNotificationIOS from "@react-native-community/push-notification-ios";
 
 import GLOBALS from 'src/Globals';
 
@@ -11,12 +11,12 @@ import GLOBALS from 'src/Globals';
 const AppBadgeHelper = {
   // To Get App Badge Count
   getAppBadgeCount: async () => {
-    // return await Notifications.getBadgeNumberAsync();
+      return await PushNotificationIOS.getApplicationIconBadgeNumber();
   },
   // To Set App Badge Count
   setAppBadgeCount: async (badgeNumber) => {
     if (Platform.OS ===  "ios") {
-       // await Notifications.setBadgeNumberAsync(badgeNumber);
+      await PushNotificationIOS.setApplicationIconBadgeNumber(badgeNumber);
     }
   },
   registerForPushNotificationsAsync: async () => {
