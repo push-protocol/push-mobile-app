@@ -325,6 +325,7 @@ export default class FeedItem extends Component {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    marginVertical: 15,
   },
   cover: {
     position: 'absolute',

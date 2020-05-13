@@ -30,6 +30,7 @@ export default class FeedsDisplayer extends Component {
 
     this.state = {
       items: [],
+
       forwardPointer: 0,
       forwardNid: -1,
       backwardPointer: 0,
@@ -48,6 +49,7 @@ export default class FeedsDisplayer extends Component {
     }
 
     this._db = null;
+    this.itemRefs = [];
   }
 
   // COMPONENT MOUNTED
@@ -75,6 +77,8 @@ export default class FeedsDisplayer extends Component {
 
       feedIsRefreshing: false,
     }, () => {
+      this.itemRefs = [];
+
       this.triggerGetItemsFromDB();
     })
   }
@@ -163,6 +167,7 @@ export default class FeedsDisplayer extends Component {
     // console.log("Backward NID: " + backwardNid);
     // console.log("limit: " + limit);
     // console.log("is Historical: " + isHistorical);
+    // console.log("Visible Count: " + visibleItemCount);
 
     this.setState({
       items: storedFeed,
@@ -212,20 +217,51 @@ export default class FeedsDisplayer extends Component {
 
   // Archive an item
   archiveItem = (nid) => {
-    return;
-    
     this.setState({
       visibleItemCount: this.state.visibleItemCount - 1,
       lastHiddenItemNid: nid,
       // items: this.state.items.filter(i => i["nid"] !== nid) // don't remove so it's better after unarchive
+    }, () => {
+      this.showToast(
+        "Item Archived, Tap to Undo",
+        '',
+        ToasterOptions.TYPE.GRADIENT_PRIMARY,
+        () => {
+          this.unarchiveItemSequential(nid)
+        },
+        ToasterOptions.DELAY.LONG,
+      )
     });
+  }
 
+  // Unarchive an item
+  unarchiveItemSequential = (nid) => {
+    // To trick the tap callback of toast
+    this.unarchiveItem(nid);
+  }
+
+  unarchiveItem = async (nid) => {
+    await FeedDBHelper.unhideFeedItem(this._db, nid);
+
+    // No Need to adjust item as items are there but invisible, just adjust visible item count
+    this.setState({
+      visibleItemCount: this.state.visibleItemCount + 1,
+    })
+
+    // get ref of that item and expand it
+    const itemRef = this.getRefForFeedItem(nid);
+    this.itemRefs[itemRef].uncollapseHeight();
+  }
+
+  // To get ref for feed items
+  getRefForFeedItem = (nid) => {
+    return 'feed' + nid;
   }
 
   // For showing toast
-  showToast = (msg, icon, type) => {
+  showToast = (msg, icon, type, tapCB, screenTime) => {
     if (this.props.showToast) {
-      this.props.showToast(msg, icon, type);
+      this.props.showToast(msg, icon, type, tapCB, screenTime);
     }
   }
 
@@ -278,11 +314,13 @@ export default class FeedsDisplayer extends Component {
                 }}
               />
             }
-            data={this.state.items}
+            data={this.state.visibleItemCount > 0 ? this.state.items : []}
+            extraData={this.state}
             keyExtractor={item => item["nid"].toString()}
             contentContainerStyle={styles.feedScrollContent}
             renderItem={({ item }) => (
               <FeedItemWrapper
+                ref={(ref) => this.itemRefs = {...this.itemRefs, [this.getRefForFeedItem(item["nid"])]: ref}}
                 item={item}
                 nid={item["nid"]}
                 showToast={showToast}

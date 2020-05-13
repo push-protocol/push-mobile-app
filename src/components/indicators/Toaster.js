@@ -27,6 +27,7 @@ const ToasterOptions = {
     ERROR: 4,
   },
   DELAY: {
+    LONGER: 5000,
     LONG: 3500,
     SHORT: 2500,
   }
@@ -43,6 +44,7 @@ class Toaster extends Component<Prop> {
       msg: 'Hello World!',
       icon: 'md-heart',
       type: ToasterOptions.TYPE.GRADIENTTEXT,
+      tapCB: null,
 
       translateY: new Animated.Value(0),
       render: true
@@ -66,12 +68,14 @@ class Toaster extends Component<Prop> {
 
   // FUNCTIONS
   // Show Toast
-  showToaster = (msg, icon, type, hideAfterTime) => {
+  showToast = (msg, icon, type, tapCB, hideAfterTime) => {
     this.setState({
       msg: msg,
       icon: icon,
       type: type,
+      tapCB: tapCB,
     }, () => {
+      this.clearTimer();
       this.changeRenderState(true, hideAfterTime);
     })
   }
@@ -101,12 +105,12 @@ class Toaster extends Component<Prop> {
     this.setState({
       render: true
     }, () => {
-      if (this.props.onWillshowToasterCallback) {
+      if (this.props.onWillshowToastCB) {
         try {
-          this.props.onWillshowToasterCallback();
+          this.props.onWillshowToastCB();
         }
         catch (err) {
-          console.warn("Error Calling onWillshowToasterCallback!");
+          console.warn("Error Calling onWillshowToastCB!");
           console.warn(err);
         }
       }
@@ -120,12 +124,12 @@ class Toaster extends Component<Prop> {
         seNativeDriver: true,
       }
     ).start(() => {
-      if (this.props.onDidshowToasterCallback) {
+      if (this.props.onDidshowToastCB) {
         try {
-          this.props.onDidshowToasterCallback();
+          this.props.onDidshowToastCB();
         }
         catch (err) {
-          console.warn("Error Calling onDidshowToasterCallback!");
+          console.warn("Error Calling onDidshowToastCB!");
           console.warn(err);
         }
       }
@@ -135,12 +139,12 @@ class Toaster extends Component<Prop> {
   slideOut = () => {
     this.clearTimer();
 
-    if (this.props.onWillHideToastCallback) {
+    if (this.props.onWillHideToastCB) {
       try {
-        this.props.onWillHideToastCallback();
+        this.props.onWillHideToastCB();
       }
       catch (err) {
-        console.warn("Error Calling onWillHideToastCallback!");
+        console.warn("Error Calling onWillHideToastCB!");
         console.warn(err);
       }
     }
@@ -156,12 +160,12 @@ class Toaster extends Component<Prop> {
         render: false
       });
 
-      if (this.props.onDidHideToastCallback) {
+      if (this.props.onDidHideToastCB) {
         try {
-          this.props.onDidHideToastCallback();
+          this.props.onDidHideToastCB();
         }
         catch (err) {
-          console.warn("Error Calling onDidHideToastCallback!");
+          console.warn("Error Calling onDidHideToastCB!");
           console.warn(err);
         }
       }
@@ -177,12 +181,12 @@ class Toaster extends Component<Prop> {
   // To handle press in
   handleOnPress = () => {
     // Call on Tap Callback if there
-    if (this.props.toastTappedCB) {
+    if (this.state.tapCB) {
       try {
-        this.props.toastTappedCB();
+        this.state.tapCB();
       }
       catch (err) {
-        console.warn("Error Calling toastTappedCB!");
+        console.warn("Error Calling tapCB!");
         console.warn(err);
       }
     }
@@ -248,11 +252,10 @@ class Toaster extends Component<Prop> {
   // RENDER
   render() {
     const {
-      toastTappedCB,
-      onWillshowToasterCallback,
-      onDidshowToasterCallback,
-      onWillHideToastCallback,
-      onDidHideToastCallback,
+      onWillshowToastCB,
+      onDidshowToastCB,
+      onWillHideToastCB,
+      onDidHideToastCB,
     } = this.props;
 
     let addedBGContainerStyles = {};

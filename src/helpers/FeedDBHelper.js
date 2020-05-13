@@ -209,12 +209,18 @@ const FeedDBHelper = {
       console.log("epoch ==> '" + epochV + "' (" + typeof(epochV) + ")");
     }
   },
-  // To add a specific feed Item
+  // To hide a specific feed Item
   hideFeedItem: async (db, nid) => {
     const table = FeedDBHelper.getTable();
 
-    // prepare, this should be 1 change it once done testing
     const query = `UPDATE ${table} SET hidden=1 WHERE nid=${nid}`;
+    await FeedDBHelper.runQuery(db, query);
+  },
+  // To unhide a specific feed Item
+  unhideFeedItem: async (db, nid) => {
+    const table = FeedDBHelper.getTable();
+
+    const query = `UPDATE ${table} SET hidden=0 WHERE nid=${nid}`;
     await FeedDBHelper.runQuery(db, query);
   },
   // to unhide all feeds

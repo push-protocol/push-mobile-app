@@ -69,7 +69,7 @@ export default class HomeScreen extends Component {
 
   // COMPONENT UNMOUNTED
   componentWillUnmount() {
-    
+
   }
 
   // COMPONENT LOADED
@@ -148,8 +148,8 @@ export default class HomeScreen extends Component {
   }
 
   // TO SHOW TOASTER
-  showToaster = (msg, icon, type) => {
-    this.refs.Toaster.showToaster(msg, icon, type);
+  showToast = (msg, icon, type, tapCB, screenTime) => {
+    this.refs.Toaster.showToast(msg, icon, type, tapCB, screenTime);
   }
 
   // RENDER
@@ -223,7 +223,7 @@ export default class HomeScreen extends Component {
               onFeedRefreshed={() => {
                 this.onNotificationListenerUpdate();
               }}
-              showToast={(msg, icon, type) => {this.showToaster(msg, icon, type)}}
+              showToast={(msg, icon, type, tapCB, screenTime) => {this.showToast(msg, icon, type, tapCB, screenTime)}}
               privateKey={this.props.route.params.pkey}
             />
 
@@ -242,7 +242,8 @@ export default class HomeScreen extends Component {
 
       {/* Toaster Always goes here in the end after safe area */}
       <Toaster
-        ref = 'Toaster'
+        ref='Toaster'
+        onToastTap
       />
 
       </View>

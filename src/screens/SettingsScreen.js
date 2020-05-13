@@ -43,7 +43,7 @@ export default class SettingsScreen extends Component {
     const db = FeedDBHelper.getDB();
     await FeedDBHelper.unhideAllFeedItems(db);
 
-    this.showToaster("All Messages Unarchived!", "", ToasterOptions.TYPE.GRADIENT_PRIMARY);
+    this.showToast("All Messages Unarchived!", "", ToasterOptions.TYPE.GRADIENT_PRIMARY);
   }
 
   // To Reset Wallet
@@ -82,8 +82,8 @@ export default class SettingsScreen extends Component {
   }
 
   // TO SHOW TOASTER
-  showToaster = (msg, icon, type) => {
-    this.refs.Toaster.showToaster(msg, icon, type);
+  showToast = (msg, icon, type, tapCB, screenTime) => {
+    this.refs.Toaster.showToast(msg, icon, type, tapCB, screenTime);
   }
 
   // RENDER

@@ -26,8 +26,6 @@ export default class FeedItemWrapper extends Component {
     super(props);
 
     this.state = {
-      itemid: null,
-      itemstartdate: null,
       deleting: false,
       scale: new Animated.Value(100),
       height: null,
@@ -35,31 +33,18 @@ export default class FeedItemWrapper extends Component {
 
       fader: new Animated.Value(0),
 
-      hidden: false,
       collapsing: false,
+      undo: false,
     }
   }
 
   // COMPONENT MOUNTED
   componentDidMount() {
-    this.setState({
-      itemid: this.props.item.id,
-      itemstartdate: this.props.item.startDate
-    });
+
   }
 
   // COMPONENT UPDATED
   componentDidUpdate(prevProps) {
-    // Check and update props here
-    if (
-        this.props.item.id !== prevProps.item.id
-        || this.props.item.startDate !== prevProps.item.startDate
-      ) {
-      this.setState({
-        itemid: this.props.item.id,
-        itemstartdate: this.props.item.startDate
-      });
-    }
   }
 
   // LAYOUT CHANGE
@@ -100,14 +85,18 @@ export default class FeedItemWrapper extends Component {
       this.refs.SwipeRight.close();
 
       // Show Toast
-      showToast("Error Archiving Notification", ToasterOptions.TYPE.GRADIENT_PRIMARY);
+      this.props.showToast("Error Archiving Notification", '', ToasterOptions.TYPE.GRADIENT_PRIMARY);
       // console.log(err);
     });
   }
 
-  onSwipeableWillClose = () => {
-    if (this.state.deleting) {
-      this.refs.SwipeRight.openRight();
+  onSwipeableClose = () => {
+    if (this.state.undo == true) {
+      this.setState({
+        undo: false,
+        collapsing: false,
+        deleting: false,
+      })
     }
   }
 
@@ -122,17 +111,28 @@ export default class FeedItemWrapper extends Component {
         duration: 250,
         // useNativeDriver: true, // No support for height
       }).start(() => {
-        this.setState({
-          hidden: true,
-        })
-
         // Perform Event Edited Callback
         if (itemArchivedFunc) {
           itemArchivedFunc(nid);
         }
       });
     })
+  }
 
+  // To uncollapse
+  uncollapseHeight = () => {
+    this.setState({
+      undo: true,
+    }, () => {
+      Animated.timing(this.state.height, {
+        toValue: this.state.adjustedH,
+        easing: Easing.easeInOut,
+        duration: 250,
+        // useNativeDriver: true, // No support for height
+      }).start(() => {
+        this.refs.SwipeRight.close();
+      });
+    })
   }
 
   // Render Right Sliding Action
@@ -215,15 +215,15 @@ export default class FeedItemWrapper extends Component {
       privateKey,
     } = this.props;
 
-    let displayStyle = {};
-    if (item["hidden"] || this.state.hidden) {
-      displayStyle.display = 'none';
-    }
-
     let scale = 0;
     let translateY = 0;
     let fade = 0;
     let height = undefined;
+
+    if (item["hidden"] == 1) {
+      height = 0;
+      fade = 0;
+    }
 
     if (this.state.height) {
       scale = this.state.height.interpolate({
@@ -251,6 +251,7 @@ export default class FeedItemWrapper extends Component {
 
     return (
       <Swipeable
+        style={styles.swipeContainer}
         ref="SwipeRight"
         renderRightActions={this.renderRightActions}
         onSwipeableRightWillOpen={this.onSwipeableRightWillOpen}
@@ -260,11 +261,11 @@ export default class FeedItemWrapper extends Component {
           itemArchived,
           showToast
         )}
+        onSwipeableClose={this.onSwipeableClose}
       >
         <Animated.View
           style = {[
             styles.container,
-            displayStyle,
             {
               height: height,
               opacity: fade,
@@ -296,11 +297,11 @@ export default class FeedItemWrapper extends Component {
 
 const styles = StyleSheet.create({
   swipeContainer: {
+
   },
   container: {
-    alignItems: 'center',
     marginHorizontal: 20,
-    marginVertical: 15,
+    alignItems: 'center',
     shadowColor: GLOBALS.COLORS.BLACK,
     shadowOffset: {
     	width: 0,
@@ -335,7 +336,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   actionActivity: {
-    marginBottom: 5,
   },
   actionText: {
     color: GLOBALS.COLORS.WHITE,
