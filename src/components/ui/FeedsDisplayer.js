@@ -43,6 +43,8 @@ export default class FeedsDisplayer extends Component {
       loadedImages: [],
       renderGallery: false,
       startFromIndex: 0,
+
+      lastHiddenItemNid: -1,
     }
 
     this._db = null;
@@ -110,8 +112,8 @@ export default class FeedsDisplayer extends Component {
 
     let visibleItemCount = this.state.visibleItemCount;
     let totalCount = 0;
-    let forwardNid = -1;
-    let backwardNid = -1;
+    let forwardNid = this.state.forwardNid;
+    let backwardNid = this.state.backwardNid;
 
     const fNid = this.state.forwardNid;
     const bNid = this.state.backwardNid;
@@ -137,7 +139,7 @@ export default class FeedsDisplayer extends Component {
         }
       }
 
-      if (totalCount == 0) {
+      if (totalCount == 0 && itemValid) {
         forwardNid = item["nid"];
       }
       backwardNid = item["nid"];
@@ -156,9 +158,9 @@ export default class FeedsDisplayer extends Component {
 
     const newBackwardPointer = this.state.backwardPointer + totalCount;
     // console.log("ForwardPointer: " + newForwardPointer);
-    // console.log("Forward NID: " + fNid);
+    // console.log("Forward NID: " + forwardNid);
     // console.log("BackwardPointer: " + newBackwardPointer);
-    // console.log("Backward NID: " + bNid);
+    // console.log("Backward NID: " + backwardNid);
     // console.log("limit: " + limit);
     // console.log("is Historical: " + isHistorical);
 
@@ -210,8 +212,11 @@ export default class FeedsDisplayer extends Component {
 
   // Archive an item
   archiveItem = (nid) => {
+    return;
+    
     this.setState({
       visibleItemCount: this.state.visibleItemCount - 1,
+      lastHiddenItemNid: nid,
       // items: this.state.items.filter(i => i["nid"] !== nid) // don't remove so it's better after unarchive
     });
 

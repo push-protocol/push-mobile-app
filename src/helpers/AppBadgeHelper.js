@@ -3,7 +3,7 @@ import {
   Platform
 } from 'react-native';
 
-import { Notifications } from 'expo';
+// import { Notifications } from 'expo';
 
 import GLOBALS from 'src/Globals';
 
@@ -16,7 +16,7 @@ const AppBadgeHelper = {
   // To Set App Badge Count
   setAppBadgeCount: async (badgeNumber) => {
     if (Platform.OS ===  "ios") {
-      await Notifications.setBadgeNumberAsync(badgeNumber);
+       // await Notifications.setBadgeNumberAsync(badgeNumber);
     }
   },
   registerForPushNotificationsAsync: async () => {

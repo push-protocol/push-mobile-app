@@ -67,6 +67,11 @@ export default class HomeScreen extends Component {
 
   }
 
+  // COMPONENT UNMOUNTED
+  componentWillUnmount() {
+    
+  }
+
   // COMPONENT LOADED
   // Run as soon as loaded
   maintainer = async () => {

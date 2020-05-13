@@ -203,7 +203,7 @@ export default class FeedItem extends Component {
 
     return (
       <TouchableOpacity
-        style={[ styles.container ]}
+        style={[ styles.container, style ]}
         onPress={() => this.onPress(this.state.cta, showToast)}
         disabled={!ctaEnabled}
       >

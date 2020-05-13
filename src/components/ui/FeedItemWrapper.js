@@ -30,9 +30,13 @@ export default class FeedItemWrapper extends Component {
       itemstartdate: null,
       deleting: false,
       scale: new Animated.Value(100),
-      layourHeight: 0,
+      height: null,
+      adjustedH: 0,
+
+      fader: new Animated.Value(0),
 
       hidden: false,
+      collapsing: false,
     }
   }
 
@@ -54,6 +58,25 @@ export default class FeedItemWrapper extends Component {
       this.setState({
         itemid: this.props.item.id,
         itemstartdate: this.props.item.startDate
+      });
+    }
+  }
+
+  // LAYOUT CHANGE
+  findDimensions = (layout) => {
+    const {height} = layout;
+
+    if (this.state.adjustedH < height) {
+      this.setState({
+        adjustedH: height,
+        height: new Animated.Value(0),
+      }, () => {
+        Animated.timing(this.state.height, {
+          toValue: height,
+          easing: Easing.easeInOut,
+        	duration: 250,
+          // useNativeDriver: true, // No support for height
+        }).start();
       });
     }
   }
@@ -90,35 +113,50 @@ export default class FeedItemWrapper extends Component {
 
   // Animated Height Collapse
   animateHeightCollapse = (nid, itemArchivedFunc) => {
-    Animated.timing(this.state.scale, {
-      toValue: 0,
-      easing: Easing.easeInOut,
-      duration: 250,
-      seNativeDriver: true,
-    }).start(() => {
-      this.setState({
-        hidden: true,
-      })
+    this.setState({
+      collapsing: true,
+    }, () => {
+      Animated.timing(this.state.height, {
+        toValue: 0,
+        easing: Easing.easeInOut,
+        duration: 250,
+        // useNativeDriver: true, // No support for height
+      }).start(() => {
+        this.setState({
+          hidden: true,
+        })
 
-      // Perform Event Edited Callback
-      if (itemArchivedFunc) {
-        itemArchivedFunc(nid);
-      }
-    });
+        // Perform Event Edited Callback
+        if (itemArchivedFunc) {
+          itemArchivedFunc(nid);
+        }
+      });
+    })
+
   }
 
   // Render Right Sliding Action
   renderRightActions = (progress, dragX) => {
-    const scale = dragX.interpolate({
+    const scaleIcon = dragX.interpolate({
       inputRange: [-200, 0],
       outputRange: [1, 0.4],
       extrapolate: 'clamp',
     });
+    //
+    // const transXIcon = dragX.interpolate({
+    //   inputRange: [0, 50, 100, 101],
+    //   outputRange: [5, 0, 0, 1],
+    // });
 
-    const trans = dragX.interpolate({
-      inputRange: [0, 50, 100, 101],
-      outputRange: [-5, 0, 0, 1],
-    });
+    let scale = 0;
+
+    if (this.state.height) {
+      scale = this.state.height.interpolate({
+        inputRange: [0, this.state.adjustedH],
+        outputRange: [0, 1],
+        extrapolate: 'clamp'
+      });
+    }
 
     return (
       <View
@@ -131,13 +169,11 @@ export default class FeedItemWrapper extends Component {
                   {
                     transform: [
                       {
-                        scale: this.state.scale.interpolate({
-                                  inputRange: [0, 25, 50, 75, 100],
-                                  outputRange: [0, .5, 0.75, 0.9, 1]
-                                })
+                        scale: scale
                       },
                     ]
                   }
+
                 ]}
 
               >
@@ -151,7 +187,7 @@ export default class FeedItemWrapper extends Component {
                 {
                   transform: [
                     {
-                      scale: scale
+                      scale: scaleIcon
                     }
                   ],
 
@@ -184,6 +220,35 @@ export default class FeedItemWrapper extends Component {
       displayStyle.display = 'none';
     }
 
+    let scale = 0;
+    let translateY = 0;
+    let fade = 0;
+    let height = undefined;
+
+    if (this.state.height) {
+      scale = this.state.height.interpolate({
+        inputRange: [0, this.state.adjustedH],
+        outputRange: [0.6, 1],
+        extrapolate: 'clamp'
+      });
+
+      translateY = this.state.height.interpolate({
+        inputRange: [0.9, this.state.adjustedH],
+        outputRange: [-this.state.adjustedH * 0.75, 0],
+        extrapolate: 'clamp'
+      });
+
+      fade = this.state.height.interpolate({
+        inputRange: [0, this.state.adjustedH/2, this.state.adjustedH],
+        outputRange: [0, 0.1, 1],
+        extrapolate: 'clamp'
+      });
+    }
+
+    if (this.state.collapsing) {
+      height = this.state.height;
+    }
+
     return (
       <Swipeable
         ref="SwipeRight"
@@ -201,16 +266,19 @@ export default class FeedItemWrapper extends Component {
             styles.container,
             displayStyle,
             {
+              height: height,
+              opacity: fade,
               transform: [
                 {
-                  scale: this.state.scale.interpolate({
-                            inputRange: [0, 25, 50, 75, 100],
-                            outputRange: [0, .5, 0.75, 0.9, 1]
-                          })
+                  scale: scale
+                },
+                {
+                  translateY: translateY,
                 }
               ]
             }
           ]}
+          onLayout = {(event) => { this.findDimensions(event.nativeEvent.layout) }}
         >
           <FeedItem
 

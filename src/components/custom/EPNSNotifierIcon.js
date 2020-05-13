@@ -112,7 +112,7 @@ export default class EPNSNotifierIcon extends Component {
 
     let onPressFunc = onPress;
     let disabled = false;
-    if (!onPressFunc || this.state.badge == 0) {
+    if (!onPressFunc) {
       onPressFunc = null;
       disabled = true;
     }
