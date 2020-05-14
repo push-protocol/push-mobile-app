@@ -93,11 +93,6 @@ export default class HomeScreen extends Component {
 
   // Run After Transition is finished
   afterTransitionMaintainer = async () => {
-
-    // Get Wallet
-    // const wallet = this.props.route.params.wallet;
-    // Notify.instance.associateToken(wallet); // While an async function, there is no need to wait
-
     // Trigger Notification Update
     await this.onNotificationListenerUpdate();
 
@@ -113,6 +108,15 @@ export default class HomeScreen extends Component {
 
     // Refresh feed automatically
     await this.refreshFeeds();
+
+
+    // Finally associate token to server if not done
+    const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
+    const privateKey = this.props.route.params.pkey;
+
+    // While an async function, there is no need to wait
+    ServerHelper.associateTokenToServer(publicKey, privateKey);
+
   }
 
   // Component Unmounted
@@ -131,13 +135,6 @@ export default class HomeScreen extends Component {
 
   // To refresh the Feeds
   refreshFeeds = async () => {
-    // Associate token to server if not done
-    const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
-    const privateKey = this.props.route.params.pkey;
-
-    // While an async function, there is no need to wait
-    ServerHelper.associateTokenToServer(publicKey, privateKey);
-
     //this.refs.FeedsDisplayer.resetFeedState();
     await this.refs.FeedsDisplayer.triggerGetItemsFromDB();
   }

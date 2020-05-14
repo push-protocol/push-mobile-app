@@ -6,6 +6,7 @@ import messaging from '@react-native-firebase/messaging';
 
 import MetaStorage from 'src/singletons/MetaStorage';
 import CryptoHelper from 'src/helpers/CryptoHelper';
+import Notify from "src/singletons/Notify";
 
 import ENV_CONFIG from 'src/env.config';
 import GLOBALS from 'src/Globals';
@@ -106,7 +107,7 @@ const ServerHelper = {
     messaging()
       .getToken()
       .then(token => {
-        this.saveDeviceToken(token);
+        Notify.instance.saveDeviceToken(token);
       });
 
     // Reset Push Notifications
