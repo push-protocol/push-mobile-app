@@ -3,7 +3,7 @@ import React from 'react';
 import { AppRegistry } from 'react-native';
 
 import messaging from '@react-native-firebase/messaging';
-import Notifications from 'src/singletons/Notify';
+import Notify from 'src/singletons/Notify';
 
 import App from './App';
 
@@ -11,7 +11,7 @@ import App from './App';
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   return new Promise(async (resolve, reject) => {
     //console.log('Message handled in the background!', remoteMessage);
-    await Notifications.instance.handleIncomingPushAppInBG(remoteMessage);
+    await Notify.instance.handleIncomingPushAppInBG(remoteMessage);
 
     resolve(true);
   });

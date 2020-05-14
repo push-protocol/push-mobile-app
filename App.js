@@ -23,10 +23,10 @@ import PushNotifyScreen from "src/screens/PushNotifyScreen";
 import SetupCompleteScreen from "src/screens/SetupCompleteScreen";
 
 import MetaStorage from "src/singletons/MetaStorage";
-import Notifications from "src/singletons/Notify";
+import Notify from "src/singletons/Notify";
 
 import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
-import ENV_CONFIG from 'root/env.config';
+import ENV_CONFIG from 'src/env.config';
 import GLOBALS from 'src/Globals';
 
 // Assign console.log to nothing
@@ -48,27 +48,27 @@ export default function App({ navigation }) {
   React.useEffect(() => {
     // PUSH NOTIFICATIONS HANDLING
     // Request Device Token and save it user is signed in
-    Notifications.instance.requestDeviceToken(true);
+    Notify.instance.requestDeviceToken(true);
 
     // Listen to whether the token changes
     const onTokenRefresh = messaging().onTokenRefresh(token => {
-      Notifications.instance.saveDeviceToken(token);
+      Notify.instance.saveDeviceToken(token);
     });
 
     // Listen for incoming messages
     const handleForegroundPush = messaging().onMessage(async remoteMessage => {
-      Notifications.instance.handleIncomingPushAppOpened(remoteMessage);
+      Notify.instance.handleIncomingPushAppOpened(remoteMessage);
     });
 
     messaging().onNotificationOpenedApp(remoteMessage => {
-      Notifications.instance.triggerNotificationListenerCallback();
+      Notify.instance.triggerNotificationListenerCallback();
     });
 
     messaging()
       .getInitialNotification()
       .then(remoteMessage => {
         if (remoteMessage) {
-          Notifications.instance.triggerNotificationListenerCallback();
+          Notify.instance.triggerNotificationListenerCallback();
         }
       });
 
@@ -87,7 +87,7 @@ export default function App({ navigation }) {
     //   .getInitialNotification()
     //   .then(remoteMessage => {
     //     if (remoteMessage) {
-    //       Notifications.instance.triggerNotificationListenerCallback();
+    //       Notify.instance.triggerNotificationListenerCallback();
     //     }
     //   });
   }, []);

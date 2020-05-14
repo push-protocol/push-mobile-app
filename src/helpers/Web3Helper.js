@@ -3,7 +3,7 @@ import Web3 from 'web3';
 
 import MetaStorage from 'src/singletons/MetaStorage';
 
-import ENV_CONFIG from 'root/env.config';
+import ENV_CONFIG from 'src/env.config';
 
 // Web3 Helper Function
 const Web3Helper = {

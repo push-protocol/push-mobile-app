@@ -158,7 +158,7 @@ export default class FeedItem extends Component {
     // CTA can be determined for the view since even encrypted, it will have some string
     let ctaBorderEnabled = true;
     let cta = item["acta"];
-
+    
     if (!cta || cta === "") {
       ctaBorderEnabled = false;
     }
@@ -226,46 +226,49 @@ export default class FeedItem extends Component {
         <View style={styles.inner}>
 
           <View style={styles.header}>
-            <TouchableOpacity
-              style={[ styles.appInfo ]}
-              onPress={() => this.onPress(item["url"], showToast)}
-              disabled={(!item["url"] || item["url"] === "") ? true : false}
-            >
-              <ImageDownloadWithIndicator
-                style={styles.appicon}
-                fileURL={internalBot ? '' : iconURL}
-                imgsrc={internalBot ? iconURL : false}
-                miniProgressLoader={true}
-                margin={2}
-                resizeMode="contain"
-              />
-              <Text
-                style={styles.apptext}
-                numberOfLines={1}
+            <View style={styles.appinfo}>
+              <TouchableOpacity
+                style={[ styles.appLink ]}
+                onPress={() => this.onPress(item["url"], showToast)}
+                disabled={(!item["url"] || item["url"] === "") ? true : false}
               >
-                {item["app"]}
-              </Text>
-              {
-                addSecretIcon == false
-                  ? null
-                  : <View
-                      style={styles.appsecret}
+                <ImageDownloadWithIndicator
+                  style={styles.appicon}
+                  fileURL={internalBot ? '' : iconURL}
+                  imgsrc={internalBot ? iconURL : false}
+                  miniProgressLoader={true}
+                  margin={2}
+                  resizeMode="contain"
+                />
+                <Text
+                  style={styles.apptext}
+                  numberOfLines={1}
+                >
+                  {item["app"]}
+                </Text>
+              </TouchableOpacity>
+
+            </View>
+            {
+              addSecretIcon == false
+                ? null
+                : <View
+                    style={styles.appsecret}
+                  >
+                    <LinearGradient
+                      colors={[
+                        GLOBALS.COLORS.GRADIENT_PRIMARY,
+                        GLOBALS.COLORS.GRADIENT_SECONDARY,
+                      ]}
+                      style={[
+                        styles.cover,
+                      ]}
+                      start={[0.1, 0.3]}
+                      end={[1, 1]}
                     >
-                      <LinearGradient
-                        colors={[
-                          GLOBALS.COLORS.GRADIENT_PRIMARY,
-                          GLOBALS.COLORS.GRADIENT_SECONDARY,
-                        ]}
-                        style={[
-                          styles.cover,
-                        ]}
-                        start={[0.1, 0.3]}
-                        end={[1, 1]}
-                      >
-                      </LinearGradient>
-                    </View>
+                    </LinearGradient>
+                  </View>
               }
-            </TouchableOpacity>
           </View>
 
           <View style={[ styles.content ]}>
@@ -347,13 +350,18 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     paddingHorizontal: 10,
     backgroundColor: GLOBALS.COLORS.SLIGTER_GRAY,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderColor: GLOBALS.COLORS.SLIGHT_GRAY,
   },
   appInfo: {
-    flex: 0,
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: 'red',
+  },
+  appLink: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -370,7 +378,6 @@ const styles = StyleSheet.create({
     backgroundColor: GLOBALS.COLORS.SLIGHT_GRAY,
   },
   apptext: {
-    flex: 1,
     marginRight: 10,
     marginLeft: 5,
     fontSize: 12,

@@ -92,8 +92,8 @@ export default class HomeScreen extends Component {
   // Run After Transition is finished
   afterTransitionMaintainer = async () => {
     // Get Wallet
-    const wallet = this.props.route.params.wallet;
-    Notify.instance.associateToken(wallet); // While an async function, there is no need to wait
+    // const wallet = this.props.route.params.wallet;
+    // Notify.instance.associateToken(wallet); // While an async function, there is no need to wait
 
     // Trigger Notification Update
     await this.onNotificationListenerUpdate();
@@ -125,6 +125,10 @@ export default class HomeScreen extends Component {
 
   // To refresh the Feeds
   refreshFeeds = async () => {
+    // const wallet = this.props.route.params.wallet;
+    // Notify.instance.associateToken(wallet); // While an async function, there is no need to wait
+    // console.log("here");
+    //
     //this.refs.FeedsDisplayer.resetFeedState();
     await this.refs.FeedsDisplayer.triggerGetItemsFromDB();
   }

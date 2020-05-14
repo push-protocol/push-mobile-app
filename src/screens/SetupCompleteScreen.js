@@ -130,6 +130,10 @@ export default class SetupCompleteScreen extends Component {
     const plainSecret = "EPNSRocks!";
     const encryptedSecret = await CryptoHelper.encryptWithECIES(plainSecret, privateKey);
 
+    // console.log(encryptedSecret);
+    // const dec = await CryptoHelper.decryptWithECIES(encryptedSecret, privateKey);
+    // console.log(dec);
+
     let sub = "Secrets... shhh!!!";
     let msg = "The [default:coolest type] of messages are [third:secrets]. They are indicated by the [bolditalics:shush gradient] on the top left of the message box.\n\nThey are always [default:encrypted] and [bold:only you] can see them.";
     let cta = '';
@@ -139,8 +143,8 @@ export default class SetupCompleteScreen extends Component {
     secret = encryptedSecret;
     sub = CryptoHelper.encryptWithAES(sub, plainSecret);
     msg = CryptoHelper.encryptWithAES(msg, plainSecret);
-    cta = CryptoHelper.encryptWithAES(cta, plainSecret);
-    img = CryptoHelper.encryptWithAES(img, plainSecret);
+    cta = cta === '' ? cta : CryptoHelper.encryptWithAES(cta, plainSecret);
+    img = img === '' ? img : CryptoHelper.encryptWithAES(img, plainSecret);
 
     payload.secret = secret;
     payload.type = 2;

@@ -3,6 +3,7 @@ import messaging from '@react-native-firebase/messaging';
 import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 
+import ENV_CONFIG from 'src/env.config';
 import GLOBALS from 'src/Globals';
 
 // STATIC SINGLETON
@@ -62,7 +63,40 @@ export default class Notify {
 
     if (!sentToServer) {
       // Send it to sever and set server flag as true
-      await MetaStorage.instance.setTokenServerSynced(true);
+      const token = await MetaStorage.instance.getPushToken();
+
+      if (token && token !== '') {
+        const endpoint = 'register/';
+        const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_PUSHTOKENS_REGISTER;
+
+        console.log("Basic Checks passed, sending request to " + apiURL);
+
+        fetch(apiURL, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              firstParam: 'yourValue',
+              secondParam: 'yourOtherValue'
+            })
+          })
+          .then((response) => response.json())
+          .then((responseJson) => {
+             console.log(responseJson);
+             // this.setState({
+             //    data: responseJson
+             // })
+          })
+          .catch((error) => {
+             console.error(error);
+          });
+
+      }
+
+
+      // await MetaStorage.instance.setTokenServerSynced(true);
     }
   }
 

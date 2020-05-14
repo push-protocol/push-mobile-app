@@ -43,10 +43,17 @@ const CryptoHelper = {
     const compressedKey = EthCrypto.publicKey.compress(publicKey);
 
     const encryptedSecret = await CryptoHelper.encryptWithPublicKey(message, compressedKey);
+
+    // Not using it since sqlite2 has some error with this
+    // const compressedEncryptedSecret = EthCrypto.hex.compress(encryptedSecret);
+
     return encryptedSecret;
   },
   // To Form Decrypted Secret, no more than 15 characters supported
   decryptWithECIES: async (message, privateKey) => {
+    // Message is always compressed, not using because sqlite2 has some error with this
+    //const uncompressedMessage = EthCrypto.hex.decompress(message).substr(2); // to remove 0x
+
     return await CryptoHelper.decryptWithPrivateKey(message, privateKey);
   },
   // Testing of Encryption and Decryption
@@ -202,7 +209,30 @@ const CryptoHelper = {
     console.log(CryptoHelper.decryptWithAES(actaE, secret));
     console.log("decrypted aimg --> ");
     console.log(CryptoHelper.decryptWithAES(aimgE, secret));
+  },
+  // To sign a message
+  signMessage: (message, privateKey) => {
+    const messageHash = EthCrypto.hash.keccak256(message);
+    const signature = EthCrypto.sign(
+        privateKey, // privateKey
+        messageHash // hash of message
+    );
+
+    // compress it as well
+    const compressedSign = EthCrypto.hex.compress(signature);
+    return compressedSign;
+  },
+  // To recover wallet from sign message and message to check
+  verifyAndRecoverWallet: (commpressedSign, messageToCheck) => {
+    const uncompressSign = EthCrypto.hex.message(compressedSign);
+
+    // message is always compressed, uncompress it
+    const signer = EthCrypto.recover(
+      uncompressSign, // uncompressed sign
+      EthCrypto.hash.keccak256(messageToCheck) // signed message hash
+    );
   }
+
 }
 
 export default CryptoHelper;
