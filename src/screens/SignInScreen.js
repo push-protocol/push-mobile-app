@@ -63,10 +63,10 @@ export default class SignInScreen extends Component {
       detailedInfoPresetned: false,
 
       fader: new Animated.Value(0),
-      pkey: '',
+      privateKey: '',
       wallet: '',
       ens: '',
-      pkeyVerified: false,
+      privateKeyVerified: false,
     }
   }
 
@@ -100,7 +100,7 @@ export default class SignInScreen extends Component {
   getCameraPermissionAsync = async (navigation) => {
     // Temp Remove Later
     const code = "0x789af986260800ff255a4e84311ec44de6efd7c595115e9176c77814652e668c";
-    this.onPKDetect(code);
+    this.onPrivateKeyDetect(code);
     return;
 
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
@@ -121,17 +121,17 @@ export default class SignInScreen extends Component {
   }
 
   // Detect PK Code
-  onPKDetect = (code) => {
+  onPrivateKeyDetect = (code) => {
     this.setState({
-      pkey: code,
+      privateKey: code,
     })
   }
 
   // Reset PK Code
-  resetPKey = () => {
+  resetPrivateKey = () => {
     this.setState({
-      pkey: '',
-      pkeyVerified: false,
+      privateKey: '',
+      privateKeyVerified: false,
 
       fader: new Animated.Value(0),
     }, () => {
@@ -150,7 +150,7 @@ export default class SignInScreen extends Component {
     this.setState({
       wallet: wallet,
       ens: ens,
-      pkeyVerified: true,
+      privateKeyVerified: true,
 
       fader: new Animated.Value(0),
     }, () => {
@@ -193,7 +193,7 @@ export default class SignInScreen extends Component {
 
     // Goto Next Screen
     this.props.navigation.navigate('Biometric', {
-      privateKey: this.state.pkey,
+      privateKey: this.state.privateKey,
     });
   }
 
@@ -218,7 +218,7 @@ export default class SignInScreen extends Component {
           <Text style={styles.header}>Sign In!</Text>
           <View style={styles.inner}>
             {
-              this.state.pkey === ''
+              this.state.privateKey === ''
                 ? <DetailedInfoPresenter
                     style={styles.intro}
                     icon={require('assets/ui/wallet.png')}
@@ -243,15 +243,15 @@ export default class SignInScreen extends Component {
                   />
                 : <PKProfileBuilder
                     style={styles.profile}
-                    forPKey={this.state.pkey}
-                    resetFunc={() => {this.resetPKey()}}
+                    forPrivateKey={this.state.privateKey}
+                    resetFunc={() => {this.resetPrivateKey()}}
                     profileInfoFetchedFunc={(wallet, ens) => {this.profileInfoFetched(wallet, ens)}}
                   />
             }
           </View>
           <Animated.View style={[ styles.footer, {opacity: this.state.fader} ]}>
             {
-              this.state.pkey === ''
+              this.state.privateKey === ''
                 ? <View style={styles.entryFooter}>
                     <PrimaryButton
                       iconFactory='Ionicons'
@@ -281,7 +281,7 @@ export default class SignInScreen extends Component {
                   </View>
                 : <View style={styles.verifyFooter}>
                     {
-                      this.state.pkeyVerified == false
+                      this.state.privateKeyVerified == false
                         ? null
                         : <React.Fragment>
                             <PrimaryButton
@@ -293,7 +293,7 @@ export default class SignInScreen extends Component {
                               fontColor={GLOBALS.COLORS.WHITE}
                               bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
                               disabled={false}
-                              onPress={() => {this.resetPKey()}}
+                              onPress={() => {this.resetPrivateKey()}}
                             />
                             <View style={styles.divider}></View>
 
@@ -323,7 +323,7 @@ export default class SignInScreen extends Component {
           ref='QRScanner'
           navigation={navigation}
           doneFunc={(code) => {
-            this.onPKDetect(code)
+            this.onPrivateKeyDetect(code)
           }}
           closeFunc={() => this.toggleQRScanner(false, navigation)}
         />
@@ -345,7 +345,7 @@ export default class SignInScreen extends Component {
           subtitle='Please enter the Private Key of your Wallet.'
           doneTitle='Verify!'
           doneFunc={(code) => {
-            this.onPKDetect(code)
+            this.onPrivateKeyDetect(code)
           }}
           closeTitle='Cancel'
           closeFunc={() => this.toggleTextEntryPrompt(false, true)}

@@ -55,6 +55,41 @@ export default class MetaStorage {
     }
   }
 
+  // PUSH TOKEN TO REMOVE IF ANY, TRIGGERS ON REFRESH TOKEN
+  getPushTokenToRemove = async () => {
+    try {
+      let token = await AsyncStorage.getItem(GLOBALS.STORAGE.PUSH_TOKEN_TO_REMOVE);
+
+      // Set Default Value
+      if (token == null) {
+        token = '';
+      }
+
+      return token;
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
+  }
+
+  setPushTokenToRemove = async (token) => {
+    try {
+      if (token == null) {
+        token = '';
+      }
+
+      await AsyncStorage.setItem(
+        GLOBALS.STORAGE.PUSH_TOKEN_TO_REMOVE,
+        token
+      );
+
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  }
+
   // PUSH TOKEN SENT TO SERVER FLAG
   getPushTokenSentToServerFlag = async () => {
     try {

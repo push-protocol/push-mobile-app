@@ -56,8 +56,8 @@ const CryptoHelper = {
 
     return await CryptoHelper.decryptWithPrivateKey(message, privateKey);
   },
-  // Testing of Encryption and Decryption
-  encryptionDecryptionTest: async (privateKey) => {
+  // Testing of Encryption and Decryption from Public to Private key
+  encryptionDecryptionPublicToPrivateTest: async (privateKey) => {
     const startTime = new Date();
     console.log("[ENCRYPTION / DECRYPTION TEST STARTED] - " + startTime);
 
@@ -65,12 +65,12 @@ const CryptoHelper = {
     const compressedKey = EthCrypto.publicKey.compress(publicKey); // is String
     //console.log(compressedKey);
 
-    const bytesCompKey = Uint8Array.from(compressedKey);
+    // const bytesCompKey = Uint8Array.from(compressedKey);
     //console.log(bytesCompKey);
 
     const msgToEncrypt = "PartialStringAS";
     const msg = await CryptoHelper.encryptWithPublicKey(msgToEncrypt, compressedKey);
-    console.log("Encryped Message:" + msg);
+    console.log("Encryped Message With compressed public key:" + msg);
 
     const encryptionTime = new Date().getTime() - startTime.getTime();
     console.log("[ENCRYPTION / DECRYPTION ENCRYPTION DONE] - " + encryptionTime / 1000 + " secs");
@@ -231,6 +231,22 @@ const CryptoHelper = {
       uncompressSign, // uncompressed sign
       EthCrypto.hash.keccak256(messageToCheck) // signed message hash
     );
+  },
+  // Helpers
+  // Get Public Key from Private Key
+  getPublicKeyFromPrivateKey: (privateKey) => {
+    return EthCrypto.publicKeyByPrivateKey(privateKey);
+  },
+  // To generate a random secret
+  generateRandomSecret: (length) => {
+     let result           = '';
+     let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+     let charactersLength = characters.length;
+     for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+     }
+
+     return result;
   }
 
 }

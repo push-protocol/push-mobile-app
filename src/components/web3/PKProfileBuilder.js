@@ -36,16 +36,16 @@ export default class PKProfileBuilder extends Component {
 
   // COMPONENT MOUNTED
   componentDidMount() {
-    this.prepareProfile(this.props.forPKey);
+    this.prepareProfile(this.props.forPrivateKey);
   }
 
   // FUNCTIONS
-  prepareProfile = async (forPKey) => {
+  prepareProfile = async (forPrivateKey) => {
     // Fetch Provider to use for Web3 and ENS
     const provider = Web3Helper.getWeb3Provider();
 
     // Get Wallet Address
-    const response = await Web3Helper.getWalletAddress(forPKey, provider);
+    const response = await Web3Helper.getWalletAddress(forPrivateKey, provider);
 
     if (response.success) {
       // Get Identicon And try to fetch ENS
@@ -86,7 +86,7 @@ export default class PKProfileBuilder extends Component {
   render() {
     const {
       style,
-      forPKey,
+      forPrivateKey,
       resetFunc,
       profileInfoFetchedFunc
     } = this.props;

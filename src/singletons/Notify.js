@@ -3,7 +3,6 @@ import messaging from '@react-native-firebase/messaging';
 import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 
-import ENV_CONFIG from 'src/env.config';
 import GLOBALS from 'src/Globals';
 
 // STATIC SINGLETON
@@ -38,78 +37,29 @@ export default class Notify {
         .then(token => {
           this.saveDeviceToken(token);
         });
-      }
+    }
   }
 
   // Save Device Token
-  saveDeviceToken = async (token) => {
-    // Add the token to the users datastore
-    console.log("Token Recieved:" + token);
+  saveDeviceToken = async (token, isRefreshToken) => {
+    // For Test sending
+    console.log("Token Recieved:" + token + "  |---| is Refresh Token: " + isRefreshToken);
+
+    // Get previous token
     const previousToken = await MetaStorage.instance.getPushToken();
 
-    if (previousToken !== token) {
+    if (previousToken !== token || isRefreshToken) {
+      if (isRefreshToken) {
+        // Set the previous token
+        await MetaStorage.instance.setPushTokenToRemove(previousToken);
+      }
+
       // This is a new token, save it
       await MetaStorage.instance.setPushToken(token);
 
       // Also flag for server
       await MetaStorage.instance.setTokenServerSynced(false);
     }
-  }
-
-  // Associate Token
-  associateToken = async () => {
-    // Associate token with server
-    const sentToServer = await MetaStorage.instance.getPushTokenSentToServerFlag();
-
-    if (!sentToServer) {
-      // Send it to sever and set server flag as true
-      const token = await MetaStorage.instance.getPushToken();
-
-      if (token && token !== '') {
-        const endpoint = 'register/';
-        const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_PUSHTOKENS_REGISTER;
-
-        console.log("Basic Checks passed, sending request to " + apiURL);
-
-        fetch(apiURL, {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              firstParam: 'yourValue',
-              secondParam: 'yourOtherValue'
-            })
-          })
-          .then((response) => response.json())
-          .then((responseJson) => {
-             console.log(responseJson);
-             // this.setState({
-             //    data: responseJson
-             // })
-          })
-          .catch((error) => {
-             console.error(error);
-          });
-
-      }
-
-
-      // await MetaStorage.instance.setTokenServerSynced(true);
-    }
-  }
-
-  // Disassociate Generated Token
-  dissaociateToken = async (wallet) => {
-    // Dissassociate token with server
-    // Reset Push Notifications
-    await MetaStorage.instance.setTokenServerSynced(false);
-    await MetaStorage.instance.setPushToken('');
-    await MetaStorage.instance.setCurrentAndPreviousBadgeCount(0, 0);
-
-    // Set Token Server Status as False
-    await MetaStorage.instance.setTokenServerSynced(false);
   }
 
   // Handle incoming notification Foreground

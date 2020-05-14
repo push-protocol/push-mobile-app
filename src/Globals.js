@@ -18,6 +18,7 @@ export default {
     HASHED_PASSCODE: 'HashedPasscode',
 
     PUSH_TOKEN: 'PushToken',
+    PUSH_TOKEN_TO_REMOVE: 'PushTokenToRemove',
     PUSH_TOKEN_SERVER_SYNCED: 'PushTokenServerSynced',
     PUSH_BADGE_COUNT: 'PushBadgeCount',
     PUSH_BADGE_COUNT_PREVIOUS: 'PreviousPushBadgeCount',

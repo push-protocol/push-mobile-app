@@ -52,7 +52,7 @@ export default function App({ navigation }) {
 
     // Listen to whether the token changes
     const onTokenRefresh = messaging().onTokenRefresh(token => {
-      Notify.instance.saveDeviceToken(token);
+      Notify.instance.saveDeviceToken(token, true); // true means it's a refresh
     });
 
     // Listen for incoming messages

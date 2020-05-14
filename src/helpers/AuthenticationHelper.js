@@ -3,6 +3,7 @@ import * as Keychain from 'react-native-keychain';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import Web3Helper from 'src/helpers/Web3Helper';
 import FeedDBHelper from 'src/helpers/FeedDBHelper';
+import ServerHelper from 'src/helpers/ServerHelper';
 
 import Notify from 'src/singletons/Notify';
 import MetaStorage from 'src/singletons/MetaStorage';
@@ -70,7 +71,7 @@ const AuthenticationHelper = {
   _removeDataOfUser: async () => {
     // First pull the wallet info to disassociate token
     const wallet = await MetaStorage.instance.getStoredWallet();
-    await Notify.instance.dissaociateToken(wallet.wallet); // takes care of deleting push as well
+    await ServerHelper.dissaociateTokenFromServer(wallet.wallet); // takes care of deleting push as well
 
     // Destroy Keychain
     await Keychain.resetGenericPassword();

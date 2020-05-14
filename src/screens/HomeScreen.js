@@ -3,6 +3,7 @@ import {
   View,
   Text,
   InteractionManager,
+  Platform,
   StyleSheet,
 } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
@@ -20,16 +21,17 @@ import OverlayBlur from 'src/components/modals/OverlayBlur';
 
 import { ToasterOptions, Toaster } from 'src/components/indicators/Toaster';
 
+import CryptoHelper from 'src/helpers/CryptoHelper';
 import FeedDBHelper from "src/helpers/FeedDBHelper";
-import Notify from "src/singletons/Notify";
 import AppBadgeHelper from "src/helpers/AppBadgeHelper";
+import ServerHelper from "src/helpers/ServerHelper";
+
+import Notify from "src/singletons/Notify";
 import MetaStorage from 'src/singletons/MetaStorage';
 import Utilities from "src/singletons/Utilities";
 
 import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
 import GLOBALS from 'src/Globals';
-
-import CryptoHelper from 'src/helpers/CryptoHelper';
 
 function ScreenFinishedTransition({ runAfterScreenTransition }) {
   useFocusEffect(
@@ -91,6 +93,7 @@ export default class HomeScreen extends Component {
 
   // Run After Transition is finished
   afterTransitionMaintainer = async () => {
+
     // Get Wallet
     // const wallet = this.props.route.params.wallet;
     // Notify.instance.associateToken(wallet); // While an async function, there is no need to wait
@@ -101,6 +104,9 @@ export default class HomeScreen extends Component {
     // First sign in by user
     const firstSignIn = await MetaStorage.instance.getFirstSignInByUser();
     if (firstSignIn) {
+      // Request new device token
+      await Notify.instance.requestDeviceToken(true);
+
       // Set it to false for future
       await MetaStorage.instance.setFirstSignInByUser(false);
     }
@@ -125,10 +131,13 @@ export default class HomeScreen extends Component {
 
   // To refresh the Feeds
   refreshFeeds = async () => {
-    // const wallet = this.props.route.params.wallet;
-    // Notify.instance.associateToken(wallet); // While an async function, there is no need to wait
-    // console.log("here");
-    //
+    // Associate token to server if not done
+    const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
+    const privateKey = this.props.route.params.pkey;
+
+    // While an async function, there is no need to wait
+    ServerHelper.associateTokenToServer(publicKey, privateKey);
+
     //this.refs.FeedsDisplayer.resetFeedState();
     await this.refs.FeedsDisplayer.triggerGetItemsFromDB();
   }
