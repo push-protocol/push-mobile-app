@@ -4,7 +4,6 @@ import {
   View,
   Text,
   Image,
-  ActivityIndicator,
   TouchableWithoutFeedback,
   TouchableOpacity,
 } from 'react-native';
@@ -17,6 +16,8 @@ import DownloadHelper from 'src/helpers/DownloadHelper';
 
 import GLOBALS from 'src/Globals';
 
+const MAX_ATTEMPTS = 3;
+
 export default class ImageDownloadWithIndicator extends Component {
   // CONSTRUCTOR
   constructor(props) {
@@ -27,6 +28,9 @@ export default class ImageDownloadWithIndicator extends Component {
       downloading: true,
       downloadProgress: 0,
       fileURI: '',
+
+      attemptNumber: 0,
+      defaulted: false,
     }
 
     // Set Mounted
@@ -91,15 +95,29 @@ export default class ImageDownloadWithIndicator extends Component {
       // console.log("File Exists on: |" + localFileURI + "|");
     }
     else {
-      if (this._isMounted) {
-          this.setState({
-            indicator: false,
-            downloading: true,
-            downloadProgress: 0,
-          });
-        }
+      if (this.state.attemptNumber <= MAX_ATTEMPTS) {
+        if (this._isMounted) {
+            this.setState({
+              indicator: false,
+              downloading: true,
+              downloadProgress: 0,
+              attemptNumber: this.state.attemptNumber + 1,
+            });
+          }
 
-      await this.startDownload(fileURL);
+        await this.startDownload(fileURL);
+      }
+      else {
+        // Image can't be retrieved, Display bad image
+        this.setState({
+          indicator: false,
+          downloading: false,
+          downloadProgress: '100%',
+          fileURI: require('assets/ui/frownface.png'),
+          defaulted: true,
+        });
+      }
+
     }
   }
 
@@ -171,6 +189,11 @@ export default class ImageDownloadWithIndicator extends Component {
       contentContainerStyle.margin = margin;
     }
 
+    let modifiedResizeMode = resizeMode;
+    if (this.state.defaulted) {
+      modifiedResizeMode = "center";
+    }
+
     return (
       <TouchableWithoutFeedback
         style = {[ styles.container ]}
@@ -185,10 +208,9 @@ export default class ImageDownloadWithIndicator extends Component {
           <View style = {[ styles.contentContainer, contentContainerStyle]}>
           {
             this.state.indicator
-              ? <ActivityIndicator
-                  style = {styles.activity}
-                  size = "large"
-                  color = {GLOBALS.COLORS.BLACK}
+              ? <EPNSActivity
+                  style={styles.activity}
+                  size="small"
                 />
               : this.state.downloading
                 ? <View style = {styles.downloading}>
@@ -209,11 +231,11 @@ export default class ImageDownloadWithIndicator extends Component {
                         </ProgressCircle>
                       }
                   </View>
-                : imgsrc != false
+                : imgsrc != false || this.state.defaulted == true
                   ? <Image
                       style = {styles.image}
-                      source = {imgsrc}
-                      resizeMode = {resizeMode}
+                      source = {this.state.defaulted ? require('assets/ui/frownface.png') : imgsrc}
+                      resizeMode = {modifiedResizeMode}
                     />
                   : <Image
                       style = {styles.image}

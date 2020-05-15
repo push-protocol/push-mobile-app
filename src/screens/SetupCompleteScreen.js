@@ -180,8 +180,8 @@ export default class SetupCompleteScreen extends Component {
     await FeedDBHelper.addFeedFromPayloadObject(db, payload);
 
     // 2. About dApps
-    payload.sub = "About dApps";
-    payload.msg = "You will often get notifications from [bold:different dApps]. The [default:Top Section] of the message contains information about these dApps.\n\n[default:Clicking on it] will take you to their [bold:website].";
+    payload.sub = "About Channels";
+    payload.msg = "[default:Channels] represent your favorite [bold:dApps] or [bold:Smart Contracts]. You will often get notifications from different channels.\n\nThe [bold:top section] of the message contains information about these channels.\n\n[bold:Clicking on it] takes you to their [bold:website].";
     payload.cta = '';
     payload.img = '';
     payload.epoch = new Date().getTime();
@@ -241,7 +241,7 @@ export default class SetupCompleteScreen extends Component {
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title='Visit [url:app.epns.io||https://aap.epns.io] from a [bold:Web3 Enabled Browser] to subscribe to your favorite [bold:dApps] or [bold:Smart Contract].'
+                  title='Visit [url:app.epns.io||https://aap.epns.io] from a [bold:Web3 Enabled Browser] to subscribe to your favorite [default:dApp channels] and start recieving [bold:messages!]'
                 />
               </View>
             }
