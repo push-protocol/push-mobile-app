@@ -221,14 +221,14 @@ export default class HomeScreen extends Component {
               src={require('assets/ui/settings.png')}
               iconSize={24}
               onPress={() => {
-                // // Finally associate token to server if not done
-                // const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
-                // const privateKey = this.props.route.params.pkey;
-                //
-                // // While an async function, there is no need to wait
-                // ServerHelper.associateTokenToServer(publicKey, privateKey);
-                //
-                navigation.navigate('Settings', {});
+                // Finally associate token to server if not done
+                const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
+                const privateKey = this.props.route.params.pkey;
+                
+                // While an async function, there is no need to wait
+                ServerHelper.associateTokenToServer(publicKey, privateKey);
+
+                // navigation.navigate('Settings', {});
               }}
             />
           </View>

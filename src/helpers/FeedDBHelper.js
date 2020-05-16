@@ -75,13 +75,16 @@ const FeedDBHelper = {
 
     let response = [];
 
-    let order = 'DESC'; // Pulling latest feed item
+    // Prepare statement | Pulling forward
+    let order = 'DESC';
+    let query = `SELECT * FROM ${table} ORDER BY epoch ${order}, nid ${order} LIMIT ${numRows} OFFSET ${startIndex}`;
+
+    // Pulling history
     if (isHistorical) {
       order = 'ASC'; // Pulling history
+      query = `SELECT * FROM ${table} ORDER BY epoch ${order}, nid ${order} LIMIT ${numRows}, ${startIndex}`;
     }
 
-    // Prepare statement
-    const query = `SELECT * FROM ${table} ORDER BY epoch ${order}, nid ${order} LIMIT ${numRows} OFFSET ${startIndex}`;
     const res = await FeedDBHelper.runQuery(db, query, response);
 
     const feedItems = res.rows;

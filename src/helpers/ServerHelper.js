@@ -17,19 +17,20 @@ const ServerHelper = {
   associateTokenToServer: async (publicKey, privateKey) => {
     // Associate token with server
     const sentToServer = await MetaStorage.instance.getPushTokenSentToServerFlag();
+    const debug = 0;
 
-    if (!sentToServer) {
+    if (!sentToServer || debug) {
       const authResponse = await ServerHelper.getAuthTokenFromServer(publicKey);
-      //console.log(authResponse);
+      debug ? console.log(authResponse) : null;
 
       if (authResponse.success) {
         // Use private key to decrypt the password
         const secret = await CryptoHelper.decryptWithPrivateKey(authResponse.secret_enc, privateKey);
-        // console.log(secret);
+        debug ? console.log(secret) : null;
 
         // Send for registration
         const regResponse = await ServerHelper.registerDeviceTokenToServer(authResponse.server_token, secret);
-        //console.log(regResponse);
+        debug ? console.log(regResponse) : null;
 
         if (regResponse.success) {
           //console.log(regResponse);
@@ -101,8 +102,12 @@ const ServerHelper = {
   // Disassociate Generated Token from server, should not be talking to server, this
   // should be handled from the device itself
   dissaociateTokenFromServer: async (wallet) => {
-    // Dissassociate token with server | BUGGY react-native-firebase wasted my time
-    const response = await messaging().deleteToken()
+    // because of Firebase-react-native issue, call permissions again and again
+    // // Dissassociate token with server | BUGGY react-native-firebase wasted my time
+    // const response = await messaging().deleteToken()
+    //
+    // // because of Firebase-react-native issue, call permissions again and again
+    // await messaging().requestPermission();
 
     messaging()
       .getToken()

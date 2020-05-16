@@ -186,6 +186,11 @@ export default class FeedsDisplayer extends Component {
     // Feeds pulled after logic
     if (!isHistorical) {
       await MetaStorage.instance.setCurrentAndPreviousBadgeCount(0, 0);
+
+      // Check and move feed to top as well
+      this.refs.feedScroll.scrollToOffset({ animated: true, offset: 0 });
+    }
+    else {
     }
 
     // Show Toast
@@ -195,6 +200,7 @@ export default class FeedsDisplayer extends Component {
     }
     else {
       this.showToast("New Notifications Loaded!", "", ToasterOptions.TYPE.GRADIENT_PRIMARY);
+
     }
 
     // Do Feed Refresh callback if it exists
@@ -203,6 +209,13 @@ export default class FeedsDisplayer extends Component {
     }
 
     return true;
+  }
+
+  onEndReached = () => {
+    if(!this.state.feedEnded){
+      this.triggerGetItemsFromDB(true);
+      console.log("end reached");
+    }
   }
 
   // Perform some task to wait
@@ -305,6 +318,7 @@ export default class FeedsDisplayer extends Component {
       <View style={styles.container}>
         <SafeAreaView style={styles.container}>
           <FlatList
+            ref="feedScroll"
             style={styles.feedScrollContainer}
             refreshControl={
               <RefreshControl
@@ -355,6 +369,7 @@ export default class FeedsDisplayer extends Component {
                     />
                   </View>
             }
+            initialNumToRender={10}
           />
 
         </SafeAreaView>
