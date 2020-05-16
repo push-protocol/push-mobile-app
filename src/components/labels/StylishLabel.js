@@ -83,68 +83,68 @@ export default class CalendarEvents extends Component {
         onPress: this.handleEmailPress
       },
       {
-        pattern: /\[(url):([^\]]+)\]/i,
+        pattern: /\[(u):([^\]]+)\]/i, // url
         style: [styles.primary, styles.bold, styles.italics, styles.underline],
         onPress: this.handleUrlPress,
         renderText: this.renderThreeStyles
       },
       {
-        pattern: /\[(default):([^\]]+)\]/i,
+        pattern: /\[(d):([^\]]+)\]/i, // default or primary gradient color
         style: [styles.primary, styles.bold],
         renderText: this.renderStyles
       },
       {
-        pattern: /\[(secondary):([^\]]+)\]/i,
+        pattern: /\[(s):([^\]]+)\]/i, // secondary gradient color
         style: [styles.secondary, styles.bold],
         renderText: this.renderStyles
       },
       {
-        pattern: /\[(third):([^\]]+)\]/i,
+        pattern: /\[(t):([^\]]+)\]/i, // third gradient color
         style: [styles.third, styles.bold],
         renderText: this.renderStyles
       },
       {
-        pattern: /\[(error):([^\]]+)\]/i,
+        pattern: /\[(e):([^\]]+)\]/i, // error
         style: [styles.error, styles.bold],
         renderText: this.renderStyles
       },
       {
-        pattern: /\[(bold):([^\]]+)\]/i,
+        pattern: /\[(b):([^\]]+)\]/i, // bold
         style: styles.bold,
         renderText: this.renderStyles
       },
       {
-        pattern: /\[(italics):([^\]]+)\]/i,
+        pattern: /\[(i):([^\]]+)\]/i, // italics
         style: styles.italics,
         renderText: this.renderStyles
       },
       {
-        pattern: /\[(bolditalics):([^\]]+)\]/i,
+        pattern: /\[(bi):([^\]]+)\]/i, // bolditalics
         style: [styles.bold, styles.italics],
         renderText: this.renderStyles
       },
       {
-        pattern: /\[(white):([^\]]+)\]/i,
+        pattern: /\[(w):([^\]]+)\]/i, // white
         style: [styles.white],
         renderText: this.renderStyles
       },
       {
-        pattern: /\[(whitebold):([^\]]+)\]/i,
+        pattern: /\[(wb):([^\]]+)\]/i, // whitebold
         style: [styles.white, styles.bold],
         renderText: this.renderStyles
       },
       {
-        pattern: /\[(midgray):([^\]]+)\]/i,
+        pattern: /\[(mg):([^\]]+)\]/i, // midgray
         style: [styles.midgray],
         renderText: this.renderStyles
       },
       {
-        pattern: /\[(darkgray):([^\]]+)\]/i,
+        pattern: /\[(dg):([^\]]+)\]/i, // darkgray
         style: [styles.darkgray],
         renderText: this.renderStyles
       },
       {
-        pattern: /\[(darkergray):([^\]]+)\]/i,
+        pattern: /\[(ddg):([^\]]+)\]/i, // darker gray
         style: [styles.darkergray],
         renderText: this.renderStyles
       },

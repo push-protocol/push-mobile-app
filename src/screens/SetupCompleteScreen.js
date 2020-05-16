@@ -135,7 +135,7 @@ export default class SetupCompleteScreen extends Component {
     // console.log(dec);
 
     let sub = "Secrets... shhh!!!";
-    let msg = "The [default:coolest type] of messages are [third:secrets]. They are indicated by the [bolditalics:shush gradient] on the top left of the message box.\n\nThey are always [default:encrypted] and [bold:only you] can see them.";
+    let msg = "The [d:coolest type] of messages are [t:secrets]. They are indicated by the [bi:shush gradient] on the top left of the message box.\n\nThey are always [d:encrypted] and [b:only you] can see them.";
     let cta = '';
     let img = '';
     let epoch = new Date().getTime();
@@ -161,7 +161,7 @@ export default class SetupCompleteScreen extends Component {
 
     // 4. Notification Types
     payload.sub = "Nofications Types";
-    payload.msg = "Notifications are [bold:never boring] in EPNS.\n\nThe messages with [bold:blueish outlines] are links that the [bold:dApp] has provided you. \n\n[default:Tapping the message opens it.]";
+    payload.msg = "Notifications are [b:never boring] in EPNS.\n\nThe messages with [b:blueish outlines] are links that the [b:dApp] has provided you. \n\n[d:Tapping the message opens it.]";
     payload.cta = 'https://epns.io';
     payload.img = '';
     payload.epoch = new Date().getTime();
@@ -171,7 +171,7 @@ export default class SetupCompleteScreen extends Component {
 
     // 3. Ring the Bell
     payload.sub = "Ring the Bell";
-    payload.msg = "The [default:Bell] on the [bold:top right] keeps track of any incoming messages and will inform you about it.\n\nClicking on the [bold:bell] will update your feed [italics:(Alternatively, pull feed down to refresh)]";
+    payload.msg = "The [d:Bell] on the [b:top right] keeps track of any incoming messages and will inform you about it.\n\nClicking on the [b:bell] will update your feed [i:(Alternatively, pull feed down to refresh)]";
     payload.cta = '';
     payload.img = 'https://i.ibb.co/SvYGCY9/epnsappbellturorial.jpg';
     payload.epoch = new Date().getTime();
@@ -181,7 +181,7 @@ export default class SetupCompleteScreen extends Component {
 
     // 2. About dApps
     payload.sub = "About Channels";
-    payload.msg = "[default:Channels] represent your favorite [bold:dApps] or [bold:Smart Contracts]. You will often get notifications from different channels.\n\nThe [bold:top section] of the message contains information about these channels.\n\n[bold:Clicking on it] takes you to their [bold:website].";
+    payload.msg = "[d:Channels] represent your favorite [b:dApps] or [b:Smart Contracts]. You will often get notifications from different channels.\n\nThe [b:top section] of the message contains information about these channels.\n\n[b:Clicking on it] takes you to their [b:website].";
     payload.cta = '';
     payload.img = '';
     payload.epoch = new Date().getTime();
@@ -191,7 +191,7 @@ export default class SetupCompleteScreen extends Component {
 
     // 1. Welcome to EPNS
     payload.sub = "Welcome to EPNS";
-    payload.msg = "[bold:Greetings] fellow users! Welcome aboard!\n\nI am your personalized [default:App Bot] whose sole purpose is to guide you about the app.\n\nTo get started! [bold:Swipe Right to Archive this.]";
+    payload.msg = "[b:Greetings] fellow users! Welcome aboard!\n\nI am your personalized [d:App Bot] whose sole purpose is to guide you about the app.\n\nTo get started! [b:Swipe Right to Archive this.]";
     payload.cta = '';
     payload.img = '';
     payload.epoch = new Date().getTime();
@@ -229,19 +229,19 @@ export default class SetupCompleteScreen extends Component {
                 <StylishLabel
                   style={styles.para}
                   fontSize={24}
-                  title='[third:Congrats!]'
+                  title='[t:Congrats!]'
                 />
 
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title='[bold:EPNS] is all setup and ready to rock!'
+                  title='[b:EPNS] is all setup and ready to rock!'
                 />
 
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title='Visit [url:app.epns.io||https://aap.epns.io] from a [bold:Web3 Enabled Browser] to subscribe to your favorite [default:dApp channels] and start recieving [bold:messages!]'
+                  title='Visit [u:app.epns.io||https://aap.epns.io] from a [b:Web3 Enabled Browser] to subscribe to your favorite [d:dApp channels] and start recieving [b:messages!]'
                 />
               </View>
             }

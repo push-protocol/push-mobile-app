@@ -165,12 +165,12 @@ export default class PushNotifyScreen extends Component {
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title="EPNS uses push notifications to deliver messages from [default:different channels] which can be a [bold:dApps] or [bold:Smart Contracts] which you have subscribed to."
+                  title="EPNS uses push notifications to deliver messages from [d:different channels] which can be a [b:dApps] or [b:Smart Contracts] which you have subscribed to."
                 />
                 <StylishLabel
                   style={styles.paraend}
                   fontSize={16}
-                  title="It's called [bold:Ethereum Push Notification Service] after all [third::)]."
+                  title="It's called [b:Ethereum Push Notification Service] after all [t::)]."
                 />
               </View>
             }

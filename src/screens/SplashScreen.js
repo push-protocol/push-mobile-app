@@ -411,10 +411,10 @@ export default class SplashScreen extends Component {
     }
 
     // Customize Prompt
-    let prompt = "[default:Please enter your Passcode]";
+    let prompt = "[d:Please enter your Passcode]";
     const maxAttempts = GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS;
     if (this.state.remainingAttempts < GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS) {
-      prompt = `[third:Incorrect Password, ${this.state.remainingAttempts} attempts pending]`;
+      prompt = `[t:Incorrect Password, ${this.state.remainingAttempts} attempts pending]`;
     }
 
     return (
@@ -555,22 +555,22 @@ export default class SplashScreen extends Component {
                       <StylishLabel
                         style={styles.paracenter}
                         fontSize={24}
-                        title='[third:Credentials Wiped]'
+                        title='[t:Credentials Wiped]'
                       />
                       <StylishLabel
                         style={styles.para}
                         fontSize={16}
-                        title='You ([default:or someone else]) exceeded the [bold:passcode limit] to access your credentials.'
+                        title='You ([d:or someone else]) exceeded the [b:passcode limit] to access your credentials.'
                       />
                       <StylishLabel
                         style={styles.para}
                         fontSize={16}
-                        title='EPNS has [default:completely wiped] your credentials in order to preserve the integrity of your wallet.'
+                        title='EPNS has [d:completely wiped] your credentials in order to preserve the integrity of your wallet.'
                       />
                       <StylishLabel
                         style={styles.paraend}
                         fontSize={16}
-                        title="[default:Don't Sweat!:] Your messages are on [third:blockchain :)]. Just sign back in to gain access to them."
+                        title="[d:Don't Sweat!:] Your messages are on [t:blockchain :)]. Just sign back in to gain access to them."
                       />
                     </View>
                   }

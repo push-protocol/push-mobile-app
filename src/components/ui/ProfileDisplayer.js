@@ -149,7 +149,7 @@ export default class ProfileDisplayer extends Component {
                         <StylishLabel
                           style={styles.para}
                           fontSize={16}
-                          title='[third:Connected Wallet]'
+                          title='[t:Connected Wallet]'
                         />
                         <Text style={styles.walletText}>
                           {wallet}

@@ -104,17 +104,17 @@ export default class WelcomeScreen extends Component {
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title='Welcome to [bold:Ethereum Push Notifications Service] (EPNS).'
+                  title='Welcome to [b:Ethereum Push Notifications Service] (EPNS).'
                 />
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title='[bold:EPNS] is a an innovative way to recieve notifications from different [bolditalics:dApps] or [bolditalics:Smart Contracts]. Think notifications but coming from blockchain ecosystem.'
+                  title='[b:EPNS] is a an innovative way to recieve notifications from different [bi:dApps] or [bi:Smart Contracts]. Think notifications but coming from blockchain ecosystem.'
                 />
                 <StylishLabel
                   style={styles.paraend}
                   fontSize={16}
-                  title='Visit [url:epns.io||https://epns.io] to learn more about it.'
+                  title='Visit [u:epns.io||https://epns.io] to learn more about it.'
                 />
               </View>
             }

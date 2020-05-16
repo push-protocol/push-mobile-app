@@ -351,7 +351,7 @@ export default class FeedsDisplayer extends Component {
                     <StylishLabel
                       style={styles.infoText}
                       fontSize={16}
-                      title='[darkgray:No New Notification!]'
+                      title='[dg:No New Notification!]'
                     />
                   </View>
             }

@@ -189,7 +189,7 @@ export default class QRScanner extends Component {
                   <StylishLabel
                     style={styles.scannerText}
                     fontSize={16}
-                    title="[whitebold:Please scan your] [default:Wallet's Private Key] [whitebold: to connect it to EPNS.]"
+                    title="[wb:Please scan your] [d:Wallet's Private Key] [wb: to connect it to EPNS.]"
                   />
                 </View>
 

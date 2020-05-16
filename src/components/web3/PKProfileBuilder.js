@@ -109,13 +109,13 @@ export default class PKProfileBuilder extends Component {
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title='[default:Error:] Unable to fetch Wallet address for the given creds.'
+                  title='[d:Error:] Unable to fetch Wallet address for the given creds.'
                 />
 
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title='This might happen when you scan [bold:incorrect QR Code] or [bold:make a typo].'
+                  title='This might happen when you scan [b:incorrect QR Code] or [b:make a typo].'
                 />
 
                 <PrimaryButton

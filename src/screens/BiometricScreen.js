@@ -362,12 +362,12 @@ export default class BiometricScreen extends Component {
     }
 
     // For Changing Text Prompt
-    let prompt = "[default:Pick a Passcode for your Vault]";
+    let prompt = "[d:Pick a Passcode for your Vault]";
     if (this.state.passcodeMismatched && !this.state.passcodeVerifyStep) {
-      prompt = "[error:Passcode Mismatch, Please Try Again]";
+      prompt = "[e:Passcode Mismatch, Please Try Again]";
     }
     if (this.state.passcodeVerifyStep == true) {
-      prompt = "[third:Re-enter your Passcode to verify]";
+      prompt = "[t:Re-enter your Passcode to verify]";
     }
 
     // For Biometric Optional Prompt
@@ -388,7 +388,7 @@ export default class BiometricScreen extends Component {
       continueIcon = 'md-finger-print';
       continuePrompt = `Enable ${biometricType} and Continue`;
 
-      biometricPrompt = `Enabling [bold:${biometricType} is optional] but further improves your security. It also gives you [default:fast and secure access].`
+      biometricPrompt = `Enabling [b:${biometricType} is optional] but further improves your security. It also gives you [d:fast and secure access].`
     }
 
     return (
@@ -426,7 +426,7 @@ export default class BiometricScreen extends Component {
                           <StylishLabel
                             style={styles.para}
                             fontSize={16}
-                            title='We need to create a [bold:Secure Vault] to store your [bold:Credentials].'
+                            title='We need to create a [b:Secure Vault] to store your [b:Credentials].'
                           />
 
                           <Animated.View style={[
@@ -487,12 +487,12 @@ export default class BiometricScreen extends Component {
                               <StylishLabel
                                 style={styles.paracenter}
                                 fontSize={24}
-                                title="[Third:Passcode Set!]"
+                                title="[t:Passcode Set!]"
                               />
                               <StylishLabel
                                 style={styles.para}
                                 fontSize={16}
-                                title="[default:Note:] Your passcode encrypts your data and even we can't recover it, Losing this means re-importing your wallet to access EPNS."
+                                title="[d:Note:] Your passcode encrypts your data and even we can't recover it, Losing this means re-importing your wallet to access EPNS."
                               />
                               {
                                 this.state.biometric == false
