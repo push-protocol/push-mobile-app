@@ -98,7 +98,8 @@ export default class FeedsDisplayer extends Component {
     // Wait for some time
     await this.performTimeConsumingTask();
 
-    const fromPointer = !isHistorical ? this.state.forwardPointer : this.state.backwardPointer;
+    let fromPointer = !isHistorical ? this.state.forwardPointer : this.state.backwardPointer;
+
     let limit = GLOBALS.CONSTANTS.FEED_ITEMS_TO_PULL;
 
     // console.log("getting Items: " + fromPointer + "| Limit: " + limit);
@@ -127,7 +128,9 @@ export default class FeedsDisplayer extends Component {
       let itemValid = true;
 
       if (isHistorical) {
-        if (bNid > item["nid"]) {
+        // Find a way for backward nid to not start from 0, it loads, should work since
+        // data is populated with forward nid first
+        if (bNid >= item["nid"] || bNid == -1) {
           storedFeed = [item, ...storedFeed];
         }
         else {
@@ -305,6 +308,16 @@ export default class FeedsDisplayer extends Component {
     })
   }
 
+  // Render Footer
+  renderFooter = () => {
+    return (
+      <EPNSActivity
+        style={styles.activity}
+        size="small"
+      />
+    );
+  }
+
   // RENDER
   render() {
     const {
@@ -369,7 +382,6 @@ export default class FeedsDisplayer extends Component {
                     />
                   </View>
             }
-            initialNumToRender={10}
           />
 
         </SafeAreaView>

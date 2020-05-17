@@ -82,7 +82,8 @@ const FeedDBHelper = {
     // Pulling history
     if (isHistorical) {
       order = 'ASC'; // Pulling history
-      query = `SELECT * FROM ${table} ORDER BY epoch ${order}, nid ${order} LIMIT ${numRows}, ${startIndex}`;
+      query = `SELECT * FROM ${table} ORDER BY epoch ${order}, nid ${order} LIMIT ${numRows} OFFSET ${startIndex}`;
+      //console.log(query);
     }
 
     const res = await FeedDBHelper.runQuery(db, query, response);
@@ -93,6 +94,8 @@ const FeedDBHelper = {
       const feedItem = feedItems.item(i);
       response.push(feedItem);
     }
+
+    //console.log(feedItems.length);
 
     return response;
   },
@@ -141,7 +144,7 @@ const FeedDBHelper = {
     actaV = actaV == undefined ? '' : actaV;
     aimgV = aimgV == undefined ? '' : aimgV;
     hiddenV = (hiddenV == undefined || parseInt(hiddenV) == 0) ? 0 : 1;
-    epochV = epochV == undefined ? parseInt(new Date().getTime()) : parseInt(epochV);
+    epochV = epochV == undefined ? parseInt(new Date().getTime() / 1000) : parseInt(epochV);
 
     // Checks first
     let shouldProceed = true;

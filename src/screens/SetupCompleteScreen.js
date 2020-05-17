@@ -164,7 +164,7 @@ export default class SetupCompleteScreen extends Component {
     payload.msg = "Notifications are [b:never boring] in EPNS.\n\nThe messages with [b:blueish outlines] are links that the [b:dApp] has provided you. \n\n[d:Tapping the message opens it.]";
     payload.cta = 'https://epns.io';
     payload.img = '';
-    payload.epoch = new Date().getTime();
+    payload.epoch = new Date().getTime() / 1000;
 
     // Add to Feed DB
     await FeedDBHelper.addFeedFromPayloadObject(db, payload);
@@ -173,8 +173,8 @@ export default class SetupCompleteScreen extends Component {
     payload.sub = "Ring the Bell";
     payload.msg = "The [d:Bell] on the [b:top right] keeps track of any incoming messages and will inform you about it.\n\nClicking on the [b:bell] will update your feed [i:(Alternatively, pull feed down to refresh)]";
     payload.cta = '';
-    payload.img = 'https://i.ibb.co/SvYGCY9/epnsappbellturorial.jpg';
-    payload.epoch = new Date().getTime();
+    payload.img = 'https://backend.epns.io/assets/epnsappbellturorial.jpg'; //'https://i.ibb.co/SvYGCY9/epnsappbellturorial.jpg';
+    payload.epoch = new Date().getTime() / 1000;
 
     // Add to Feed DB
     await FeedDBHelper.addFeedFromPayloadObject(db, payload);
@@ -184,7 +184,7 @@ export default class SetupCompleteScreen extends Component {
     payload.msg = "[d:Channels] represent your favorite [b:dApps] or [b:Smart Contracts]. You will often get notifications from different channels.\n\nThe [b:top section] of the message contains information about these channels.\n\n[b:Clicking on it] takes you to their [b:website].";
     payload.cta = '';
     payload.img = '';
-    payload.epoch = new Date().getTime();
+    payload.epoch = new Date().getTime() / 1000;
 
     // Add to Feed DB
     await FeedDBHelper.addFeedFromPayloadObject(db, payload);
@@ -194,7 +194,7 @@ export default class SetupCompleteScreen extends Component {
     payload.msg = "[b:Greetings] fellow users! Welcome aboard!\n\nI am your personalized [d:App Bot] whose sole purpose is to guide you about the app.\n\nTo get started! [b:Swipe Right to Archive this.]";
     payload.cta = '';
     payload.img = '';
-    payload.epoch = new Date().getTime();
+    payload.epoch = new Date().getTime() / 1000;
 
     // Add to Feed DB
     await FeedDBHelper.addFeedFromPayloadObject(db, payload);
