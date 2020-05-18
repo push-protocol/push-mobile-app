@@ -77,12 +77,12 @@ const FeedDBHelper = {
 
     // Prepare statement | Pulling forward
     let order = 'DESC';
-    let query = `SELECT * FROM ${table} ORDER BY epoch ${order}, nid ${order} LIMIT ${numRows} OFFSET ${startIndex}`;
+    let query = `SELECT * FROM ${table} ORDER BY nid ${order}, epoch ${order} LIMIT ${numRows} OFFSET ${startIndex}`;
 
     // Pulling history
     if (isHistorical) {
-      order = 'ASC'; // Pulling history
-      query = `SELECT * FROM ${table} ORDER BY epoch ${order}, nid ${order} LIMIT ${numRows} OFFSET ${startIndex}`;
+      // order = 'ASC'; // Pulling history
+      // query = `SELECT * FROM ${table} ORDER BY epoch ${order}, nid ${order} LIMIT ${numRows} OFFSET ${startIndex}`;
       //console.log(query);
     }
 
@@ -177,10 +177,14 @@ const FeedDBHelper = {
 
     const insertRows = `${sid}, ${type}, ${app}, ${icon}, ${url}, ${appbot}, ${secret}, ${asub}, ${amsg}, ${acta}, ${aimg}, ${hidden}, ${epoch}`;
 
-    const query = `INSERT INTO ${table} (${insertRows}) VALUES (${sidV}, ${typeV}, '${appV}', '${iconV}', '${urlV}', ${appbotV}, '${secretV}', '${asubV}', '${amsgV}', '${actaV}', '${aimgV}', ${hiddenV}, ${epochV})`;
+    const query = `INSERT INTO ${table} (${insertRows}) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     if (shouldProceed) {
-      const res = await FeedDBHelper.runQuery(db, query);
+      const res = await FeedDBHelper.runQuery(
+        db,
+        query,
+        [sidV, typeV, appV, iconV, urlV, appbotV, secretV, asubV, amsgV, actaV, aimgV, hiddenV, epochV]
+      );
 
       if (res) {
         // Finally update badge
