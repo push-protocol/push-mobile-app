@@ -43,11 +43,16 @@ export default class EPNSNotifierIcon extends Component {
           if (this.props.onNewNotifications) {
             this.props.onNewNotifications();
           }
+
+          // Set the badge after animation
+          this.setAndAnimatedBadge(newBadge - prevBadge, prevBadge);
         }
       );
     }
-
-    this.setAndAnimatedBadge(newBadge - prevBadge, prevBadge);
+    else {
+      // Just set the badge
+      this.setAndAnimatedBadge(newBadge - prevBadge, prevBadge);
+    }
   }
 
   // To Animate and show badge count
