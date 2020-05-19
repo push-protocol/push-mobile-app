@@ -80,14 +80,20 @@ export default class ENSButton extends Component<Prop> {
       headerStyle.marginRight = 0;
 
       if (!showENS && !loading) {
-        gradient = [
-          GLOBALS.COLORS.MID_GRAY,
-          GLOBALS.COLORS.LIGHT_GRAY,
-        ]
+        // Colored look better
+        // gradient = [
+        //   GLOBALS.COLORS.MID_GRAY,
+        //   GLOBALS.COLORS.LIGHT_GRAY,
+        // ]
+
+        // headerTextStyle={
+        //   color: GLOBALS.COLORS.DARK_BLACK_TRANS,
+        //   fontWeight: '300',
+        // }
 
         headerTextStyle={
-          color: GLOBALS.COLORS.DARK_BLACK_TRANS,
-          fontWeight: '300',
+          color: GLOBALS.COLORS.WHITE,
+          fontWeight: '400',
         }
       }
 
