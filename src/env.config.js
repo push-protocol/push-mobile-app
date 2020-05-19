@@ -10,7 +10,7 @@ import {
   ENDPOINT_REGISTER,
 } from 'react-native-dotenv';
 
-const IS_PROD_ENV = 0; // 1 is Production, 0 is testnet / development
+const IS_PROD_ENV = 0; // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work
 
 export default {
   PROD_ENV: IS_PROD_ENV,

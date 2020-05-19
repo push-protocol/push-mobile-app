@@ -25,7 +25,7 @@ const ServerHelper = {
 
       if (authResponse.success) {
         // Use private key to decrypt the password
-        const secret = await CryptoHelper.decryptWithPrivateKey(authResponse.secret_enc, privateKey);
+        const secret = await CryptoHelper.decryptWithECIES(authResponse.secret_enc, privateKey);
         debug ? console.log(secret) : null;
 
         // Send for registration
