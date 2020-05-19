@@ -14,7 +14,7 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import GLOBALS from 'src/Globals';
 
-const PK_LENGTH = 66;
+const PK_LENGTH = 64;
 
 export default class PKEntryPrompt extends Component {
   // Constructor
@@ -174,7 +174,6 @@ export default class PKEntryPrompt extends Component {
                           maxLength={PK_LENGTH}
                           contextMenuHidden={true}
                           multiline={true}
-                          autoCapitalize="characters"
                           autoCorrect={false}
                           onChangeText={(value) => (this.changePKEntry(doneFunc, closeFunc, value))}
                           onSubmitEditing={(event) => {

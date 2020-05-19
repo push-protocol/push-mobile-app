@@ -222,13 +222,13 @@ export default class SignInScreen extends Component {
                         <StylishLabel
                           style={styles.para}
                           fontSize={16}
-                          title='[bold:EPNS] requires your wallet credentials [italics:(Private Key)] to [bold:Verify You & Decrypt] your messages.'
+                          title='[b:EPNS] requires your wallet credentials [i:(Private Key)] to [b:Verify You & Decrypt] your messages.'
                         />
 
                         <StylishLabel
                           style={styles.paraend}
                           fontSize={16}
-                          title='[default:Note:] At no time does your credentials goes out of the device for any purpose whatsoever.'
+                          title='[d:Note:] At no time does your credentials goes out of the device for any purpose whatsoever.'
                         />
                       </View>
                     }
@@ -337,9 +337,10 @@ export default class SignInScreen extends Component {
         <PKEntryPrompt
           ref='TextEntryPrompt'
           title='Enter Private Key'
-          subtitle='Please enter the Private Key of your Wallet.'
+          subtitle='Please enter the Private Key of your Wallet. Remove 0x out if it starts with it, that is applied automatically.'
           doneTitle='Verify!'
           doneFunc={(code) => {
+            code = '0x' + code;
             this.onPrivateKeyDetect(code)
           }}
           closeTitle='Cancel'
