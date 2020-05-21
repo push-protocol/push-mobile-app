@@ -50,7 +50,7 @@ export default class FeedItem extends Component {
     let cta = !item["acta"] || item["acta"] === '' ? null : item["acta"];
     let img = !item["aimg"] || item["aimg"] === '' ? null : item["aimg"];
 
-    if (item["type"] == 1) {
+    if (item["type"] == 1 || item["type"] == 3) {
       // all clear
       this.setState({
         sub: sub,
@@ -158,7 +158,7 @@ export default class FeedItem extends Component {
     // CTA can be determined for the view since even encrypted, it will have some string
     let ctaBorderEnabled = true;
     let cta = item["acta"];
-    
+
     if (!cta || cta === "") {
       ctaBorderEnabled = false;
     }
