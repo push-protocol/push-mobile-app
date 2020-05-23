@@ -231,6 +231,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 15,
+    height: 56,
     borderRadius: GLOBALS.ADJUSTMENTS.DEFAULT_MID_RADIUS,
     overflow: 'hidden',
     width: '100%',
