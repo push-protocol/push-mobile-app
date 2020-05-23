@@ -172,7 +172,6 @@ export default class PKEntryPrompt extends Component {
                         <TextInput
                           style={styles.input}
                           maxLength={PK_LENGTH}
-                          contextMenuHidden={true}
                           multiline={true}
                           autoCorrect={false}
                           onChangeText={(value) => (this.changePKEntry(doneFunc, closeFunc, value))}

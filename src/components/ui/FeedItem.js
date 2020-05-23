@@ -296,17 +296,17 @@ export default class FeedItem extends Component {
                       </View>
                   }
 
-                    <View style={[ styles.contentBody, styles.contentBodyStyle ]}>
+                    <View style={[ styles.contentBody, contentBodyStyle ]}>
                       {
                         !this.state.sub
                           ? null
-                          : <Text style={styles.msgSub}>
+                          : <Text style={[ styles.msgSub ]}>
                               {this.state.sub}
                             </Text>
                       }
 
                       <StylishLabel
-                        style={styles.msg}
+                        style={[ styles.msg ]}
                         fontSize={14}
                         title={this.state.msg}
                       />
