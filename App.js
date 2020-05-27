@@ -30,7 +30,7 @@ import ENV_CONFIG from 'src/env.config';
 import GLOBALS from 'src/Globals';
 
 // Assign console.log to nothing
-if (ENV_CONFIG.PROD_ENV) {
+if (!ENV_CONFIG.SHOW_CONSOLE) {
   console.log("Production Environment... disabling console!")
   console.log = () => {};
 }

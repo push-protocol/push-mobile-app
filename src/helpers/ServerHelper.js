@@ -102,7 +102,7 @@ const ServerHelper = {
   // Disassociate Generated Token from server, should not be talking to server, this
   // should be handled from the device itself
   dissaociateTokenFromServer: async (wallet) => {
-    // because of Firebase-react-native issue, call permissions again and again
+    // // because of Firebase-react-native issue, call permissions again and again
     // // Dissassociate token with server | BUGGY react-native-firebase wasted my time
     // const response = await messaging().deleteToken()
     //
