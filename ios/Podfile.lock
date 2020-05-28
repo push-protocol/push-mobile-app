@@ -57,7 +57,7 @@ PODS:
   - EXSQLite (8.1.0):
     - UMCore
     - UMFileSystemInterface
-  - EXUpdates (0.1.3):
+  - EXUpdates (0.2.0):
     - React
     - UMCore
   - EXWebBrowser (8.2.1):
@@ -705,7 +705,7 @@ SPEC CHECKSUMS:
   EXPermissions: d2cafee9c72578ecc9ca121481e6c4a04a798861
   EXSharing: a86c6e6fc6168b5b843c7765ae2e3e028f3d25c8
   EXSQLite: 15268ec49f859e4594fe5b0a1c7a47913da0b67e
-  EXUpdates: e496c29a42e361ca22791eb056a9adf6538ce140
+  EXUpdates: 874169f048b5eb85907bef86136b082b605b74fb
   EXWebBrowser: 6364e9e1ea73f6c3c2e6e3cc0ac17259a260e3a8
   FBLazyVector: aaeaf388755e4f29cd74acbc9e3b8da6d807c37f
   FBReactNativeSpec: 118d0d177724c2d67f08a59136eb29ef5943ec75
