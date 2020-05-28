@@ -1,10 +1,9 @@
-import CryptoJS from "react-native-crypto-js";
+import CryptoJS from "crypto-js";
 import { JSHash, CONSTANTS } from 'react-native-hash';
 
-import crypto from 'crypto';
 import EthCrypto from 'eth-crypto';
 import {encrypt, decrypt} from 'eccrypto';
-import { publicKeyConvert, publicKeyVerify } from 'secp256k1';
+import { publicKeyConvert, publicKeyVerify } from 'secp256k1-v4';
 
 // Crypographic Helper Function
 const CryptoHelper = {
