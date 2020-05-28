@@ -58,7 +58,6 @@
     "react-native": "~0.61.5",
     "react-native-crypto": "^2.2.0",
     "react-native-crypto-js": "^1.0.0",
-    "react-native-firebase": "5.3.0-rc3",
     "react-native-gesture-handler": "1.6.1",
     "react-native-hash": "1.2.6",
     "react-native-image-viewing": "0.1.8",

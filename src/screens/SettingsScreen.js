@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
+  Image,
   FlatList,
   StyleSheet,
 } from 'react-native';
@@ -37,13 +38,30 @@ export default class SettingsScreen extends Component {
 
   }
 
+  // ADD HEADER COMPONENET
+  addHeaderComponent = (navigation) => {
+    navigation.setOptions({
+      headerLeft: (() => {
+        return null;
+      }),
+    });
+  }
+
   // FUNCTIONS
   // To Unarchive Message
   unarchiveMessages = async () => {
     const db = FeedDBHelper.getDB();
     await FeedDBHelper.unhideAllFeedItems(db);
 
-    this.showToast("All Messages Unarchived!", "", ToasterOptions.TYPE.GRADIENT_PRIMARY);
+    // Change the header back
+    this.addHeaderComponent(this.props.navigation);
+
+    this.showToast("Messages Unarchived! Restarting...", "", ToasterOptions.TYPE.GRADIENT_PRIMARY);
+
+    setTimeout(() => {
+      const { handleAppAuthState } = this.context;
+      handleAppAuthState(APP_AUTH_STATES.ONBOARDED);
+    }, 1500);
   }
 
   // To Reset Wallet
@@ -121,6 +139,10 @@ export default class SettingsScreen extends Component {
               keyExtractor={item => item.title}
               renderItem={this.renderItem}
             />
+            <View style={styles.appInfo}>
+              <Text style={styles.appText}>Ethereum Push Notification Service(Alpha) v0.1</Text>
+              <Image style={styles.appImage} source={require('assets/ui/fulllogo.png')} />
+            </View>
           </View>
         </SafeAreaView>
 
@@ -160,4 +182,25 @@ const styles = StyleSheet.create({
   settings: {
 
   },
+  appInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    marginLeft: 80,
+  },
+  appImage: {
+    height: 40,
+    width: 60,
+    resizeMode: 'contain',
+    padding: 10,
+  },
+  appText: {
+    flex: 1,
+    padding: 10,
+    textAlign: 'right',
+    fontSize: 12,
+    color: GLOBALS.COLORS.MID_GRAY,
+  }
 });

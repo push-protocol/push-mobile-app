@@ -26,7 +26,6 @@ import ENSButton from 'src/components/buttons/ENSButton';
 
 import Web3Helper from 'src/helpers/Web3Helper';
 
-import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
 import GLOBALS from 'src/Globals';
 
 const MARGIN_RIGHT = 120;
