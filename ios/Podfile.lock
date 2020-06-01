@@ -57,7 +57,7 @@ PODS:
   - EXSQLite (8.1.0):
     - UMCore
     - UMFileSystemInterface
-  - EXUpdates (0.2.0):
+  - EXUpdates (0.1.3):
     - React
     - UMCore
   - EXWebBrowser (8.2.1):
@@ -383,10 +383,10 @@ PODS:
     - Firebase/Analytics (~> 6.25.0)
     - React
     - RNFBApp
-  - RNFBApp (7.1.0):
+  - RNFBApp (7.1.4):
     - Firebase/CoreOnly (~> 6.25.0)
     - React
-  - RNFBMessaging (7.1.0):
+  - RNFBMessaging (7.1.3):
     - Firebase/Analytics (~> 6.25.0)
     - Firebase/Messaging (~> 6.25.0)
     - React
@@ -705,7 +705,7 @@ SPEC CHECKSUMS:
   EXPermissions: d2cafee9c72578ecc9ca121481e6c4a04a798861
   EXSharing: a86c6e6fc6168b5b843c7765ae2e3e028f3d25c8
   EXSQLite: 15268ec49f859e4594fe5b0a1c7a47913da0b67e
-  EXUpdates: 874169f048b5eb85907bef86136b082b605b74fb
+  EXUpdates: e496c29a42e361ca22791eb056a9adf6538ce140
   EXWebBrowser: 6364e9e1ea73f6c3c2e6e3cc0ac17259a260e3a8
   FBLazyVector: aaeaf388755e4f29cd74acbc9e3b8da6d807c37f
   FBReactNativeSpec: 118d0d177724c2d67f08a59136eb29ef5943ec75
@@ -754,8 +754,8 @@ SPEC CHECKSUMS:
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
   RNCPushNotificationIOS: 9aa40ed0ff0e53f8ecf3baaaa7e5ccbaa5ba3894
   RNFBAnalytics: faa7f3d312854c5e4e952a9a4b4cecf3fdb69885
-  RNFBApp: 25a6476dfd7aac2bcbe984f569875bcea122895b
-  RNFBMessaging: ea4ce2a6466b3a6dfb46a8c28c38a7989da36a31
+  RNFBApp: fa6c2bf4e67ca1db74d04eec5909189b5500c9b8
+  RNFBMessaging: 9828cef66a7ae2691aace0e1a0f931452369b8b9
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNKeychain: bf2d7e9a0ae7a073c07770dd2aa6d11c67581733
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
