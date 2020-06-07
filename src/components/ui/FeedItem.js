@@ -13,7 +13,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import { ToasterOptions } from 'src/components/indicators/Toaster';
+
+import DownloadHelper from 'src/helpers/DownloadHelper';
 import ImageDownloadWithIndicator from 'src/components/loaders/ImageDownloadWithIndicator';
+import VideoDownloadWithIndicator from 'src/components/loaders/VideoDownloadWithIndicator';
 
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import Utilities from "src/singletons/Utilities";
@@ -32,6 +35,7 @@ export default class FeedItem extends Component {
       msg: null,
       cta: null,
       img: null,
+
       type: 1,
     }
   }
@@ -171,7 +175,10 @@ export default class FeedItem extends Component {
     // Finally mark if the device is a tablet or a phone
     let contentInnerStyle = {};
     let contentImgStyle = {};
-    let contentMsgImgStyle = {}
+    let contentMsgImgStyle = {};
+    let contentVidStyle = {};
+    let contentMsgVidStyle = {};
+
     let contentBodyStyle = {};
     let containMode = 'contain';
     if (Utilities.instance.getDeviceType() == Device.DeviceType.TABLET) {
@@ -283,17 +290,25 @@ export default class FeedItem extends Component {
                   {
                   !this.state.img
                     ? null
-                    : <View style={[ styles.contentImg, contentImgStyle ]}>
-                        <ImageDownloadWithIndicator
-                          style={[ styles.msgImg, contentMsgImgStyle ]}
-                          fileURL={this.state.img}
-                          imgsrc={false}
-                          resizeMode={containMode}
-                          onPress={(fileURL) => {
-                            onImagePreview(fileURL)
-                          }}
-                        />
-                      </View>
+                    : DownloadHelper.isMediaSupportedVideo(this.state.img)
+                      ? <View style={[ styles.contentVid, contentVidStyle ]}>
+                          <VideoDownloadWithIndicator
+                            style={[ styles.msgVid, contentMsgVidStyle ]}
+                            fileURL={this.state.img}
+                            resizeMode={containMode}
+                          />
+                        </View>
+                      : <View style={[ styles.contentImg, contentImgStyle ]}>
+                          <ImageDownloadWithIndicator
+                            style={[ styles.msgImg, contentMsgImgStyle ]}
+                            fileURL={this.state.img}
+                            imgsrc={false}
+                            resizeMode={containMode}
+                            onPress={(fileURL) => {
+                              onImagePreview(fileURL)
+                            }}
+                          />
+                        </View>
                   }
 
                     <View style={[ styles.contentBody, contentBodyStyle ]}>
@@ -394,6 +409,14 @@ const styles = StyleSheet.create({
   },
   contentLoader: {
     margin: 20,
+  },
+  contentVid: {
+    width: '100%',
+  },
+  msgVid: {
+    borderColor: GLOBALS.COLORS.SLIGHT_GRAY,
+    backgroundColor: GLOBALS.COLORS.SLIGTER_GRAY,
+    borderBottomWidth: 1,
   },
   contentImg: {
     width: '100%',

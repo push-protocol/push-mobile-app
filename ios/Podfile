@@ -52,4 +52,6 @@ target 'epns' do
   use_native_modules!
 
 
+  pod 'react-native-video', :path => '../node_modules/react-native-video'
+
 end

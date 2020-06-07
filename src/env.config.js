@@ -8,10 +8,12 @@ import {
 
   ENDPOINT_AUTHTOKEN,
   ENDPOINT_REGISTER,
+
+  YOUTUBE_API_KEY,
 } from 'react-native-dotenv';
 
 const IS_PROD_ENV = 1; // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work
-const SHOW_CONSOLE = 0; // Show or disable console
+const SHOW_CONSOLE = 1; // Show or disable console
 
 export default {
   PROD_ENV: IS_PROD_ENV,
@@ -24,4 +26,6 @@ export default {
 
   ENDPOINT_AUTHTOKEN: ENDPOINT_AUTHTOKEN,
   ENDPOINT_REGISTER: ENDPOINT_REGISTER,
+
+  YOUTUBE_API_KEY: YOUTUBE_API_KEY,
 };
