@@ -118,6 +118,72 @@ const Web3Helper = {
     // Finally return Wallet Info
     return storedWalletObject;
   },
+  // To get CNS Reverse Domain from Wallet
+  getCNSReverseDomain: async function (wallet) {
+    // example --> https://unstoppabledomains.com/api/v1/resellers/xxxx/domains?owner=0x033dc48B5dB4CA62861643e9D2C411D9eb6D1975&extension=crypto
+    const endpoint = ENV_CONFIG.CNS_ENDPOINT;
+
+    // prepare api url
+    const apiURL = endpoint + "?owner=" + wallet + "&extension=crypto";
+
+    return await fetch(apiURL, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        let response = {
+          success: false,
+          cns: ''
+        }
+
+        if (responseJson["domains"].length > 0) {
+          response.cns = responseJson["domains"][0];
+        }
+
+        return response;
+      })
+      .catch((error) => {
+        console.warn(error);
+        return error;
+      });
+  },
+  // Update CNS Record
+  updateCNSAndFetchWalletInfoObject: async () => {
+    // Get Wallet Info for MetaStorage
+    let storedWalletObject = await MetaStorage.instance.getStoredWallet();
+
+    // Check for Time Stamp, if more than 24 hours than refresh ens records
+    const currentTime = new Date().getTime() / 1000;
+    const storedTime = storedWalletObject.cnsRefreshTime == null ? 0 : storedWalletObject.cnsRefreshTime;
+
+    if (storedWalletObject.wallet != null
+        && (currentTime - storedWalletObject.cnsRefreshTime > 1 || !storedWalletObject.cnsRefreshTime)
+      ) {
+      const response = await Web3Helper.getCNSReverseDomain(storedWalletObject.wallet);
+    
+      let cns = '';
+      let timestamp = currentTime;
+
+      if (response.success) {
+        // Update Time and exit
+        cns = response.cns;
+        updated = true;
+      }
+
+      storedWalletObject.cnsRefreshTime = currentTime;
+      storedWalletObject.cns = cns;
+    }
+
+    // Set New Info on the Wallet
+    await MetaStorage.instance.setStoredWallet(storedWalletObject);
+
+    // Finally return Wallet Info
+    return storedWalletObject;
+  },
 }
 
 export default Web3Helper;

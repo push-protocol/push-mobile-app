@@ -37,13 +37,18 @@ export default class ENSButton extends Component<Prop> {
       innerStyle,
       forProfile,
       loading,
+      cns,
       ens,
       wallet,
       fontSize
     } = this.props;
 
     let showENS = true;
-    let title = ens;
+    let title = cns;
+
+    if (cns === '') {
+      title = ens;
+    }
 
     if (ens === '') {
       showENS = false;

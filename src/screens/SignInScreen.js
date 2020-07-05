@@ -65,6 +65,7 @@ export default class SignInScreen extends Component {
       fader: new Animated.Value(0),
       privateKey: '',
       wallet: '',
+      cns: '',
       ens: '',
       privateKeyVerified: false,
     }
@@ -141,9 +142,10 @@ export default class SignInScreen extends Component {
   }
 
   // Handle Profile Info
-  profileInfoFetched = (wallet, ens) => {
+  profileInfoFetched = (wallet, cns, ens) => {
     this.setState({
       wallet: wallet,
+      cns: cns,
       ens: ens,
       privateKeyVerified: true,
 
@@ -240,7 +242,7 @@ export default class SignInScreen extends Component {
                     style={styles.profile}
                     forPrivateKey={this.state.privateKey}
                     resetFunc={() => {this.resetPrivateKey()}}
-                    profileInfoFetchedFunc={(wallet, ens) => {this.profileInfoFetched(wallet, ens)}}
+                    profileInfoFetchedFunc={(wallet, cns, ens) => {this.profileInfoFetched(wallet, cns, ens)}}
                   />
             }
           </View>

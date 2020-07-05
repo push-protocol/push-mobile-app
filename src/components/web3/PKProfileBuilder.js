@@ -29,7 +29,9 @@ export default class PKProfileBuilder extends Component {
 
       wallet: '',
 
-      ensFetched: -1, // -1 is not yet fetched, 0 is fetching and 1 is fetched
+      blockchainNamingServiceFetched: -1, // -1 is not yet fetched, 0 is fetching and 1 is fetched
+
+      cns: '',
       ens: '',
     }
   }
@@ -54,7 +56,7 @@ export default class PKProfileBuilder extends Component {
       this.setState({
         indicator: false,
         wallet: wallet,
-        ensFetched: 0,
+        blockchainNamingServiceFetched: 0,
       });
 
       const ensResponse = await Web3Helper.getENSReverseDomain(wallet, provider);
@@ -64,12 +66,20 @@ export default class PKProfileBuilder extends Component {
         ens = ensResponse.ens;
       }
 
+      const cnsResponse = await Web3Helper.getCNSReverseDomain(wallet);
+      let cns = '';
+
+      if (cnsResponse.success) {
+        cns = cnsResponse.cns;
+      }
+
       this.setState({
-        ensFetched: 1,
+        blockchainNamingServiceFetched: 1,
+        cns: cns,
         ens: ens
       }, () => {
         if (this.props.profileInfoFetchedFunc) {
-          this.props.profileInfoFetchedFunc(wallet, ens);
+          this.props.profileInfoFetchedFunc(wallet, cns, ens);
         }
       })
     }
@@ -140,7 +150,8 @@ export default class PKProfileBuilder extends Component {
 
                 <ENSButton
                   style={styles.ensbox}
-                  loading={!this.state.ensFetched}
+                  loading={!this.state.blockchainNamingServiceFetched}
+                  cns={this.state.cns}
                   ens={this.state.ens}
                   wallet={this.state.wallet}
                   fontSize={16}

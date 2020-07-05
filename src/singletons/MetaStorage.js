@@ -247,6 +247,8 @@ export default class MetaStorage {
       // Set Default Value
       if (walletObj == null) {
         walletObj = {
+          cnsRefreshTime: 0, // Time in epoch
+          cns: '',
           ensRefreshTime: 0, // Time in epoch
           ens: '',
           wallet: '',

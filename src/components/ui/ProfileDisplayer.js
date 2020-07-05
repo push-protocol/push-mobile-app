@@ -36,6 +36,7 @@ export default class ProfileDisplayer extends Component {
     super(props);
 
     this.state = {
+      cns: '',
       ens: '',
       loading: true,
       active: false,
@@ -46,7 +47,16 @@ export default class ProfileDisplayer extends Component {
 
   // COMPONENT MOUNTED
   async componentDidMount() {
-    const walletObject = await Web3Helper.updateENSAndFetchWalletInfoObject();
+    // do for CNS
+    let walletObject = await Web3Helper.updateCNSAndFetchWalletInfoObject();
+    let cns = '';
+    
+    if (walletObject.cns !== '') {
+      cns = walletObject.cns;
+    }
+
+    // do for ENS
+    walletObject = await Web3Helper.updateENSAndFetchWalletInfoObject();
     let ens = '';
 
     if (walletObject.ens !== '') {
@@ -54,6 +64,7 @@ export default class ProfileDisplayer extends Component {
     }
 
     this.setState({
+      cns: cns,
       ens: ens,
       loading: false,
     })
@@ -126,6 +137,7 @@ export default class ProfileDisplayer extends Component {
                 style={styles.ens}
                 innerStyle={styles.ensbox}
                 loading={this.state.loading}
+                cns={this.state.cns}
                 ens={this.state.ens}
                 wallet={wallet}
                 fontSize={14}
