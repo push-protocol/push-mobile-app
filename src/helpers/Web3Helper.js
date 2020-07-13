@@ -141,7 +141,8 @@ const Web3Helper = {
         }
 
         if (responseJson["domains"].length > 0) {
-          response.cns = responseJson["domains"][0];
+          response.success = true;
+          response.cns = responseJson["domains"][responseJson["domains"].length - 1]["name"];
         }
 
         return response;
@@ -164,7 +165,7 @@ const Web3Helper = {
         && (currentTime - storedWalletObject.cnsRefreshTime > 1 || !storedWalletObject.cnsRefreshTime)
       ) {
       const response = await Web3Helper.getCNSReverseDomain(storedWalletObject.wallet);
-    
+
       let cns = '';
       let timestamp = currentTime;
 
