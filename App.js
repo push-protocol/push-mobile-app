@@ -18,6 +18,7 @@ import SettingsScreen from "src/screens/SettingsScreen";
 
 import WelcomeScreen from "src/screens/WelcomeScreen";
 import SignInScreen from "src/screens/SignInScreen";
+import SignInScreenAdvance from "src/screens/SignInScreenAdvance";
 import BiometricScreen from "src/screens/BiometricScreen";
 import PushNotifyScreen from "src/screens/PushNotifyScreen";
 import SetupCompleteScreen from "src/screens/SetupCompleteScreen";
@@ -153,6 +154,15 @@ export default function App({ navigation }) {
           <Stack.Screen
             name="SignIn"
             component={SignInScreen}
+            options = {{
+              headerShown: false,
+              headerTintColor: GLOBALS.COLORS.MID_GRAY,
+            }}
+          />
+
+          <Stack.Screen
+            name="SignInAdvance"
+            component={SignInScreenAdvance}
             options = {{
               headerShown: false,
               headerTintColor: GLOBALS.COLORS.MID_GRAY,

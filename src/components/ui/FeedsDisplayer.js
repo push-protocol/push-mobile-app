@@ -85,16 +85,16 @@ export default class FeedsDisplayer extends Component {
 
   // trigger getting feed items
   triggerGetItemsFromDB = async (isHistorical) => {
+    await this.setState({
+      feedIsRefreshing: true,
+    });
+
     const result = await this.getItemsFromDB(isHistorical);
     return result;
   }
 
   // To pull more feeds and store them in the feed items
   getItemsFromDB = async (isHistorical) => {
-    this.setState({
-      feedIsRefreshing: true,
-    });
-
     // Wait for some time
     await this.performTimeConsumingTask();
 
@@ -169,6 +169,7 @@ export default class FeedsDisplayer extends Component {
     // console.log("BackwardPointer: " + newBackwardPointer);
     // console.log("Backward NID: " + backwardNid);
     // console.log("limit: " + limit);
+    // console.log("Fetched Items: " + fetcheditems);
     // console.log("is Historical: " + isHistorical);
     // console.log("Visible Count: " + visibleItemCount);
 
@@ -215,10 +216,17 @@ export default class FeedsDisplayer extends Component {
   }
 
   onEndReached = () => {
+    console.log("Refreshing");
+
     if(!this.state.feedEnded){
-      this.triggerGetItemsFromDB(true);
-      console.log("end reached");
+      if (!this.state.feedIsRefreshing) {
+        this.triggerGetItemsFromDB(true);
+      }
     }
+
+    // This is for flat list
+    // onEndReached={this.onEndReached}
+    // onEndReachedThreshold={0.5}
   }
 
   // Perform some task to wait
@@ -337,7 +345,7 @@ export default class FeedsDisplayer extends Component {
               <RefreshControl
                 refreshing={this.state.feedIsRefreshing}
                 onRefresh={() => {
-                  this.getItemsFromDB();
+                  this.triggerGetItemsFromDB();
                 }}
               />
             }

@@ -14,6 +14,40 @@ import GLOBALS from 'src/Globals';
 // Download Helper Function
 const ServerHelper = {
   // Associate a device token to server
+  associateTokenToServerNoAuth: async (wallet) => {
+    // Associate token with server
+    const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_REGISTER_NO_AUTH;
+
+    // prepare payloads
+    const token = await MetaStorage.instance.getPushToken();
+    const platform = Platform.OS;
+
+    return await fetch(apiURL, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          op: "register",
+          device_token: token,
+          wallet: wallet,
+          platform: platform,
+        })
+      })
+      .then((response) => response.json())
+      .then(async (authResponse) => {
+        console.log(authResponse);
+        if (authResponse.success) {
+          await MetaStorage.instance.setTokenServerSynced(true);
+        }
+      })
+      .catch((error) => {
+        console.warn(error);
+        return error;
+      });
+  },
+  // Associate a device token to server
   associateTokenToServer: async (publicKey, privateKey) => {
     // Associate token with server
     const sentToServer = await MetaStorage.instance.getPushTokenSentToServerFlag();

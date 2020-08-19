@@ -1,4 +1,5 @@
 import ENS from 'ethereum-ens';
+import { ethers } from 'ethers';
 import Web3 from 'web3';
 
 import MetaStorage from 'src/singletons/MetaStorage';
@@ -22,6 +23,10 @@ const Web3Helper = {
   // To Get ENS
   getENS: function(provider) {
     return new ENS(provider);
+  },
+  // To verify a given wallet
+  getWalletVerification: async function(wallet) {
+    utils . getAddress ( address )
   },
   // To get Wallet Address from Private Key
   getWalletAddress: async function(pkey, provider, web3) {

@@ -8,6 +8,7 @@ export default {
   // For Async Storage --> Represents Key and some Constants
   STORAGE: {
     IS_SIGNED_IN: 'IsUserSignedIn',
+    SIGNED_IN_TYPE: 'SignedInType',
     FIRST_SIGN_IN: 'FirstSignInByUser',
     USER_LOCKED: 'UserLocked',
     PASSCODE_ATTEMPTS: 'MaxPasscodeAttempts',
@@ -25,6 +26,9 @@ export default {
   },
 
   CONSTANTS: {
+    CRED_TYPE_WALLET: "TypeWallet",
+    CRED_TYPE_PRIVATE_KEY: "TypePrivateKey",
+
     MAX_PASSCODE_ATTEMPTS: 5,
 
     PUSH_TYPE_NORMAL_MSG: 1,
@@ -58,7 +62,7 @@ export default {
     MID_WHITE: 'rgba(255.0, 255.0, 255.0, 0.5)',
     LIGHT_WHITE: 'rgba(255.0, 255.0, 255.0, 0.25)',
 
-    SLIGTER_GRAY: 'rgba(250.0, 250.0, 250.0, 1)',
+    SLIGHTER_GRAY: 'rgba(250.0, 250.0, 250.0, 1)',
     SLIGHT_GRAY: 'rgba(231.0, 231.0, 231.0, 1)',
     LIGHT_GRAY: 'rgba(225.0, 225.0, 225.0, 1)',
     MID_GRAY: 'rgba(200.0, 200.0, 200.0, 1)',

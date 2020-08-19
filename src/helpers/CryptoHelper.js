@@ -38,6 +38,11 @@ const CryptoHelper = {
   },
   // To Form Encryted Secret, no more than 15 characters supported
   encryptWithECIES: async (message, privateKey) => {
+    if (privateKey === "") {
+      // return message as private key is not defined, deal with only wallet sign in
+      return message;
+    }
+
     const publicKey = EthCrypto.publicKeyByPrivateKey(privateKey);
     const compressedKey = EthCrypto.publicKey.compress(publicKey);
 

@@ -38,16 +38,35 @@ export default class PKProfileBuilder extends Component {
 
   // COMPONENT MOUNTED
   componentDidMount() {
-    this.prepareProfile(this.props.forPrivateKey);
+    this.prepareProfile(this.props.profileKey, this.props.profileType);
   }
 
   // FUNCTIONS
-  prepareProfile = async (forPrivateKey) => {
+  prepareProfile = async (profileKey, profileType) => {
+    let response = {};
+
     // Fetch Provider to use for Web3 and ENS
     const provider = Web3Helper.getWeb3Provider();
 
-    // Get Wallet Address
-    const response = await Web3Helper.getWalletAddress(forPrivateKey, provider);
+    if (profileType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
+      // do some brushing up
+      if (profileKey.startsWith("ethereum:")) {
+        // Metamask does this
+        profileKey = profileKey.replace("ethereum:", "");
+      }
+
+      // Next verify wallet
+
+
+      response = {
+        success: true,
+        wallet: profileKey
+      }
+    }
+    else if (profileType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY){
+      // Get Wallet Address
+      response = await Web3Helper.getWalletAddress(profileKey, provider);
+    }
 
     if (response.success) {
       // Get Identicon And try to fetch ENS
@@ -89,14 +108,14 @@ export default class PKProfileBuilder extends Component {
         errored: true,
       });
     }
-
   }
 
   // RENDER
   render() {
     const {
       style,
-      forPrivateKey,
+      profileKey,
+      profileType,
       resetFunc,
       profileInfoFetchedFunc
     } = this.props;
@@ -115,18 +134,20 @@ export default class PKProfileBuilder extends Component {
         <View style={styles.profile}>
         {
           this.state.errored == true
-            ? <View style={styles.error}>
-                <StylishLabel
-                  style={styles.para}
-                  fontSize={16}
-                  title='[d:Error:] Unable to fetch Wallet address for the given creds.'
-                />
+            ? <View style={styles.profileErr}>
+                <View style={styles.profileErrMsg}>
+                  <StylishLabel
+                    style={styles.para}
+                    fontSize={16}
+                    title='[d:Error:] Unable to fetch [d:wallet] for the given creds.'
+                  />
 
-                <StylishLabel
-                  style={styles.para}
-                  fontSize={16}
-                  title='This might happen when you scan [b:incorrect QR Code] or [b:make a typo].'
-                />
+                  <StylishLabel
+                    style={styles.paraend}
+                    fontSize={16}
+                    title='This might happen when you scan [b:incorrect QR Code] or [b:make a typo].'
+                  />
+                </View>
 
                 <PrimaryButton
                   style={styles.reset}
@@ -174,19 +195,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  paratop: {
-    marginBottom: 0,
-  },
-  para: {
-    marginBottom: 20,
-  },
-  paraend: {
-    marginBottom: 0,
-  },
   profile: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'center',
   },
   blockies: {
     borderRadius: 128,
@@ -195,7 +208,27 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     margin: 20,
   },
+  profileErr: {
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    flex: 1,
+  },
+  profileErrMsg: {
+    alignSelf: 'flex-start',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  paratop: {
+    marginBottom: 0,
+
+  },
+  para: {
+    marginBottom: 20,
+  },
+  paraend: {
+
+  },
   reset: {
-    marginTop: 10,
+    marginBottom: 10,
   },
 });

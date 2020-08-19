@@ -109,7 +109,7 @@ export default class PrimaryButton extends Component {
   };
 
   // Render Icon
-  renderIcon = (iconFactory, icon, color, size) => {
+  renderIcon = (iconFactory, icon, color, size, iconAlignToLeft) => {
     // Need to import to enable them
     switch (iconFactory) {
       case 'FontAwesome':
@@ -128,13 +128,25 @@ export default class PrimaryButton extends Component {
         Factory = Ionicons;
     }
 
-    return (
-      <Factory
-        name = {icon}
-        color = {color}
-        size = {size}
-      />
-    );
+    if (iconFactory) {
+      let iconStyle = styles.iconAlignRight;
+      if (iconAlignToLeft) {
+        iconStyle = styles.iconAlignLeft;
+      }
+
+      return (
+        <View style={iconStyle}>
+          <Factory
+            name = {icon}
+            color = {color}
+            size = {size}
+          />
+        </View>
+      );
+    }
+    else {
+      return null;
+    }
   }
 
   // Set Render
@@ -144,6 +156,7 @@ export default class PrimaryButton extends Component {
       iconFactory,
       icon,
       iconSize,
+      iconAlignToLeft,
       title,
       fontSize,
       loading,
@@ -170,6 +183,11 @@ export default class PrimaryButton extends Component {
     }
 
     updatedButtonStyle.backgroundColor = this.state.bgColor;
+
+    let containerItemsPlacementStyle = {};
+    if (iconAlignToLeft) {
+      containerItemsPlacementStyle.flexDirection='row-reverse';
+    }
 
     return (
       <View style={[ style, styles.outerContainer ]}>
@@ -200,7 +218,7 @@ export default class PrimaryButton extends Component {
                     size="small"
                     color={GLOBALS.COLORS.WHITE}
                   />
-                : <React.Fragment>
+                : <View style={[ styles.container, containerItemsPlacementStyle ]}>
                     <Text style = {[styles.title, fontStyle ]}>{title}</Text>
                     {
                       this.renderIcon(
@@ -208,9 +226,10 @@ export default class PrimaryButton extends Component {
                         icon,
                         this.state.fontColor,
                         iconSize,
+                        iconAlignToLeft
                       )
                     }
-                  </React.Fragment>
+                  </View>
             }
 
           </Animated.View>
@@ -224,28 +243,39 @@ export default class PrimaryButton extends Component {
 const styles = StyleSheet.create({
   outerContainer: {
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'stretch',
+    alignSelf: 'stretch',
+    flexGrow: 1,
+    maxHeight: 56,
   },
   innerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 15,
-    height: 56,
     borderRadius: GLOBALS.ADJUSTMENTS.DEFAULT_MID_RADIUS,
     overflow: 'hidden',
-    width: '100%',
   },
   overlayContainer: {
     position: 'absolute',
     ...StyleSheet.absoluteFill,
     backgroundColor: GLOBALS.COLORS.LIGHT_BLACK_TRANS,
   },
+  container: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   title: {
     fontSize: 12,
-    paddingRight: 10,
     color: GLOBALS.COLORS.WHITE,
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
+  iconAlignRight: {
+    paddingLeft: 10,
+  },
+  iconAlignLeft: {
+    paddingRight: 10,
+  },
 });

@@ -81,9 +81,9 @@ const FeedDBHelper = {
 
     // Pulling history
     if (isHistorical) {
-      // order = 'ASC'; // Pulling history
-      // query = `SELECT * FROM ${table} ORDER BY epoch ${order}, nid ${order} LIMIT ${numRows} OFFSET ${startIndex}`;
-      //console.log(query);
+      order = 'ASC'; // Pulling history
+      query = `SELECT * FROM ${table} ORDER BY epoch ${order}, nid ${order} LIMIT ${numRows} OFFSET ${startIndex}`;
+      console.log(query);
     }
 
     const res = await FeedDBHelper.runQuery(db, query, response);

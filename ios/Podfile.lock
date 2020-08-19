@@ -1,19 +1,19 @@
 PODS:
   - boost-for-react-native (1.63.0)
   - DoubleConversion (1.1.6)
-  - EXAV (8.1.0):
+  - EXAV (8.4.0):
     - UMCore
     - UMFileSystemInterface
     - UMPermissionsInterface
-  - EXBarCodeScanner (8.1.0):
+  - EXBarCodeScanner (8.2.1):
     - UMCore
     - UMImageLoaderInterface
     - UMPermissionsInterface
     - ZXingObjC/OneD
     - ZXingObjC/PDF417
-  - EXBlur (8.1.0):
+  - EXBlur (8.1.2):
     - UMCore
-  - EXCamera (8.2.0):
+  - EXCamera (8.3.1):
     - UMBarCodeScannerInterface
     - UMCore
     - UMFaceDetectorInterface
@@ -39,16 +39,16 @@ PODS:
     - UMImageLoaderInterface
   - EXKeepAwake (8.1.0):
     - UMCore
-  - EXLinearGradient (8.1.0):
+  - EXLinearGradient (8.2.1):
     - UMCore
-  - EXLocalAuthentication (9.0.0):
+  - EXLocalAuthentication (9.2.0):
     - UMConstantsInterface
     - UMCore
   - EXLocation (8.1.0):
     - UMCore
     - UMPermissionsInterface
     - UMTaskManagerInterface
-  - EXPermissions (8.1.0):
+  - EXPermissions (8.2.0):
     - UMCore
     - UMPermissionsInterface
   - EXSharing (8.1.0):
@@ -401,7 +401,7 @@ PODS:
     - RNFBApp
   - RNGestureHandler (1.6.1):
     - React
-  - RNKeychain (6.0.0):
+  - RNKeychain (6.1.1):
     - React
   - RNOS (1.2.6):
     - React
@@ -704,10 +704,10 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
-  EXAV: ed8de7f07a76c540815fbb2cc4686b97f4b038b5
-  EXBarCodeScanner: 5e1d94192899873d2570a1c2c161df638bac52da
-  EXBlur: bcc7a55f55c2915ffd7662449e89ecbdd6bf91b9
-  EXCamera: e7e250c78f26468028c3866bb5c27e046f2b7b49
+  EXAV: b50e42821a48110add008bf83f480ce6ac2b8471
+  EXBarCodeScanner: 5808938c8b53a3871931e68e6ba7a9da79cc1a29
+  EXBlur: 5b7a7344c97f448fa88e40df58a755f84084e292
+  EXCamera: d2caf6bdc821a316d070fe979a255dd5b32d2daf
   EXConstants: 9f18e9ef229706394f41735d9c7f309d479b36c0
   EXDevice: a06de8965c975fbd549c40317905811755a140d9
   EXErrorRecovery: 88541714d9bbf8a823f4ee0b7078a92d3e0e42d2
@@ -715,10 +715,10 @@ SPEC CHECKSUMS:
   EXFont: af4c3281cac0bf6ccd8b8a534e9bce6437cc2e17
   EXImageLoader: 5c9d1bf408443ac4d4f44463eaf3b0d03bc70425
   EXKeepAwake: 4b53df0b4e87aa9f38bf57461e07fc167716a760
-  EXLinearGradient: 8189387e3a65c2a9ba5507432e3a099ea8f7ea86
-  EXLocalAuthentication: 238cc8f7d647e7676fba045420266da80bf7c2b2
+  EXLinearGradient: d25940ede1e798882f57715cff9edb4075d95e2d
+  EXLocalAuthentication: eaad05573c742b44c21c63b81b832d830dea71e8
   EXLocation: 0397e4f11666d6ceb026b6424fdf66995c604964
-  EXPermissions: d2cafee9c72578ecc9ca121481e6c4a04a798861
+  EXPermissions: ae198769bbf40608f3e72ae370ab7b85256e9ab1
   EXSharing: a86c6e6fc6168b5b843c7765ae2e3e028f3d25c8
   EXSQLite: 15268ec49f859e4594fe5b0a1c7a47913da0b67e
   EXUpdates: e496c29a42e361ca22791eb056a9adf6538ce140
@@ -775,7 +775,7 @@ SPEC CHECKSUMS:
   RNFBApp: fa6c2bf4e67ca1db74d04eec5909189b5500c9b8
   RNFBMessaging: 9828cef66a7ae2691aace0e1a0f931452369b8b9
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
-  RNKeychain: bf2d7e9a0ae7a073c07770dd2aa6d11c67581733
+  RNKeychain: db956c02a018f7dd3a0ea8a6cf3087bc1894bf2b
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: b5ccb50650ba06f6e749c7c329a1bc3ae0c88b43
   RNScreens: 62211832af51e0aebcf6e8c36bcf7dd65592f244

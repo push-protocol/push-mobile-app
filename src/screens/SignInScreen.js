@@ -63,11 +63,11 @@ export default class SignInScreen extends Component {
       detailedInfoPresetned: false,
 
       fader: new Animated.Value(0),
-      privateKey: '',
+      walletAddress: '',
       wallet: '',
       cns: '',
       ens: '',
-      privateKeyVerified: false,
+      walletAddressVerified: false,
     }
   }
 
@@ -117,17 +117,17 @@ export default class SignInScreen extends Component {
   }
 
   // Detect PK Code
-  onPrivateKeyDetect = (code) => {
+  onWalletDetect = (code) => {
     this.setState({
-      privateKey: code,
+      walletAddress: code,
     })
   }
 
   // Reset PK Code
-  resetPrivateKey = () => {
+  resetWalletAddress = () => {
     this.setState({
-      privateKey: '',
-      privateKeyVerified: false,
+      walletAddress: '',
+      walletAddressVerified: false,
 
       fader: new Animated.Value(0),
     }, () => {
@@ -147,7 +147,7 @@ export default class SignInScreen extends Component {
       wallet: wallet,
       cns: cns,
       ens: ens,
-      privateKeyVerified: true,
+      walletAddressVerified: true,
 
       fader: new Animated.Value(0),
     }, () => {
@@ -181,6 +181,7 @@ export default class SignInScreen extends Component {
     // Store ENS and Wallet in Storage and then move ahead
     const walletObj = {
       ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
+      cns: this.state.cns,
       ens: this.state.ens,
       wallet: this.state.wallet,
     }
@@ -190,7 +191,16 @@ export default class SignInScreen extends Component {
 
     // Goto Next Screen
     this.props.navigation.navigate('Biometric', {
-      privateKey: this.state.privateKey,
+      walletAddress: this.state.walletAddress,
+      fromOnboarding: this.props.route.params.fromOnboarding
+    });
+  }
+
+  // Load Advvance Screen
+  loadAdvanceScreen = async () => {
+    // Goto Next Screen
+    this.props.navigation.navigate('SignInAdvance', {
+      fromOnboarding: this.props.route.params.fromOnboarding
     });
   }
 
@@ -212,10 +222,10 @@ export default class SignInScreen extends Component {
             }
           />
 
-          <Text style={styles.header}>Sign In!</Text>
+        <Text style={styles.header}>Wallet Address!</Text>
           <View style={styles.inner}>
             {
-              this.state.privateKey === ''
+              this.state.walletAddress === ''
                 ? <DetailedInfoPresenter
                     style={styles.intro}
                     icon={require('assets/ui/wallet.png')}
@@ -224,13 +234,7 @@ export default class SignInScreen extends Component {
                         <StylishLabel
                           style={styles.para}
                           fontSize={16}
-                          title='[b:EPNS] requires your wallet credentials [i:(Private Key)] to [b:Verify You & Decrypt] your messages.'
-                        />
-
-                        <StylishLabel
-                          style={styles.paraend}
-                          fontSize={16}
-                          title='[d:Note:] At no time does your credentials goes out of the device for any purpose whatsoever.'
+                          title='[b:EPNS] requires your wallet address to deliver [d:notifications] meant for you!'
                         />
                       </View>
                     }
@@ -240,15 +244,16 @@ export default class SignInScreen extends Component {
                   />
                 : <PKProfileBuilder
                     style={styles.profile}
-                    forPrivateKey={this.state.privateKey}
-                    resetFunc={() => {this.resetPrivateKey()}}
+                    profileKey={this.state.walletAddress}
+                    profileType={GLOBALS.CONSTANTS.CRED_TYPE_WALLET}
+                    resetFunc={() => {this.resetWalletAddress()}}
                     profileInfoFetchedFunc={(wallet, cns, ens) => {this.profileInfoFetched(wallet, cns, ens)}}
                   />
             }
           </View>
           <Animated.View style={[ styles.footer, {opacity: this.state.fader} ]}>
             {
-              this.state.privateKey === ''
+              this.state.walletAddress === ''
                 ? <View style={styles.entryFooter}>
                     <PrimaryButton
                       iconFactory='Ionicons'
@@ -264,21 +269,37 @@ export default class SignInScreen extends Component {
 
                     <View style={styles.divider}></View>
 
-                    <PrimaryButton
-                      iconFactory='Ionicons'
-                      icon='ios-code-working'
-                      iconSize={24}
-                      title='Enter Manually'
-                      fontSize={16}
-                      fontColor={GLOBALS.COLORS.WHITE}
-                      bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
-                      disabled={false}
-                      onPress={() => {this.toggleTextEntryPrompt(true, true)}}
-                    />
+                    <View style={styles.columnizer}>
+                      <PrimaryButton
+                        iconFactory='Ionicons'
+                        icon='ios-code-working'
+                        iconSize={24}
+                        title='Enter Manually'
+                        fontSize={16}
+                        fontColor={GLOBALS.COLORS.WHITE}
+                        bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
+                        disabled={false}
+                        onPress={() => {this.toggleTextEntryPrompt(true, true)}}
+                      />
+
+                    <View style={styles.colDivider}></View>
+
+                      <PrimaryButton
+                        iconFactory='Ionicons'
+                        icon='ios-menu'
+                        iconSize={24}
+                        title='Advance'
+                        fontSize={16}
+                        fontColor={GLOBALS.COLORS.WHITE}
+                        bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
+                        disabled={false}
+                        onPress={() => {this.loadAdvanceScreen()}}
+                      />
+                    </View>
                   </View>
                 : <View style={styles.verifyFooter}>
                     {
-                      this.state.privateKeyVerified == false
+                      this.state.walletAddressVerified == false
                         ? null
                         : <React.Fragment>
                             <PrimaryButton
@@ -290,7 +311,7 @@ export default class SignInScreen extends Component {
                               fontColor={GLOBALS.COLORS.WHITE}
                               bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
                               disabled={false}
-                              onPress={() => {this.resetPrivateKey()}}
+                              onPress={() => {this.resetWalletAddress()}}
                             />
                             <View style={styles.divider}></View>
 
@@ -319,8 +340,9 @@ export default class SignInScreen extends Component {
         <QRScanner
           ref='QRScanner'
           navigation={navigation}
+          title="[wb:Please scan your] [d:wallet's address] [wb:to connect it to EPNS.]"
           doneFunc={(code) => {
-            this.onPrivateKeyDetect(code)
+            this.onWalletDetect(code)
           }}
           closeFunc={() => this.toggleQRScanner(false, navigation)}
         />
@@ -338,12 +360,12 @@ export default class SignInScreen extends Component {
 
         <PKEntryPrompt
           ref='TextEntryPrompt'
-          title='Enter Private Key'
-          subtitle='Please enter the Private Key of your Wallet. Remove 0x out if it starts with it, that is applied automatically.'
+          title='Enter Wallet Address'
+          subtitle='Please enter your wallet address whose notification you want to receive.'
+          entryLimit={42}
           doneTitle='Verify!'
           doneFunc={(code) => {
-            code = '0x' + code;
-            this.onPrivateKeyDetect(code)
+            this.onWalletDetect(code)
           }}
           closeTitle='Cancel'
           closeFunc={() => this.toggleTextEntryPrompt(false, true)}
@@ -359,7 +381,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: GLOBALS.COLORS.WHITE,
-    alignItems: 'center',
+    alignItems: 'stretch',
     justifyContent: 'space-between',
   },
   header: {
@@ -367,11 +389,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingTop: 40,
     paddingHorizontal: 20,
+    alignSelf: 'center',
   },
   inner: {
     position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'center',
     top: 0,
     bottom: 0,
     padding: 20,
@@ -393,12 +417,18 @@ const styles = StyleSheet.create({
   profile: {
   },
   footer: {
-    width: '100%',
     paddingHorizontal: 20,
   },
   divider: {
     marginVertical: 10,
     width: '100%',
+  },
+  columnizer: {
+    flexDirection: 'row',
+  },
+  colDivider: {
+    marginHorizontal: 10,
+    height: '100%',
   },
   insetAdjustment: {
     paddingBottom: 5,

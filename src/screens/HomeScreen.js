@@ -109,14 +109,19 @@ export default class HomeScreen extends Component {
     // Refresh feed automatically
     await this.refreshFeeds();
 
+    // Get signed type and register device for push
+    let signedInType = await MetaStorage.instance.getSignedInType();
+    if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
+      ServerHelper.associateTokenToServerNoAuth(this.props.route.params.wallet);
+    }
+    else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+      // Finally associate token to server if not done
+      const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
+      const privateKey = this.props.route.params.pkey;
 
-    // Finally associate token to server if not done
-    const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
-    const privateKey = this.props.route.params.pkey;
-
-    // While an async function, there is no need to wait
-    ServerHelper.associateTokenToServer(publicKey, privateKey);
-
+      // While an async function, there is no need to wait
+      ServerHelper.associateTokenToServer(publicKey, privateKey);
+    }
   }
 
   // Component Unmounted
@@ -136,7 +141,7 @@ export default class HomeScreen extends Component {
   // To refresh the Feeds
   refreshFeeds = async () => {
     //this.refs.FeedsDisplayer.resetFeedState();
-    await this.refs.FeedsDisplayer.triggerGetItemsFromDB();
+    await this.refs.FeedsDisplayer.triggerGetItemsFromDB(false);
   }
 
   // Overlay Blur exit intent

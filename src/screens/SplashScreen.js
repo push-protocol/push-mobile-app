@@ -160,11 +160,22 @@ export default class SplashScreen extends Component {
         if (credentials) {
           // console.log('Credentials successfully loaded for user ' + credentials.username + "|" + credentials.password);
           const hashedCode = await MetaStorage.instance.getHashedPasscode();
-          const authResponse = await AuthenticationHelper.returnDecryptedPKey(
-            credentials.password,
-            credentials.username,
-            hashedCode
-          );
+          const signedInType = await MetaStorage.instance.getSignedInType();
+
+          let authResponse;
+          if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
+            authResponse = await AuthenticationHelper.getCodeVerification(
+              credentials.username,
+              hashedCode
+            )
+          }
+          else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+            authResponse = await AuthenticationHelper.returnDecryptedPKey(
+              credentials.password,
+              credentials.username,
+              hashedCode
+            );
+          }
 
           if (authResponse.success) {
             response.success = true;
@@ -209,14 +220,25 @@ export default class SplashScreen extends Component {
     }
 
     // Check if Passcode decrypts the key
-    const encryptedPKey = await MetaStorage.instance.getEncryptedPkey();
     const hashedCode = await MetaStorage.instance.getHashedPasscode();
+    const signedInType = await MetaStorage.instance.getSignedInType();
 
-    const response = await AuthenticationHelper.returnDecryptedPKey(
-      encryptedPKey,
-      value,
-      hashedCode
-    );
+    let response;
+    if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
+      response = await AuthenticationHelper.getCodeVerification(
+        value,
+        hashedCode
+      )
+    }
+    else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+      const encryptedPKey = await MetaStorage.instance.getEncryptedPkey();
+
+      response = await AuthenticationHelper.returnDecryptedPKey(
+        encryptedPKey,
+        value,
+        hashedCode
+      );
+    }
 
     if (response.success) {
       const { handleAppAuthState } = this.context;

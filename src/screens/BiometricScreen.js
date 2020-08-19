@@ -121,7 +121,15 @@ export default class BiometricScreen extends Component {
 
         // Encrypt Private Key and Do Hashing
         const { privateKey } = this.props.route.params;
-        const encryptedPkey = CryptoHelper.encryptWithAES(privateKey, this.state.passcode);
+        let encrptedPkey;
+
+        if (!privateKey) {
+          // encrypted private key is empty to support wallet sign in
+          encryptedPkey = "";
+        }
+        else {
+          encryptedPkey = CryptoHelper.encryptWithAES(privateKey, this.state.passcode);
+        }
         const hashedCode = await CryptoHelper.hashWithSha256(this.state.passcode);
 
         // Store private key and hashed code and continue
@@ -331,11 +339,13 @@ export default class BiometricScreen extends Component {
     if (authorizationStatus == messaging.AuthorizationStatus.NOT_DETERMINED) {
       this.props.navigation.navigate('PushNotify', {
         privateKey: privateKey,
+        fromOnboarding: this.props.route.params.fromOnboarding,
       });
     }
     else {
       this.props.navigation.navigate('SetupComplete', {
         privateKey: privateKey,
+        fromOnboarding: this.props.route.params.fromOnboarding,
       });
     }
 

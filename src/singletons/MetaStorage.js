@@ -238,6 +238,26 @@ export default class MetaStorage {
     }
   }
 
+  // FOR STORING SIGNED IN TYPE
+  getSignedInType = async () => {
+    const isSignedIn = await this.getIsSignedIn();
+
+    if (isSignedIn) {
+      const privateKey = await this.getEncryptedPkey();
+
+      if (!privateKey) {
+        // sign in is via wallet
+        return GLOBALS.CONSTANTS.CRED_TYPE_WALLET;
+      }
+      else {
+        return GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY;
+      }
+    }
+    else {
+      return false;
+    }
+  }
+
   // FOR STORING USER WALLET, ENS AND TIMESTAMP
   getStoredWallet = async () => {
     try {

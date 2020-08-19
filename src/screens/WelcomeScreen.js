@@ -76,6 +76,7 @@ export default class WelcomeScreen extends Component {
   loadNextScreen = () => {
     // Goto Next Screen
     this.props.navigation.navigate('SignIn', {
+      fromOnboarding: true,
     });
   }
 

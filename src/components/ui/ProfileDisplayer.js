@@ -50,7 +50,7 @@ export default class ProfileDisplayer extends Component {
     // do for CNS
     let walletObject = await Web3Helper.updateCNSAndFetchWalletInfoObject();
     let cns = '';
-    
+
     if (walletObject.cns !== '') {
       cns = walletObject.cns;
     }

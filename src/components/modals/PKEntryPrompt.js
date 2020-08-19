@@ -14,8 +14,6 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import GLOBALS from 'src/Globals';
 
-const PK_LENGTH = 64;
-
 export default class PKEntryPrompt extends Component {
   // Constructor
   constructor(props) {
@@ -31,7 +29,8 @@ export default class PKEntryPrompt extends Component {
 
   // Validate Pass Code
   validatePKEntry = (doneFunc, closeFunc, value) => {
-    if (value.length == PK_LENGTH) {
+    // if (this.params.entryType == )
+    if (value.length == this.props.entryLimit) {
       Keyboard.dismiss();
 
       if (doneFunc) {
@@ -123,6 +122,7 @@ export default class PKEntryPrompt extends Component {
     const {
       title,
       subtitle,
+      entryLimit,
       doneTitle,
       doneFunc,
       closeTitle,
@@ -131,7 +131,7 @@ export default class PKEntryPrompt extends Component {
 
     let doneTextStyle = {};
     let doneDisabled = false;
-    if (this.state.PKEntry.length != PK_LENGTH) {
+    if (this.state.PKEntry.length != entryLimit) {
       doneTextStyle.color = GLOBALS.COLORS.MID_GRAY;
       doneDisabled = true;
     }
@@ -171,7 +171,7 @@ export default class PKEntryPrompt extends Component {
                     : <React.Fragment>
                         <TextInput
                           style={styles.input}
-                          maxLength={PK_LENGTH}
+                          maxLength={entryLimit}
                           multiline={true}
                           autoCorrect={false}
                           onChangeText={(value) => (this.changePKEntry(doneFunc, closeFunc, value))}
@@ -183,7 +183,7 @@ export default class PKEntryPrompt extends Component {
                           autoFocus
                         />
                         <Text style={styles.lettercount}>
-                          {this.state.PKEntry.length} / {PK_LENGTH}
+                          {this.state.PKEntry.length} / {entryLimit}
                         </Text>
                       </React.Fragment>
                 }

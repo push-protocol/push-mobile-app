@@ -89,6 +89,24 @@ export default class CalendarEvents extends Component {
         renderText: this.renderThreeStyles
       },
       {
+        pattern: /\[(ub):([^\]]+)\]/i, // url
+        style: [styles.secondary, styles.bold, styles.italics, styles.underline],
+        onPress: this.handleUrlPress,
+        renderText: this.renderThreeStyles
+      },
+      {
+        pattern: /\[(ut):([^\]]+)\]/i, // url
+        style: [styles.third, styles.bold, styles.italics, styles.underline],
+        onPress: this.handleUrlPress,
+        renderText: this.renderThreeStyles
+      },
+      {
+        pattern: /\[(up):([^\]]+)\]/i, // url
+        style: [styles.primary, styles.italics, styles.underline],
+        onPress: this.handleUrlPress,
+        renderText: this.renderThreeStyles
+      },
+      {
         pattern: /\[(d):([^\]]+)\]/i, // default or primary gradient color
         style: [styles.primary, styles.bold],
         renderText: this.renderStyles

@@ -126,28 +126,35 @@ export default class SetupCompleteScreen extends Component {
 
     // Set last message first
     // 5. Secrets... shhh!!!
-    const { privateKey } = this.props.route.params;
-    const plainSecret = "EPNSRocks!";
-    const encryptedSecret = await CryptoHelper.encryptWithECIES(plainSecret, privateKey);
-
-    // console.log(encryptedSecret);
-    // const dec = await CryptoHelper.decryptWithECIES(encryptedSecret, privateKey);
-    // console.log(dec);
-
+    let type = 2;
+    let secret = "";
     let sub = "Secrets... shhh!!!";
     let msg = "The [d:coolest type] of messages are [t:secrets]. They are indicated by the [bi:shush gradient] on the top left of the message box.\n\nThey are always [d:encrypted] and [b:only you] can see them.";
     let cta = '';
     let img = '';
     let epoch = new Date().getTime();
 
-    secret = encryptedSecret;
-    sub = CryptoHelper.encryptWithAES(sub, plainSecret);
-    msg = CryptoHelper.encryptWithAES(msg, plainSecret);
-    cta = cta === '' ? cta : CryptoHelper.encryptWithAES(cta, plainSecret);
-    img = img === '' ? img : CryptoHelper.encryptWithAES(img, plainSecret);
+    const { privateKey } = this.props.route.params;
+    if (privateKey) {
+      const plainSecret = "EPNSRocks!";
+      const encryptedSecret = await CryptoHelper.encryptWithECIES(plainSecret, privateKey);
+
+      // console.log(encryptedSecret);
+      // const dec = await CryptoHelper.decryptWithECIES(encryptedSecret, privateKey);
+      // console.log(dec);
+
+      secret = encryptedSecret;
+      sub = CryptoHelper.encryptWithAES(sub, plainSecret);
+      msg = CryptoHelper.encryptWithAES(msg, plainSecret);
+      cta = cta === '' ? cta : CryptoHelper.encryptWithAES(cta, plainSecret);
+      img = img === '' ? img : CryptoHelper.encryptWithAES(img, plainSecret);
+    }
+    else {
+      type = -2; // special type, message is plain but tells user about secret
+    }
 
     payload.secret = secret;
-    payload.type = 2;
+    payload.type = type;
     payload.sub = sub;
     payload.msg = msg;
     payload.cta = cta;

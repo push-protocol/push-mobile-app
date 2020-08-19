@@ -145,6 +145,7 @@ export default class QRScanner extends Component {
     const {
       style,
       navigation,
+      title,
       doneFunc,
       closeFunc
     } = this.props;
@@ -189,7 +190,7 @@ export default class QRScanner extends Component {
                   <StylishLabel
                     style={styles.scannerText}
                     fontSize={16}
-                    title="[wb:Please scan your] [d:Wallet's Private Key] [wb: to connect it to EPNS.]"
+                    title={title}
                   />
                 </View>
 

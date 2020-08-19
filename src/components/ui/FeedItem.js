@@ -9,6 +9,7 @@ import {
 import SafeAreaView from 'react-native-safe-area-view';
 import * as Device from 'expo-device';
 import { LinearGradient } from 'expo-linear-gradient';
+import moment from "moment";
 
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
@@ -35,6 +36,7 @@ export default class FeedItem extends Component {
       msg: null,
       cta: null,
       img: null,
+      timestamp: false,
 
       type: 1,
     }
@@ -55,39 +57,58 @@ export default class FeedItem extends Component {
     let img = !item["aimg"] || item["aimg"] === '' ? null : item["aimg"];
 
     if (item["type"] == 1 || item["type"] == 3) {
-      // all clear
+      // all clear, plain message types
+      let showTimestamp = false;
+      const matches = msg.match(/\[timestamp:(.*?)\]/);
+      if (matches) {
+        showTimestamp = matches[1];
+        msg = msg.replace(/ *\[timestamp:[^)]*\] */g, "");
+      }
+
       this.setState({
         sub: sub,
         msg: msg,
         cta: cta,
         img: img,
+        timestamp: showTimestamp,
+
+        type: item["type"],
 
         loading: false,
       })
     }
 
-    if (item["type"] == 2) {
+    if (item["type"] == 2 || item["type"] == -2) {
       const privateKey = this.props.privateKey;
-      // console.log("PK:" + privateKey);
 
-      // decrypt the message
-      const secret = await CryptoHelper.decryptWithECIES(item["secret"], privateKey);
-      // console.log("SECR:" + secret);
+      if (privateKey) {
+        // Private key present, else display action banner as it's a wallet sign in
+        // decrypt the message
+        const secret = await CryptoHelper.decryptWithECIES(item["secret"], privateKey);
+        // console.log("SECR:" + secret);
 
-      if (sub) {
-        sub = CryptoHelper.decryptWithAES(sub, secret);
+        if (sub) {
+          sub = CryptoHelper.decryptWithAES(sub, secret);
+        }
+
+        if (msg) {
+          msg = CryptoHelper.decryptWithAES(msg, secret);
+        }
+
+        if (cta) {
+          cta = CryptoHelper.decryptWithAES(cta, secret);
+        }
+
+        if (img) {
+          img = CryptoHelper.decryptWithAES(img, secret);
+        }
       }
 
-      if (msg) {
-        msg = CryptoHelper.decryptWithAES(msg, secret);
-      }
-
-      if (cta) {
-        cta = CryptoHelper.decryptWithAES(cta, secret);
-      }
-
-      if (img) {
-        img = CryptoHelper.decryptWithAES(img, secret);
+      let showTimestamp = false;
+      const matches = msg.match(/\[timestamp:(.*?)\]/);
+      if (matches) {
+        showTimestamp = matches[1];
+        msg = msg.replace(/ *\[timestamp:[^)]*\] */g, "");
       }
 
       this.setState({
@@ -95,6 +116,9 @@ export default class FeedItem extends Component {
         msg: msg,
         cta: cta,
         img: img,
+        timestamp: showTimestamp,
+
+        type: item["type"],
 
         loading: false,
       })
@@ -155,7 +179,7 @@ export default class FeedItem extends Component {
 
     // Also add secret icon if message type is 2
     let addSecretIcon = false;
-    if (item["type"] == 2) {
+    if (item["type"] == 2 || item["type"] == -2) {
       addSecretIcon = true;
     }
 
@@ -325,6 +349,16 @@ export default class FeedItem extends Component {
                         fontSize={14}
                         title={this.state.msg}
                       />
+
+                      {
+                        !this.state.timestamp
+                          ? null
+                          : <View style={styles.timestampOuter}>
+                              <Text style={styles.timestamp}>
+                                {moment.utc(parseInt(this.state.timestamp) * 1000).local().format("DD MMM YYYY | hh:mm A")}
+                              </Text>
+                            </View>
+                      }
                     </View>
                   </View>
             }
@@ -364,7 +398,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 7,
     paddingHorizontal: 10,
-    backgroundColor: GLOBALS.COLORS.SLIGTER_GRAY,
+    backgroundColor: GLOBALS.COLORS.SLIGHTER_GRAY,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -415,7 +449,7 @@ const styles = StyleSheet.create({
   },
   msgVid: {
     borderColor: GLOBALS.COLORS.SLIGHT_GRAY,
-    backgroundColor: GLOBALS.COLORS.SLIGTER_GRAY,
+    backgroundColor: GLOBALS.COLORS.SLIGHTER_GRAY,
     borderBottomWidth: 1,
   },
   contentImg: {
@@ -424,7 +458,7 @@ const styles = StyleSheet.create({
   },
   msgImg: {
     borderColor: GLOBALS.COLORS.SLIGHT_GRAY,
-    backgroundColor: GLOBALS.COLORS.SLIGTER_GRAY,
+    backgroundColor: GLOBALS.COLORS.SLIGHTER_GRAY,
     borderBottomWidth: 1,
     resizeMode: 'contain',
   },
@@ -440,5 +474,26 @@ const styles = StyleSheet.create({
   msg: {
     paddingTop: 5,
     paddingBottom: 20,
+  },
+  timestampOuter: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignSelf: 'flex-end',
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    marginRight: -20,
+    borderTopLeftRadius: 5,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderColor: GLOBALS.COLORS.SLIGHT_GRAY,
+    overflow: 'hidden',
+
+    backgroundColor: GLOBALS.COLORS.SLIGHTER_GRAY,
+  },
+  timestamp: {
+    fontWeight: '300',
+    fontSize: 12,
+
+    color: GLOBALS.COLORS.MID_BLACK_TRANS,
   }
 });

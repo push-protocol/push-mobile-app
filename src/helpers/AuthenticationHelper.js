@@ -45,6 +45,22 @@ const AuthenticationHelper = {
 
     return response;
   },
+  // To Retur false or true from code and hashed code
+  getCodeVerification: async (code, hashedCode) => {
+    let response = {};
+    response.success = false;
+
+    const result = await CryptoHelper.verifyHash(code, hashedCode);
+    if (result) {
+      const walletObject = await MetaStorage.instance.getStoredWallet();
+
+      response.success = true;
+      response.wallet = walletObject.wallet;
+      response.pkey = "";
+    }
+
+    return response;
+  },
   // To Wipe the Signed In User Data, this is a force reset
   wipeSignedInUser: async () => {
     // Set user locked to true
