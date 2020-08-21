@@ -81,7 +81,7 @@ export default class FeedItem extends Component {
     if (item["type"] == 2 || item["type"] == -2) {
       const privateKey = this.props.privateKey;
 
-      if (privateKey) {
+      if (privateKey && privateKey !== GLOBALS.CONSTANTS.NULL_EXCEPTION) {
         // Private key present, else display action banner as it's a wallet sign in
         // decrypt the message
         const secret = await CryptoHelper.decryptWithECIES(item["secret"], privateKey);

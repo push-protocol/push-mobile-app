@@ -29,6 +29,8 @@ export default {
     CRED_TYPE_WALLET: "TypeWallet",
     CRED_TYPE_PRIVATE_KEY: "TypePrivateKey",
 
+    NULL_EXCEPTION: "NULL",
+
     MAX_PASSCODE_ATTEMPTS: 5,
 
     PUSH_TYPE_NORMAL_MSG: 1,

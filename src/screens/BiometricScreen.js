@@ -294,7 +294,13 @@ export default class BiometricScreen extends Component {
       if (biometricEnabled) {
         // Store passcode and encrypted private key in keychain
         const username = String(this.state.passcode);
-        const password = String(this.state.encryptedPKey);
+
+        // since private key can be absent and android doesn't support that...
+        let pass = this.state.encryptedPKey;
+        if (!pass) {
+          pass = GLOBALS.CONSTANTS.NULL_EXCEPTION;
+        }
+        const password = String(pass);
         const AUTH_OPTIONS = {
          accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
          accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,

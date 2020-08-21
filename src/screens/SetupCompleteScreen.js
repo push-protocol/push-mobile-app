@@ -135,7 +135,7 @@ export default class SetupCompleteScreen extends Component {
     let epoch = new Date().getTime();
 
     const { privateKey } = this.props.route.params;
-    if (privateKey) {
+    if (privateKey && privateKey !== GLOBALS.CONSTANTS.NULL_EXCEPTION) {
       const plainSecret = "EPNSRocks!";
       const encryptedSecret = await CryptoHelper.encryptWithECIES(plainSecret, privateKey);
 

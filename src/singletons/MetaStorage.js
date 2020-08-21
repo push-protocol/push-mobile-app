@@ -245,7 +245,7 @@ export default class MetaStorage {
     if (isSignedIn) {
       const privateKey = await this.getEncryptedPkey();
 
-      if (!privateKey) {
+      if (!privateKey || privateKey === GLOBALS.CONSTANTS.NULL_EXCEPTION) {
         // sign in is via wallet
         return GLOBALS.CONSTANTS.CRED_TYPE_WALLET;
       }
