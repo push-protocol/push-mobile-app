@@ -538,12 +538,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = epns/EPNS.entitlements;
-				CURRENT_PROJECT_VERSION = 3.0.6;
+				CURRENT_PROJECT_VERSION = 3.0.7;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				INFOPLIST_FILE = epns/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.2.4;
+				MARKETING_VERSION = 0.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -562,11 +562,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = epns/EPNS.entitlements;
-				CURRENT_PROJECT_VERSION = 3.0.6;
+				CURRENT_PROJECT_VERSION = 3.0.7;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				INFOPLIST_FILE = epns/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.2.4;
+				MARKETING_VERSION = 0.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

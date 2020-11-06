@@ -12,6 +12,8 @@ import {
 
   YOUTUBE_API_KEY,
   CNS_ENDPOINT,
+
+  APP_VERSION
 } from 'react-native-dotenv';
 
 const IS_PROD_ENV = 1; // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work
@@ -34,4 +36,7 @@ export default {
 
   // Third-party services endpoints
   CNS_ENDPOINT: CNS_ENDPOINT,
+
+  // App Version
+  APP_VERSION: APP_VERSION,
 };
