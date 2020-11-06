@@ -131,7 +131,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "io.epns.epns"
+        applicationId "io.epns.epnsstaging"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 6

@@ -1,9 +1,9 @@
 {
-  "name": "epns",
-  "displayName": "epns",
+  "name": "epnsstaging",
+  "displayName": "EPNS Staging",
   "expo": {
-    "name": "epns",
-    "slug": "epns",
+    "name": "epnsstaging",
+    "slug": "epnsstaging",
     "version": "1.0.1",
     "platforms": [
       "ios",

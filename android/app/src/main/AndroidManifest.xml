@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.epns">
+    package="io.epns.epnsstaging">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
@@ -26,7 +26,7 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme">
 
-      <meta-data android:name="expo.modules.updates.EXPO_UPDATE_URL" android:value="https://exp.host/@prodigy/epns" />
+      <meta-data android:name="expo.modules.updates.EXPO_UPDATE_URL" android:value="https://exp.host/@prodigy/epnsstaging" />
       <meta-data android:name="expo.modules.updates.EXPO_SDK_VERSION" android:value="37.0.0" />
 
       <meta-data android:name="expo.modules.updates.EXPO_RELEASE_CHANNEL" android:value="default" />
