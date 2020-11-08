@@ -296,16 +296,16 @@
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 8Y846RA37B;
+						DevelopmentTeam = 62B7287GF5;
 					};
 					1E8454FA246B1F63008B0FBE = {
 						CreatedOnToolsVersion = 11.4.1;
-						DevelopmentTeam = 8Y846RA37B;
+						DevelopmentTeam = 62B7287GF5;
 						ProvisioningStyle = Automatic;
 					};
 					1E84550A246B1FD7008B0FBE = {
 						CreatedOnToolsVersion = 11.4.1;
-						DevelopmentTeam = 8Y846RA37B;
+						DevelopmentTeam = 62B7287GF5;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -538,18 +538,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = epns/EPNS.entitlements;
-				CURRENT_PROJECT_VERSION = 3.0.4;
+				CURRENT_PROJECT_VERSION = 3.0.6;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 8Y846RA37B;
+				DEVELOPMENT_TEAM = 62B7287GF5;
 				INFOPLIST_FILE = epns/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.2.2;
+				MARKETING_VERSION = 0.3.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epns;
+				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject;
 				PRODUCT_NAME = EPNS;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -562,17 +562,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = epns/EPNS.entitlements;
-				CURRENT_PROJECT_VERSION = 3.0.4;
-				DEVELOPMENT_TEAM = 8Y846RA37B;
+				CURRENT_PROJECT_VERSION = 3.0.6;
+				DEVELOPMENT_TEAM = 62B7287GF5;
 				INFOPLIST_FILE = epns/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.2.2;
+				MARKETING_VERSION = 0.3.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epns;
+				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject;
 				PRODUCT_NAME = EPNS;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -590,17 +590,17 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3.0.4;
+				CURRENT_PROJECT_VERSION = 3.0.6;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 8Y846RA37B;
+				DEVELOPMENT_TEAM = 62B7287GF5;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 0.2.2;
+				MARKETING_VERSION = 0.3.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epns.NotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject.NotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -619,16 +619,16 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3.0.4;
+				CURRENT_PROJECT_VERSION = 3.0.6;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 8Y846RA37B;
+				DEVELOPMENT_TEAM = 62B7287GF5;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 0.2.2;
+				MARKETING_VERSION = 0.3.1;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epns.NotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject.NotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -646,17 +646,17 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = NotificationContentExtension/NotificationContentExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3.0.4;
+				CURRENT_PROJECT_VERSION = 3.0.6;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 8Y846RA37B;
+				DEVELOPMENT_TEAM = 62B7287GF5;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = NotificationContentExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 0.2.2;
+				MARKETING_VERSION = 0.3.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epns.NotificationContentExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject.NotificationContentExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -675,16 +675,16 @@
 				CODE_SIGN_ENTITLEMENTS = NotificationContentExtension/NotificationContentExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3.0.4;
+				CURRENT_PROJECT_VERSION = 3.0.6;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 8Y846RA37B;
+				DEVELOPMENT_TEAM = 62B7287GF5;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = NotificationContentExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 0.2.2;
+				MARKETING_VERSION = 0.3.1;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epns.NotificationContentExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject.NotificationContentExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";

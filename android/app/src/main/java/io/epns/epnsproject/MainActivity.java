@@ -1,4 +1,4 @@
-package com.epns;
+package io.epns.epnsproject;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

@@ -25,6 +25,7 @@ import MetaStorage from 'src/singletons/MetaStorage';
 import FeedDBHelper from 'src/helpers/FeedDBHelper';
 
 import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
+import ENV_CONFIG from 'src/env.config';
 import GLOBALS from 'src/Globals';
 
 export default class SettingsScreen extends Component {
@@ -140,7 +141,7 @@ export default class SettingsScreen extends Component {
               renderItem={this.renderItem}
             />
             <View style={styles.appInfo}>
-              <Text style={styles.appText}>Ethereum Push Notification Service(Alpha) v0.1</Text>
+              <Text style={styles.appText}>{`Ethereum Push Notification Service(Alpha) v${ENV_CONFIG.APP_VERSION}`}</Text>
               <Image style={styles.appImage} source={require('assets/ui/fulllogo.png')} />
             </View>
           </View>
