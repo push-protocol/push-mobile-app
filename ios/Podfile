@@ -7,7 +7,7 @@ target 'NotificationServiceExtension' do
    pod 'Firebase/Messaging'
 end
 
-target 'epns' do
+target 'epnsstaging' do
   rnPrefix = "../node_modules/react-native"
 
   # React Native and its dependencies
