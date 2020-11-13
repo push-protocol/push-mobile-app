@@ -136,18 +136,18 @@ const ServerHelper = {
   // Disassociate Generated Token from server, should not be talking to server, this
   // should be handled from the device itself
   dissaociateTokenFromServer: async (wallet) => {
-    // // because of Firebase-react-native issue, call permissions again and again
-    // // Dissassociate token with server | BUGGY react-native-firebase wasted my time
-    // const response = await messaging().deleteToken()
-    //
-    // // because of Firebase-react-native issue, call permissions again and again
-    // await messaging().requestPermission();
+    // because of Firebase-react-native issue, call permissions again and again
+    // Dissassociate token with server | BUGGY react-native-firebase wasted my time
+    const response = await messaging().deleteToken()
 
-    messaging()
-      .getToken()
-      .then(token => {
-        Notify.instance.saveDeviceToken(token);
-      });
+    // because of Firebase-react-native issue, call permissions again and again
+    await messaging().requestPermission();
+
+    // messaging()
+    //   .getToken()
+    //   .then(token => {
+    //     Notify.instance.saveDeviceToken(token);
+    //   });
 
     // Reset Push Notifications
     await MetaStorage.instance.setTokenServerSynced(false);

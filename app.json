@@ -4,7 +4,7 @@
   "expo": {
     "name": "epns",
     "slug": "epns",
-    "version": "0.3",
+    "version": "0.3.6",
     "platforms": [
       "ios",
       "android",
