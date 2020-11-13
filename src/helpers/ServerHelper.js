@@ -143,11 +143,11 @@ const ServerHelper = {
     // because of Firebase-react-native issue, call permissions again and again
     await messaging().requestPermission();
 
-    messaging()
-      .getToken()
-      .then(token => {
-        Notify.instance.saveDeviceToken(token);
-      });
+    // messaging()
+    //   .getToken()
+    //   .then(token => {
+    //     Notify.instance.saveDeviceToken(token);
+    //   });
 
     // Reset Push Notifications
     await MetaStorage.instance.setTokenServerSynced(false);

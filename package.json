@@ -14,7 +14,7 @@
     "@expo/vector-icons": "10.2.0",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-community/push-notification-ios": "1.2.0",
-    "@react-native-firebase/analytics": "^7.0.0",
+    "@react-native-firebase/analytics": "^8.0.1",
     "@react-native-firebase/app": "^9.0.0",
     "@react-native-firebase/messaging": "^8.0.1",
     "@react-navigation/native": "5.4.3",
