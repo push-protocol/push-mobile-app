@@ -7,6 +7,6 @@
 	<key>EXUpdatesSDKVersion</key>
 	<string>37.0.0</string>
 	<key>EXUpdatesURL</key>
-	<string>https://exp.host/@prodigy/epns</string>
+	<string>https://exp.host/@prodigy/epnsstaging</string>
 </dict>
 </plist>

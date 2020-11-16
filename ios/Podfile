@@ -5,6 +5,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 target 'NotificationServiceExtension' do
    pod 'Firebase/Messaging'
+   pod 'Firebase/Analytics'
 end
 
 target 'epnsstaging' do

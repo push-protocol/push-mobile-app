@@ -7,13 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0731D3B824204D62009CAE85 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0731D3B524204D62009CAE85 /* Expo.plist */; };
-		074F4BDC2432833400BDB9FE /* app.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 07C2E6E4243282B30028AF0A /* app.bundle */; };
-		074F4BDD2432833400BDB9FE /* app.manifest in Resources */ = {isa = PBXBuildFile; fileRef = 07C2E6E3243282B30028AF0A /* app.manifest */; };
-		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
-		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
-		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		1E8454FF246B1F64008B0FBE /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E8454FE246B1F64008B0FBE /* NotificationService.m */; };
 		1E845503246B1F64008B0FBE /* EPNS Staging.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 1E8454FB246B1F63008B0FBE /* EPNS Staging.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1E84550D246B1FD7008B0FBE /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E84550C246B1FD7008B0FBE /* UserNotifications.framework */; };
@@ -21,6 +14,14 @@
 		1E845513246B1FD7008B0FBE /* NotificationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E845512246B1FD7008B0FBE /* NotificationViewController.m */; };
 		1E845516246B1FD7008B0FBE /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E845514246B1FD7008B0FBE /* MainInterface.storyboard */; };
 		1E84551A246B1FD7008B0FBE /* NotificationContentExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 1E84550B246B1FD7008B0FBE /* NotificationContentExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1EA4F1A52561808300C5A483 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1EA4F1992561808300C5A483 /* LaunchScreen.xib */; };
+		1EA4F1A62561808300C5A483 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EA4F19B2561808300C5A483 /* main.m */; };
+		1EA4F1A72561808300C5A483 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1EA4F19C2561808300C5A483 /* Images.xcassets */; };
+		1EA4F1A82561808300C5A483 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EA4F19D2561808300C5A483 /* AppDelegate.m */; };
+		1EA4F1AA2561808300C5A483 /* app.manifest in Resources */ = {isa = PBXBuildFile; fileRef = 1EA4F1A02561808300C5A483 /* app.manifest */; };
+		1EA4F1AC2561808300C5A483 /* app.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1EA4F1A22561808300C5A483 /* app.bundle */; };
+		1EA4F1B02561842300C5A483 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1EA4F1AF2561842200C5A483 /* Expo.plist */; };
+		1EA4F1B22561842700C5A483 /* Expo.json in Resources */ = {isa = PBXBuildFile; fileRef = 1EA4F1B12561842700C5A483 /* Expo.json */; };
 		1EEDE088245F48F900B6993F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1EEDE087245F48F700B6993F /* GoogleService-Info.plist */; };
 		279C92AF26F144187DBBDA7C /* libPods-epnsstaging.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6309C5EBC3E3D096FE0FD011 /* libPods-epnsstaging.a */; };
 		8A995959B2BA9B66E439171D /* libPods-NotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE6E4FE2CBC0D712DE84C791 /* libPods-NotificationServiceExtension.a */; };
@@ -59,17 +60,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		0731D3B524204D62009CAE85 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Expo.plist; path = epns/Supporting/Expo.plist; sourceTree = "<group>"; };
-		07C2E6E3243282B30028AF0A /* app.manifest */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = app.manifest; path = epns/Supporting/app.manifest; sourceTree = "<group>"; };
-		07C2E6E4243282B30028AF0A /* app.bundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = app.bundle; path = epns/Supporting/app.bundle; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* EPNS Staging.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "EPNS Staging.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = epns/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = epns/AppDelegate.m; sourceTree = "<group>"; };
-		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = epns/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = epns/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = epns/main.m; sourceTree = "<group>"; };
 		1C30BCBCE4FBD3D2DDD96099 /* Pods-NotificationServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationServiceExtension.release.xcconfig"; path = "Target Support Files/Pods-NotificationServiceExtension/Pods-NotificationServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
 		1C5BB86761DAEDA87B75957B /* Pods-NotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationServiceExtension.debug.xcconfig"; path = "Target Support Files/Pods-NotificationServiceExtension/Pods-NotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		1E8454FB246B1F63008B0FBE /* EPNS Staging.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "EPNS Staging.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -84,7 +75,17 @@
 		1E845515246B1FD7008B0FBE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		1E845517246B1FD7008B0FBE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1E86AE7C24846E4300580BAB /* NotificationContentExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NotificationContentExtension.entitlements; sourceTree = "<group>"; };
-		1EEDE086245C74BE00B6993F /* EPNS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = EPNS.entitlements; path = epns/EPNS.entitlements; sourceTree = "<group>"; };
+		1EA4F1972561808300C5A483 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		1EA4F1982561808300C5A483 /* EPNS.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = EPNS.entitlements; sourceTree = "<group>"; };
+		1EA4F19A2561808300C5A483 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		1EA4F19B2561808300C5A483 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1EA4F19C2561808300C5A483 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		1EA4F19D2561808300C5A483 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		1EA4F1A02561808300C5A483 /* app.manifest */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = app.manifest; sourceTree = "<group>"; };
+		1EA4F1A22561808300C5A483 /* app.bundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = app.bundle; sourceTree = "<group>"; };
+		1EA4F1A42561808300C5A483 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1EA4F1AF2561842200C5A483 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		1EA4F1B12561842700C5A483 /* Expo.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Expo.json; sourceTree = "<group>"; };
 		1EEDE087245F48F700B6993F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B47C5AFCB8BDE514B7D1AC6 /* Pods-epns.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epns.debug.xcconfig"; path = "Target Support Files/Pods-epns/Pods-epns.debug.xcconfig"; sourceTree = "<group>"; };
@@ -126,24 +127,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* epns */ = {
-			isa = PBXGroup;
-			children = (
-				1EEDE086245C74BE00B6993F /* EPNS.entitlements */,
-				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.m */,
-				13B07FB51A68108700A75B9A /* Images.xcassets */,
-				13B07FB61A68108700A75B9A /* Info.plist */,
-				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
-				13B07FB71A68108700A75B9A /* main.m */,
-				0731D3B524204D62009CAE85 /* Expo.plist */,
-				07C2E6E4243282B30028AF0A /* app.bundle */,
-				07C2E6E3243282B30028AF0A /* app.manifest */,
-			);
-			name = epns;
-			sourceTree = "<group>";
-		};
 		1E8454FC246B1F64008B0FBE /* NotificationServiceExtension */ = {
 			isa = PBXGroup;
 			children = (
@@ -164,6 +147,32 @@
 				1E845517246B1FD7008B0FBE /* Info.plist */,
 			);
 			path = NotificationContentExtension;
+			sourceTree = "<group>";
+		};
+		1EA4F1962561808300C5A483 /* epnsstaging */ = {
+			isa = PBXGroup;
+			children = (
+				1EA4F1972561808300C5A483 /* AppDelegate.h */,
+				1EA4F1982561808300C5A483 /* EPNS.entitlements */,
+				1EA4F1992561808300C5A483 /* LaunchScreen.xib */,
+				1EA4F19B2561808300C5A483 /* main.m */,
+				1EA4F19C2561808300C5A483 /* Images.xcassets */,
+				1EA4F19D2561808300C5A483 /* AppDelegate.m */,
+				1EA4F19E2561808300C5A483 /* Supporting */,
+				1EA4F1A42561808300C5A483 /* Info.plist */,
+			);
+			path = epnsstaging;
+			sourceTree = "<group>";
+		};
+		1EA4F19E2561808300C5A483 /* Supporting */ = {
+			isa = PBXGroup;
+			children = (
+				1EA4F1B12561842700C5A483 /* Expo.json */,
+				1EA4F1AF2561842200C5A483 /* Expo.plist */,
+				1EA4F1A02561808300C5A483 /* app.manifest */,
+				1EA4F1A22561808300C5A483 /* app.bundle */,
+			);
+			path = Supporting;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -204,7 +213,7 @@
 			isa = PBXGroup;
 			children = (
 				1EEDE087245F48F700B6993F /* GoogleService-Info.plist */,
-				13B07FAE1A68108700A75B9A /* epns */,
+				1EA4F1962561808300C5A483 /* epnsstaging */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				1E8454FC246B1F64008B0FBE /* NotificationServiceExtension */,
 				1E845510246B1FD7008B0FBE /* NotificationContentExtension */,
@@ -340,12 +349,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				074F4BDC2432833400BDB9FE /* app.bundle in Resources */,
-				074F4BDD2432833400BDB9FE /* app.manifest in Resources */,
-				0731D3B824204D62009CAE85 /* Expo.plist in Resources */,
-				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				1EA4F1B02561842300C5A483 /* Expo.plist in Resources */,
+				1EA4F1B22561842700C5A483 /* Expo.json in Resources */,
+				1EA4F1AA2561808300C5A483 /* app.manifest in Resources */,
+				1EA4F1A72561808300C5A483 /* Images.xcassets in Resources */,
+				1EA4F1A52561808300C5A483 /* LaunchScreen.xib in Resources */,
 				1EEDE088245F48F900B6993F /* GoogleService-Info.plist in Resources */,
+				1EA4F1AC2561808300C5A483 /* app.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,8 +489,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				1EA4F1A82561808300C5A483 /* AppDelegate.m in Sources */,
+				1EA4F1A62561808300C5A483 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -516,21 +526,20 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		13B07FB11A68108700A75B9A /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				13B07FB21A68108700A75B9A /* Base */,
-			);
-			name = LaunchScreen.xib;
-			path = epns;
-			sourceTree = "<group>";
-		};
 		1E845514246B1FD7008B0FBE /* MainInterface.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				1E845515246B1FD7008B0FBE /* Base */,
 			);
 			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
+		1EA4F1992561808300C5A483 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1EA4F19A2561808300C5A483 /* Base */,
+			);
+			name = LaunchScreen.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -541,13 +550,13 @@
 			baseConfigurationReference = 834A0175C3C8BDB5D9403F1D /* Pods-epnsstaging.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = epns/EPNS.entitlements;
-				CURRENT_PROJECT_VERSION = 3.1.3;
+				CODE_SIGN_ENTITLEMENTS = epnsstaging/EPNS.entitlements;
+				CURRENT_PROJECT_VERSION = 3.2.3;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 62B7287GF5;
-				INFOPLIST_FILE = epns/Info.plist;
+				INFOPLIST_FILE = epnsstaging/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.3.6;
+				MARKETING_VERSION = 0.3.9;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -565,12 +574,12 @@
 			baseConfigurationReference = A233993B3BB78DEC114D62DE /* Pods-epnsstaging.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = epns/EPNS.entitlements;
-				CURRENT_PROJECT_VERSION = 3.1.3;
+				CODE_SIGN_ENTITLEMENTS = epnsstaging/EPNS.entitlements;
+				CURRENT_PROJECT_VERSION = 3.2.3;
 				DEVELOPMENT_TEAM = 62B7287GF5;
-				INFOPLIST_FILE = epns/Info.plist;
+				INFOPLIST_FILE = epnsstaging/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.3.6;
+				MARKETING_VERSION = 0.3.9;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -594,14 +603,14 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3.1.3;
+				CURRENT_PROJECT_VERSION = 3.2.3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 0.3.6;
+				MARKETING_VERSION = 0.3.9;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging.NotificationServiceExtension;
@@ -623,14 +632,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3.1.3;
+				CURRENT_PROJECT_VERSION = 3.2.3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 0.3.6;
+				MARKETING_VERSION = 0.3.9;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging.NotificationServiceExtension;
 				PRODUCT_NAME = "EPNS Staging";
@@ -650,14 +659,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = NotificationContentExtension/NotificationContentExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3.1.3;
+				CURRENT_PROJECT_VERSION = 3.2.3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = NotificationContentExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 0.3.6;
+				MARKETING_VERSION = 0.3.9;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging.NotificationContentExtension;
@@ -679,14 +688,14 @@
 				CODE_SIGN_ENTITLEMENTS = NotificationContentExtension/NotificationContentExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3.1.3;
+				CURRENT_PROJECT_VERSION = 3.2.3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = NotificationContentExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 0.3.6;
+				MARKETING_VERSION = 0.3.9;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging.NotificationContentExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
