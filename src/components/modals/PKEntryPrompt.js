@@ -11,6 +11,7 @@ import {
   Animated
 } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
+import styled from 'styled-components/native'
 
 import Web3Helper from 'src/helpers/Web3Helper';
 
@@ -99,19 +100,27 @@ export default class PKEntryPrompt extends Component {
 
   // Resolve domain
   resolveBlockchainDomain = async (domain) => {
-    Web3Helper.resolveBlockchainDomain(domain, "ETH")
-      .then((address) => {
-        this.setState({
-          domainAddr: address,
-          domainErr: null
-        });
-      })
-      .catch((err) => {
-        this.setState({
-          domainAddr: null,
-          domainErr: err.toString().replace("ResolutionError: ", "")
-        });
-      })
+    if (this.props.allowDomainDetection) {
+      Web3Helper.resolveBlockchainDomain(domain, "ETH")
+        .then((address) => {
+          this.setState({
+            domainAddr: address,
+            domainErr: null
+          });
+        })
+        .catch((err) => {
+          this.setState({
+            domainAddr: null,
+            domainErr: err.toString().replace("ResolutionError: ", "")
+          });
+        })
+    }
+    else {
+      this.setState({
+        domainAddr: null,
+        domainErr: "Invalid Address"
+      });
+    }
   }
 
   // Clear Timer
@@ -183,6 +192,7 @@ export default class PKEntryPrompt extends Component {
       title,
       subtitle,
       entryLimit,
+      allowDomainDetection,
       doneTitle,
       doneFunc,
       closeTitle,
@@ -234,6 +244,7 @@ export default class PKEntryPrompt extends Component {
                           maxLength={entryLimit}
                           multiline={true}
                           autoCorrect={false}
+                          autoCapitalize='none'
                           onChangeText={(value) => (this.changePKEntry(doneFunc, closeFunc, value))}
                           onSubmitEditing={(event) => {
                             this.validatePKEntry(doneFunc, closeFunc, event.nativeEvent.text);
@@ -245,12 +256,19 @@ export default class PKEntryPrompt extends Component {
 
                         <Text style={styles.lettercount}>
                           {
-                            this.state.isWalletAddress
+                            this.state.isWalletAddress || !allowDomainDetection
                             ? `${this.state.PKEntry.length} / ${entryLimit}`
                             : this.state.domainAddr
                               ? `Domain Found`
                               : this.state.domainErr
-                                ? `Error: ${this.state.domainErr}`
+                                ? <>
+                                    <ErrorMsg weight={600} color={GLOBALS.COLORS.GRADIENT_PRIMARY}>
+                                      Error:
+                                    </ErrorMsg>
+                                    <ErrorMsg weight={300} underline={true} color={GLOBALS.COLORS.BLACK}>
+                                      {` ${this.state.domainErr}`}
+                                    </ErrorMsg>
+                                  </>
                                 : 'Checking for CNS / ENS Name...'
                           }
 
@@ -301,6 +319,12 @@ export default class PKEntryPrompt extends Component {
     );
   }
 }
+
+// Styled Components
+const ErrorMsg = styled.Text`
+  color: ${props => props.color || GLOBALS.COLORS.BLACK},
+  font-weight: ${props => props.weight || 400}
+`
 
 // Styling
 const styles = StyleSheet.create({

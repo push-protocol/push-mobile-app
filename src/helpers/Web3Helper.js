@@ -160,7 +160,21 @@ const Web3Helper = {
 
         if (responseJson["domains"].length > 0) {
           response.success = true;
-          response.cns = responseJson["domains"][0]["name"];
+
+          let cns = '';
+          responseJson["domains"].map((item, i) => {
+            cns = cns + item["name"];
+
+            if (i != responseJson["domains"].length - 1) {
+              cns = cns + " | ";
+            }
+          })
+
+          if (responseJson["domains"].length > 1) {
+            cns = `${cns}`;
+          }
+
+          response.cns = cns;
         }
 
         return response;
@@ -228,16 +242,14 @@ const Web3Helper = {
   resolveBlockchainDomain: async (domain, currency) => {
     const resolution = new Resolution();
     return new Promise((resolve, reject) => {
-      // if (domain.slice(domain.length - 4).toLowerCase() == ".eth") {
-      //   reject("Not Supported")
-      // }
-
       resolution
       .addr(domain, currency)
       .then((address) => {
+        console.log(address);
         resolve(address);
       })
       .catch(err => {
+        console.log(err);
         reject(err);
       });
     });
