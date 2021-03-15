@@ -556,7 +556,7 @@
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				INFOPLIST_FILE = epnsstaging/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.4.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -579,7 +579,7 @@
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				INFOPLIST_FILE = epnsstaging/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.4.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -610,7 +610,7 @@
 				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.4.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging.NotificationServiceExtension;
@@ -639,7 +639,7 @@
 				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.4.3;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging.NotificationServiceExtension;
 				PRODUCT_NAME = "EPNS Staging";
@@ -666,7 +666,7 @@
 				INFOPLIST_FILE = NotificationContentExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.4.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging.NotificationContentExtension;
@@ -695,7 +695,7 @@
 				INFOPLIST_FILE = NotificationContentExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.4.3;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging.NotificationContentExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
