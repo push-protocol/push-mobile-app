@@ -247,3 +247,4 @@ RNTester/Pods/*
 .env
 google-services.json
 GoogleService-Info.plist
+dump.rdb

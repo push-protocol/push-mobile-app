@@ -45,15 +45,19 @@ export default class ENSButton extends Component<Prop> {
 
     let showENS = true;
     let title = cns;
-
+    
     if (cns === '') {
       title = ens;
     }
 
     if (ens === '') {
       showENS = false;
+    }
+
+    if (ens === '' && cns === '') {
       title = wallet;
     }
+
 
     let icon = 'ios-arrow-down';
     if (this.state.active) {

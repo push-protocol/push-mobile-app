@@ -1,6 +1,7 @@
 import ENS from 'ethereum-ens';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
+const { default: Resolution } = require('@unstoppabledomains/resolution');
 
 import MetaStorage from 'src/singletons/MetaStorage';
 
@@ -19,6 +20,18 @@ const Web3Helper = {
     }
 
     return new Web3(provider);
+  },
+  // To Get Ethers Provider
+  getEthersProvider: function() {
+    return new ethers.providers.Web3Provider(ENV_CONFIG.INFURA_API);
+  },
+  // To Get Ethers
+  getEthersSigner: function(address, provider) {
+    if (!provider) {
+      provider = Web3Helper.getEthersProvider();
+    }
+
+    return new ethers.VoidSigner(address, provider);
   },
   // To Get ENS
   getENS: function(provider) {
@@ -147,7 +160,7 @@ const Web3Helper = {
 
         if (responseJson["domains"].length > 0) {
           response.success = true;
-          response.cns = responseJson["domains"][responseJson["domains"].length - 1]["name"];
+          response.cns = responseJson["domains"][0]["name"];
         }
 
         return response;
@@ -190,6 +203,45 @@ const Web3Helper = {
     // Finally return Wallet Info
     return storedWalletObject;
   },
+  // Check if the entry is non hex
+  isHex: (str) => {
+
+    if (str.length == 0) {
+      return true;
+    }
+    else if (str.length == 1 && str.substring(0, 1) === '0') {
+      return true;
+    }
+    else if (str.length == 2 && str.substring(0, 2) === '0x') {
+      return true;
+    }
+    else {
+      let modStr = str;
+      if (str.substring(0, 2) === '0x') {
+        modStr = str.substring(2);
+      }
+      modStr = modStr.toLowerCase();
+      return (/^[0-9a-f]+$/.test(modStr));
+    }
+  },
+  // Resolve Domain name
+  resolveBlockchainDomain: async (domain, currency) => {
+    const resolution = new Resolution();
+    return new Promise((resolve, reject) => {
+      // if (domain.slice(domain.length - 4).toLowerCase() == ".eth") {
+      //   reject("Not Supported")
+      // }
+
+      resolution
+      .addr(domain, currency)
+      .then((address) => {
+        resolve(address);
+      })
+      .catch(err => {
+        reject(err);
+      });
+    });
+  }
 }
 
 export default Web3Helper;
