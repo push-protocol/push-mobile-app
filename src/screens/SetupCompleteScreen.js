@@ -248,7 +248,7 @@ export default class SetupCompleteScreen extends Component {
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title='Visit [u:app.epns.io||https://aap.epns.io] from a [b:Web3 Enabled Browser] to subscribe to your favorite [d:dApp channels] and start recieving [b:messages!]'
+                  title='Visit [u:app.epns.io||https://app.epns.io] from a [b:Web3 Enabled Browser] to subscribe to your favorite [d:dApp channels] and start recieving [b:messages!]'
                 />
               </View>
             }
