@@ -363,6 +363,7 @@ export default class SignInScreen extends Component {
           title='Enter Wallet Address'
           subtitle='Please enter your wallet address whose notification you want to receive.'
           entryLimit={42}
+          allowDomainDetection={true}
           doneTitle='Verify!'
           doneFunc={(code) => {
             this.onWalletDetect(code)

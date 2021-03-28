@@ -11,6 +11,9 @@ import {
   Animated
 } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
+import styled from 'styled-components/native'
+
+import Web3Helper from 'src/helpers/Web3Helper';
 
 import GLOBALS from 'src/Globals';
 
@@ -24,7 +27,25 @@ export default class PKEntryPrompt extends Component {
       render: false,
       indicator: false,
       PKEntry: '',
+      isWalletAddress: true,
+      domainAddr: null,
+      domainErr: null
     }
+
+    // VARIABLES
+    this._isMounted = false;
+    this._timer = null;
+  }
+
+  // COMPONENT MOUNTED
+  componentDidMount() {
+    this._isMounted = true;
+
+  }
+
+  componentWillUnmount () {
+    this._isMounted = false;
+    this.clearTimer();
   }
 
   // Validate Pass Code
@@ -56,8 +77,56 @@ export default class PKEntryPrompt extends Component {
     value = value.replace(/[\n\r\t]/g, '');
 
     this.setState({
-      PKEntry: value
+      domainAddr: null,
+      domainErr: null
+    }, () => {
+      if (!Web3Helper.isHex(value)) {
+        this.clearTimer();
+
+        this._timer = setTimeout(() => {
+          this.resolveBlockchainDomain(value)
+        }, 500, value);
+      }
+      else {
+        this.clearTimer();
+      }
+    })
+
+    this.setState({
+      PKEntry: value,
+      isWalletAddress: Web3Helper.isHex(value)
     });
+  }
+
+  // Resolve domain
+  resolveBlockchainDomain = async (domain) => {
+    if (this.props.allowDomainDetection) {
+      Web3Helper.resolveBlockchainDomain(domain, "ETH")
+        .then((address) => {
+          this.setState({
+            domainAddr: address,
+            domainErr: null
+          });
+        })
+        .catch((err) => {
+          this.setState({
+            domainAddr: null,
+            domainErr: err.toString().replace("ResolutionError: ", "")
+          });
+        })
+    }
+    else {
+      this.setState({
+        domainAddr: null,
+        domainErr: "Invalid Address"
+      });
+    }
+  }
+
+  // Clear Timer
+  clearTimer () {
+   // Handle an undefined timer rather than null
+   this._timer !== undefined ? clearTimeout(this._timer) : null;
   }
 
   // Set Render
@@ -123,6 +192,7 @@ export default class PKEntryPrompt extends Component {
       title,
       subtitle,
       entryLimit,
+      allowDomainDetection,
       doneTitle,
       doneFunc,
       closeTitle,
@@ -174,6 +244,7 @@ export default class PKEntryPrompt extends Component {
                           maxLength={entryLimit}
                           multiline={true}
                           autoCorrect={false}
+                          autoCapitalize='none'
                           onChangeText={(value) => (this.changePKEntry(doneFunc, closeFunc, value))}
                           onSubmitEditing={(event) => {
                             this.validatePKEntry(doneFunc, closeFunc, event.nativeEvent.text);
@@ -182,12 +253,44 @@ export default class PKEntryPrompt extends Component {
                           returnKeyType="done"
                           autoFocus
                         />
+
                         <Text style={styles.lettercount}>
-                          {this.state.PKEntry.length} / {entryLimit}
+                          {
+                            this.state.isWalletAddress || !allowDomainDetection
+                            ? `${this.state.PKEntry.length} / ${entryLimit}`
+                            : this.state.domainAddr
+                              ? `Domain Found`
+                              : this.state.domainErr
+                                ? <>
+                                    <ErrorMsg weight={600} color={GLOBALS.COLORS.GRADIENT_PRIMARY}>
+                                      Error:
+                                    </ErrorMsg>
+                                    <ErrorMsg weight={300} underline={true} color={GLOBALS.COLORS.BLACK}>
+                                      {` ${this.state.domainErr}`}
+                                    </ErrorMsg>
+                                  </>
+                                : 'Checking for CNS / ENS Name...'
+                          }
+
                         </Text>
                       </React.Fragment>
                 }
                 </View>
+                {
+                  !this.state.isWalletAddress && this.state.domainAddr
+                    ? <View style={[ styles.doneArea ]}>
+                        <TouchableHighlight
+                          style={[ styles.done ]}
+                          underlayColor={GLOBALS.COLORS.LIGHT_GRAY}
+                          onPress={() => {
+                            this.changePKEntry(doneFunc, closeFunc, this.state.domainAddr)
+                          }}
+                        >
+                          <Text style={[ styles.hintText ]} >{this.state.domainAddr}</Text>
+                        </TouchableHighlight>
+                      </View>
+                    : null
+                }
                 <View style={[ styles.doneArea ]}>
                   <TouchableHighlight
                     style={[ styles.done ]}
@@ -216,6 +319,12 @@ export default class PKEntryPrompt extends Component {
     );
   }
 }
+
+// Styled Components
+const ErrorMsg = styled.Text`
+  color: ${props => props.color || GLOBALS.COLORS.BLACK},
+  font-weight: ${props => props.weight || 400}
+`
 
 // Styling
 const styles = StyleSheet.create({
@@ -286,6 +395,11 @@ const styles = StyleSheet.create({
     paddingTop: 2,
     color: GLOBALS.COLORS.MID_GRAY,
     fontSize: 12,
+  },
+  hintText: {
+    color: GLOBALS.COLORS.GRADIENT_PRIMARY,
+    textAlign: 'center',
+    fontSize: 14,
   },
   doneArea: {
 

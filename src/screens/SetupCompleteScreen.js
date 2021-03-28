@@ -129,7 +129,7 @@ export default class SetupCompleteScreen extends Component {
     let type = 2;
     let secret = "";
     let sub = "Secrets... shhh!!!";
-    let msg = "The [d:coolest type] of messages are [t:secrets]. They are indicated by the [bi:shush gradient] on the top left of the message box.\n\nThey are always [d:encrypted] and [b:only you] can see them.";
+    let msg = "The [d:coolest type] of messages are [t:secrets]. They are indicated by the [bi:shush gradient] on the top right of the message box.\n\nThey are always [d:encrypted] and [b:only you] can see them.";
     let cta = '';
     let img = '';
     let epoch = new Date().getTime();
@@ -180,7 +180,7 @@ export default class SetupCompleteScreen extends Component {
     payload.sub = "Ring the Bell";
     payload.msg = "The [d:Bell] on the [b:top right] keeps track of any incoming messages and will inform you about it.\n\nClicking on the [b:bell] will update your feed [i:(Alternatively, pull feed down to refresh)]";
     payload.cta = '';
-    payload.img = 'https://backend.epns.io/assets/epnsappbellturorial.jpg'; //'https://i.ibb.co/SvYGCY9/epnsappbellturorial.jpg';
+    payload.img = 'https://backend-staging.epns.io/assets/epnsappbellturorial.jpg'; //'https://i.ibb.co/SvYGCY9/epnsappbellturorial.jpg';
     payload.epoch = new Date().getTime() / 1000;
 
     // Add to Feed DB
@@ -198,7 +198,7 @@ export default class SetupCompleteScreen extends Component {
 
     // 1. Welcome to EPNS
     payload.sub = "Welcome to EPNS";
-    payload.msg = "[b:Greetings] fellow users! Welcome aboard!\n\nI am your personalized [d:App Bot] whose sole purpose is to guide you about the app.\n\nTo get started! [b:Swipe Right to Archive this.]";
+    payload.msg = "[b:Greetings] fellow users! Welcome aboard!\n\nI am your personalized [d:App Bot] whose sole purpose is to guide you about the app.\n\nTo get started! [b:Swipe Left to Archive this.]";
     payload.cta = '';
     payload.img = '';
     payload.epoch = new Date().getTime() / 1000;
@@ -248,7 +248,7 @@ export default class SetupCompleteScreen extends Component {
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title='Visit [u:app.epns.io||https://aap.epns.io] from a [b:Web3 Enabled Browser] to subscribe to your favorite [d:dApp channels] and start recieving [b:messages!]'
+                  title='Visit [u:app.epns.io||https://app.epns.io] from a [b:Web3 Enabled Browser] to subscribe to your favorite [d:dApp channels] and start recieving [b:messages!]'
                 />
               </View>
             }

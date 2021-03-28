@@ -369,6 +369,7 @@ export default class SignInScreenAdvance extends Component {
           title='Enter Private Key'
           subtitle='Please enter the Private Key of your Wallet. Remove 0x out if it starts with it, that is applied automatically.'
           entryLimit={64}
+          allowDomainDetection={false}
           doneTitle='Verify!'
           doneFunc={(code) => {
             code = '0x' + code;

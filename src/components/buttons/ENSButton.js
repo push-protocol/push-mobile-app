@@ -43,17 +43,18 @@ export default class ENSButton extends Component<Prop> {
       fontSize
     } = this.props;
 
-    let showENS = true;
+    let showDomain = true;
     let title = cns;
 
     if (cns === '') {
       title = ens;
     }
 
-    if (ens === '') {
-      showENS = false;
+    if (ens === '' && cns === '') {
       title = wallet;
+      showDomain = false;
     }
+
 
     let icon = 'ios-arrow-down';
     if (this.state.active) {
@@ -84,7 +85,7 @@ export default class ENSButton extends Component<Prop> {
       numberOfLines = 1;
       headerStyle.marginRight = 0;
 
-      if (!showENS && !loading) {
+      if (!showDomain && !loading) {
         // Colored look better
         // gradient = [
         //   GLOBALS.COLORS.MID_GRAY,
@@ -114,7 +115,7 @@ export default class ENSButton extends Component<Prop> {
       <View style={[ styles.container, style ]}>
         <TouchableOpacity
           onPress = {this.onPress}
-          disabled={!showENS || forProfile}
+          disabled={!showDomain || forProfile}
         >
           <LinearGradient
             colors={gradient}
@@ -129,7 +130,7 @@ export default class ENSButton extends Component<Prop> {
                     size = "small"
                     color = {GLOBALS.COLORS.WHITE}
                   />
-                : showENS == false
+                : showDomain == false
                   ? <Text
                       style={[ styles.ensName, { fontSize: fontSize}, headerTextStyle ]}
                       numberOfLines={numberOfLines}
