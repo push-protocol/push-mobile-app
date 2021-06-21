@@ -308,7 +308,7 @@
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 62B7287GF5;
+						DevelopmentTeam = 9FP924P7P4;
 					};
 					1E8454FA246B1F63008B0FBE = {
 						CreatedOnToolsVersion = 11.4.1;
@@ -551,7 +551,7 @@
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/EPNS.entitlements;
 				CURRENT_PROJECT_VERSION = 38;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 62B7287GF5;
+				DEVELOPMENT_TEAM = 9FP924P7P4;
 				INFOPLIST_FILE = epnsstaging/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 0.4.4;
@@ -574,7 +574,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/EPNS.entitlements;
 				CURRENT_PROJECT_VERSION = 38;
-				DEVELOPMENT_TEAM = 62B7287GF5;
+				DEVELOPMENT_TEAM = 9FP924P7P4;
 				INFOPLIST_FILE = epnsstaging/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 0.4.4;

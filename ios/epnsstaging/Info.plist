@@ -47,6 +47,7 @@
 	<string>Allow EPNS to access your Audio. EPNS will use this to play sounds.</string>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>external-accessory</string>
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
