@@ -308,7 +308,8 @@
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 9FP924P7P4;
+						DevelopmentTeam = 62B7287GF5;
+						ProvisioningStyle = Automatic;
 					};
 					1E8454FA246B1F63008B0FBE = {
 						CreatedOnToolsVersion = 11.4.1;
@@ -549,12 +550,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/EPNS.entitlements;
-				CURRENT_PROJECT_VERSION = 38;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 45;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 9FP924P7P4;
+				DEVELOPMENT_TEAM = 62B7287GF5;
 				INFOPLIST_FILE = epnsstaging/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.4.4;
+				MARKETING_VERSION = 0.5;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -562,6 +565,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging;
 				PRODUCT_NAME = "EPNS Staging";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -573,11 +577,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/EPNS.entitlements;
-				CURRENT_PROJECT_VERSION = 38;
-				DEVELOPMENT_TEAM = 9FP924P7P4;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 45;
+				DEVELOPMENT_TEAM = 62B7287GF5;
 				INFOPLIST_FILE = epnsstaging/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.4.4;
+				MARKETING_VERSION = 0.5;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -585,6 +591,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging;
 				PRODUCT_NAME = "EPNS Staging";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

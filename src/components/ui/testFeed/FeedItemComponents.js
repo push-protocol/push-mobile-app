@@ -6,6 +6,7 @@ import {
 	StyleSheet,
 	Linking,
 	Image,
+	ToastAndroid,
 } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import * as Device from "expo-device";
@@ -34,7 +35,8 @@ const FeedItem = (props) => {
 	useEffect(() => {
 		// console.log("CALLING");
 		compileMessage();
-	}, [props.item]);
+		// console.log("PROPS", props);
+	}, []);
 
 	const { style } = props;
 
@@ -49,6 +51,8 @@ const FeedItem = (props) => {
 	const [img, setImg] = useState(null);
 	const [timestamp, setTimestamp] = useState(false);
 	const [type, setType] = useState("1");
+
+	const [loadingFeed, setLoadingFeed] = useState(props.loading);
 
 	// this.state = {
 	//   loading: true,
@@ -93,7 +97,7 @@ const FeedItem = (props) => {
 	};
 
 	// FUNCTIONS
-	const compileMessage = () => {
+	const compileMessage = async () => {
 		// console.log("CALLED", props.item.payload.data.type);
 		let _sub =
 			!props.item.payload.data.asub || props.item.payload.data.asub === ""
@@ -134,50 +138,63 @@ const FeedItem = (props) => {
 			setType(props.item.payload.data.type);
 		}
 
-		// if (item["type"] == 2 || item["type"] == -2) {
-		//   const privateKey = this.props.privateKey;
+		// if (
+		// 	props.item.payload.data.type == 2 ||
+		// 	props.item.payload.data.type == -2
+		// ) {
+		// 	const privateKey = props.privateKey;
 
-		//   if (privateKey && privateKey !== GLOBALS.CONSTANTS.NULL_EXCEPTION) {
-		//     // Private key present, else display action banner as it's a wallet sign in
-		//     // decrypt the message
-		//     const secret = await CryptoHelper.decryptWithECIES(item["secret"], privateKey);
-		//     // console.log("SECR:" + secret);
+		// 	if (privateKey && privateKey !== GLOBALS.CONSTANTS.NULL_EXCEPTION) {
+		// 		// Private key present, else display action banner as it's a wallet sign in
+		// 		// decrypt the message
+		// 		const secret = await CryptoHelper.decryptWithECIES(
+		// 			props.item.payload.data.secret,
+		// 			privateKey
+		// 		);
+		// 		// console.log("SECR:" + secret);
 
-		//     if (sub) {
-		//       sub = CryptoHelper.decryptWithAES(sub, secret);
-		//     }
+		// 		if (_sub) {
+		// 			_sub = await CryptoHelper.decryptWithAES(_sub, secret);
+		// 		}
 
-		//     if (msg) {
-		//       msg = CryptoHelper.decryptWithAES(msg, secret);
-		//     }
+		// 		if (msg1) {
+		// 			msg1 = await CryptoHelper.decryptWithAES(msg1, secret);
+		// 		}
 
-		//     if (cta) {
-		//       cta = CryptoHelper.decryptWithAES(cta, secret);
-		//     }
+		// 		if (_cta) {
+		// 			_cta = await CryptoHelper.decryptWithAES(_cta, secret);
+		// 		}
 
-		//     if (img) {
-		//       img = CryptoHelper.decryptWithAES(img, secret);
-		//     }
-		//   }
+		// 		if (_img) {
+		// 			_img = await CryptoHelper.decryptWithAES(_img, secret);
+		// 		}
+		// 	}
 
-		//   let showTimestamp = false;
-		//   const matches = msg.match(/\[timestamp:(.*?)\]/);
-		//   if (matches) {
-		//     showTimestamp = matches[1];
-		//     msg = msg.replace(/ *\[timestamp:[^)]*\] */g, "");
-		//   }
+		// 	let showTimestamp = false;
+		// 	const matches = msg1.match(/\[timestamp:(.*?)\]/);
+		// 	if (matches) {
+		// 		showTimestamp = matches[1];
+		// 		msg1 = msg1.replace(/ *\[timestamp:[^)]*\] */g, "");
+		// 	}
 
-		//   this.setState({
-		//     sub: sub,
-		//     msg: msg,
-		//     cta: cta,
-		//     img: img,
-		//     timestamp: showTimestamp,
+		// 	// this.setState({
+		// 	// 	sub: sub,
+		// 	// 	msg: msg,
+		// 	// 	cta: cta,
+		// 	// 	img: img,
+		// 	// 	timestamp: showTimestamp,
 
-		//     type: item["type"],
+		// 	// 	type: item["type"],
 
-		//     loading: false,
-		//   })
+		// 	// 	loading: false,
+		// 	// });
+		// 	setTimestamp(showTimestamp);
+		// 	setloading(false);
+		// 	setSub(_sub);
+		// 	setMsg(msg1);
+		// 	setCta(_cta);
+		// 	setImg(_img);
+		// 	setType(props.item.payload.data.type);
 		// }
 	};
 
@@ -197,7 +214,8 @@ const FeedItem = (props) => {
 
 	// Do stuff with contants like internal bot, app meta info, etc
 	let internalBot = false;
-	if (item.appbot == 1) {
+
+	if (props.item.payload.data.appbot == 1) {
 		internalBot = true;
 	}
 
@@ -285,15 +303,18 @@ const FeedItem = (props) => {
 							style={[styles.appLink]}
 							onPress={() => onPress(item.url)}
 							disabled={!item.url || item.url === "" ? true : false}>
-							<Image style={styles.appicon} source={{ uri: item.icon }} />
-							{/* <ImageDownloadWithIndicator
+							{/* <Image
+								style={styles.appicon}
+								source={{ uri: internalBot ? iconURL : item.icon }}
+							/> */}
+							<ImageDownloadWithIndicator
 								style={styles.appicon}
 								fileURL={internalBot ? "" : item.icon}
 								imgsrc={internalBot ? iconURL : false}
 								miniProgressLoader={true}
 								margin={2}
 								resizeMode="contain"
-							/> */}
+							/>
 							<Text style={styles.apptext} numberOfLines={1}>
 								{item.app}
 							</Text>

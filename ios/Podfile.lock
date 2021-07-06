@@ -330,6 +330,9 @@ PODS:
     - React-Core
   - react-native-safe-area-context (0.7.3):
     - React
+  - react-native-simple-toast (1.1.3):
+    - React-Core
+    - Toast (~> 4.0.0)
   - react-native-udp (2.7.0):
     - React
   - react-native-video (5.1.1):
@@ -405,6 +408,7 @@ PODS:
     - React
   - TcpSockets (3.3.2):
     - React
+  - Toast (4.0.0)
   - UMAppLoader (1.0.2)
   - UMBarCodeScannerInterface (5.1.0)
   - UMCameraInterface (5.1.0)
@@ -472,6 +476,7 @@ DEPENDENCIES:
   - react-native-hash (from `../node_modules/react-native-hash`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-simple-toast (from `../node_modules/react-native-simple-toast`)
   - react-native-udp (from `../node_modules/react-native-udp`)
   - react-native-video (from `../node_modules/react-native-video`)
   - react-native-webview (from `../node_modules/react-native-webview`)
@@ -529,6 +534,7 @@ SPEC REPOS:
     - GoogleUtilities
     - nanopb
     - PromisesObjC
+    - Toast
     - YoutubePlayer-in-WKWebView
     - ZXingObjC
 
@@ -607,6 +613,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-randombytes"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-simple-toast:
+    :path: "../node_modules/react-native-simple-toast"
   react-native-udp:
     :path: "../node_modules/react-native-udp"
   react-native-video:
@@ -739,6 +747,7 @@ SPEC CHECKSUMS:
   react-native-hash: c66948010974722739fc666c33494854dc5f4f7c
   react-native-randombytes: b6677f7d495c27e9ee0dbd77ebc97b3c59173729
   react-native-safe-area-context: e200d4433aba6b7e60b52da5f37af11f7a0b0392
+  react-native-simple-toast: bf002828cf816775a6809f7a9ec3907509bce11f
   react-native-udp: ff9d13e523f2b58e6bc5d4d32321ac60671b5dc9
   react-native-video: 0bb76b6d6b77da3009611586c7dbf817b947f30e
   react-native-webview: cf5527893252b3b036eea024a1da6996f7344c74
@@ -765,6 +774,7 @@ SPEC CHECKSUMS:
   RNSqlite2: 038cbebb953f80432db480c5ac5fd8ae427f8446
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
+  Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   UMAppLoader: ee77a072f9e15128f777ccd6d2d00f52ab4387e6
   UMBarCodeScannerInterface: 9dc692b87e5f20fe277fa57aa47f45d418c3cc6c
   UMCameraInterface: 625878bbf2ba188a8548675e1d1d2e438a653e6d
@@ -784,4 +794,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 44c2333417ce3c83128b8f3e7712aa29c3cac091
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.10.1

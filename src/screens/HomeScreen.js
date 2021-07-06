@@ -5,12 +5,13 @@ import {
 	InteractionManager,
 	Platform,
 	StyleSheet,
+	TouchableOpacity,
 } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useFocusEffect } from "@react-navigation/native";
 
 import messaging from "@react-native-firebase/messaging";
-
+import HomeFeed from "src/components/ui/HomeFeed";
 import ProfileDisplayer from "src/components/ui/ProfileDisplayer";
 import EPNSNotifierIcon from "src/components/custom/EPNSNotifierIcon";
 import FeedsDisplayer from "src/components/ui/FeedsDisplayer";
@@ -18,6 +19,7 @@ import FeedsDisplayer from "src/components/ui/FeedsDisplayer";
 import ImageButton from "src/components/buttons/ImageButton";
 import PrimaryButton from "src/components/buttons/PrimaryButton";
 import OverlayBlur from "src/components/modals/OverlayBlur";
+import { Feather } from "@expo/vector-icons";
 
 import { ToasterOptions, Toaster } from "src/components/indicators/Toaster";
 
@@ -32,7 +34,6 @@ import Utilities from "src/singletons/Utilities";
 
 import AuthContext, { APP_AUTH_STATES } from "src/components/auth/AuthContext";
 import GLOBALS from "src/Globals";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 function ScreenFinishedTransition({ runAfterScreenTransition }) {
 	useFocusEffect(
@@ -61,11 +62,9 @@ export default class HomeScreen extends Component {
 
 	// COMPONENT MOUNTED
 	async componentDidMount() {
-		await this.maintainer();
-
+		// await this.maintainer();
 		// To Output msg payload for testing
 		// this.outputSecretMsgPayload();
-
 		// Testing Feed DB
 	}
 
@@ -74,25 +73,25 @@ export default class HomeScreen extends Component {
 
 	// COMPONENT LOADED
 	// Run as soon as loaded
-	maintainer = async () => {
-		// Set Notification Listener
-		Notify.instance.setNotificationListenerCallback(() => {
-			this.onNotificationListenerUpdate();
-		});
+	// maintainer = async () => {
+	// 	// Set Notification Listener
+	// 	Notify.instance.setNotificationListenerCallback(() => {
+	// 		this.onNotificationListenerUpdate();
+	// 	});
 
-		// Since User is logged in, reset passcode attempts
-		await MetaStorage.instance.setRemainingPasscodeAttempts(
-			GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
-		);
+	// 	// Since User is logged in, reset passcode attempts
+	// 	await MetaStorage.instance.setRemainingPasscodeAttempts(
+	// 		GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
+	// 	);
 
-		// Initialize Utilities
-		Utilities.instance.initialize();
-	};
+	// 	// Initialize Utilities
+	// 	Utilities.instance.initialize();
+	// };
 
 	// Run After Transition is finished
 	afterTransitionMaintainer = async () => {
 		// Trigger Notification Update
-		await this.onNotificationListenerUpdate();
+		// await this.onNotificationListenerUpdate();
 
 		// First sign in by user
 		const firstSignIn = await MetaStorage.instance.getFirstSignInByUser();
@@ -105,7 +104,7 @@ export default class HomeScreen extends Component {
 		}
 
 		// Refresh feed automatically
-		await this.refreshFeeds();
+		// await this.refreshFeeds();
 
 		// Get signed type and register device for push
 		let signedInType = await MetaStorage.instance.getSignedInType();
@@ -132,10 +131,10 @@ export default class HomeScreen extends Component {
 	// FUNCTIONS
 
 	// To refresh the bell badge
-	onNotificationListenerUpdate = async () => {
-		// Check Notifier
-		await this.refs.EPNSNotifier.getBadgeCountAndRefresh();
-	};
+	// onNotificationListenerUpdate = async () => {
+	// 	// Check Notifier
+	// 	await this.refs.EPNSNotifier.getBadgeCountAndRefresh();
+	// };
 
 	// To refresh the Feeds
 	refreshFeeds = async () => {
@@ -186,18 +185,18 @@ export default class HomeScreen extends Component {
 				/>
 
 				{/* Has absolute Header so goes on top */}
-				<ProfileDisplayer
-					ref="ProfileDisplayer"
-					style={styles.profile}
-					wallet={wallet}
-					lockApp={() => {
-						const { handleAppAuthState } = this.context;
-						handleAppAuthState(APP_AUTH_STATES.ONBOARDED);
-					}}
-				/>
 
 				<SafeAreaView style={styles.container}>
 					<View style={styles.header}>
+						<ProfileDisplayer
+							ref="ProfileDisplayer"
+							style={styles.profile}
+							wallet={wallet}
+							lockApp={() => {
+								const { handleAppAuthState } = this.context;
+								handleAppAuthState(APP_AUTH_STATES.ONBOARDED);
+							}}
+						/>
 						{/* Header Comes Here */}
 						<EPNSNotifierIcon
 							ref="EPNSNotifier"
@@ -205,13 +204,27 @@ export default class HomeScreen extends Component {
 							iconSize={32}
 							onPress={() => {
 								// Refresh the feeds
-								this.refreshFeeds();
+								// this.refreshFeeds();
 							}}
 							onNewNotifications={() => {
 								// Do nothing for now, bell is ringing in the module anyway
 							}}
 						/>
+						<ImageButton
+							style={styles.help}
+							src={require("assets/ui/help.png")}
+							iconSize={24}
+							onPress={() => {
+								// // Finally associate token to server if not done
+								// const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
+								// const privateKey = this.props.route.params.pkey;
+								//
+								// // While an async function, there is no need to wait
+								// ServerHelper.associateTokenToServer(publicKey, privateKey);
 
+								navigation.navigate("SampleFeed", {});
+							}}
+						/>
 						<ImageButton
 							style={styles.settings}
 							src={require("assets/ui/settings.png")}
@@ -229,12 +242,11 @@ export default class HomeScreen extends Component {
 						/>
 					</View>
 					<View style={styles.content}>
-						<TouchableOpacity
-							onPress={() => {
-								navigation.navigate("TestFeed", { wallet: wallet });
-							}}>
-							<Text>Test Feed</Text>
-						</TouchableOpacity>
+						<HomeFeed
+							wallet={wallet}
+							privateKey={this.props.route.params.pkey}
+						/>
+						{/*
 						<FeedsDisplayer
 							ref="FeedsDisplayer"
 							style={styles.feedDisplayer}
@@ -245,7 +257,7 @@ export default class HomeScreen extends Component {
 								this.showToast(msg, icon, type, tapCB, screenTime);
 							}}
 							privateKey={this.props.route.params.pkey}
-						/>
+						/> */}
 					</View>
 				</SafeAreaView>
 
@@ -272,22 +284,22 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		width: "100%",
-		justifyContent: "center",
-		alignItems: "center",
+		// justifyContent: "center",
+		// alignItems: "center",
 		backgroundColor: GLOBALS.COLORS.WHITE,
 	},
 	profile: {
-		position: "absolute",
-		top: 0,
-		right: 0,
-		left: 0,
-		bottom: 0,
-		zIndex: 99,
+		// position: "absolute",
+		// top: 0,
+		// right: 0,
+		// left: 0,
+		// bottom: 0,
+		// zIndex: 99,
 	},
 	header: {
 		flexDirection: "row",
 		alignSelf: "stretch",
-		justifyContent: "flex-end",
+		// justifyContent: "flex-end",
 		alignItems: "center",
 		marginHorizontal: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
 		zIndex: 99,
@@ -300,6 +312,11 @@ const styles = StyleSheet.create({
 	settings: {
 		marginTop: 5,
 		width: 24,
+	},
+	help: {
+		width: 24,
+		marginTop: 5,
+		marginRight: 10,
 	},
 	content: {
 		flex: 1,

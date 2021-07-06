@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
 	View,
 	Text,
@@ -15,7 +15,7 @@ import ImagePreviewFooter from "src/components/ui/ImagePreviewFooter";
 
 import FeedItemWrapper from "src/components/ui/FeedItemWrapper";
 import EPNSActivity from "src/components/loaders/EPNSActivity";
-import { ToasterOptions } from "src/components/indicators/Toaster";
+import { ToasterOptions, Toaster } from "src/components/indicators/Toaster";
 
 import StylishLabel from "src/components/labels/StylishLabel";
 import FeedDBHelper from "src/helpers/FeedDBHelper";
@@ -24,6 +24,18 @@ import MetaStorage from "src/singletons/MetaStorage";
 import GLOBALS from "src/Globals";
 
 const FeedsDisplayerComponent = (props) => {
+	useEffect(() => {
+		this.showToast(
+			"Messages Unarchived! Restarting...",
+			"",
+			ToasterOptions.TYPE.GRADIENT_PRIMARY
+		);
+	}, []);
+
+	showToast = (msg, icon, type, tapCB, screenTime) => {
+		refs.Toaster.showToast(msg, icon, type, tapCB, screenTime);
+	};
+
 	// To pull more feeds and store them in the feed items
 
 	// // Show Toast
@@ -94,6 +106,7 @@ const FeedsDisplayerComponent = (props) => {
 					// extraData={this.state}
 					keyExtractor={(item) => item.payload_id}
 					contentContainerStyle={styles.feedScrollContent}
+					onEndReachedThreshold={100}
 					renderItem={({ item }) => (
 						<FeedItemWrapper
 							// ref={(ref) =>
@@ -102,6 +115,7 @@ const FeedsDisplayerComponent = (props) => {
 							// 		[this.getRefForFeedItem(item["nid"])]: ref,
 							// 	})
 							// }
+							loading={props.loading}
 							item={item}
 							// nid={item["nid"]}
 							// showToast={showToast}
@@ -132,6 +146,7 @@ const FeedsDisplayerComponent = (props) => {
 					// 	)
 					// }
 				/>
+				<Toaster ref="Toaster" />
 			</SafeAreaView>
 
 			{/* <ImageView

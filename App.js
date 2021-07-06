@@ -22,7 +22,8 @@ import SignInScreenAdvance from "src/screens/SignInScreenAdvance";
 import BiometricScreen from "src/screens/BiometricScreen";
 import PushNotifyScreen from "src/screens/PushNotifyScreen";
 import SetupCompleteScreen from "src/screens/SetupCompleteScreen";
-import TestFeed from "src/screens/TestFeed";
+
+import SampleFeed from "src/screens/SampleFeed";
 
 import MetaStorage from "src/singletons/MetaStorage";
 import Notify from "src/singletons/Notify";
@@ -138,7 +139,17 @@ export default function App({ navigation }) {
 						}}
 					/>
 
-					<Stack.Screen name="TestFeed" component={TestFeed} />
+					<Stack.Screen
+						name="SampleFeed"
+						component={SampleFeed}
+						options={{
+							title: "Example Feed",
+							headerStyle: {
+								backgroundColor: GLOBALS.COLORS.WHITE,
+							},
+							headerTintColor: GLOBALS.COLORS.MID_GRAY,
+						}}
+					/>
 				</React.Fragment>
 			);
 		}

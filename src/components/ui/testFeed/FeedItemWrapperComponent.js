@@ -284,6 +284,7 @@ const FeedItemWrapper = (props) => {
 		//     onLayout = {(event) => { this.findDimensions(event.nativeEvent.layout) }}
 		//   >
 		<FeedItem
+			loading={props.loading}
 			item={props.item}
 			// showToast={props.showToast}
 			// onImagePreview={onImagePreview}
