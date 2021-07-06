@@ -78,7 +78,8 @@ import com.android.build.OutputFile
 project.ext.react = [
     entryFile: "index.js",
     enableHermes: false,
-    bundleInRelease: false
+    bundleInRelease: false,
+bundleInDebug: true
 ]
 
 apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
@@ -134,8 +135,8 @@ android {
         applicationId "io.epns.epnsstaging"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 9
-        versionName "0.3.6"
+        versionCode 10
+        versionName "0.5"
     }
     splits {
         abi {
