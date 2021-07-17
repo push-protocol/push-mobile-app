@@ -134,7 +134,7 @@ android {
         applicationId "io.epns.epns"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 45
+        versionCode 47
         versionName "0.5"
     }
     splits {
