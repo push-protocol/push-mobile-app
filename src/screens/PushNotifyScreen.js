@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   View,
   Text,
@@ -7,22 +7,22 @@ import {
   Animated,
   AsyncStorage,
   StyleSheet,
-} from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
+} from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { SafeAreaView, useSafeArea } from "react-native-safe-area-context";
 
-import messaging from '@react-native-firebase/messaging';
+import messaging from "@react-native-firebase/messaging";
 
-import StylishLabel from 'src/components/labels/StylishLabel';
-import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
-import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import StylishLabel from "src/components/labels/StylishLabel";
+import DetailedInfoPresenter from "src/components/misc/DetailedInfoPresenter";
+import PrimaryButton from "src/components/buttons/PrimaryButton";
 
-import OverlayBlur from 'src/components/modals/OverlayBlur';
-import NoticePrompt from 'src/components/modals/NoticePrompt';
+import OverlayBlur from "src/components/modals/OverlayBlur";
+import NoticePrompt from "src/components/modals/NoticePrompt";
 
-import Notify from 'src/singletons/Notify';
+import Notify from "src/singletons/Notify";
 
-import GLOBALS from 'src/Globals';
+import GLOBALS from "src/Globals";
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
@@ -44,8 +44,7 @@ function GetScreenInsets() {
   if (insets.bottom > 0) {
     // Adjust inset by
     return <View style={styles.insetAdjustment}></View>;
-  }
-  else {
+  } else {
     return <View style={styles.noInsetAdjustment}></View>;
   }
 }
@@ -59,28 +58,36 @@ export default class PushNotifyScreen extends Component {
       transitionFinished: false,
       detailedInfoPresetned: false,
 
-      fader: new Animated.Value(0)
-    }
+      fader: new Animated.Value(0),
+    };
   }
 
   // FUNCTIONS
   // When Animation is Finished
   animationFinished = () => {
-    this.setState({
-      detailedInfoPresetned: true,
-    }, ()=> {
-      Animated.timing(
-        this.state.fader, {
+    this.setState(
+      {
+        detailedInfoPresetned: true,
+      },
+      () => {
+        Animated.timing(this.state.fader, {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }
-      ).start();
-    })
-  }
+        }).start();
+      }
+    );
+  };
 
   // Open Notice Prompt With Overlay Blur
-  toggleNoticePrompt = (toggle, animate, title, subtitle, notice, showIndicator) => {
+  toggleNoticePrompt = (
+    toggle,
+    animate,
+    title,
+    subtitle,
+    notice,
+    showIndicator
+  ) => {
     // Set Notice First
     if (title) {
       this.refs.NoticePrompt.changeTitle(title);
@@ -101,7 +108,7 @@ export default class PushNotifyScreen extends Component {
     // Set render state of this and the animate the blur modal in
     this.refs.OverlayBlur.changeRenderState(toggle, animate);
     this.refs.NoticePrompt.changeRenderState(toggle, animate);
-  }
+  };
 
   // Load the Next Screen
   loadNextScreenAfterAdditionalSetup = async () => {
@@ -112,21 +119,20 @@ export default class PushNotifyScreen extends Component {
       this.toggleNoticePrompt(
         true,
         true,
-        'Push Notifications are Disabled',
-        'Having Push Notifications is recommended as EPNS uses this to deliver your messages to you.',
+        "Push Notifications are Disabled",
+        "Having Push Notifications is recommended as EPNS uses this to deliver your messages to you.",
         `If you wish to enable Push Notifations in the future, you can do so from the [appsettings:App Settings]`,
         false
       );
-    }
-    else {
+    } else {
       this.loadNextScreen();
     }
-  }
+  };
 
   // Load real next screen
   loadNextScreenSequential = () => {
     this.loadNextScreen();
-  }
+  };
 
   loadNextScreen = async () => {
     // Save Device Token
@@ -135,11 +141,12 @@ export default class PushNotifyScreen extends Component {
     const { privateKey } = this.props.route.params;
 
     // Goto Next Screen
-    this.props.navigation.navigate('SetupComplete', {
+    this.props.navigation.navigate("OnboardingChannel", {
+      wallet: this.props.route.params.walletAddress,
       privateKey: privateKey,
       fromOnboarding: this.props.route.params.fromOnboarding,
     });
-  }
+  };
 
   // RETURN
   render() {
@@ -148,19 +155,17 @@ export default class PushNotifyScreen extends Component {
     return (
       <SafeAreaView style={styles.container}>
         <ScreenFinishedTransition
-          setScreenTransitionAsDone={
-            () => {
-              this.setState({
-                transitionFinished: true
-              });
-            }
-          }
+          setScreenTransitionAsDone={() => {
+            this.setState({
+              transitionFinished: true,
+            });
+          }}
         />
-      <Text style={styles.header}>Notifications</Text>
+        <Text style={styles.header}>Notifications</Text>
         <View style={styles.inner}>
           <DetailedInfoPresenter
             style={styles.intro}
-            icon={require('assets/ui/push.png')}
+            icon={require("assets/ui/push.png")}
             contentView={
               <View style={styles.introContent}>
                 <StylishLabel
@@ -177,32 +182,34 @@ export default class PushNotifyScreen extends Component {
             }
             animated={!this.state.detailedInfoPresetned}
             startAnimation={this.state.transitionFinished}
-            animationCompleteCallback={() => {this.animationFinished()}}
+            animationCompleteCallback={() => {
+              this.animationFinished();
+            }}
           />
         </View>
-        <Animated.View style={[ styles.footer, {opacity: this.state.fader} ]}>
+        <Animated.View style={[styles.footer, { opacity: this.state.fader }]}>
           <PrimaryButton
-            iconFactory='Ionicons'
-            icon='ios-notifications-outline'
+            iconFactory="Ionicons"
+            icon="ios-notifications-outline"
             iconSize={24}
-            title='Enable Notifications and Continue'
+            title="Enable Notifications and Continue"
             fontSize={16}
             fontColor={GLOBALS.COLORS.WHITE}
             bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
             disabled={false}
-            onPress={() => {this.loadNextScreenAfterAdditionalSetup()}}
+            onPress={() => {
+              this.loadNextScreenAfterAdditionalSetup();
+            }}
           />
           <GetScreenInsets />
         </Animated.View>
 
         {/* Overlay Blur and Notice to show in case biometric is skipped */}
-        <OverlayBlur
-          ref='OverlayBlur'
-        />
+        <OverlayBlur ref="OverlayBlur" />
 
         <NoticePrompt
-          ref='NoticePrompt'
-          closeTitle='OK'
+          ref="NoticePrompt"
+          closeTitle="OK"
           closeFunc={() => {
             this.toggleNoticePrompt(false, true);
             this.loadNextScreenSequential();
@@ -218,19 +225,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: GLOBALS.COLORS.WHITE,
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   header: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     paddingTop: 40,
     paddingHorizontal: 20,
   },
   inner: {
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: "absolute",
+    alignItems: "center",
+    justifyContent: "center",
     top: 0,
     bottom: 0,
     left: 0,
@@ -250,7 +257,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   footer: {
-    width: '100%',
+    width: "100%",
     paddingHorizontal: 20,
   },
   insetAdjustment: {
@@ -258,5 +265,5 @@ const styles = StyleSheet.create({
   },
   noInsetAdjustment: {
     paddingBottom: 20,
-  }
+  },
 });
