@@ -57,6 +57,7 @@ export default class HomeScreen extends Component {
 
     this.state = {
       transitionFinished: false,
+      refresh: false,
     };
   }
 
@@ -73,20 +74,20 @@ export default class HomeScreen extends Component {
 
   // COMPONENT LOADED
   // Run as soon as loaded
-  // maintainer = async () => {
-  // 	// Set Notification Listener
-  // 	Notify.instance.setNotificationListenerCallback(() => {
-  // 		this.onNotificationListenerUpdate();
-  // 	});
+  maintainer = async () => {
+    // Set Notification Listener
+    Notify.instance.setNotificationListenerCallback(() => {
+      this.onNotificationListenerUpdate();
+    });
 
-  // 	// Since User is logged in, reset passcode attempts
-  // 	await MetaStorage.instance.setRemainingPasscodeAttempts(
-  // 		GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
-  // 	);
+    // Since User is logged in, reset passcode attempts
+    await MetaStorage.instance.setRemainingPasscodeAttempts(
+      GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
+    );
 
-  // 	// Initialize Utilities
-  // 	Utilities.instance.initialize();
-  // };
+    // Initialize Utilities
+    Utilities.instance.initialize();
+  };
 
   // Run After Transition is finished
   afterTransitionMaintainer = async () => {
@@ -139,7 +140,9 @@ export default class HomeScreen extends Component {
   // To refresh the Feeds
   refreshFeeds = async () => {
     //this.refs.FeedsDisplayer.resetFeedState();
-    await this.refs.FeedsDisplayer.triggerGetItemsFromDB(false);
+    // await this.refs.FeedsDisplayer.triggerGetItemsFromDB(false);
+    this.setState({ refresh: !this.state.refresh });
+    console.log("REFRESH", this.state.refresh);
   };
 
   // Overlay Blur exit intent
@@ -204,7 +207,7 @@ export default class HomeScreen extends Component {
               iconSize={32}
               onPress={() => {
                 // Refresh the feeds
-                // this.refreshFeeds();
+                this.refreshFeeds();
               }}
               onNewNotifications={() => {
                 // Do nothing for now, bell is ringing in the module anyway
@@ -245,6 +248,7 @@ export default class HomeScreen extends Component {
             <HomeFeed
               wallet={wallet}
               privateKey={this.props.route.params.pkey}
+              refresh={this.state.refresh}
             />
             {/*
 						<FeedsDisplayer

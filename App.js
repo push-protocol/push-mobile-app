@@ -231,7 +231,7 @@ export default function App({ navigation }) {
             }}
           />
 
-          <Stack.Screen
+          {/* <Stack.Screen
             name="OnboardingChannel"
             component={OnboardingChannel}
             options={{
@@ -241,7 +241,7 @@ export default function App({ navigation }) {
               wallet: userWallet,
               pkey: userPKey,
             }}
-          />
+          /> */}
           <Stack.Screen
             name="SetupComplete"
             component={SetupCompleteScreen}

@@ -368,7 +368,7 @@ export default class BiometricScreen extends Component {
         fromOnboarding: this.props.route.params.fromOnboarding,
       });
     } else {
-      this.props.navigation.navigate("OnboardingChannel", {
+      this.props.navigation.navigate("SetupComplete", {
         privateKey: privateKey,
         fromOnboarding: this.props.route.params.fromOnboarding,
       });

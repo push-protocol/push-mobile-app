@@ -25,9 +25,9 @@ import { ActivityIndicator } from "react-native";
 export default function TestFeed(props) {
   // const toast = useRef(null);
 
-  const DEVICE_HEIGHT = Dimensions.get("window").height;
   useEffect(() => {
     fetchFeed();
+    setRefresh(props.refresh);
   }, []);
 
   const [feed, setFeed] = useState([]);
@@ -36,6 +36,11 @@ export default function TestFeed(props) {
   const [loading, setloading] = useState(false);
   const [callOnScrollEnd, setCallOnScrollEnd] = useState(false);
   const [endReached, setEndReached] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+
+  useEffect(() => {
+    onRefreshFunction();
+  }, [props.refresh]);
 
   const fetchFeed = async () => {
     if (!endReached) {
@@ -72,6 +77,16 @@ export default function TestFeed(props) {
       setRefreshing(false);
     }
     // console.log(feed);
+  };
+
+  const onRefreshFunction = async () => {
+    if (!endReached) {
+      setFeed([]);
+      setPage(1);
+      setEndReached(false);
+      setRefreshing(true);
+      fetchFeed();
+    }
   };
 
   return (
@@ -116,13 +131,7 @@ export default function TestFeed(props) {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={() => {
-                  if (!endReached) {
-                    setFeed([]);
-                    setPage(1);
-                    setEndReached(false);
-                    setRefreshing(true);
-                    fetchFeed();
-                  }
+                  onRefreshFunction();
                   // this.triggerGetItemsFromDB();
                   // setTimeout(() => {
                   // 	setRefreshing(false);
@@ -157,7 +166,7 @@ export default function TestFeed(props) {
             }
             ListFooterComponent={() => {
               return loading ? (
-                <View style={{ paddingBottom: 20 }}>
+                <View style={{ paddingBottom: 20, marginTop: 20 }}>
                   <ActivityIndicator size="large" color="#000000" />
                 </View>
               ) : null;

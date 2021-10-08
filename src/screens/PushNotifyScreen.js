@@ -141,7 +141,7 @@ export default class PushNotifyScreen extends Component {
     const { privateKey } = this.props.route.params;
 
     // Goto Next Screen
-    this.props.navigation.navigate("OnboardingChannel", {
+    this.props.navigation.navigate("SetupComplete", {
       wallet: this.props.route.params.walletAddress,
       privateKey: privateKey,
       fromOnboarding: this.props.route.params.fromOnboarding,
