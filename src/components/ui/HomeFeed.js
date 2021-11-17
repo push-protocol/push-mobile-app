@@ -62,7 +62,7 @@ export default function TestFeed(props) {
         }),
       });
       const resJson = await response.json();
-      // console.log(resJson);
+      console.log(resJson);
       if (resJson.count != 0 && resJson.results != []) {
         const data = feed;
         // toast.current.show("New Notifications fetched");

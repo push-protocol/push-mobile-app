@@ -33,6 +33,7 @@ import AuthContext, { APP_AUTH_STATES } from "src/components/auth/AuthContext";
 import ENV_CONFIG from "src/env.config";
 import GLOBALS from "src/Globals";
 import OnboardingChannel from "./src/screens/OnboardingChannel";
+import SpamBox from "./src/screens/SpamBox.js";
 
 // Assign console.log to nothing
 // if (!ENV_CONFIG.SHOW_CONSOLE) {
@@ -173,6 +174,17 @@ export default function App({ navigation }) {
             component={SampleFeed}
             options={{
               title: "Example Feed",
+              headerStyle: {
+                backgroundColor: GLOBALS.COLORS.WHITE,
+              },
+              headerTintColor: GLOBALS.COLORS.MID_GRAY,
+            }}
+          />
+          <Stack.Screen
+            name="SpamBox"
+            component={SpamBox}
+            options={{
+              title: "SpamBox",
               headerStyle: {
                 backgroundColor: GLOBALS.COLORS.WHITE,
               },

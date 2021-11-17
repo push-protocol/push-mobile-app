@@ -228,6 +228,26 @@ export default class HomeScreen extends Component {
 								navigation.navigate("SampleFeed", {});
 							}}
 						/> */}
+
+            <ImageButton
+              style={styles.settings}
+              src={require("assets/ui/spambox1.png")}
+              iconSize={24}
+              onPress={() => {
+                // // Finally associate token to server if not done
+                // const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
+                // const privateKey = this.props.route.params.pkey;
+                //
+                // // While an async function, there is no need to wait
+                // ServerHelper.associateTokenToServer(publicKey, privateKey);
+
+                navigation.navigate("SpamBox", {
+                  wallet: wallet,
+                  privateKey: this.props.route.params.pkey,
+                });
+              }}
+            />
+
             <ImageButton
               style={styles.settings}
               src={require("assets/ui/settings.png")}
@@ -311,10 +331,11 @@ const styles = StyleSheet.create({
   },
   notifier: {
     marginTop: 5,
-    marginRight: 10,
+    marginRight: 0,
   },
   settings: {
     marginTop: 5,
+    marginLeft: 10,
     width: 24,
   },
   help: {
