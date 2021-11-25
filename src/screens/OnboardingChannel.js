@@ -36,7 +36,6 @@ export default function Channels(props) {
   const [endReached, setEndReached] = useState(false);
 
   useEffect(() => {
-    console.log(props);
     // fetchChannels();
     const network = "ropsten";
     const providerState = ethers.getDefaultProvider(network, {

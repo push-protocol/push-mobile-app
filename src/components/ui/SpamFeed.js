@@ -48,7 +48,6 @@ export default function SpamFeed(props) {
       const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_GET_FEEDS;
 
       const wallet = props.wallet;
-      console.log("CALLING");
       const response = await fetch(apiURL, {
         method: "POST",
         headers: {
@@ -63,7 +62,6 @@ export default function SpamFeed(props) {
         }),
       });
       const resJson = await response.json();
-      console.log("CALLED", resJson);
       if (resJson.count != 0 && resJson.results != []) {
         const data = feed;
         // toast.current.show("New Notifications fetched");

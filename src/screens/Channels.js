@@ -32,36 +32,36 @@ export default function Channels(props) {
   const [provider, setProvider] = useState(null);
   const [endReached, setEndReached] = useState(false);
 
-  useEffect(() => {
-    // fetchChannels();
-    const network = "ropsten";
-    const providerState = ethers.getDefaultProvider(network, {
-      etherscan: "TZCWZ8YCQDH4THP54865SDGTG3XXY8ZAQU",
-      infura: ENV_CONFIG.INFURA_PROJECT_ID
-        ? {
-            projectId: ENV_CONFIG.INFURA_PROJECT_ID,
-            projectSecret: ENV_CONFIG.INFURA_PROJECT_SECRET,
-          }
-        : null,
-      alchemy: "wxQBUQ4vvHpc8HJBJWw1YjWoCMDwiHh2",
-    });
-    setProvider(providerState);
-    initiateContractInstance(providerState);
-  }, []);
+  // useEffect(() => {
+  //   // fetchChannels();
+  //   const network = "ropsten";
+  //   const providerState = ethers.getDefaultProvider(network, {
+  //     etherscan: "TZCWZ8YCQDH4THP54865SDGTG3XXY8ZAQU",
+  //     infura: ENV_CONFIG.INFURA_PROJECT_ID
+  //       ? {
+  //           projectId: ENV_CONFIG.INFURA_PROJECT_ID,
+  //           projectSecret: ENV_CONFIG.INFURA_PROJECT_SECRET,
+  //         }
+  //       : null,
+  //     alchemy: "wxQBUQ4vvHpc8HJBJWw1YjWoCMDwiHh2",
+  //   });
+  //   setProvider(providerState);
+  //   initiateContractInstance(providerState);
+  // }, []);
 
-  const initiateContractInstance = async (provider) => {
-    const contractInstanceState = await new ethers.Contract(
-      addresses.epnscore,
-      EPNSABI,
-      provider
-    );
+  // const initiateContractInstance = async (provider) => {
+  //   const contractInstanceState = await new ethers.Contract(
+  //     addresses.epnscore,
+  //     EPNSABI,
+  //     provider
+  //   );
 
-    setContract(contractInstanceState);
-  };
+  //   setContract(contractInstanceState);
+  // };
 
   useEffect(() => {
     fetchChannels();
-  }, [contract]);
+  }, []);
 
   const fetchChannels = async () => {
     const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_CHANNELS;
@@ -78,7 +78,7 @@ export default function Channels(props) {
       body: JSON.stringify({
         page: page,
         pageSize: 10,
-        op: "read",
+        op: "write",
       }),
     });
     const resJson = await response.json();
@@ -261,7 +261,7 @@ export default function Channels(props) {
                     <SubscriptionStatus
                       channel={item.channel}
                       user={props.route.params.wallet}
-                      contract={contract}
+                      // contract={contract}
                     />
                   </View>
                 </View>

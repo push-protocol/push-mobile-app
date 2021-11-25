@@ -36,10 +36,10 @@ import OnboardingChannel from "./src/screens/OnboardingChannel";
 import SpamBox from "./src/screens/SpamBox.js";
 
 // Assign console.log to nothing
-// if (!ENV_CONFIG.SHOW_CONSOLE) {
-//   console.log("Production Environment... disabling console!");
-//   console.log = () => {};
-// }
+if (!ENV_CONFIG.SHOW_CONSOLE) {
+  console.log("Production Environment... disabling console!");
+  console.log = () => {};
+}
 
 // Create Stack Navigator
 const Stack = createStackNavigator();
@@ -184,7 +184,7 @@ export default function App({ navigation }) {
             name="SpamBox"
             component={SpamBox}
             options={{
-              title: "SpamBox",
+              title: "Spam Box",
               headerStyle: {
                 backgroundColor: GLOBALS.COLORS.WHITE,
               },

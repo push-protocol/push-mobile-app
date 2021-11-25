@@ -142,7 +142,7 @@ export default class HomeScreen extends Component {
     //this.refs.FeedsDisplayer.resetFeedState();
     // await this.refs.FeedsDisplayer.triggerGetItemsFromDB(false);
     this.setState({ refresh: !this.state.refresh });
-    console.log("REFRESH", this.state.refresh);
+    // console.log("REFRESH", this.state.refresh);
   };
 
   // Overlay Blur exit intent

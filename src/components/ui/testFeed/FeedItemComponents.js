@@ -33,9 +33,7 @@ const FeedItem = (props) => {
 
   // COMPONENT MOUNTED
   useEffect(() => {
-    // console.log("CALLING");
     compileMessage();
-    // console.log("PROPS", props);
   }, []);
 
   const { style } = props;
@@ -98,7 +96,6 @@ const FeedItem = (props) => {
 
   // FUNCTIONS
   const compileMessage = async () => {
-    // console.log("CALLED", props.item.payload.data.type);
     let _sub =
       !props.item.payload.data.asub || props.item.payload.data.asub === ""
         ? null
