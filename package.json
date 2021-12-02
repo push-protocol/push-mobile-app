@@ -109,6 +109,7 @@
     "babel-jest": "~25.2.6",
     "babel-preset-react-native": "^4.0.1",
     "jest": "~25.2.6",
+    "jetifier": "2.0.0",
     "react-native-dotenv": "^0.2.0",
     "react-test-renderer": "~16.9.0",
     "rn-nodeify": "^10.2.0"
