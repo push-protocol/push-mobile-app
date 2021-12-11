@@ -4,6 +4,7 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import Channels from "./Channels";
 import HomeScreen from "./HomeScreen";
 import SampleFeed from "../screens/SampleFeed";
+import SpamBox from "./SpamBox";
 import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 
 export default function Tabs(props) {
@@ -22,7 +23,7 @@ export default function Tabs(props) {
         name="Feed"
         component={HomeScreen}
         options={{
-          tabBarLabel: "Feed",
+          tabBarLabel: "Inbox",
           tabBarIcon: ({ color }) => (
             <FontAwesome5 name="list-alt" color={color} size={20} />
           ),
@@ -48,6 +49,20 @@ export default function Tabs(props) {
                 left: 0,
               }}
             />
+          ),
+        }}
+        initialParams={{
+          wallet: props.route.params.wallet,
+          pkey: props.route.params.pkey,
+        }}
+      />
+      <Tab.Screen
+        name="Spam"
+        component={SpamBox}
+        options={{
+          tabBarLabel: "Spam",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome5 name="exclamation-circle" size={24} color={color} />
           ),
         }}
         initialParams={{

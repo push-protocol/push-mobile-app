@@ -1,26 +1,60 @@
+import { serializeTransaction } from "ethers/lib/utils";
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, Linking } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  Linking,
+  StyleSheet,
+  Modal,
+} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import ENV_CONFIG from "src/env.config";
+import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 
 export default function SubscriptionStatus(props) {
   const [subscribed, setSubscribed] = useState(null);
+  const [modal, setModal] = useState(false);
+  const [action, setAction] = useState("");
+
+  const apiURL =
+    ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_SUBSCRIPTION;
+
   useEffect(() => {
     let isMounted = true;
-    const contract = props.contract;
+    if (isMounted) fetchSubscriptionStatus(props.user, props.channel);
 
-    contract
-      .memberExists(props.user, props.channel)
-      .then((response) => {
-        console.log("getSubscribedStatus() --> %o", response);
-        if (isMounted) setSubscribed(response);
-      })
-      .catch((err) => {
-        // console.log("!!!Error, getSubscribedStatus() --> %o", err);
-      });
     return () => {
       isMounted = false;
     };
-  }, []);
+  });
+
+  const showPopUp = async (action) => {
+    setModal(true);
+    setAction(action);
+  };
+
+  const fetchSubscriptionStatus = async (user, channel) => {
+    console.log(apiURL);
+    const response = await fetch(apiURL, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        subscriber: user,
+        channel: channel,
+        op: "read",
+      }),
+    });
+
+    const subscriptionStatus = await response.json();
+
+    console.log(subscriptionStatus);
+
+    setSubscribed(subscriptionStatus);
+  };
 
   const openURL = (url) => {
     // if (validURL(url) || 1) {
@@ -40,11 +74,46 @@ export default function SubscriptionStatus(props) {
 
   return (
     <View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modal}
+        onRequestClose={() => {
+          setModal(!modal);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>
+              {action} is currently posible with Metamask. You will be
+              redirected to the Metamask app where you can sign into our Dapp
+              and carry out {action}.
+            </Text>
+            <TouchableOpacity
+              style={styles.button1}
+              onPress={() =>
+                openURL("https://metamask.app.link/dapp/app-kovan.epns.io")
+              }
+            >
+              <Text style={styles.textStyle}>
+                Sign In with Metamask.{"  "}
+                <FontAwesome5 name="external-link-alt" size={20} />{" "}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setModal(!modal)}
+            >
+              <Text style={styles.textStyle}>Close.</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       {subscribed == null ? (
         <ActivityIndicator size={"small"} color={"#E20880"} />
       ) : subscribed == false ? (
         <TouchableOpacity
-          onPress={() => openURL("https://app.epns.io")}
+          onPress={() => showPopUp("Subscription")}
           style={{
             backgroundColor: "#E20880",
             padding: 5,
@@ -57,7 +126,9 @@ export default function SubscriptionStatus(props) {
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
-          onPress={() => openURL("https://app.epns.io")}
+          onPress={() => {
+            showPopUp("Unsubscription");
+          }}
           style={{
             backgroundColor: "#674C9F",
             padding: 5,
@@ -72,3 +143,55 @@ export default function SubscriptionStatus(props) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+    backgroundColor: "rgba(255,255,255,0.75)",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginTop: 10,
+  },
+  button1: {
+    borderRadius: 8,
+    padding: 10,
+    elevation: 2,
+    backgroundColor: "#E20880",
+  },
+  buttonOpen: {
+    backgroundColor: "#228bc6",
+  },
+  buttonClose: {
+    backgroundColor: "#228bc6",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+});
