@@ -35,7 +35,7 @@ import OnboardingChannel from "./src/screens/OnboardingChannel";
 // Assign console.log to nothing
 if (!ENV_CONFIG.SHOW_CONSOLE) {
   console.log("Production Environment... disabling console!");
-  // console.log = () => {};
+  console.log = () => {};
 }
 
 // Create Stack Navigator

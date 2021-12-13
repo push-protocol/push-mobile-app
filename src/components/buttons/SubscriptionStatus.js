@@ -35,7 +35,7 @@ export default function SubscriptionStatus(props) {
   };
 
   const fetchSubscriptionStatus = async (user, channel) => {
-    console.log(apiURL);
+    // console.log(apiURL);
     const response = await fetch(apiURL, {
       method: "POST",
       headers: {
@@ -51,7 +51,7 @@ export default function SubscriptionStatus(props) {
 
     const subscriptionStatus = await response.json();
 
-    console.log(subscriptionStatus);
+    // console.log(subscriptionStatus);
 
     setSubscribed(subscriptionStatus);
   };
@@ -91,9 +91,7 @@ export default function SubscriptionStatus(props) {
             </Text>
             <TouchableOpacity
               style={styles.button1}
-              onPress={() =>
-                openURL("https://metamask.app.link/dapp/app-kovan.epns.io")
-              }
+              onPress={() => openURL(ENV_CONFIG.METAMASK_LINK)}
             >
               <Text style={styles.textStyle}>
                 Sign In with Metamask.{"  "}

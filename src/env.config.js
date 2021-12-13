@@ -16,6 +16,7 @@ import {
   CNS_ENDPOINT,
   APP_VERSION,
   METAMASK_LINK_PROD,
+  METAMASK_LINK_STAGING,
 } from "react-native-dotenv";
 
 const IS_PROD_ENV = 1; // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work
@@ -29,6 +30,7 @@ export default {
 
   // All Server related endpoints
   EPNS_SERVER: IS_PROD_ENV ? PROD_EPNS_SERVER : DEV_EPNS_SERVER,
+  METAMASK_LINK: IS_PROD_ENV ? METAMASK_LINK_PROD : METAMASK_LINK_STAGING,
 
   ENDPOINT_AUTHTOKEN: ENDPOINT_AUTHTOKEN,
   ENDPOINT_REGISTER_NO_AUTH: ENDPOINT_REGISTER_NO_AUTH,
