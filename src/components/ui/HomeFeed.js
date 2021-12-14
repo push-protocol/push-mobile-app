@@ -84,13 +84,13 @@ export default function TestFeed(props) {
   };
 
   const onRefreshFunction = async () => {
-    if (!endReached) {
-      setFeed([]);
-      setPage(1);
-      setEndReached(false);
-      setRefreshing(true);
-      fetchFeed();
-    }
+    // if (!endReached) {
+    setPage(1);
+    setEndReached(false);
+    setRefreshing(true);
+    setFeed([]);
+    fetchFeed();
+    // }
   };
 
   return (

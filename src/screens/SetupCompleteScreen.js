@@ -187,8 +187,7 @@ export default class SetupCompleteScreen extends Component {
     payload.msg =
       "The [d:Bell] on the [b:top right] keeps track of any incoming messages and will inform you about it.\n\nClicking on the [b:bell] will update your feed [i:(Alternatively, pull feed down to refresh)]";
     payload.cta = "";
-    payload.img =
-      "https://backend-staging.epns.io/assets/epnsappbellturorial.jpg"; //'https://i.ibb.co/SvYGCY9/epnsappbellturorial.jpg';
+    payload.img = "https://backend-prod.epns.io/assets/epnsappbellturorial.jpg"; //'https://i.ibb.co/SvYGCY9/epnsappbellturorial.jpg';
     payload.epoch = new Date().getTime() / 1000;
 
     // Add to Feed DB

@@ -40,51 +40,48 @@ export default function SpamFeed(props) {
 
   useEffect(() => {
     onRefreshFunction();
-  }, [props.refresh]);
+  }, []);
 
   const fetchFeed = async () => {
-    if (!endReached) {
-      setloading(true);
-      const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_GET_FEEDS;
+    setloading(true);
+    const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_GET_SPAM_FEEDS;
 
-      const wallet = props.wallet;
-      const response = await fetch(apiURL, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user: wallet.toLowerCase(),
-          page: page,
-          pageSize: 10,
-          op: "read",
-        }),
-      });
-      const resJson = await response.json();
-      if (resJson.count != 0 && resJson.results != []) {
-        const data = feed;
-        // toast.current.show("New Notifications fetched");
-        await setFeed([...data, ...resJson.results]);
-        await setPage(page + 1);
-        Toast.show("More Notifications Loaded.", 0.1);
-      } else {
-        setEndReached(true);
-        Toast.show("No More Notifications.", Toast.SHORT);
-      }
-      setloading(false);
-      setRefreshing(false);
+    const wallet = props.wallet;
+    const response = await fetch(apiURL, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user: wallet.toLowerCase(),
+        page: page,
+        pageSize: 10,
+        op: "read",
+      }),
+    });
+    const resJson = await response.json();
+    console.log("SPAM RESPONSE", resJson);
+    if (resJson.count != 0 && resJson.results != []) {
+      const data = feed;
+      // toast.current.show("New Notifications fetched");
+      await setFeed([...data, ...resJson.results]);
+      await setPage(page + 1);
+      Toast.show("More Notifications Loaded.", 0.1);
+    } else {
+      setEndReached(true);
+      Toast.show("No More Notifications.", Toast.SHORT);
     }
+    setloading(false);
+    setRefreshing(false);
   };
 
   const onRefreshFunction = async () => {
-    if (!endReached) {
-      setFeed([]);
-      setPage(1);
-      setEndReached(false);
-      setRefreshing(true);
-      fetchFeed();
-    }
+    setRefreshing(true);
+    setFeed([]);
+    setPage(1);
+    setEndReached(false);
+    fetchFeed();
   };
 
   return (
@@ -131,10 +128,6 @@ export default function SpamFeed(props) {
                 refreshing={refreshing}
                 onRefresh={() => {
                   onRefreshFunction();
-                  // this.triggerGetItemsFromDB();
-                  // setTimeout(() => {
-                  // 	setRefreshing(false);
-                  // }, 3000);
                 }}
               />
             }

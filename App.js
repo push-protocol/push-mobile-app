@@ -35,7 +35,7 @@ import OnboardingChannel from "./src/screens/OnboardingChannel";
 // Assign console.log to nothing
 if (!ENV_CONFIG.SHOW_CONSOLE) {
   console.log("Production Environment... disabling console!");
-  console.log = () => {};
+  // console.log = () => {};
 }
 
 // Create Stack Navigator
@@ -262,35 +262,33 @@ export default function App({ navigation }) {
   // RENDER
   return (
     <AuthContext.Provider value={authContext}>
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              title: "",
-              headerStyle: {
-                backgroundColor: GLOBALS.COLORS.WHITE,
-                shadowColor: "transparent",
-                shadowRadius: 0,
-                shadowOffset: {
-                  height: 0,
-                },
-                elevation: 0,
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            title: "",
+            headerStyle: {
+              backgroundColor: GLOBALS.COLORS.WHITE,
+              shadowColor: "transparent",
+              shadowRadius: 0,
+              shadowOffset: {
+                height: 0,
               },
-              headerTitleStyle: {
-                color: GLOBALS.COLORS.BLACK,
-              },
-              headerBackTitleStyle: {
-                color: GLOBALS.COLORS.PRIMARY,
-              },
-              headerTintColor: GLOBALS.COLORS.BLACK,
-              headerTitleAlign: "center",
-              headerBackTitleVisible: false,
-            }}
-          >
-            {renderSelectiveScreens()}
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
+              elevation: 0,
+            },
+            headerTitleStyle: {
+              color: GLOBALS.COLORS.BLACK,
+            },
+            headerBackTitleStyle: {
+              color: GLOBALS.COLORS.PRIMARY,
+            },
+            headerTintColor: GLOBALS.COLORS.BLACK,
+            headerTitleAlign: "center",
+            headerBackTitleVisible: false,
+          }}
+        >
+          {renderSelectiveScreens()}
+        </Stack.Navigator>
+      </NavigationContainer>
     </AuthContext.Provider>
   );
 }
