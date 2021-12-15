@@ -7,8 +7,8 @@ import {
   Linking,
   StyleSheet,
   Modal,
+  TouchableOpacity,
 } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import ENV_CONFIG from "src/env.config";
 import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 
