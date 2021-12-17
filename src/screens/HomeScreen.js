@@ -137,12 +137,15 @@ export default class HomeScreen extends Component {
   // 	await this.refs.EPNSNotifier.getBadgeCountAndRefresh();
   // };
 
-  // To refresh the Feeds
+  // To refresh the Feeds\\
   refreshFeeds = async () => {
     //this.refs.FeedsDisplayer.resetFeedState();
     // await this.refs.FeedsDisplayer.triggerGetItemsFromDB(false);
-    this.setState({ refresh: !this.state.refresh });
-    // console.log("REFRESH", this.state.refresh);
+    this.setState({ refresh: !this.state.refresh }, () => {
+      if (this.state.refresh == true) {
+        this.setState({ refresh: false });
+      }
+    });
   };
 
   // Overlay Blur exit intent
