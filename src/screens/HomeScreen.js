@@ -139,8 +139,6 @@ export default class HomeScreen extends Component {
 
   // To refresh the Feeds\\
   refreshFeeds = async () => {
-    //this.refs.FeedsDisplayer.resetFeedState();
-    // await this.refs.FeedsDisplayer.triggerGetItemsFromDB(false);
     this.setState({ refresh: !this.state.refresh }, () => {
       if (this.state.refresh == true) {
         this.setState({ refresh: false });
