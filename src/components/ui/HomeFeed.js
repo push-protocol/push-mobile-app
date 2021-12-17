@@ -25,6 +25,7 @@ import { ActivityIndicator } from "react-native";
 export default function TestFeed(props) {
   // const toast = useRef(null);
 
+  const DEVICE_HEIGHT = Dimensions.get("window").height;
   useEffect(() => {
     fetchFeed();
     setRefresh(props.refresh);
@@ -40,6 +41,10 @@ export default function TestFeed(props) {
 
   useEffect(() => {
     onRefreshFunction();
+    setFeed([]);
+    setEndReached(false);
+    setPage(1);
+    fetchFeed();
   }, [props.refresh]);
 
   const fetchFeed = async () => {
@@ -62,7 +67,6 @@ export default function TestFeed(props) {
         }),
       });
       const resJson = await response.json();
-      console.log(resJson);
       if (resJson.count != 0 && resJson.results != []) {
         const data = feed;
         // toast.current.show("New Notifications fetched");
@@ -80,13 +84,13 @@ export default function TestFeed(props) {
   };
 
   const onRefreshFunction = async () => {
-    if (!endReached) {
-      setFeed([]);
-      setPage(1);
-      setEndReached(false);
-      setRefreshing(true);
-      fetchFeed();
-    }
+    // if (!endReached) {
+    setPage(1);
+    setEndReached(false);
+    setRefreshing(true);
+    setFeed([]);
+    fetchFeed();
+    // }
   };
 
   return (
@@ -132,37 +136,31 @@ export default function TestFeed(props) {
                 refreshing={refreshing}
                 onRefresh={() => {
                   onRefreshFunction();
-                  // this.triggerGetItemsFromDB();
-                  // setTimeout(() => {
-                  // 	setRefreshing(false);
-                  // }, 3000);
                 }}
               />
             }
             ListEmptyComponent={
-              feed == [] ? (
-                refreshing ? (
-                  <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-                    <StylishLabel
-                      style={styles.infoText}
-                      fontSize={16}
-                      title="[dg:Please wait, Refreshing feed.!]"
-                    />
-                  </View>
-                ) : (
-                  <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-                    <Image
-                      style={styles.infoIcon}
-                      source={require("assets/ui/feed.png")}
-                    />
-                    <StylishLabel
-                      style={styles.infoText}
-                      fontSize={16}
-                      title="[dg:No New Notification!]"
-                    />
-                  </View>
-                )
-              ) : null
+              refreshing ? (
+                <View style={[styles.infodisplay, styles.noPendingFeeds]}>
+                  <StylishLabel
+                    style={styles.infoText}
+                    fontSize={16}
+                    title="[dg:Please wait, Refreshing feed.!]"
+                  />
+                </View>
+              ) : (
+                <View style={[styles.infodisplay, styles.noPendingFeeds]}>
+                  <Image
+                    style={styles.infoIcon}
+                    source={require("assets/ui/feed.png")}
+                  />
+                  <StylishLabel
+                    style={styles.infoText}
+                    fontSize={16}
+                    title="[dg:No Notifications!]"
+                  />
+                </View>
+              )
             }
             ListFooterComponent={() => {
               return loading ? (

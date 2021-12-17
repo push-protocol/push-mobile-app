@@ -139,6 +139,8 @@ export default class HomeScreen extends Component {
 
   // To refresh the Feeds\\
   refreshFeeds = async () => {
+    //this.refs.FeedsDisplayer.resetFeedState();
+    // await this.refs.FeedsDisplayer.triggerGetItemsFromDB(false);
     this.setState({ refresh: !this.state.refresh }, () => {
       if (this.state.refresh == true) {
         this.setState({ refresh: false });
@@ -214,41 +216,6 @@ export default class HomeScreen extends Component {
                 // Do nothing for now, bell is ringing in the module anyway
               }}
             />
-            {/* <ImageButton
-							style={styles.help}
-							src={require("assets/ui/help.png")}
-							iconSize={24}
-							onPress={() => {
-								// // Finally associate token to server if not done
-								// const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
-								// const privateKey = this.props.route.params.pkey;
-								//
-								// // While an async function, there is no need to wait
-								// ServerHelper.associateTokenToServer(publicKey, privateKey);
-
-								navigation.navigate("SampleFeed", {});
-							}}
-						/> */}
-
-            <ImageButton
-              style={styles.settings}
-              src={require("assets/ui/spambox1.png")}
-              iconSize={24}
-              onPress={() => {
-                // // Finally associate token to server if not done
-                // const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
-                // const privateKey = this.props.route.params.pkey;
-                //
-                // // While an async function, there is no need to wait
-                // ServerHelper.associateTokenToServer(publicKey, privateKey);
-
-                navigation.navigate("SpamBox", {
-                  wallet: wallet,
-                  privateKey: this.props.route.params.pkey,
-                });
-              }}
-            />
-
             <ImageButton
               style={styles.settings}
               src={require("assets/ui/settings.png")}

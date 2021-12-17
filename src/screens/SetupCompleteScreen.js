@@ -101,124 +101,121 @@ export default class SetupCompleteScreen extends Component {
     await MetaStorage.instance.setCurrentAndPreviousBadgeCount(0, 0);
 
     // Create DB connection
-    // const db = await FeedDBHelper.getDB();
+    const db = await FeedDBHelper.getDB();
 
-    // // Create / Recreate Feed
-    // await FeedDBHelper.createTable(db);
+    // Create / Recreate Feed
+    await FeedDBHelper.createTable(db);
 
-    // // Form payload template
-    // const appName = GLOBALS.LINKS.APPBOT_NAME;
-    // const appURL = GLOBALS.LINKS.APP_WEBSITE;
+    // Form payload template
+    const appName = GLOBALS.LINKS.APPBOT_NAME;
+    const appURL = GLOBALS.LINKS.APP_WEBSITE;
 
-    // let payload = {
-    //   sid: -1, // Always -1 for Internal Payload
-    //   type: 1, // Unencrypted Message (1) or Encrypted Message (2)
-    //   app: appName,
-    //   icon: "na",
-    //   url: appURL,
-    //   appbot: "1",
-    //   secret: "",
-    //   sub: "",
-    //   msg: "",
-    //   cta: "",
-    //   img: "",
-    //   hidden: "0",
-    //   epoch: new Date().getTime(),
-    // };
+    let payload = {
+      sid: -1, // Always -1 for Internal Payload
+      type: 1, // Unencrypted Message (1) or Encrypted Message (2)
+      app: appName,
+      icon: "na",
+      url: appURL,
+      appbot: "1",
+      secret: "",
+      sub: "",
+      msg: "",
+      cta: "",
+      img: "",
+      hidden: "0",
+      epoch: new Date().getTime(),
+    };
 
-    // // Set last message first
-    // // 5. Secrets... shhh!!!
-    // let type = 2;
-    // let secret = "";
-    // let sub = "Secrets... shhh!!!";
-    // let msg =
-    //   "The [d:coolest type] of messages are [t:secrets]. They are indicated by the [bi:shush gradient] on the top left of the message box.\n\nThey are always [d:encrypted] and [b:only you] can see them.";
-    // let cta = "";
-    // let img = "";
-    // let epoch = new Date().getTime();
+    // Set last message first
+    // 5. Secrets... shhh!!!
+    let type = 2;
+    let secret = "";
+    let sub = "Secrets... shhh!!!";
+    let msg =
+      "The [d:coolest type] of messages are [t:secrets]. They are indicated by the [bi:shush gradient] on the top right of the message box.\n\nThey are always [d:encrypted] and [b:only you] can see them.";
+    let cta = "";
+    let img = "";
+    let epoch = new Date().getTime();
 
-    // const { privateKey } = this.props.route.params;
-    // if (privateKey && privateKey !== GLOBALS.CONSTANTS.NULL_EXCEPTION) {
-    //   const plainSecret = "EPNSRocks!";
-    //   const encryptedSecret = await CryptoHelper.encryptWithECIES(
-    //     plainSecret,
-    //     privateKey
-    //   );
+    const { privateKey } = this.props.route.params;
+    if (privateKey && privateKey !== GLOBALS.CONSTANTS.NULL_EXCEPTION) {
+      const plainSecret = "EPNSRocks!";
+      const encryptedSecret = await CryptoHelper.encryptWithECIES(
+        plainSecret,
+        privateKey
+      );
 
-    //   // console.log(encryptedSecret);
-    //   // const dec = await CryptoHelper.decryptWithECIES(encryptedSecret, privateKey);
-    //   // console.log(dec);
+      // console.log(encryptedSecret);
+      // const dec = await CryptoHelper.decryptWithECIES(encryptedSecret, privateKey);
+      // console.log(dec);
 
-    //   secret = encryptedSecret;
-    //   sub = CryptoHelper.encryptWithAES(sub, plainSecret);
-    //   msg = CryptoHelper.encryptWithAES(msg, plainSecret);
-    //   cta = cta === "" ? cta : CryptoHelper.encryptWithAES(cta, plainSecret);
-    //   img = img === "" ? img : CryptoHelper.encryptWithAES(img, plainSecret);
-    // } else {
-    //   type = -2; // special type, message is plain but tells user about secret
-    // }
+      secret = encryptedSecret;
+      sub = CryptoHelper.encryptWithAES(sub, plainSecret);
+      msg = CryptoHelper.encryptWithAES(msg, plainSecret);
+      cta = cta === "" ? cta : CryptoHelper.encryptWithAES(cta, plainSecret);
+      img = img === "" ? img : CryptoHelper.encryptWithAES(img, plainSecret);
+    } else {
+      type = -2; // special type, message is plain but tells user about secret
+    }
 
-    // payload.secret = secret;
-    // payload.type = type;
-    // payload.sub = sub;
-    // payload.msg = msg;
-    // payload.cta = cta;
-    // payload.img = img;
-    // payload.epoch = epoch;
+    payload.secret = secret;
+    payload.type = type;
+    payload.sub = sub;
+    payload.msg = msg;
+    payload.cta = cta;
+    payload.img = img;
+    payload.epoch = epoch;
 
-    // // Add to Feed DB
-    // // await FeedDBHelper.addFeedFromPayloadObject(db, payload);
-    // payload.secret = ""; // don't need to use secret anymore
-    // payload.type = 1; // reset payload type as well
+    // Add to Feed DB
+    // await FeedDBHelper.addFeedFromPayloadObject(db, payload);
+    payload.secret = ""; // don't need to use secret anymore
+    payload.type = 1; // reset payload type as well
 
-    // // 4. Notification Types
-    // payload.sub = "Nofications Types";
-    // payload.msg =
-    //   "Notifications are [b:never boring] in EPNS.\n\nThe messages with [b:blueish outlines] are links that the [b:dApp] has provided you. \n\n[d:Tapping the message opens it.]";
-    // payload.cta = "https://epns.io";
-    // payload.img = "";
-    // payload.epoch = new Date().getTime() / 1000;
+    // 4. Notification Types
+    payload.sub = "Nofications Types";
+    payload.msg =
+      "Notifications are [b:never boring] in EPNS.\n\nThe messages with [b:blueish outlines] are links that the [b:dApp] has provided you. \n\n[d:Tapping the message opens it.]";
+    payload.cta = "https://epns.io";
+    payload.img = "";
+    payload.epoch = new Date().getTime() / 1000;
 
-    // // Add to Feed DB
-    // // await FeedDBHelper.addFeedFromPayloadObject(db, payload);
+    // Add to Feed DB
+    // await FeedDBHelper.addFeedFromPayloadObject(db, payload);
 
-    // // 3. Ring the Bell
-    // payload.sub = "Ring the Bell";
-    // payload.msg =
-    //   "The [d:Bell] on the [b:top right] keeps track of any incoming messages and will inform you about it.\n\nClicking on the [b:bell] will update your feed [i:(Alternatively, pull feed down to refresh)]";
-    // payload.cta = "";
-    // payload.img =
-    //   "https://backend-staging.epns.io/assets/epnsappbellturorial.jpg"; //'https://i.ibb.co/SvYGCY9/epnsappbellturorial.jpg';
-    // payload.epoch = new Date().getTime() / 1000;
+    // 3. Ring the Bell
+    payload.sub = "Ring the Bell";
+    payload.msg =
+      "The [d:Bell] on the [b:top right] keeps track of any incoming messages and will inform you about it.\n\nClicking on the [b:bell] will update your feed [i:(Alternatively, pull feed down to refresh)]";
+    payload.cta = "";
+    payload.img = "https://backend-prod.epns.io/assets/epnsappbellturorial.jpg"; //'https://i.ibb.co/SvYGCY9/epnsappbellturorial.jpg';
+    payload.epoch = new Date().getTime() / 1000;
 
-    // // Add to Feed DB
-    // // await FeedDBHelper.addFeedFromPayloadObject(db, payload);
+    // Add to Feed DB
+    // await FeedDBHelper.addFeedFromPayloadObject(db, payload);
 
-    // // 2. About dApps
-    // payload.sub = "About Channels";
-    // payload.msg =
-    //   "[d:Channels] represent your favorite [b:dApps] or [b:Smart Contracts]. You will often get notifications from different channels.\n\nThe [b:top section] of the message contains information about these channels.\n\n[b:Clicking on it] takes you to their [b:website].";
-    // payload.cta = "";
-    // payload.img = "";
-    // payload.epoch = new Date().getTime() / 1000;
+    // 2. About dApps
+    payload.sub = "About Channels";
+    payload.msg =
+      "[d:Channels] represent your favorite [b:dApps] or [b:Smart Contracts]. You will often get notifications from different channels.\n\nThe [b:top section] of the message contains information about these channels.\n\n[b:Clicking on it] takes you to their [b:website].";
+    payload.cta = "";
+    payload.img = "";
+    payload.epoch = new Date().getTime() / 1000;
 
-    // // Add to Feed DB
-    // // await FeedDBHelper.addFeedFromPayloadObject(db, payload);
+    // Add to Feed DB
+    // await FeedDBHelper.addFeedFromPayloadObject(db, payload);
 
-    // // 1. Welcome to EPNS
-    // payload.sub = "Welcome to EPNS";
-    // payload.msg =
-    //   "[b:Greetings] fellow users! Welcome aboard!\n\nI am your personalized [d:App Bot] whose sole purpose is to guide you about the app.\n\nTo get started! [b:Swipe Right to Archive this.]";
-    // payload.cta = "";
-    // payload.img = "";
-    // payload.epoch = new Date().getTime() / 1000;
+    // 1. Welcome to EPNS
+    payload.sub = "Welcome to EPNS";
+    payload.msg =
+      "[b:Greetings] fellow users! Welcome aboard!\n\nI am your personalized [d:App Bot] whose sole purpose is to guide you about the app.\n\nTo get started! [b:Swipe Left to Archive this.]";
+    payload.cta = "";
+    payload.img = "";
+    payload.epoch = new Date().getTime() / 1000;
 
-    // // Add to Feed DB
-    // // await FeedDBHelper.addFeedFromPayloadObject(db, payload);
+    // Add to Feed DB
+    // await FeedDBHelper.addFeedFromPayloadObject(db, payload);
 
-    // this.props.navigation.navigate("OnboardingChannel");
-
-    // // // Handle App Auth Flow
+    // Handle App Auth Flow
     const { handleAppAuthState } = this.context;
     handleAppAuthState(APP_AUTH_STATES.ONBOARDED);
   };

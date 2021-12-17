@@ -1,9 +1,9 @@
 import React from "react";
-import { View, Text, FlatList, SafeAreaView } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import FeedItemComponent from "src/components/ui/testFeed/FeedItemComponents.js";
 import EPNSActivity from "src/components/loaders/EPNSActivity";
 import StylishLabel from "src/components/labels/StylishLabel";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 const feed = [
   {
     payload_id: 1,
@@ -20,7 +20,7 @@ const feed = [
         },
         fcm_options: {
           image:
-            "https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+            "https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
         },
       },
       data: {
@@ -31,7 +31,7 @@ const feed = [
         aimg: "",
         amsg: "[b:Greetings] fellow users! Welcome aboard!\n\nI am your personalized [d:App Bot] whose sole purpose is to guide you about the app.",
         asub: "Welcome to EPNS",
-        icon: "https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+        icon: "https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
         type: "1",
         // epoch: "1625139867",
         appbot: "1",
@@ -43,7 +43,7 @@ const feed = [
           icon: "@drawable/ic_stat_name",
           color: "#e20880",
           image:
-            "https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+            "https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
           default_vibrate_timings: true,
         },
       },
@@ -68,7 +68,7 @@ const feed = [
         },
         fcm_options: {
           image:
-            "https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+            "https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
         },
       },
       data: {
@@ -79,7 +79,7 @@ const feed = [
         aimg: "",
         amsg: "[d:Channels] represent your favorite [b:dApps] or [b:Smart Contracts]. You will often get notifications from different channels.\n\nThe [b:top section] of the message contains information about these channels.\n\n[b:Clicking on it] takes you to their [b:website].",
         asub: "About Channels",
-        icon: "https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+        icon: "https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
         type: "1",
         // epoch: "1625139867",
         appbot: "1",
@@ -91,7 +91,7 @@ const feed = [
           icon: "@drawable/ic_stat_name",
           color: "#e20880",
           image:
-            "https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+            "https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
           default_vibrate_timings: true,
         },
       },
@@ -116,7 +116,7 @@ const feed = [
         },
         fcm_options: {
           image:
-            "https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+            "https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
         },
       },
       data: {
@@ -124,10 +124,10 @@ const feed = [
         sid: "22710",
         url: "https://epns.io/",
         acta: "",
-        aimg: "https://backend-staging.epns.io/assets/epnsappbellturorial.jpg",
+        aimg: "https://backend-prod.epns.io/assets/epnsappbellturorial.jpg",
         amsg: "The [d:Bell] on the [b:top right] keeps track of any incoming messages and will inform you about it.\n\nClicking on the [b:bell] will update your feed [i:(Alternatively, pull feed down to refresh)]",
         asub: "Ring the Bell",
-        icon: "https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+        icon: "https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
         type: "1",
         // epoch: "1625139867",
         appbot: "1",
@@ -139,7 +139,7 @@ const feed = [
           icon: "@drawable/ic_stat_name",
           color: "#e20880",
           image:
-            "https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+            "https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
           default_vibrate_timings: true,
         },
       },
@@ -164,7 +164,7 @@ const feed = [
         },
         fcm_options: {
           image:
-            "https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+            "https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
         },
       },
       data: {
@@ -175,7 +175,7 @@ const feed = [
         aimg: "",
         amsg: "Notifications are [b:never boring] in EPNS.\n\nThe messages with [b:blueish outlines] are links that the [b:dApp] has provided you. \n\n[d:Tapping the message opens it.]",
         asub: "Nofications Types",
-        icon: "https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+        icon: "https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
         type: "1",
         // epoch: "1625139867",
         appbot: "1",
@@ -187,7 +187,7 @@ const feed = [
           icon: "@drawable/ic_stat_name",
           color: "#e20880",
           image:
-            "https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+            "https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
           default_vibrate_timings: true,
         },
       },
@@ -212,7 +212,7 @@ const feed = [
   // 			},
   // 			fcm_options: {
   // 				image:
-  // 					"https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+  // 					"https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
   // 			},
   // 		},
   // 		data: {
@@ -223,7 +223,7 @@ const feed = [
   // 			aimg: "",
   // 			amsg: "The [d:coolest type] of messages are [t:secrets]. They are indicated by the [bi:shush gradient] on the top left of the message box.\n\nThey are always [d:encrypted] and [b:only you] can see them.",
   // 			asub: "Secrets... shhh!!!",
-  // 			icon: "https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+  // 			icon: "https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
   // 			type: "-2",
   // 			// epoch: "1625139867",
   // 			appbot: "1",
@@ -235,7 +235,7 @@ const feed = [
   // 				icon: "@drawable/ic_stat_name",
   // 				color: "#e20880",
   // 				image:
-  // 					"https://backend-staging.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
+  // 					"https://backend-prod.epns.io/cache/bafkreibzn4s6nfa4jwyuswkojxclec5nhvj3e4ac5cvamzc2ajznh7t77a.jpg",
   // 				default_vibrate_timings: true,
   // 			},
   // 		},
@@ -253,7 +253,7 @@ export default function SampleFeed() {
       <View style={{ flex: 1 }}>
         <FlatList
           data={feed}
-          keyExtractor={(item) => item.payload_id}
+          keyExtractor={(item) => item.payload_id.toString()}
           // onEndReached={() => {
           // 	console.log("END REACHED");
           // 	setloading(true);

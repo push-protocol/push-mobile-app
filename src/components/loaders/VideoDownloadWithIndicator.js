@@ -174,7 +174,7 @@ export default class VideoDownloadWithIndicator extends Component {
 
   // When Errored
   videoError = (error) => {
-    console.log("Error on playback" + error);
+    // console.log("Error on playback" + error);
 
     this.setState({
       indicator: false,
@@ -187,6 +187,7 @@ export default class VideoDownloadWithIndicator extends Component {
 
   // handle on press
   onPress = () => {
+    // console.log("here");
     this.player.presentFullscreenPlayer();
 
     if (this.props.onPress) {

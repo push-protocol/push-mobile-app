@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   View,
   Text,
@@ -6,22 +6,22 @@ import {
   FlatList,
   RefreshControl,
   StyleSheet,
-} from 'react-native';
-import SafeAreaView from 'react-native-safe-area-view';
-import { Asset } from 'expo-asset';
+} from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
+import { Asset } from "expo-asset";
 
 import ImageView from "react-native-image-viewing";
-import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
+import ImagePreviewFooter from "src/components/ui/ImagePreviewFooter";
 
-import FeedItemWrapper from 'src/components/ui/FeedItemWrapper';
-import EPNSActivity from 'src/components/loaders/EPNSActivity';
-import { ToasterOptions } from 'src/components/indicators/Toaster';
+import FeedItemWrapper from "src/components/ui/FeedItemWrapper";
+import EPNSActivity from "src/components/loaders/EPNSActivity";
+import { ToasterOptions } from "src/components/indicators/Toaster";
 
-import StylishLabel from 'src/components/labels/StylishLabel';
-import FeedDBHelper from 'src/helpers/FeedDBHelper';
-import MetaStorage from 'src/singletons/MetaStorage';
+import StylishLabel from "src/components/labels/StylishLabel";
+import FeedDBHelper from "src/helpers/FeedDBHelper";
+import MetaStorage from "src/singletons/MetaStorage";
 
-import GLOBALS from 'src/Globals';
+import GLOBALS from "src/Globals";
 
 export default class FeedsDisplayer extends Component {
   // CONSTRUCTOR
@@ -46,7 +46,7 @@ export default class FeedsDisplayer extends Component {
       startFromIndex: 0,
 
       lastHiddenItemNid: -1,
-    }
+    };
 
     this._db = null;
     this.itemRefs = [];
@@ -65,23 +65,26 @@ export default class FeedsDisplayer extends Component {
   // FUNCTIONS
   // to reset the feed and refresh
   resetFeedState = () => {
-    this.setState({
-      items: [],
-      forwardPointer: 0,
-      forwardNid: -1,
-      backwardPointer: 0,
-      backwardNid: -1,
-      visibleItemCount: 0,
-      feedEnded: false,
-      feedQueried: false,
+    this.setState(
+      {
+        items: [],
+        forwardPointer: 0,
+        forwardNid: -1,
+        backwardPointer: 0,
+        backwardNid: -1,
+        visibleItemCount: 0,
+        feedEnded: false,
+        feedQueried: false,
 
-      feedIsRefreshing: false,
-    }, () => {
-      this.itemRefs = [];
+        feedIsRefreshing: false,
+      },
+      () => {
+        this.itemRefs = [];
 
-      this.triggerGetItemsFromDB();
-    })
-  }
+        this.triggerGetItemsFromDB();
+      }
+    );
+  };
 
   // trigger getting feed items
   triggerGetItemsFromDB = async (isHistorical) => {
@@ -91,14 +94,16 @@ export default class FeedsDisplayer extends Component {
 
     const result = await this.getItemsFromDB(isHistorical);
     return result;
-  }
+  };
 
   // To pull more feeds and store them in the feed items
   getItemsFromDB = async (isHistorical) => {
     // Wait for some time
     await this.performTimeConsumingTask();
 
-    let fromPointer = !isHistorical ? this.state.forwardPointer : this.state.backwardPointer;
+    let fromPointer = !isHistorical
+      ? this.state.forwardPointer
+      : this.state.backwardPointer;
 
     let limit = GLOBALS.CONSTANTS.FEED_ITEMS_TO_PULL;
 
@@ -112,7 +117,12 @@ export default class FeedsDisplayer extends Component {
       limit = diff;
     }
 
-    const fetcheditems = await FeedDBHelper.getFeeds(this._db, fromPointer, limit, isHistorical);
+    const fetcheditems = await FeedDBHelper.getFeeds(
+      this._db,
+      fromPointer,
+      limit,
+      isHistorical
+    );
     let storedFeed = this.state.items;
 
     let visibleItemCount = this.state.visibleItemCount;
@@ -132,16 +142,15 @@ export default class FeedsDisplayer extends Component {
         // data is populated with forward nid first
         if (bNid >= item["nid"] || bNid == -1) {
           storedFeed = [item, ...storedFeed];
-        }
-        else {
+        } else {
           itemValid = false;
         }
-      }
-      else {
+      } else {
         if (fNid < item["nid"] || fNid == -1) {
-          storedFeed = feedQueried ? [item, ...storedFeed] : [...storedFeed, item];
-        }
-        else {
+          storedFeed = feedQueried
+            ? [item, ...storedFeed]
+            : [...storedFeed, item];
+        } else {
           itemValid = false;
         }
       }
@@ -160,7 +169,7 @@ export default class FeedsDisplayer extends Component {
       }
     });
 
-    const newForwardPointer = 0 // Since this is reverse, it will not affect the forward pointer
+    const newForwardPointer = 0; // Since this is reverse, it will not affect the forward pointer
     //const newForwardPointer = !isHistorical ? this.state.forwardPointer + totalCount : this.state.forwardPointer;
 
     const newBackwardPointer = this.state.backwardPointer + totalCount;
@@ -185,7 +194,7 @@ export default class FeedsDisplayer extends Component {
 
       backwardPointer: newBackwardPointer,
       backwardNid: backwardNid,
-    })
+    });
 
     // Feeds pulled after logic
     if (!isHistorical) {
@@ -193,18 +202,23 @@ export default class FeedsDisplayer extends Component {
 
       // Check and move feed to top as well
       this.refs.feedScroll.scrollToOffset({ animated: true, offset: 0 });
-    }
-    else {
+    } else {
     }
 
     // Show Toast
     if (totalCount == 0) {
       // No New Items
-      this.showToast("No New Notifications", "", ToasterOptions.TYPE.GRADIENT_PRIMARY);
-    }
-    else {
-      this.showToast("New Notifications Loaded!", "", ToasterOptions.TYPE.GRADIENT_PRIMARY);
-
+      this.showToast(
+        "No New Notifications",
+        "",
+        ToasterOptions.TYPE.GRADIENT_PRIMARY
+      );
+    } else {
+      this.showToast(
+        "New Notifications Loaded!",
+        "",
+        ToasterOptions.TYPE.GRADIENT_PRIMARY
+      );
     }
 
     // Do Feed Refresh callback if it exists
@@ -213,12 +227,12 @@ export default class FeedsDisplayer extends Component {
     }
 
     return true;
-  }
+  };
 
   onEndReached = () => {
-    console.log("Refreshing");
+    // console.log("Refreshing");
 
-    if(!this.state.feedEnded){
+    if (!this.state.feedEnded) {
       if (!this.state.feedIsRefreshing) {
         this.triggerGetItemsFromDB(true);
       }
@@ -227,42 +241,44 @@ export default class FeedsDisplayer extends Component {
     // This is for flat list
     // onEndReached={this.onEndReached}
     // onEndReachedThreshold={0.5}
-  }
+  };
 
   // Perform some task to wait
   performTimeConsumingTask = async () => {
     return new Promise((resolve) =>
-      setTimeout(
-        () => { resolve('result') },
-        500
-      )
+      setTimeout(() => {
+        resolve("result");
+      }, 500)
     );
-  }
+  };
 
   // Archive an item
   archiveItem = (nid) => {
-    this.setState({
-      visibleItemCount: this.state.visibleItemCount - 1,
-      lastHiddenItemNid: nid,
-      // items: this.state.items.filter(i => i["nid"] !== nid) // don't remove so it's better after unarchive
-    }, () => {
-      this.showToast(
-        "Item Archived, Tap to Undo",
-        '',
-        ToasterOptions.TYPE.GRADIENT_PRIMARY,
-        () => {
-          this.unarchiveItemSequential(nid)
-        },
-        ToasterOptions.DELAY.LONG,
-      )
-    });
-  }
+    this.setState(
+      {
+        visibleItemCount: this.state.visibleItemCount - 1,
+        lastHiddenItemNid: nid,
+        // items: this.state.items.filter(i => i["nid"] !== nid) // don't remove so it's better after unarchive
+      },
+      () => {
+        this.showToast(
+          "Item Archived, Tap to Undo",
+          "",
+          ToasterOptions.TYPE.GRADIENT_PRIMARY,
+          () => {
+            this.unarchiveItemSequential(nid);
+          },
+          ToasterOptions.DELAY.LONG
+        );
+      }
+    );
+  };
 
   // Unarchive an item
   unarchiveItemSequential = (nid) => {
     // To trick the tap callback of toast
     this.unarchiveItem(nid);
-  }
+  };
 
   unarchiveItem = async (nid) => {
     await FeedDBHelper.unhideFeedItem(this._db, nid);
@@ -270,24 +286,24 @@ export default class FeedsDisplayer extends Component {
     // No Need to adjust item as items are there but invisible, just adjust visible item count
     this.setState({
       visibleItemCount: this.state.visibleItemCount + 1,
-    })
+    });
 
     // get ref of that item and expand it
     const itemRef = this.getRefForFeedItem(nid);
     this.itemRefs[itemRef].uncollapseHeight();
-  }
+  };
 
   // To get ref for feed items
   getRefForFeedItem = (nid) => {
-    return 'feed' + nid;
-  }
+    return "feed" + nid;
+  };
 
   // For showing toast
   showToast = (msg, icon, type, tapCB, screenTime) => {
     if (this.props.showToast) {
       this.props.showToast(msg, icon, type, tapCB, screenTime);
     }
-  }
+  };
 
   // Show Image Preview
   showImagePreview = async (fileURL) => {
@@ -301,7 +317,7 @@ export default class FeedsDisplayer extends Component {
     // Push to valid path
     validPaths.push({
       uri: Asset.fromModule(fileURL).uri,
-      id: fileURL
+      id: fileURL,
     });
 
     fileIndex = validPaths.length - 1;
@@ -312,28 +328,18 @@ export default class FeedsDisplayer extends Component {
     this.setState({
       loadedImages: validPaths,
       renderGallery: true,
-      startFromIndex: fileIndex
-    })
-  }
+      startFromIndex: fileIndex,
+    });
+  };
 
   // Render Footer
   renderFooter = () => {
-    return (
-      <EPNSActivity
-        style={styles.activity}
-        size="small"
-      />
-    );
-  }
+    return <EPNSActivity style={styles.activity} size="small" />;
+  };
 
   // RENDER
   render() {
-    const {
-      style,
-      onFeedRefreshed,
-      showToast,
-      privateKey,
-    } = this.props;
+    const { style, onFeedRefreshed, showToast, privateKey } = this.props;
 
     return (
       <View style={styles.container}>
@@ -351,64 +357,63 @@ export default class FeedsDisplayer extends Component {
             }
             data={this.state.visibleItemCount > 0 ? this.state.items : []}
             extraData={this.state}
-            keyExtractor={item => item["nid"].toString()}
+            keyExtractor={(item) => item["nid"].toString()}
             contentContainerStyle={styles.feedScrollContent}
             renderItem={({ item }) => (
               <FeedItemWrapper
-                ref={(ref) => this.itemRefs = {...this.itemRefs, [this.getRefForFeedItem(item["nid"])]: ref}}
+                ref={(ref) =>
+                  (this.itemRefs = {
+                    ...this.itemRefs,
+                    [this.getRefForFeedItem(item["nid"])]: ref,
+                  })
+                }
                 item={item}
                 nid={item["nid"]}
                 showToast={showToast}
                 itemArchived={(nid) => {
                   this.archiveItem(nid);
                 }}
-                onImagePreview={(fileURL) => (this.showImagePreview(fileURL))}
+                onImagePreview={(fileURL) => this.showImagePreview(fileURL)}
                 privateKey={privateKey}
               />
             )}
             ListEmptyComponent={
-              this.state.feedQueried == false
-                ? <View
-                    style={[ styles.infodisplay, styles.loading ]}
-                  >
-                    <EPNSActivity
-                      style={styles.activity}
-                      size="small"
-                    />
-                  </View>
-                : <View
-                    style={[ styles.infodisplay, styles.noPendingFeeds ]}
-                  >
-                    <Image
-                      style={styles.infoIcon}
-                      source={require('assets/ui/feed.png')}
-                    />
-                    <StylishLabel
-                      style={styles.infoText}
-                      fontSize={16}
-                      title='[dg:No New Notification!]'
-                    />
-                  </View>
+              this.state.feedQueried == false ? (
+                <View style={[styles.infodisplay, styles.loading]}>
+                  <EPNSActivity style={styles.activity} size="small" />
+                </View>
+              ) : (
+                <View style={[styles.infodisplay, styles.noPendingFeeds]}>
+                  <Image
+                    style={styles.infoIcon}
+                    source={require("assets/ui/feed.png")}
+                  />
+                  <StylishLabel
+                    style={styles.infoText}
+                    fontSize={16}
+                    title="[dg:No New Notification!]"
+                  />
+                </View>
+              )
             }
           />
-
         </SafeAreaView>
 
         <ImageView
-          images = {this.state.loadedImages}
-          imageIndex = {this.state.startFromIndex}
-          visible = {this.state.renderGallery}
-          swipeToCloseEnabled = {true}
-          onRequestClose = {() => {
+          images={this.state.loadedImages}
+          imageIndex={this.state.startFromIndex}
+          visible={this.state.renderGallery}
+          swipeToCloseEnabled={true}
+          onRequestClose={() => {
             this.setState({
               renderGallery: false,
-            })
+            });
           }}
           FooterComponent={({ imageIndex }) => (
             <ImagePreviewFooter
-              imageIndex = {imageIndex}
-              imagesCount = {this.state.loadedImages.length}
-              fileURI = {this.state.loadedImages[imageIndex].uri}
+              imageIndex={imageIndex}
+              imagesCount={this.state.loadedImages.length}
+              fileURI={this.state.loadedImages[imageIndex].uri}
             />
           )}
         />
@@ -421,12 +426,12 @@ export default class FeedsDisplayer extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   feedScrollContainer: {
-    width: '100%',
+    width: "100%",
     flex: 1,
     marginTop: 10,
   },
@@ -435,27 +440,22 @@ const styles = StyleSheet.create({
   },
   infodisplay: {
     flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 20,
   },
   infoIcon: {
     height: 48,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     margin: 10,
   },
   infoText: {
     marginVertical: 10,
-
   },
-  loading: {
-
-  },
-  noPendingFeeds: {
-
-  },
+  loading: {},
+  noPendingFeeds: {},
   feed: {
-    width: '100%',
-  }
+    width: "100%",
+  },
 });

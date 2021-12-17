@@ -15,9 +15,7 @@ import ENV_CONFIG from "src/env.config";
 import addresses from "../templates/addresses";
 import EPNSABI from "../abis/epnscore.json";
 import GLOBALS from "src/Globals";
-import ProfileDisplayer from "src/components/ui/ProfileDisplayer";
 import SubscriptionStatus from "../components/buttons/SubscriptionStatus";
-import EPNSNotifierIcon from "src/components/custom/EPNSNotifierIcon";
 import { useNavigation } from "@react-navigation/native";
 import DetailedInfoPresenter from "src/components/misc/DetailedInfoPresenter";
 import StylishLabel from "src/components/labels/StylishLabel";
@@ -36,6 +34,7 @@ export default function Channels(props) {
   const [endReached, setEndReached] = useState(false);
 
   useEffect(() => {
+    console.log(props);
     // fetchChannels();
     const network = "ropsten";
     const providerState = ethers.getDefaultProvider(network, {

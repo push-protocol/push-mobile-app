@@ -9,11 +9,12 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import AppBadgeHelper from "./src/helpers/AppBadgeHelper";
+import messaging from "@react-native-firebase/messaging";
 
 import messaging from "@react-native-firebase/messaging";
 import Tabs from "./src/screens/Tabs";
 import SplashScreen from "src/screens/SplashScreen";
-
+import SampleFeed from "src/screens/SampleFeed";
 import HomeScreen from "src/screens/HomeScreen";
 import SettingsScreen from "src/screens/SettingsScreen";
 
@@ -23,6 +24,7 @@ import SignInScreenAdvance from "src/screens/SignInScreenAdvance";
 import BiometricScreen from "src/screens/BiometricScreen";
 import PushNotifyScreen from "src/screens/PushNotifyScreen";
 import SetupCompleteScreen from "src/screens/SetupCompleteScreen";
+import Tabs from "./src/screens/Tabs";
 
 import SampleFeed from "src/screens/SampleFeed";
 
@@ -33,7 +35,6 @@ import AuthContext, { APP_AUTH_STATES } from "src/components/auth/AuthContext";
 import ENV_CONFIG from "src/env.config";
 import GLOBALS from "src/Globals";
 import OnboardingChannel from "./src/screens/OnboardingChannel";
-import SpamBox from "./src/screens/SpamBox.js";
 
 // Assign console.log to nothing
 if (!ENV_CONFIG.SHOW_CONSOLE) {
@@ -101,6 +102,10 @@ export default function App({ navigation }) {
     //   });
   }, []);
 
+  const handleAppNotificationBadge = async () => {
+    await AppBadgeHelper.setAppBadgeCount(0);
+  };
+
   // HANDLE AUTH FLOW
   const authContext = React.useMemo(
     () => ({
@@ -126,17 +131,6 @@ export default function App({ navigation }) {
           {/* <Stack.Screen
             name="Home"
             component={HomeScreen}
-            options={{
-              headerShown: false,
-            }}
-            initialParams={{
-              wallet: userWallet,
-              pkey: userPKey,
-            }}
-          /> */}
-          {/* <Stack.Screen
-            name="OnboardingChannels"
-            component={OnboardingChannel}
             options={{
               headerShown: false,
             }}
@@ -174,17 +168,6 @@ export default function App({ navigation }) {
             component={SampleFeed}
             options={{
               title: "Example Feed",
-              headerStyle: {
-                backgroundColor: GLOBALS.COLORS.WHITE,
-              },
-              headerTintColor: GLOBALS.COLORS.MID_GRAY,
-            }}
-          />
-          <Stack.Screen
-            name="SpamBox"
-            component={SpamBox}
-            options={{
-              title: "Spam Box",
               headerStyle: {
                 backgroundColor: GLOBALS.COLORS.WHITE,
               },
@@ -285,35 +268,33 @@ export default function App({ navigation }) {
   // RENDER
   return (
     <AuthContext.Provider value={authContext}>
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              title: "",
-              headerStyle: {
-                backgroundColor: GLOBALS.COLORS.WHITE,
-                shadowColor: "transparent",
-                shadowRadius: 0,
-                shadowOffset: {
-                  height: 0,
-                },
-                elevation: 0,
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            title: "",
+            headerStyle: {
+              backgroundColor: GLOBALS.COLORS.WHITE,
+              shadowColor: "transparent",
+              shadowRadius: 0,
+              shadowOffset: {
+                height: 0,
               },
-              headerTitleStyle: {
-                color: GLOBALS.COLORS.BLACK,
-              },
-              headerBackTitleStyle: {
-                color: GLOBALS.COLORS.PRIMARY,
-              },
-              headerTintColor: GLOBALS.COLORS.BLACK,
-              headerTitleAlign: "center",
-              headerBackTitleVisible: false,
-            }}
-          >
-            {renderSelectiveScreens()}
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
+              elevation: 0,
+            },
+            headerTitleStyle: {
+              color: GLOBALS.COLORS.BLACK,
+            },
+            headerBackTitleStyle: {
+              color: GLOBALS.COLORS.PRIMARY,
+            },
+            headerTintColor: GLOBALS.COLORS.BLACK,
+            headerTitleAlign: "center",
+            headerBackTitleVisible: false,
+          }}
+        >
+          {renderSelectiveScreens()}
+        </Stack.Navigator>
+      </NavigationContainer>
     </AuthContext.Provider>
   );
 }

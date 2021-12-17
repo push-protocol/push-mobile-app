@@ -32,33 +32,6 @@ export default function Channels(props) {
   const [provider, setProvider] = useState(null);
   const [endReached, setEndReached] = useState(false);
 
-  // useEffect(() => {
-  //   // fetchChannels();
-  //   const network = "ropsten";
-  //   const providerState = ethers.getDefaultProvider(network, {
-  //     etherscan: "TZCWZ8YCQDH4THP54865SDGTG3XXY8ZAQU",
-  //     infura: ENV_CONFIG.INFURA_PROJECT_ID
-  //       ? {
-  //           projectId: ENV_CONFIG.INFURA_PROJECT_ID,
-  //           projectSecret: ENV_CONFIG.INFURA_PROJECT_SECRET,
-  //         }
-  //       : null,
-  //     alchemy: "wxQBUQ4vvHpc8HJBJWw1YjWoCMDwiHh2",
-  //   });
-  //   setProvider(providerState);
-  //   initiateContractInstance(providerState);
-  // }, []);
-
-  // const initiateContractInstance = async (provider) => {
-  //   const contractInstanceState = await new ethers.Contract(
-  //     addresses.epnscore,
-  //     EPNSABI,
-  //     provider
-  //   );
-
-  //   setContract(contractInstanceState);
-  // };
-
   useEffect(() => {
     fetchChannels();
   }, []);
@@ -77,7 +50,7 @@ export default function Channels(props) {
       },
       body: JSON.stringify({
         page: page,
-        pageSize: 10,
+        pageSize: 100,
         op: "write",
       }),
     });
@@ -133,7 +106,7 @@ export default function Channels(props) {
           }}
         />
         {/* Header Comes Here */}
-        <EPNSNotifierIcon
+        {/* <EPNSNotifierIcon
           // ref="EPNSNotifier"
           style={styles.notifier}
           iconSize={32}
@@ -144,7 +117,7 @@ export default function Channels(props) {
           onNewNotifications={() => {
             // Do nothing for now, bell is ringing in the module anyway
           }}
-        />
+        /> */}
         {/* <ImageButton
           style={styles.help}
           src={require("assets/ui/help.png")}
@@ -261,7 +234,7 @@ export default function Channels(props) {
                     <SubscriptionStatus
                       channel={item.channel}
                       user={props.route.params.wallet}
-                      // contract={contract}
+                      contract={contract}
                     />
                   </View>
                 </View>
