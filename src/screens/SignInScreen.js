@@ -1,4 +1,4 @@
-import React, { Component, useRef } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -60,19 +60,16 @@ function GetScreenInsets() {
 }
 
 const SignInScreen = ({ style, route, navigation }) => {
-  // Get navigation
-  //const navigation = useNavigation();
-
   // Setup state
-  const [transitionFinished, setTransitionFinished] = React.useState(false);
-  const [detailedInfoPresetned, setDetailedInfoPresetned] = React.useState(false);
+  const [transitionFinished, setTransitionFinished] = useState(false);
+  const [detailedInfoPresetned, setDetailedInfoPresetned] = useState(false);
 
-  const [fader, setFader] = React.useState(new Animated.Value(0));
-  const [walletAddress, setWalletAddress] = React.useState("");
-  const [wallet, setWallet] = React.useState("");
-  const [cns, setCNS] = React.useState("");
-  const [ens, setENS] = React.useState("");
-  const [walletAddressVerified, setWalletAddressVerified] = React.useState("");
+  const [fader, setFader] = useState(new Animated.Value(0));
+  const [walletAddress, setWalletAddress] = useState("");
+  const [wallet, setWallet] = useState("");
+  const [cns, setCNS] = useState("");
+  const [ens, setENS] = useState("");
+  const [walletAddressVerified, setWalletAddressVerified] = useState("");
 
   // Wallet Connect functionality
   const {
@@ -149,13 +146,11 @@ const SignInScreen = ({ style, route, navigation }) => {
   const resetWalletAddress = () => {
     setWalletAddress("")
     setWalletAddressVerified(false)
-    setFader(new Animated.Value(0), () => {
-      Animated.timing(fader, {
-        toValue: 1,
-        duration: 250,
-        useNativeDriver: true,
-      }).start();
-    })
+    Animated.timing(fader, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
   };
 
   // Handle Profile Info
@@ -164,13 +159,11 @@ const SignInScreen = ({ style, route, navigation }) => {
     setCNS(cns)
     setENS(ens)
     setWalletAddressVerified(true)
-    setFader(new Animated.Value(0), () => {
-      Animated.timing(fader, {
-        toValue: 1,
-        duration: 250,
-        useNativeDriver: true,
-      }).start();
-    })
+    Animated.timing(fader, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
   };
 
   // When Animation is Finished
@@ -207,8 +200,8 @@ const SignInScreen = ({ style, route, navigation }) => {
   const loadAdvanceScreen = async () => {
     // Goto Next Screen
     navigation.navigate("SignInAdvance", {
-      fromOnboarding: route.params.fromOnboarding,
       wallet: wallet,
+      fromOnboarding: route.params.fromOnboarding,
     });
   };
 

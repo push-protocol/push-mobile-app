@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -18,64 +18,30 @@ import Web3Helper from "src/helpers/Web3Helper";
 
 import GLOBALS from "src/Globals";
 
-export default class PKProfileBuilder extends Component {
-  // CONSTRUCTOR
-  constructor(props) {
-    super(props);
+const PKProfileBuilder = ({ style, profileKey, profileType, resetFunc, profileInfoFetchedFunc }) => {
 
-    this.state = {
-      indicator: true,
-      errored: false,
+  // Setup state
+  const [indicator, setIndicator] = useState(true);
+  const [errored, setErrored] = useState(false);
 
-      wallet: "",
+  const [wallet, setWallet] = useState("");
+  const [blockchainNamingServiceFetched, setBlockchainNamingServiceFetched] = useState(-1);
 
-      blockchainNamingServiceFetched: -1, // -1 is not yet fetched, 0 is fetching and 1 is fetched
+  const [ens, setENS] = useState("");
+  const [cns, setCNS] = useState("");
 
-      cns: "",
-      ens: "",
-    };
-  }
+  // FUNCTIONAL COMPONENT MOUNTED
+  useEffect(() => {
+    prepareProfile(profileKey, profileType);
+  }, []);
 
-  // COMPONENT MOUNTED
-  componentDidMount() {
-    this.prepareProfile(this.props.profileKey, this.props.profileType);
-  }
-
-  // FUNCTIONS
-  prepareProfile = async (profileKey, profileType) => {
-    let response = {};
-
-    // Fetch Provider to use for Web3 and ENS
-
-    const provider = await Web3Helper.getWeb3Provider();
-
-    if (profileType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
-      // do some brushing up
-      if (profileKey.startsWith("ethereum:")) {
-        // Metamask does this
-        profileKey = profileKey.replace("ethereum:", "");
-      }
-
-      // Next verify wallet
-
-      response = {
-        success: true,
-        wallet: profileKey,
-      };
-    } else if (profileType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
-      // Get Wallet Address
-      response = await Web3Helper.getWalletAddress(profileKey, provider);
+  useEffect( () => {
+    if (blockchainNamingServiceFetched == 0) {
+      fetchBNSFunc();
     }
 
-    if (response.success) {
-      // Get Identicon And try to fetch ENS
-      const wallet = response.wallet;
-
-      this.setState({
-        indicator: false,
-        wallet: wallet,
-        blockchainNamingServiceFetched: 0,
-      });
+    async function fetchBNSFunc() {
+      const provider = await Web3Helper.getWeb3Provider();
 
       const ensResponse = await Web3Helper.getENSReverseDomain(
         wallet,
@@ -94,97 +60,114 @@ export default class PKProfileBuilder extends Component {
         cns = cnsResponse.cns;
       }
 
-      this.setState(
-        {
-          blockchainNamingServiceFetched: 1,
-          cns: cns,
-          ens: ens,
-        },
-        () => {
-          if (this.props.profileInfoFetchedFunc) {
-            this.props.profileInfoFetchedFunc(wallet, cns, ens);
-          }
-        }
-      );
+      setCNS(cns)
+      setENS(ens)
+      setBlockchainNamingServiceFetched(1)
+
+      if (profileInfoFetchedFunc) {
+        profileInfoFetchedFunc(wallet, cns, ens);
+      }
+    }
+  }, [blockchainNamingServiceFetched])
+
+  // FUNCTIONS
+  const prepareProfile = async (profileKey, profileType) => {
+    let response = {};
+
+    // Fetch Provider to use for Web3 and ENS
+    const provider = await Web3Helper.getWeb3Provider();
+
+    if (profileType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
+      // do some brushing up
+      if (profileKey.startsWith("ethereum:")) {
+        // Metamask does this
+        profileKey = profileKey.replace("ethereum:", "");
+      }
+
+      // Next verify wallet
+      response = {
+        success: true,
+        wallet: profileKey,
+      };
+    } else if (profileType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+      // Get Wallet Address
+      response = await Web3Helper.getWalletAddress(profileKey, provider);
+    }
+
+    if (response.success) {
+      // Get Identicon And try to fetch ENS
+      const wallet = response.wallet;
+
+      setIndicator(false)
+      setWallet(wallet)
+      setBlockchainNamingServiceFetched(0)
     } else {
-      this.setState({
-        indicator: false,
-        errored: true,
-      });
+      setIndicator(false)
+      setErrored(true)
     }
   };
 
   // RENDER
-  render() {
-    const {
-      style,
-      profileKey,
-      profileType,
-      resetFunc,
-      profileInfoFetchedFunc,
-    } = this.props;
-
-    return (
-      <SafeAreaView style={[styles.container, style]}>
-        {this.state.indicator == true ? (
-          <ActivityIndicator
-            style={styles.activity}
-            size="small"
-            color={GLOBALS.COLORS.GRADIENT_THIRD}
-          />
-        ) : null}
-        <View style={styles.profile}>
-          {this.state.errored == true ? (
-            <View style={styles.profileErr}>
-              <View style={styles.profileErrMsg}>
-                <StylishLabel
-                  style={styles.para}
-                  fontSize={16}
-                  title="[d:Error:] Unable to fetch [d:wallet] for the given creds."
-                />
-
-                <StylishLabel
-                  style={styles.paraend}
-                  fontSize={16}
-                  title="This might happen when you scan [b:incorrect QR Code] or [b:make a typo]."
-                />
-              </View>
-
-              <PrimaryButton
-                style={styles.reset}
-                iconFactory="Ionicons"
-                icon="ios-refresh"
-                iconSize={24}
-                title="Reset / Use Different Wallet"
+  return (
+    <SafeAreaView style={[styles.container, style]}>
+      {indicator == true ? (
+        <ActivityIndicator
+          style={styles.activity}
+          size="small"
+          color={GLOBALS.COLORS.GRADIENT_THIRD}
+        />
+      ) : null}
+      <View style={styles.profile}>
+        {errored == true ? (
+          <View style={styles.profileErr}>
+            <View style={styles.profileErrMsg}>
+              <StylishLabel
+                style={styles.para}
                 fontSize={16}
-                fontColor={GLOBALS.COLORS.WHITE}
-                bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
-                disabled={false}
-                onPress={resetFunc}
+                title="[d:Error:] Unable to fetch [d:wallet] for the given creds."
+              />
+
+              <StylishLabel
+                style={styles.paraend}
+                fontSize={16}
+                title="This might happen when you scan [b:incorrect QR Code] or [b:make a typo]."
               />
             </View>
-          ) : (
-            <View style={styles.profile}>
-              <Blockies
-                style={styles.blockies}
-                seed={this.state.wallet.toLowerCase()} //string content to generate icon
-                dimension={128} // blocky icon size
-              />
 
-              <ENSButton
-                style={styles.ensbox}
-                loading={!this.state.blockchainNamingServiceFetched}
-                cns={this.state.cns}
-                ens={this.state.ens}
-                wallet={this.state.wallet}
-                fontSize={16}
-              />
-            </View>
-          )}
-        </View>
-      </SafeAreaView>
-    );
-  }
+            <PrimaryButton
+              style={styles.reset}
+              iconFactory="Ionicons"
+              icon="ios-refresh"
+              iconSize={24}
+              title="Reset / Use Different Wallet"
+              fontSize={16}
+              fontColor={GLOBALS.COLORS.WHITE}
+              bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
+              disabled={false}
+              onPress={resetFunc}
+            />
+          </View>
+        ) : (
+          <View style={styles.profile}>
+            <Blockies
+              style={styles.blockies}
+              seed={wallet.toLowerCase()} //string content to generate icon
+              dimension={128} // blocky icon size
+            />
+
+            <ENSButton
+              style={styles.ensbox}
+              loading={!blockchainNamingServiceFetched}
+              cns={cns}
+              ens={ens}
+              wallet={wallet}
+              fontSize={16}
+            />
+          </View>
+        )}
+      </View>
+    </SafeAreaView>
+  )
 }
 
 // Styling
@@ -229,3 +212,5 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
+
+export default PKProfileBuilder;
