@@ -65,7 +65,6 @@ export default class BiometricScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
     super(props);
-
     this.state = {
       transitionFinished: false,
       detailedInfoPresetned: false,
@@ -365,11 +364,13 @@ export default class BiometricScreen extends Component {
     if (authorizationStatus == messaging.AuthorizationStatus.NOT_DETERMINED) {
       this.props.navigation.navigate("PushNotify", {
         privateKey: privateKey,
+        wallet: this.props.route.params.wallet,
         fromOnboarding: this.props.route.params.fromOnboarding,
       });
     } else {
       this.props.navigation.navigate("SetupComplete", {
         privateKey: privateKey,
+        wallet: this.props.route.params.wallet,
         fromOnboarding: this.props.route.params.fromOnboarding,
       });
     }

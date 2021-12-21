@@ -35,8 +35,8 @@ const PKProfileBuilder = ({ style, profileKey, profileType, resetFunc, profileIn
     prepareProfile(profileKey, profileType);
   }, []);
 
-  useEffect( () => {
-    if (blockchainNamingServiceFetched == 0) {
+  useEffect(() => {
+    if (blockchainNamingServiceFetched == 0 && wallet) {
       fetchBNSFunc();
     }
 
@@ -68,7 +68,7 @@ const PKProfileBuilder = ({ style, profileKey, profileType, resetFunc, profileIn
         profileInfoFetchedFunc(wallet, cns, ens);
       }
     }
-  }, [blockchainNamingServiceFetched])
+  }, [blockchainNamingServiceFetched, wallet])
 
   // FUNCTIONS
   const prepareProfile = async (profileKey, profileType) => {

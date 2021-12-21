@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -66,7 +66,6 @@ const SignInScreen = ({ style, route, navigation }) => {
 
   const [fader, setFader] = useState(new Animated.Value(0));
   const [walletAddress, setWalletAddress] = useState("");
-  const [wallet, setWallet] = useState("");
   const [cns, setCNS] = useState("");
   const [ens, setENS] = useState("");
   const [walletAddressVerified, setWalletAddressVerified] = useState("");
@@ -159,12 +158,17 @@ const SignInScreen = ({ style, route, navigation }) => {
     setCNS(cns)
     setENS(ens)
     setWalletAddressVerified(true)
-    Animated.timing(fader, {
-      toValue: 1,
-      duration: 250,
-      useNativeDriver: true,
-    }).start();
   };
+
+  useEffect(() => {
+    if (walletAddressVerified && walletAddress) {
+      Animated.timing(fader, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }).start();
+    }
+	}, [walletAddress, walletAddressVerified]);
 
   // When Animation is Finished
   const animationFinished = () => {
@@ -183,7 +187,7 @@ const SignInScreen = ({ style, route, navigation }) => {
       ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
       cns: cns,
       ens: ens,
-      wallet: wallet,
+      wallet: walletAddress,
     };
     // console.log(walletObj);
 
@@ -200,7 +204,7 @@ const SignInScreen = ({ style, route, navigation }) => {
   const loadAdvanceScreen = async () => {
     // Goto Next Screen
     navigation.navigate("SignInAdvance", {
-      wallet: wallet,
+      wallet: walletAddress,
       fromOnboarding: route.params.fromOnboarding,
     });
   };
