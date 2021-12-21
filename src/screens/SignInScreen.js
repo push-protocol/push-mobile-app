@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useRef } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,13 @@ import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView, useSafeArea } from "react-native-safe-area-context";
 
 import * as Permissions from "expo-permissions";
+
+import {
+  useWalletConnect,
+  withWalletConnect,
+  RenderQrcodeModalProps,
+  WalletService,
+} from '@walletconnect/react-native-dapp';
 
 import StylishLabel from "src/components/labels/StylishLabel";
 import DetailedInfoPresenter from "src/components/misc/DetailedInfoPresenter";
@@ -52,27 +59,39 @@ function GetScreenInsets() {
   }
 }
 
-export default class SignInScreen extends Component {
-  // CONSTRUCTOR
-  constructor(props) {
-    super(props);
+const SignInScreen = ({ style, route, navigation }) => {
+  // Get navigation
+  //const navigation = useNavigation();
 
-    this.state = {
-      transitionFinished: false,
-      detailedInfoPresetned: false,
+  // Setup state
+  const [transitionFinished, setTransitionFinished] = React.useState(false);
+  const [detailedInfoPresetned, setDetailedInfoPresetned] = React.useState(false);
 
-      fader: new Animated.Value(0),
-      walletAddress: "",
-      wallet: "",
-      cns: "",
-      ens: "",
-      walletAddressVerified: false,
-    };
-  }
+  const [fader, setFader] = React.useState(new Animated.Value(0));
+  const [walletAddress, setWalletAddress] = React.useState("");
+  const [wallet, setWallet] = React.useState("");
+  const [cns, setCNS] = React.useState("");
+  const [ens, setENS] = React.useState("");
+  const [walletAddressVerified, setWalletAddressVerified] = React.useState("");
+
+  // Wallet Connect functionality
+  const {
+    createSession,
+    killSession,
+    session,
+    signTransaction,
+  } = useWalletConnect();
+  const connector = useWalletConnect();
+
+  // Setup Refs
+  const QRScannerRef = useRef(null);
+  const OverlayBlurRef = useRef(null);
+  const NoticePromptRef = useRef(null);
+  const TextEntryPromptRef = useRef(null);
 
   // FUNCTIONS
   // Open Notice Prompt With Overlay Blur
-  toggleNoticePrompt = (
+  const toggleNoticePrompt = (
     toggle,
     animate,
     title,
@@ -81,33 +100,33 @@ export default class SignInScreen extends Component {
     showIndicator
   ) => {
     // Set Notice First
-    this.refs.NoticePrompt.changeTitle(title);
-    this.refs.NoticePrompt.changeSubtitle(subtitle);
-    this.refs.NoticePrompt.changeNotice(notice);
-    this.refs.NoticePrompt.changeIndicator(showIndicator);
+    NoticePromptRef.current.changeTitle(title);
+    NoticePromptRef.current.changeSubtitle(subtitle);
+    NoticePromptRef.current.changeNotice(notice);
+    NoticePromptRef.current.changeIndicator(showIndicator);
 
     // Set render state of this and the animate the blur modal in
-    this.refs.OverlayBlur.changeRenderState(toggle, animate);
-    this.refs.NoticePrompt.changeRenderState(toggle, animate);
+    OverlayBlurRef.current.changeRenderState(toggle, animate);
+    NoticePromptRef.current.changeRenderState(toggle, animate);
   };
 
   // Open Text Prompt With Overlay Blur
-  toggleTextEntryPrompt = (toggle, animate) => {
+  const toggleTextEntryPrompt = (toggle, animate) => {
     // Set render state of this and the animate the blur modal in
-    this.refs.OverlayBlur.changeRenderState(toggle, animate);
-    this.refs.TextEntryPrompt.changeRenderState(toggle, animate);
+    OverlayBlurRef.current.changeRenderState(toggle, animate);
+    TextEntryPromptRef.current.changeRenderState(toggle, animate);
   };
 
   // Open QR Scanner
-  toggleQRScanner = (toggle, navigation) => {
-    this.refs.QRScanner.changeRenderState(toggle, navigation);
+  const toggleQRScanner = (toggle, navigation) => {
+    QRScannerRef.current.changeRenderState(toggle, navigation);
   };
 
   // Users Permissions
-  getCameraPermissionAsync = async (navigation) => {
+  const getCameraPermissionAsync = async (navigation) => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     if (status !== "granted") {
-      this.toggleNoticePrompt(
+      toggleNoticePrompt(
         true,
         true,
         "Camera Access",
@@ -117,279 +136,272 @@ export default class SignInScreen extends Component {
       );
     } else {
       // All Clear, open QR Scanner
-      this.toggleQRScanner(true, navigation);
+      toggleQRScanner(true, navigation);
     }
   };
 
   // Detect PK Code
-  onWalletDetect = (code) => {
-    this.setState({
-      walletAddress: code,
-    });
+  const onWalletDetect = (code) => {
+    setWalletAddress(code)
   };
 
   // Reset PK Code
-  resetWalletAddress = () => {
-    this.setState(
-      {
-        walletAddress: "",
-        walletAddressVerified: false,
-
-        fader: new Animated.Value(0),
-      },
-      () => {
-        Animated.timing(this.state.fader, {
-          toValue: 1,
-          duration: 250,
-          useNativeDriver: true,
-        }).start();
-      }
-    );
+  const resetWalletAddress = () => {
+    setWalletAddress("")
+    setWalletAddressVerified(false)
+    setFader(new Animated.Value(0), () => {
+      Animated.timing(fader, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }).start();
+    })
   };
 
   // Handle Profile Info
-  profileInfoFetched = (wallet, cns, ens) => {
-    this.setState(
-      {
-        wallet: wallet,
-        cns: cns,
-        ens: ens,
-        walletAddressVerified: true,
-
-        fader: new Animated.Value(0),
-      },
-      () => {
-        Animated.timing(this.state.fader, {
-          toValue: 1,
-          duration: 250,
-          useNativeDriver: true,
-        }).start();
-      }
-    );
+  const profileInfoFetched = (wallet, cns, ens) => {
+    setWalletAddress(wallet)
+    setCNS(cns)
+    setENS(ens)
+    setWalletAddressVerified(true)
+    setFader(new Animated.Value(0), () => {
+      Animated.timing(fader, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }).start();
+    })
   };
 
   // When Animation is Finished
-  animationFinished = () => {
-    this.setState(
-      {
-        detailedInfoPresetned: true,
-      },
-      () => {
-        Animated.timing(this.state.fader, {
-          toValue: 1,
-          duration: 250,
-          useNativeDriver: true,
-        }).start();
-      }
-    );
+  const animationFinished = () => {
+    setDetailedInfoPresetned(true)
+    Animated.timing(fader, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
   };
 
   // Load the Next Screen
-  loadNextScreen = async () => {
+  const loadNextScreen = async () => {
     // Store ENS and Wallet in Storage and then move ahead
     const walletObj = {
       ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
-      cns: this.state.cns,
-      ens: this.state.ens,
-      wallet: this.state.wallet,
+      cns: cns,
+      ens: ens,
+      wallet: wallet,
     };
     // console.log(walletObj);
 
     await MetaStorage.instance.setStoredWallet(walletObj);
 
     // Goto Next Screen
-    this.props.navigation.navigate("Biometric", {
-      wallet: this.state.walletAddress,
-      fromOnboarding: this.props.route.params.fromOnboarding,
+    navigation.navigate("Biometric", {
+      wallet: walletAddress,
+      fromOnboarding: route.params.fromOnboarding,
     });
   };
 
   // Load Advvance Screen
-  loadAdvanceScreen = async () => {
+  const loadAdvanceScreen = async () => {
     // Goto Next Screen
-    this.props.navigation.navigate("SignInAdvance", {
-      fromOnboarding: this.props.route.params.fromOnboarding,
-      wallet: this.state.wallet,
+    navigation.navigate("SignInAdvance", {
+      fromOnboarding: route.params.fromOnboarding,
+      wallet: wallet,
     });
   };
 
-  // RETURN
-  render() {
-    const { navigation } = this.props;
+  const connectViaWalletConnect = async () => {
+    connector.createSession();
+  }
 
-    return (
-      <React.Fragment>
-        <SafeAreaView style={styles.container}>
-          <ScreenFinishedTransition
-            setScreenTransitionAsDone={() => {
-              this.setState({
-                transitionFinished: true,
-              });
-            }}
-          />
+  return (
+    <>
+      <SafeAreaView style={styles.container}>
+        <ScreenFinishedTransition
+          setScreenTransitionAsDone={() => {
+            setTransitionFinished(true)
+          }}
+        />
 
-          <Text style={styles.header}>Wallet Address!</Text>
-          <View style={styles.inner}>
-            {this.state.walletAddress === "" ? (
-              <DetailedInfoPresenter
-                style={styles.intro}
-                icon={require("assets/ui/wallet.png")}
-                contentView={
-                  <View style={styles.introContent}>
-                    <StylishLabel
-                      style={styles.para}
-                      fontSize={16}
-                      title="[b:EPNS] requires your wallet address to deliver [d:notifications] meant for you!"
-                    />
-                  </View>
-                }
-                animated={!this.state.detailedInfoPresetned}
-                startAnimation={this.state.transitionFinished}
-                animationCompleteCallback={() => {
-                  this.animationFinished();
+        <Text style={styles.header}>Wallet Address!</Text>
+        <View style={styles.inner}>
+          {walletAddress === "" ? (
+            <DetailedInfoPresenter
+              style={styles.intro}
+              icon={require("assets/ui/wallet.png")}
+              contentView={
+                <View style={styles.introContent}>
+                  <StylishLabel
+                    style={styles.para}
+                    fontSize={16}
+                    title="[b:EPNS] requires your wallet address to deliver [d:notifications] meant for you!"
+                  />
+                </View>
+              }
+              animated={!detailedInfoPresetned}
+              startAnimation={transitionFinished}
+              animationCompleteCallback={() => {
+                animationFinished();
+              }}
+            />
+          ) : (
+            <PKProfileBuilder
+              style={styles.profile}
+              profileKey={walletAddress}
+              profileType={GLOBALS.CONSTANTS.CRED_TYPE_WALLET}
+              resetFunc={() => {
+                resetWalletAddress();
+              }}
+              profileInfoFetchedFunc={(wallet, cns, ens) => {
+                profileInfoFetched(wallet, cns, ens);
+              }}
+            />
+          )}
+        </View>
+        <Animated.View style={[styles.footer, { opacity: fader }]}>
+          {walletAddress === "" ? (
+            <View style={styles.entryFooter}>
+              <PrimaryButton
+                iconFactory="Image"
+                icon={require('assets/ui/walletConnect.png')}
+                iconSize={24}
+                title="WalletConnect"
+                fontSize={16}
+                fontColor={GLOBALS.COLORS.WHITE}
+                bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
+                disabled={false}
+                onPress={() => {
+                  connectViaWalletConnect();
                 }}
               />
-            ) : (
-              <PKProfileBuilder
-                style={styles.profile}
-                profileKey={this.state.walletAddress}
-                profileType={GLOBALS.CONSTANTS.CRED_TYPE_WALLET}
-                resetFunc={() => {
-                  this.resetWalletAddress();
-                }}
-                profileInfoFetchedFunc={(wallet, cns, ens) => {
-                  this.profileInfoFetched(wallet, cns, ens);
+
+              <View style={styles.divider}></View>
+
+              <PrimaryButton
+                iconFactory="Ionicons"
+                icon="ios-qr-scanner"
+                iconSize={24}
+                title="Scan via QR Code"
+                fontSize={16}
+                fontColor={GLOBALS.COLORS.WHITE}
+                bgColor={GLOBALS.COLORS.GRADIENT_SECONDARY}
+                disabled={false}
+                onPress={() => {
+                  getCameraPermissionAsync(navigation);
                 }}
               />
-            )}
-          </View>
-          <Animated.View style={[styles.footer, { opacity: this.state.fader }]}>
-            {this.state.walletAddress === "" ? (
-              <View style={styles.entryFooter}>
+
+              <View style={styles.divider}></View>
+
+              <View style={styles.columnizer}>
                 <PrimaryButton
                   iconFactory="Ionicons"
-                  icon="ios-qr-scanner"
+                  icon="ios-code-working"
                   iconSize={24}
-                  title="Scan via QR Code"
+                  title="Enter Manually"
                   fontSize={16}
                   fontColor={GLOBALS.COLORS.WHITE}
-                  bgColor={GLOBALS.COLORS.GRADIENT_SECONDARY}
+                  bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
                   disabled={false}
                   onPress={() => {
-                    this.getCameraPermissionAsync(navigation);
+                    toggleTextEntryPrompt(true, true);
                   }}
                 />
 
-                <View style={styles.divider}></View>
+                <View style={styles.colDivider}></View>
 
-                <View style={styles.columnizer}>
+                <PrimaryButton
+                  iconFactory="Ionicons"
+                  icon="ios-menu"
+                  iconSize={24}
+                  title="Advance"
+                  fontSize={16}
+                  fontColor={GLOBALS.COLORS.WHITE}
+                  bgColor={GLOBALS.COLORS.BLACK}
+                  disabled={false}
+                  onPress={() => {
+                    loadAdvanceScreen();
+                  }}
+                />
+              </View>
+            </View>
+          ) : (
+            <View style={styles.verifyFooter}>
+              {walletAddressVerified == false ? null : (
+                <>
                   <PrimaryButton
                     iconFactory="Ionicons"
-                    icon="ios-code-working"
+                    icon="ios-refresh"
                     iconSize={24}
-                    title="Enter Manually"
-                    fontSize={16}
-                    fontColor={GLOBALS.COLORS.WHITE}
-                    bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
-                    disabled={false}
-                    onPress={() => {
-                      this.toggleTextEntryPrompt(true, true);
-                    }}
-                  />
-
-                  <View style={styles.colDivider}></View>
-
-                  <PrimaryButton
-                    iconFactory="Ionicons"
-                    icon="ios-menu"
-                    iconSize={24}
-                    title="Advance"
+                    title="Reset / Use Different Wallet"
                     fontSize={16}
                     fontColor={GLOBALS.COLORS.WHITE}
                     bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
                     disabled={false}
                     onPress={() => {
-                      this.loadAdvanceScreen();
+                      resetWalletAddress();
                     }}
                   />
-                </View>
-              </View>
-            ) : (
-              <View style={styles.verifyFooter}>
-                {this.state.walletAddressVerified == false ? null : (
-                  <React.Fragment>
-                    <PrimaryButton
-                      iconFactory="Ionicons"
-                      icon="ios-refresh"
-                      iconSize={24}
-                      title="Reset / Use Different Wallet"
-                      fontSize={16}
-                      fontColor={GLOBALS.COLORS.WHITE}
-                      bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
-                      disabled={false}
-                      onPress={() => {
-                        this.resetWalletAddress();
-                      }}
-                    />
-                    <View style={styles.divider}></View>
+                  <View style={styles.divider}></View>
 
-                    <PrimaryButton
-                      iconFactory="Ionicons"
-                      icon="ios-arrow-forward"
-                      iconSize={24}
-                      title="Continue"
-                      fontSize={16}
-                      fontColor={GLOBALS.COLORS.WHITE}
-                      bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
-                      disabled={false}
-                      onPress={() => {
-                        this.loadNextScreen();
-                      }}
-                    />
-                  </React.Fragment>
-                )}
-              </View>
-            )}
+                  <PrimaryButton
+                    iconFactory="Ionicons"
+                    icon="ios-arrow-forward"
+                    iconSize={24}
+                    title="Continue"
+                    fontSize={16}
+                    fontColor={GLOBALS.COLORS.WHITE}
+                    bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
+                    disabled={false}
+                    onPress={() => {
+                      loadNextScreen();
+                    }}
+                  />
+                </>
+              )}
+            </View>
+          )}
 
-            <GetScreenInsets />
-          </Animated.View>
-        </SafeAreaView>
+          <GetScreenInsets />
+        </Animated.View>
 
         <QRScanner
-          ref="QRScanner"
+          ref={QRScannerRef}
           navigation={navigation}
           title="[wb:Please scan your] [d:wallet's address] [wb:to connect it to EPNS.]"
           doneFunc={(code) => {
-            this.onWalletDetect(code);
+            onWalletDetect(code);
           }}
-          closeFunc={() => this.toggleQRScanner(false, navigation)}
+          closeFunc={() => toggleQRScanner(false, navigation)}
         />
 
         {/* Overlay Blur and Notice to show in case permissions for camera aren't given */}
-        <OverlayBlur ref="OverlayBlur" />
+        <OverlayBlur ref={OverlayBlurRef}/>
 
         <NoticePrompt
-          ref="NoticePrompt"
+          ref={NoticePromptRef}
           closeTitle="OK"
-          closeFunc={() => this.toggleNoticePrompt(false, true)}
+          closeFunc={() => toggleNoticePrompt(false, true)}
         />
 
         <PKEntryPrompt
-          ref="TextEntryPrompt"
+          ref={TextEntryPromptRef}
           title="Enter Wallet Address"
           subtitle="Please enter your wallet address whose notification you want to receive."
           entryLimit={42}
           allowDomainDetection={true}
-          doneTitle='Verify!'
+          doneTitle="Verify!"
           doneFunc={(code) => {
-            this.onWalletDetect(code);
+            onWalletDetect(code);
           }}
           closeTitle="Cancel"
-          closeFunc={() => this.toggleTextEntryPrompt(false, true)}
+          closeFunc={() => toggleTextEntryPrompt(false, true)}
         />
-      </React.Fragment>
-    );
-  }
+      </SafeAreaView>
+    </>
+  );
 }
 
 // Styling
@@ -452,3 +464,5 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
 });
+
+export default SignInScreen;

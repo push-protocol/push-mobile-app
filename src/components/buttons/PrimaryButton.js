@@ -4,12 +4,15 @@ import {
   TouchableWithoutFeedback,
   Text,
   Animated,
+  Image,
   ActivityIndicator,
   Easing,
   StyleSheet
 } from 'react-native';
 import {
   Ionicons,
+  FontAwesome,
+  FontAwesome5
 } from '@expo/vector-icons';
 
 import GLOBALS from 'src/Globals';
@@ -134,15 +137,27 @@ export default class PrimaryButton extends Component {
         iconStyle = styles.iconAlignLeft;
       }
 
-      return (
-        <View style={iconStyle}>
-          <Factory
-            name = {icon}
-            color = {color}
-            size = {size}
-          />
-        </View>
-      );
+      if (iconFactory != "Image") {
+        return (
+          <View style={iconStyle}>
+            <Factory
+              name = {icon}
+              color = {color}
+              size = {size}
+            />
+          </View>
+        );
+      }
+      else {
+        return (
+          <View style={iconStyle}>
+            <Image
+                style={[{width: size}, styles.iconImage]}
+                source={icon}
+            />
+          </View>
+        );
+      }
     }
     else {
       return null;
@@ -271,6 +286,10 @@ const styles = StyleSheet.create({
     color: GLOBALS.COLORS.WHITE,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  iconImage: {
+    resizeMode: 'center',
+    height: '120%'
   },
   iconAlignRight: {
     paddingLeft: 10,

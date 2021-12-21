@@ -1,8 +1,4 @@
-<<<<<<< HEAD:android/app/src/main/java/io/epns/epnsstaging/MainActivity.java
 package io.epns.epnsstaging;
-=======
-package io.epns.epnsproject;
->>>>>>> prod-merge/kovan_changes:android/app/src/main/java/io/epns/epnsproject/MainActivity.java
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

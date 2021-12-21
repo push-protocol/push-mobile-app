@@ -140,6 +140,7 @@ export default class ProfileDisplayer extends Component {
 										<Text style={styles.walletText}>{wallet}</Text>
 									</View>
 
+									{/*
 									<View style={styles.interestEarned}>
 										<View style={styles.interestEarnedTitle}>
 											<MaskedView
@@ -165,6 +166,7 @@ export default class ProfileDisplayer extends Component {
 											<EPNSActivity style={styles.activity} size="small" />
 										</View>
 									</View>
+									*/}
 
 									<View style={styles.settings}>
 										<PrimaryButton

@@ -1,15 +1,16 @@
 import "./web3globals.js";
-import "./shim.js";
+import './shim.js'
+import crypto from 'crypto'
+
 import "react-native-gesture-handler";
 
 import React, { useState, useCallback } from "react";
-import { Alert, AsyncStorage } from "react-native";
+import { Alert } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import AppBadgeHelper from "./src/helpers/AppBadgeHelper";
-import messaging from "@react-native-firebase/messaging";
 
 import messaging from "@react-native-firebase/messaging";
 import Tabs from "./src/screens/Tabs";
@@ -24,9 +25,6 @@ import SignInScreenAdvance from "src/screens/SignInScreenAdvance";
 import BiometricScreen from "src/screens/BiometricScreen";
 import PushNotifyScreen from "src/screens/PushNotifyScreen";
 import SetupCompleteScreen from "src/screens/SetupCompleteScreen";
-import Tabs from "./src/screens/Tabs";
-
-import SampleFeed from "src/screens/SampleFeed";
 
 import MetaStorage from "src/singletons/MetaStorage";
 import Notify from "src/singletons/Notify";
@@ -35,6 +33,9 @@ import AuthContext, { APP_AUTH_STATES } from "src/components/auth/AuthContext";
 import ENV_CONFIG from "src/env.config";
 import GLOBALS from "src/Globals";
 import OnboardingChannel from "./src/screens/OnboardingChannel";
+
+import WalletConnectProvider from '@walletconnect/react-native-dapp';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Assign console.log to nothing
 if (!ENV_CONFIG.SHOW_CONSOLE) {
@@ -117,10 +118,6 @@ export default function App({ navigation }) {
     }),
     []
   );
-
-  const handleAppNotificationBadge = async () => {
-    await AppBadgeHelper.setAppBadgeCount(0);
-  };
 
   // RENDER ASSIST
   renderSelectiveScreens = () => {
@@ -267,34 +264,47 @@ export default function App({ navigation }) {
 
   // RENDER
   return (
-    <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            title: "",
-            headerStyle: {
-              backgroundColor: GLOBALS.COLORS.WHITE,
-              shadowColor: "transparent",
-              shadowRadius: 0,
-              shadowOffset: {
-                height: 0,
-              },
-              elevation: 0,
-            },
-            headerTitleStyle: {
-              color: GLOBALS.COLORS.BLACK,
-            },
-            headerBackTitleStyle: {
-              color: GLOBALS.COLORS.PRIMARY,
-            },
-            headerTintColor: GLOBALS.COLORS.BLACK,
-            headerTitleAlign: "center",
-            headerBackTitleVisible: false,
+      <AuthContext.Provider value={authContext}>
+        <WalletConnectProvider
+          redirectUrl={'epnsstaging://'}
+          bridge="https://bridge.walletconnect.org"
+          clientMeta={{
+            description: 'Connect with WalletConnect',
+            url: 'https://walletconnect.org',
+            icons: ['https://walletconnect.org/walletconnect-logo.png'],
+            name: 'WalletConnect',
           }}
-        >
-          {renderSelectiveScreens()}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </AuthContext.Provider>
+          storageOptions= {{
+            asyncStorage: AsyncStorage,
+          }}>
+          <NavigationContainer>
+            <Stack.Navigator
+              screenOptions={{
+                title: "",
+                headerStyle: {
+                  backgroundColor: GLOBALS.COLORS.WHITE,
+                  shadowColor: "transparent",
+                  shadowRadius: 0,
+                  shadowOffset: {
+                    height: 0,
+                  },
+                  elevation: 0,
+                },
+                headerTitleStyle: {
+                  color: GLOBALS.COLORS.BLACK,
+                },
+                headerBackTitleStyle: {
+                  color: GLOBALS.COLORS.PRIMARY,
+                },
+                headerTintColor: GLOBALS.COLORS.BLACK,
+                headerTitleAlign: "center",
+                headerBackTitleVisible: false,
+              }}
+            >
+              {renderSelectiveScreens()}
+            </Stack.Navigator>
+          </NavigationContainer>
+        </WalletConnectProvider>
+      </AuthContext.Provider>
   );
 }

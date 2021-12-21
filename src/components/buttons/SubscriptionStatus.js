@@ -12,7 +12,8 @@ import {
 import ENV_CONFIG from "src/env.config";
 import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 
-export default function SubscriptionStatus(props) {
+
+const SubscriptionStatus = ({ channel, user, contract, style }) => {
   const [subscribed, setSubscribed] = useState(null);
   const [modal, setModal] = useState(false);
   const [action, setAction] = useState("");
@@ -22,7 +23,7 @@ export default function SubscriptionStatus(props) {
 
   useEffect(() => {
     let isMounted = true;
-    if (isMounted) fetchSubscriptionStatus(props.user, props.channel);
+    if (isMounted) fetchSubscriptionStatus(user, channel);
 
     return () => {
       isMounted = false;
@@ -73,6 +74,8 @@ export default function SubscriptionStatus(props) {
     // }
   };
 
+
+
   return (
     <View>
       <Modal
@@ -99,6 +102,17 @@ export default function SubscriptionStatus(props) {
                 <FontAwesome5 name="external-link-alt" size={20} />{" "}
               </Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.button1}
+              onPress={() => {initiateWalletConnect()}}
+            >
+              <Text style={styles.textStyle}>
+                Sign In with Wallet Connect.{"  "}
+                <FontAwesome5 name="external-link-alt" size={20} />{" "}
+              </Text>
+            </TouchableOpacity>
+
             <TouchableOpacity
               style={[styles.button, styles.buttonClose]}
               onPress={() => setModal(!modal)}
@@ -194,3 +208,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+export default SubscriptionStatus;

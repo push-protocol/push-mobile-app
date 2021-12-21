@@ -118,14 +118,14 @@ export default class SettingsScreen extends Component {
         },
         type: 'button',
       },
-      // {
-      //   title: 'Swipe / Reset Wallet',
-      //   img: require('assets/ui/unlink.png'),
-      //   func: () => {
-      //     this.resetWallet();
-      //   },
-      //   type: 'button',
-      // }
+      {
+        title: 'Swipe / Reset Wallet',
+        img: require('assets/ui/unlink.png'),
+        func: () => {
+          this.resetWallet();
+        },
+        type: 'button',
+      }
     ];
 
     return (

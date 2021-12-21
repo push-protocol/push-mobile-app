@@ -1,8 +1,4 @@
-<<<<<<< HEAD:android/app/src/main/java/io/epns/epnsstaging/generated/BasePackageList.java
 package io.epns.epnsstaging.generated;
-=======
-package io.epns.epnsproject.generated;
->>>>>>> prod-merge/kovan_changes:android/app/src/main/java/io/epns/epnsproject/generated/BasePackageList.java
 
 import java.util.Arrays;
 import java.util.List;

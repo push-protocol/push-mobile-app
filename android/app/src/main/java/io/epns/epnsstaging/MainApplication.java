@@ -1,25 +1,18 @@
-<<<<<<< HEAD:android/app/src/main/java/io/epns/epnsstaging/MainApplication.java
 package io.epns.epnsstaging;
-=======
-package io.epns.epnsproject;
->>>>>>> prod-merge/kovan_changes:android/app/src/main/java/io/epns/epnsproject/MainApplication.java
-
 import android.app.Application;
 import android.content.Context;
 import android.net.Uri;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.bitgo.randombytes.RandomBytesPackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-<<<<<<< HEAD:android/app/src/main/java/io/epns/epnsstaging/MainApplication.java
 import io.epns.epnsstaging.generated.BasePackageList;
-=======
-import io.epns.epnsproject.generated.BasePackageList;
->>>>>>> prod-merge/kovan_changes:android/app/src/main/java/io/epns/epnsproject/MainApplication.java
 
 import org.unimodules.adapters.react.ReactAdapterPackage;
 import org.unimodules.adapters.react.ModuleRegistryAdapter;

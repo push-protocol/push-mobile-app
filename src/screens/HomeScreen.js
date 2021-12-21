@@ -193,6 +193,7 @@ export default class HomeScreen extends Component {
         {/* Has absolute Header so goes on top */}
 
         <SafeAreaView style={styles.container}>
+          {/* Header Comes Here */}
           <View style={styles.header}>
             <ProfileDisplayer
               ref="ProfileDisplayer"
@@ -203,7 +204,6 @@ export default class HomeScreen extends Component {
                 handleAppAuthState(APP_AUTH_STATES.ONBOARDED);
               }}
             />
-            {/* Header Comes Here */}
             <EPNSNotifierIcon
               ref="EPNSNotifier"
               style={styles.notifier}
