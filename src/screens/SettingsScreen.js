@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, useRef, useState } from 'react';
 import {
+  StatusBar,
   View,
   Text,
   Image,
@@ -7,6 +8,11 @@ import {
   StyleSheet,
 } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
+
+import {
+  useWalletConnect,
+} from '@walletconnect/react-native-dapp';
+
 
 import ProfileDisplayer from 'src/components/ui/ProfileDisplayer';
 import ImageButton from 'src/components/buttons/ImageButton';
@@ -23,24 +29,29 @@ import AuthenticationHelper from 'src/helpers/AuthenticationHelper'
 import MetaStorage from 'src/singletons/MetaStorage';
 
 import FeedDBHelper from 'src/helpers/FeedDBHelper';
-
-import AuthContext, {APP_AUTH_STATES} from 'src/components/auth/AuthContext';
+import AuthContext, { useAuthContext, APP_AUTH_STATES } from "src/components/auth/AuthContext";
 import ENV_CONFIG from 'src/env.config';
 import GLOBALS from 'src/Globals';
 
-export default class SettingsScreen extends Component {
-  // CONSTRUCTOR
-  constructor(props) {
-    super(props);
-  }
+const SettingsScreen = ({ style, route, navigation }) => {
+  const authContext = useAuthContext();
 
-  // COMPONENT MOUNTED
-  componentDidMount() {
+  // Wallet Connect functionality
+  const {
+    createSession,
+    killSession,
+    session,
+    signTransaction,
+  } = useWalletConnect();
+  const connector = useWalletConnect();
 
-  }
+  // Setup Refs
+  const OverlayBlurRef = useRef(null);
+  const ToasterRef = useRef(null);
 
+  // FUNCTIONS
   // ADD HEADER COMPONENET
-  addHeaderComponent = (navigation) => {
+  const addHeaderComponent = (navigation) => {
     navigation.setOptions({
       headerLeft: (() => {
         return null;
@@ -48,32 +59,8 @@ export default class SettingsScreen extends Component {
     });
   }
 
-  // FUNCTIONS
-  // To Unarchive Message
-  unarchiveMessages = async () => {
-    const db = FeedDBHelper.getDB();
-    await FeedDBHelper.unhideAllFeedItems(db);
-
-    // Change the header back
-    this.addHeaderComponent(this.props.navigation);
-
-    this.showToast("Messages Unarchived! Restarting...", "", ToasterOptions.TYPE.GRADIENT_PRIMARY);
-
-    setTimeout(() => {
-      const { handleAppAuthState } = this.context;
-      handleAppAuthState(APP_AUTH_STATES.ONBOARDED);
-    }, 1500);
-  }
-
-  // To Reset Wallet
-  resetWallet = async () => {
-    await AuthenticationHelper.resetSignedInUser();
-
-    const { handleAppAuthState } = this.context;
-    handleAppAuthState(APP_AUTH_STATES.INITIALIZING);
-  }
-
-  renderItem = ({item}) => {
+  // Render Items in Settings
+  const renderItem = ({item}) => {
     if (item.type === 'button') {
       return (
         <ImageTitleButton
@@ -100,75 +87,113 @@ export default class SettingsScreen extends Component {
     }
   }
 
+  // To Unarchive Message
+  const unarchiveMessages = async () => {
+    const db = FeedDBHelper.getDB();
+    await FeedDBHelper.unhideAllFeedItems(db);
+
+    // Change the header back
+    addHeaderComponent(navigation);
+
+    showToast("Messages Unarchived! Restarting...", "", ToasterOptions.TYPE.GRADIENT_PRIMARY);
+
+    setTimeout(() => {
+      authContext.handleAppAuthState(APP_AUTH_STATES.ONBOARDED);
+    }, 1500);
+  }
+
+  // To Reset Wallet
+  const resetWallet = async () => {
+    await AuthenticationHelper.resetSignedInUser();
+
+    authContext.handleAppAuthState(APP_AUTH_STATES.INITIALIZING);
+  }
+
   // TO SHOW TOASTER
-  showToast = (msg, icon, type, tapCB, screenTime) => {
-    this.refs.Toaster.showToast(msg, icon, type, tapCB, screenTime);
+  const showToast = (msg, icon, type, tapCB, screenTime) => {
+    ToasterRef.current.showToast(msg, icon, type, tapCB, screenTime);
+  }
+
+  // CONSTANTS
+  let settingsOptions = [];
+
+  // Unarchive Messages
+  settingsOptions.push({
+    title: 'Unarchive Messages',
+    img: require('assets/ui/unarchive.png'),
+    func: () => {
+      unarchiveMessages();
+    },
+    type: 'button',
+  })
+
+  // Swipe Reset
+  settingsOptions.push({
+    title: 'Swipe / Reset Wallet',
+    img: require('assets/ui/unlink.png'),
+    func: () => {
+      resetWallet();
+    },
+    type: 'button',
+  })
+
+  // Wallet Connect Disconnect
+  if (connector.connected) {
+    // Add Wallet Connect Disconnect Link
+    settingsOptions.push({
+      title: 'Disconnect WalletConnect',
+      img: require('assets/ui/wcsettings.png'),
+      func: () => {
+        connector.killSession();
+      },
+      type: 'button',
+    })
   }
 
   // RENDER
-  render() {
+  return (
+    <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar
+          barStyle={'dark-content'}
+          translucent
+          backgroundColor="transparent"
+        />
 
-    // CONSTANTS
-    const settingsOptions = [
-      {
-        title: 'Unarchive Messages',
-        img: require('assets/ui/unarchive.png'),
-        func: () => {
-          this.unarchiveMessages();
-        },
-        type: 'button',
-      },
-      {
-        title: 'Swipe / Reset Wallet',
-        img: require('assets/ui/unlink.png'),
-        func: () => {
-          this.resetWallet();
-        },
-        type: 'button',
-      }
-    ];
-
-    return (
-      <View style={styles.container}>
-        <SafeAreaView style={styles.container}>
-          <View
-            style={styles.settingsContainer}
-          >
-            <FlatList
-              style={styles.settings}
-              bounces={true}
-              data={settingsOptions}
-              keyExtractor={item => item.title}
-              renderItem={this.renderItem}
-            />
-            <View style={styles.appInfo}>
-              <Text style={styles.appText}>{`Ethereum Push Notification Service(Alpha) v${ENV_CONFIG.APP_VERSION}`}</Text>
-              <Image style={styles.appImage} source={require('assets/ui/fulllogo.png')} />
-            </View>
+        <View
+          style={styles.settingsContainer}
+        >
+          <FlatList
+            style={styles.settings}
+            bounces={true}
+            data={settingsOptions}
+            keyExtractor={item => item.title}
+            renderItem={renderItem}
+          />
+          <View style={styles.appInfo}>
+            <Text style={styles.appText}>{`Ethereum Push Notification Service(Alpha) v${ENV_CONFIG.APP_VERSION}`}</Text>
+            <Image style={styles.appImage} source={require('assets/ui/fulllogo.png')} />
           </View>
-        </SafeAreaView>
+        </View>
+      </SafeAreaView>
 
-        {/* Overlay Blur to show incase need to emphasize on something */}
-        <OverlayBlur
-          ref='OverlayBlur'
-          onPress={
-            ()=>{
-              this.exitIntentOnOverleyBlur()
-            }
+      {/* Overlay Blur to show incase need to emphasize on something */}
+      <OverlayBlur
+        ref={OverlayBlurRef}
+        onPress={
+          ()=>{
+            exitIntentOnOverleyBlur()
           }
-        />
+        }
+      />
 
-        {/* Toaster Always goes here in the end after safe area */}
-        <Toaster
-          ref = 'Toaster'
-        />
-      </View>
-    );
-  }
+      {/* Toaster Always goes here in the end after safe area */}
+      <Toaster
+        ref={ToasterRef}
+      />
+    </View>
+  );
 }
-
-// Connect to Auth Context
-SettingsScreen.contextType = AuthContext;
 
 // Styling
 const styles = StyleSheet.create({
@@ -206,3 +231,5 @@ const styles = StyleSheet.create({
     color: GLOBALS.COLORS.MID_GRAY,
   }
 });
+
+export default SettingsScreen;

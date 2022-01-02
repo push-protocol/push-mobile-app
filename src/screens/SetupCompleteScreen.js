@@ -275,6 +275,7 @@ export default class SetupCompleteScreen extends Component {
             fontSize={16}
             fontColor={GLOBALS.COLORS.WHITE}
             bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
+            setHeight={60}
             disabled={false}
             loading={this.state.singingUserIn}
             onPress={() => {

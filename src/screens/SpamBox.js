@@ -3,6 +3,7 @@ import SpamFeed from "../components/ui/SpamFeed";
 
 import React from 'react';
 import {
+  StatusBar,
   View,
   Text,
   Image,
@@ -59,7 +60,14 @@ const SpamBox = ({ style }) => {
   const hasWallet = !!session.length;
   const connector = useWalletConnect();
 
-  return (<SafeAreaView style={[ styles.container, style ]}>
+  return (
+    <SafeAreaView style={[ styles.container, style ]}>
+      <StatusBar
+        barStyle={'dark-content'}
+        translucent
+        backgroundColor="transparent"
+      />
+
     <Text style={styles.textStyle}>Greetings! Started with ReactNative</Text>
     <Text style={styles.subHeaderStyle}>My name is {name}</Text>
       <TouchableOpacity

@@ -3,6 +3,7 @@ import { View, Text, Image } from "react-native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import Channels from "./Channels";
 import HomeScreen from "./HomeScreen";
+import ChannelsScreen from "./ChannelsScreen";
 import SampleFeed from "../screens/SampleFeed";
 import SpamBox from "./SpamBox";
 import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
@@ -35,7 +36,7 @@ export default function Tabs(props) {
       />
       <Tab.Screen
         name="Channels"
-        component={Channels}
+        component={ChannelsScreen}
         options={{
           tabBarLabel: "Channels",
           tabBarIcon: ({ color }) => (

@@ -111,7 +111,7 @@ export default class ProfileDisplayer extends Component {
 							pointerEvents="auto">
 							<Blockies
 								style={styles.blockies}
-								seed={wallet.toLowerCase()} //string content to generate icon
+								seed={wallet ? wallet.toLowerCase() : null} //string content to generate icon
 								dimension={40} // blocky icon size
 							/>
 							<ENSButton
@@ -191,6 +191,7 @@ export default class ProfileDisplayer extends Component {
 
 				{/* Overlay Blur to show incase need to emphasize on something */}
 				<OverlayBlur
+					style={{backgroundColor: 'black'}}
 					ref="OverlayBlur"
 					onPress={() => {
 						// Exit Intent

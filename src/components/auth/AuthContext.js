@@ -3,12 +3,16 @@ import React, { Component, createContext } from 'react';
 const AuthContext = React.createContext({});
 export default AuthContext;
 
+export const useAuthContext = () => React.useContext(AuthContext);
+
 export const APP_AUTH_STATES = {
   INITIALIZING: 1,
   ONBOARDING: 2,
   ONBOARDED: 3,
   AUTHENTICATED: 4
 };
+
+
 
 // LOOK INTO IT LATER
 

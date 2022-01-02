@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
 	container: {
 		position: "absolute",
 		alignSelf: "center",
-		bottom: 50,
+		bottom: 30,
 		zIndex: 9999,
 	},
 	content: {

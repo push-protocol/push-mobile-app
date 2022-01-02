@@ -143,6 +143,11 @@ const SignInScreen = ({ style, route, navigation }) => {
 
   // Reset PK Code
   const resetWalletAddress = () => {
+    // Kill Wallet Conenct
+    if (connector.connected) {
+      connector.killSession();
+    }
+
     setWalletAddress("")
     setWalletAddressVerified(false)
     Animated.timing(fader, {
@@ -169,6 +174,13 @@ const SignInScreen = ({ style, route, navigation }) => {
       }).start();
     }
 	}, [walletAddress, walletAddressVerified]);
+
+  useEffect(() => {
+    if (connector.connected) {
+      setWalletAddress(connector.accounts[0])
+    }
+	}, [connector.connected]);
+
 
   // When Animation is Finished
   const animationFinished = () => {
@@ -208,10 +220,6 @@ const SignInScreen = ({ style, route, navigation }) => {
       fromOnboarding: route.params.fromOnboarding,
     });
   };
-
-  const connectViaWalletConnect = async () => {
-    connector.createSession();
-  }
 
   return (
     <>
@@ -257,6 +265,7 @@ const SignInScreen = ({ style, route, navigation }) => {
             />
           )}
         </View>
+
         <Animated.View style={[styles.footer, { opacity: fader }]}>
           {walletAddress === "" ? (
             <View style={styles.entryFooter}>
@@ -264,13 +273,19 @@ const SignInScreen = ({ style, route, navigation }) => {
                 iconFactory="Image"
                 icon={require('assets/ui/walletConnect.png')}
                 iconSize={24}
-                title="WalletConnect"
+                title={!connector.connected ? "WalletConnect" : "Disconnect"}
                 fontSize={16}
                 fontColor={GLOBALS.COLORS.WHITE}
                 bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
+                setHeight={60}
                 disabled={false}
                 onPress={() => {
-                  connectViaWalletConnect();
+                  if (connector.connected) {
+                    connector.killSession();
+                  }
+                  else {
+                    connector.connect();
+                  }
                 }}
               />
 

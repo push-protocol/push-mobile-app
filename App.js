@@ -5,15 +5,19 @@ import crypto from 'crypto'
 import "react-native-gesture-handler";
 
 import React, { useState, useCallback } from "react";
-import { Alert } from "react-native";
+import { StatusBar, Alert, View, Text, TouchableOpacity } from "react-native";
+import Constants from 'expo-constants';
+
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import AppBadgeHelper from "./src/helpers/AppBadgeHelper";
-
 import messaging from "@react-native-firebase/messaging";
-import Tabs from "./src/screens/Tabs";
+
+import Header from "src/components/ui/Header";
+import Tabs from "src/screens/Tabs";
+import AppBadgeHelper from "src/helpers/AppBadgeHelper";
+
 import SplashScreen from "src/screens/SplashScreen";
 import SampleFeed from "src/screens/SampleFeed";
 import HomeScreen from "src/screens/HomeScreen";
@@ -140,7 +144,16 @@ export default function App({ navigation }) {
             name="Tabs"
             component={Tabs}
             options={{
-              headerShown: false,
+              statusBar: {
+                backgroundColor: 'white',
+                style: 'dark'
+              },
+              header: () => (
+                <Header
+                  wallet={userWallet}
+                  navigation={navigation}
+                />
+              ),
             }}
             initialParams={{
               wallet: userWallet,
@@ -155,6 +168,7 @@ export default function App({ navigation }) {
               title: "Settings",
               headerStyle: {
                 backgroundColor: GLOBALS.COLORS.WHITE,
+                height: Constants.statusBarHeight + GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
               },
               headerTintColor: GLOBALS.COLORS.MID_GRAY,
             }}
@@ -266,7 +280,7 @@ export default function App({ navigation }) {
   return (
       <AuthContext.Provider value={authContext}>
         <WalletConnectProvider
-          redirectUrl={'epnsstaging://'}
+          redirectUrl={`${ENV_CONFIG.DEEPLINK_URL}://wcauth`}
           bridge="https://bridge.walletconnect.org"
           clientMeta={{
             description: 'Connect with WalletConnect',

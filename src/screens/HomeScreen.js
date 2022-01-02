@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import {
+  StatusBar,
   View,
   Text,
   InteractionManager,
@@ -12,8 +13,6 @@ import { useFocusEffect } from "@react-navigation/native";
 
 import messaging from "@react-native-firebase/messaging";
 import HomeFeed from "src/components/ui/HomeFeed";
-import ProfileDisplayer from "src/components/ui/ProfileDisplayer";
-import EPNSNotifierIcon from "src/components/custom/EPNSNotifierIcon";
 import FeedsDisplayer from "src/components/ui/FeedsDisplayer";
 
 import ImageButton from "src/components/buttons/ImageButton";
@@ -63,22 +62,38 @@ export default class HomeScreen extends Component {
 
   // COMPONENT MOUNTED
   async componentDidMount() {
-    // await this.maintainer();
+    await this.maintainer();
+
     // To Output msg payload for testing
     // this.outputSecretMsgPayload();
     // Testing Feed DB
+    // this.props.navigation.setParams({onPressAction: ()=>console.log("TT")})
+    //
+    // navigation.setOptions({
+    //   onPressAction: ()=>console.log("TT")
+    // });
   }
 
   // COMPONENT UNMOUNTED
   componentWillUnmount() {}
 
+  // COMPONENT DID UPDATE
+  componentDidUpdate(prevProps) {
+    if (prevProps.route.params.refreshNotifFeed !== this.props.route.params.refreshNotifFeed && this.props.route.params.refreshNotifFeed == true) {
+      this.refreshFeeds();
+    }
+  }
+
   // COMPONENT LOADED
   // Run as soon as loaded
   maintainer = async () => {
-    // Set Notification Listener
-    Notify.instance.setNotificationListenerCallback(() => {
-      this.onNotificationListenerUpdate();
-    });
+    // DEPRECATED
+    // IN FAVOR OF /src/components/ui/Header.js handles it now
+    // // Set Notification Listener
+    // Notify.instance.setNotificationListenerCallback(() => {
+    //   this.onNotificationListenerUpdate();
+    // });
+    // END DEPRECATION
 
     // Since User is logged in, reset passcode attempts
     await MetaStorage.instance.setRemainingPasscodeAttempts(
@@ -91,8 +106,11 @@ export default class HomeScreen extends Component {
 
   // Run After Transition is finished
   afterTransitionMaintainer = async () => {
-    // Trigger Notification Update
+    // DEPRECATED
+    // IN FAVOR OF /src/components/ui/Header.js handles it now
+    // // Trigger Notification Update
     // await this.onNotificationListenerUpdate();
+    // END DEPRECATION
 
     // First sign in by user
     const firstSignIn = await MetaStorage.instance.getFirstSignInByUser();
@@ -125,22 +143,29 @@ export default class HomeScreen extends Component {
 
   // Component Unmounted
   componentWillUnmount() {
-    // Reset Callback of notification
-    Notify.instance.setNotificationListenerCallback(null);
+    // DEPRECATED
+    // IN FAVOR OF /src/components/ui/Header.js handles it now
+    // // Reset Callback of notification
+    // Notify.instance.setNotificationListenerCallback(null);
+    // END DEPRECATION
   }
 
   // FUNCTIONS
-
-  // To refresh the bell badge
+  // DEPRECATED
+  // IN FAVOR OF /src/components/ui/Header.js handles it now
+  // // To refresh the bell badge
   // onNotificationListenerUpdate = async () => {
   // 	// Check Notifier
   // 	await this.refs.EPNSNotifier.getBadgeCountAndRefresh();
   // };
+  // END DEPRECATION
 
   // To refresh the Feeds\\
   refreshFeeds = async () => {
     //this.refs.FeedsDisplayer.resetFeedState();
     // await this.refs.FeedsDisplayer.triggerGetItemsFromDB(false);
+    this.props.navigation.setParams({refreshNotifFeed: false})
+
     this.setState({ refresh: !this.state.refresh }, () => {
       if (this.state.refresh == true) {
         this.setState({ refresh: false });
@@ -148,10 +173,12 @@ export default class HomeScreen extends Component {
     });
   };
 
-  // Overlay Blur exit intent
-  exitIntentOnOverleyBlur = () => {
-    this.refs.ProfileDisplayer.toggleActive(false);
-  };
+  // DEPRECATED
+  // IN FAVOR OF /src/components/ui/Header.js handles it now
+  // exitIntentOnOverleyBlur = () => {
+  //   this.refs.ProfileDisplayer.toggleActive(false);
+  // };
+  // END DEPRECATION
 
   // To output secret msg payload, only used in testing
   outputSecretMsgPayload = async () => {
@@ -175,10 +202,10 @@ export default class HomeScreen extends Component {
   // RENDER
   render() {
     const { navigation } = this.props;
-
     const { wallet, pkey } = this.props.route.params;
 
     return (
+
       <View style={styles.container}>
         <ScreenFinishedTransition
           runAfterScreenTransition={() => {
@@ -190,53 +217,21 @@ export default class HomeScreen extends Component {
           }}
         />
 
-        {/* Has absolute Header so goes on top */}
-
         <SafeAreaView style={styles.container}>
-          {/* Header Comes Here */}
-          <View style={styles.header}>
-            <ProfileDisplayer
-              ref="ProfileDisplayer"
-              style={styles.profile}
-              wallet={wallet}
-              lockApp={() => {
-                const { handleAppAuthState } = this.context;
-                handleAppAuthState(APP_AUTH_STATES.ONBOARDED);
-              }}
-            />
-            <EPNSNotifierIcon
-              ref="EPNSNotifier"
-              style={styles.notifier}
-              iconSize={32}
-              onPress={() => {
-                // Refresh the feeds
-                this.refreshFeeds();
-              }}
-              onNewNotifications={() => {
-                // Do nothing for now, bell is ringing in the module anyway
-              }}
-            />
-            <ImageButton
-              style={styles.settings}
-              src={require("assets/ui/settings.png")}
-              iconSize={24}
-              onPress={() => {
-                // // Finally associate token to server if not done
-                // const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
-                // const privateKey = this.props.route.params.pkey;
-                //
-                // // While an async function, there is no need to wait
-                // ServerHelper.associateTokenToServer(publicKey, privateKey);
+          <StatusBar
+            barStyle={'dark-content'}
+            translucent
+            backgroundColor="transparent"
+          />
 
-                navigation.navigate("Settings", {});
-              }}
-            />
-          </View>
           <View style={styles.content}>
             <HomeFeed
               wallet={wallet}
               privateKey={this.props.route.params.pkey}
-              refresh={this.state.refresh}
+              refreshNotifFeeds={this.state.refresh}
+              ToasterFunc={(msg, icon, type, tapCB, screenTime) => {
+                this.showToast(msg, icon, type, tapCB, screenTime)
+              }}
             />
             {/*
 						<FeedsDisplayer

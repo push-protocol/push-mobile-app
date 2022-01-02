@@ -1,5 +1,5 @@
 import { serializeTransaction } from "ethers/lib/utils";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -9,17 +9,48 @@ import {
   Modal,
   TouchableOpacity,
 } from "react-native";
-import ENV_CONFIG from "src/env.config";
 import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 
+import {
+  useWalletConnect,
+} from '@walletconnect/react-native-dapp';
 
-const SubscriptionStatus = ({ channel, user, contract, style }) => {
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
+
+import OverlayBlur from "src/components/modals/OverlayBlur";
+import NoticePrompt from "src/components/modals/NoticePrompt";
+
+import MetaStorage from "src/singletons/MetaStorage";
+
+import ENV_CONFIG from "src/env.config";
+import GLOBALS from 'src/Globals';
+
+const CHANNEL_OPT_IN = 1;
+const CHANNEL_OPT_OUT = 2;
+
+const SubscriptionStatus = ({ channel, user, style }) => {
   const [subscribed, setSubscribed] = useState(null);
+
   const [modal, setModal] = useState(false);
   const [action, setAction] = useState("");
 
+  const [processing, setProcessing] = useState(false);
+
   const apiURL =
     ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_SUBSCRIPTION;
+
+  // Wallet Connect functionality
+  const {
+    createSession,
+    killSession,
+    session,
+    signTransaction,
+  } = useWalletConnect();
+  const connector = useWalletConnect();
+
+  // Setup Refs
+  const OverlayBlurRef = useRef(null);
+  const NoticePromptRef = useRef(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -30,7 +61,23 @@ const SubscriptionStatus = ({ channel, user, contract, style }) => {
     };
   });
 
+  const handleOpts = async (action) => {
+    // Check signin flow
+    setProcessing(true);
+
+    const signedInType = await MetaStorage.instance.getSignedInType();
+    if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+
+    }
+    else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
+      // Check if wallet connect is active
+
+    }
+
+  }
+
   const showPopUp = async (action) => {
+    // Check if Wallet Connect
     setModal(true);
     setAction(action);
   };
@@ -74,10 +121,79 @@ const SubscriptionStatus = ({ channel, user, contract, style }) => {
     // }
   };
 
+  // Open Notice Prompt With Overlay Blur
+  const toggleNoticePrompt = (
+    toggle,
+    animate,
+    title,
+    subtitle,
+    notice,
+    showIndicator
+  ) => {
+    // Set Notice First
+    NoticePromptRef.current.changeTitle(title);
+    NoticePromptRef.current.changeSubtitle(subtitle);
+    NoticePromptRef.current.changeNotice(notice);
+    NoticePromptRef.current.changeIndicator(showIndicator);
 
+    // Set render state of this and the animate the blur modal in
+    OverlayBlurRef.current.changeRenderState(toggle, animate);
+    NoticePromptRef.current.changeRenderState(toggle, animate);
+  };
 
   return (
-    <View>
+    <View style={styles.container}>
+      {subscribed == null &&
+        <ActivityIndicator size={"small"} color={GLOBALS.COLORS.GRADIENT_PRIMARY} />
+      }
+
+      {subscribed != null && subscribed == true &&
+        <PrimaryButton
+          style={styles.controlPrimary}
+          setButtonStyle={{borderRadius: 0, padding: 0}}
+          iconFactory='MaterialCommunityIcons'
+          icon='checkbox-marked'
+          iconSize={24}
+          fontSize={10}
+          fontColor={GLOBALS.COLORS.WHITE}
+          bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
+          setHeight='100%'
+          disabled={processing}
+          loading={processing}
+          onPress={() => {handleOpts(CHANNEL_OPT_IN)}}
+        />
+      }
+
+      {subscribed != null && subscribed == false &&
+        <PrimaryButton
+          style={styles.controlPrimary}
+          setButtonStyle={{borderRadius: 0, padding: 0}}
+          setButtonInnerStyle={{flexDirection: 'column-reverse'}}
+          title="Opt In"
+          iconFactory='MaterialCommunityIcons'
+          icon='checkbox-blank-outline'
+          iconSize={24}
+          iconColor={GLOBALS.COLORS.BLACK}
+          fontSize={10}
+          fontColor={GLOBALS.COLORS.MID_BLACK_TRANS}
+          bgColor={GLOBALS.COLORS.LIGHT_BLACK_TRANS}
+          color={GLOBALS.COLORS.GRADIENT_PRIMARY}
+          setHeight='100%'
+          disabled={processing}
+          loading={processing}
+          onPress={() => {handleOpts(CHANNEL_OPT_OUT)}}
+        />
+      }
+
+      {/* Overlay Blur and Notice to show in case permissions for camera aren't given */}
+      <OverlayBlur ref={OverlayBlurRef}/>
+
+      <NoticePrompt
+        ref={NoticePromptRef}
+        closeTitle="OK"
+        closeFunc={() => toggleNoticePrompt(false, true)}
+      />
+
       <Modal
         animationType="fade"
         transparent={true}
@@ -122,42 +238,22 @@ const SubscriptionStatus = ({ channel, user, contract, style }) => {
           </View>
         </View>
       </Modal>
-      {subscribed == null ? (
-        <ActivityIndicator size={"small"} color={"#E20880"} />
-      ) : subscribed == false ? (
-        <TouchableOpacity
-          onPress={() => showPopUp("Subscription")}
-          style={{
-            backgroundColor: "#E20880",
-            padding: 5,
-            borderRadius: 4,
-          }}
-        >
-          <Text style={{ fontSize: 10, color: "white", fontWeight: "500" }}>
-            Subscribe
-          </Text>
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity
-          onPress={() => {
-            showPopUp("Unsubscription");
-          }}
-          style={{
-            backgroundColor: "#674C9F",
-            padding: 5,
-            borderRadius: 4,
-          }}
-        >
-          <Text style={{ fontSize: 10, color: "white", fontWeight: "500" }}>
-            Unsubscribe
-          </Text>
-        </TouchableOpacity>
-      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    overflow: 'hidden',
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    justifyContent: "center",
+  },
+  controlPrimary: {
+    flex: 1,
+    maxHeight: '100%'
+  },
   centeredView: {
     flex: 1,
     justifyContent: "center",
