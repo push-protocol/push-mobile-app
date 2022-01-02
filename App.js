@@ -267,7 +267,7 @@ export default function App({ navigation }) {
   return (
       <AuthContext.Provider value={authContext}>
         <WalletConnectProvider
-          redirectUrl={`${ENV_CONFIG.DEEPLINK_URL}://wcauth`}
+          redirectUrl={`${ENV_CONFIG.DEEPLINK_URL}`}
           bridge="https://bridge.walletconnect.org"
           clientMeta={{
             description: 'Connect with WalletConnect',

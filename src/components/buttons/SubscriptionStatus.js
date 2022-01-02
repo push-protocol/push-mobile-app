@@ -67,10 +67,10 @@ const SubscriptionStatus = ({ channel, user, style }) => {
 
     const signedInType = await MetaStorage.instance.getSignedInType();
     if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
-
+      
     }
     else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
-      // Check if wallet connect is active
+      // Give Options
 
     }
 
