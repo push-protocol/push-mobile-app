@@ -21,7 +21,7 @@ import DetailedInfoPresenter from "src/components/misc/DetailedInfoPresenter";
 import StylishLabel from "src/components/labels/StylishLabel";
 import PrimaryButton from "src/components/buttons/PrimaryButton";
 
-export default function Channels(props) {
+export default function OnboardingChannelScreen(props) {
   const navigation = useNavigation();
 
   const { wallet, pkey } = props.route.params;

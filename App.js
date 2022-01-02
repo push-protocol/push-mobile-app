@@ -14,12 +14,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import messaging from "@react-native-firebase/messaging";
 
+import WalletConnectProvider from '@walletconnect/react-native-dapp';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import Header from "src/components/ui/Header";
-import Tabs from "src/screens/Tabs";
-import AppBadgeHelper from "src/helpers/AppBadgeHelper";
+import Tabs from "src/components/ui/Tabs";
 
 import SplashScreen from "src/screens/SplashScreen";
-import SampleFeed from "src/screens/SampleFeed";
 import HomeScreen from "src/screens/HomeScreen";
 import SettingsScreen from "src/screens/SettingsScreen";
 
@@ -29,17 +30,15 @@ import SignInScreenAdvance from "src/screens/SignInScreenAdvance";
 import BiometricScreen from "src/screens/BiometricScreen";
 import PushNotifyScreen from "src/screens/PushNotifyScreen";
 import SetupCompleteScreen from "src/screens/SetupCompleteScreen";
+import OnboardingChannelScreen from "./src/screens/OnboardingChannelScreen";
 
+import AppBadgeHelper from "src/helpers/AppBadgeHelper";
 import MetaStorage from "src/singletons/MetaStorage";
 import Notify from "src/singletons/Notify";
 
 import AuthContext, { APP_AUTH_STATES } from "src/components/auth/AuthContext";
 import ENV_CONFIG from "src/env.config";
 import GLOBALS from "src/Globals";
-import OnboardingChannel from "./src/screens/OnboardingChannel";
-
-import WalletConnectProvider from '@walletconnect/react-native-dapp';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Assign console.log to nothing
 if (!ENV_CONFIG.SHOW_CONSOLE) {
@@ -173,18 +172,6 @@ export default function App({ navigation }) {
               headerTintColor: GLOBALS.COLORS.MID_GRAY,
             }}
           />
-
-          <Stack.Screen
-            name="SampleFeed"
-            component={SampleFeed}
-            options={{
-              title: "Example Feed",
-              headerStyle: {
-                backgroundColor: GLOBALS.COLORS.WHITE,
-              },
-              headerTintColor: GLOBALS.COLORS.MID_GRAY,
-            }}
-          />
         </React.Fragment>
       );
     }
@@ -238,8 +225,8 @@ export default function App({ navigation }) {
           />
 
           {/* <Stack.Screen
-            name="OnboardingChannel"
-            component={OnboardingChannel}
+            name="OnboardingChannelScreen"
+            component={OnboardingChannelScreen}
             options={{
               headerShown: false,
             }}

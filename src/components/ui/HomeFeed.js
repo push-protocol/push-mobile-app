@@ -42,9 +42,7 @@ export default function TestFeed(props) {
   // LOGIC
   useEffect(() => {
     if (!initialized) {
-      setInitialized(true);
-      setRefreshing(true);
-      fetchFeed(true);
+      fetchInitializedFeeds();
     }
   }, [initialized]);
 
@@ -53,6 +51,16 @@ export default function TestFeed(props) {
       setInitialized(false);
     }
   }, [props.refreshNotifFeeds]);
+
+  // Refresh Feed
+  const fetchInitializedFeeds = async () => {
+    setInitialized(true);
+    setRefreshing(true);
+    await performTimeConsumingTask();
+
+    FlatListFeedsRef.current.scrollToOffset({ animated: true, offset: 0 });
+    fetchFeed(true);
+  }
 
   // Perform some task to wait
   const performTimeConsumingTask = async () => {
@@ -66,11 +74,12 @@ export default function TestFeed(props) {
   const fetchFeed = async (rewrite) => {
     if (!endReached || rewrite == true) {
       if (!loading) {
+        //props.ToasterFunc("Fetching Notifs!", ToasterOptions.ICON_TYPE.PROCESSING, ToasterOptions.TYPE.GRADIENT_PRIMARY);
+
         // Check if this is a rewrite
         let paging = page;
         if (rewrite) {
           paging = 1;
-          FlatListFeedsRef.current.scrollToOffset({ animated: false, offset: 0 });
         }
 
         setloading(true);
@@ -101,7 +110,7 @@ export default function TestFeed(props) {
             // toast.current.show("New Notifications fetched");
             if (rewrite) {
               setFeed([...resJson.results]);
-
+              setEndReached(false);
             }
             else {
               setFeed([...data, ...resJson.results]);
@@ -199,8 +208,8 @@ export default function TestFeed(props) {
             }
             ListFooterComponent={() => {
               return loading ? (
-                <View style={{ paddingBottom: 20, marginTop: 20 }}>
-                  <ActivityIndicator size="large" color="#000000" />
+                <View style={{ paddingBottom: 30, marginTop: 20 }}>
+                  <EPNSActivity style={styles.activity} size="small" />
                 </View>
               ) : null;
             }}

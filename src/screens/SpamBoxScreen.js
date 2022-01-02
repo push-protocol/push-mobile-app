@@ -24,7 +24,7 @@ import { ethers } from 'ethers';
 
 import GLOBALS from 'src/Globals';
 
-const SpamBox = ({ style }) => {
+const SpamBoxScreen = ({ style }) => {
   const initiateWalletConnect = async () => {
     const connector = useWalletConnect();
     connector.connect()
@@ -107,4 +107,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SpamBox;
+export default SpamBoxScreen;

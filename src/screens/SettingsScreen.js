@@ -33,7 +33,7 @@ import AuthContext, { useAuthContext, APP_AUTH_STATES } from "src/components/aut
 import ENV_CONFIG from 'src/env.config';
 import GLOBALS from 'src/Globals';
 
-const SettingsScreen = ({ style, route, navigation }) => {
+const SettingsScreen = ({ style, navigation }) => {
   const authContext = useAuthContext();
 
   // Wallet Connect functionality
