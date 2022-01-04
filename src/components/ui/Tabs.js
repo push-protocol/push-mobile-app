@@ -1,14 +1,19 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, SafeAreaView } from "react-native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { MaterialIcons, MaterialCommunityIcons, Ionicons, FontAwesome5 } from "@expo/vector-icons";
+import {
+  MaterialIcons,
+  MaterialCommunityIcons,
+  Ionicons,
+  FontAwesome5,
+} from "@expo/vector-icons";
 
 import HomeScreen from "src/screens/HomeScreen";
 import ChannelsScreen from "src/screens/ChannelsScreen";
 import SampleFeedScreen from "src/screens/SampleFeedScreen";
 import SpamBoxScreen from "src/screens/SpamBoxScreen";
 
-import GLOBALS from 'src/Globals';
+import GLOBALS from "src/Globals";
 
 export default function Tabs(props) {
   const Tab = createMaterialBottomTabNavigator();

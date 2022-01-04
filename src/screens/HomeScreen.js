@@ -79,7 +79,11 @@ export default class HomeScreen extends Component {
 
   // COMPONENT DID UPDATE
   componentDidUpdate(prevProps) {
-    if (prevProps.route.params.refreshNotifFeed !== this.props.route.params.refreshNotifFeed && this.props.route.params.refreshNotifFeed == true) {
+    if (
+      prevProps.route.params.refreshNotifFeed !==
+        this.props.route.params.refreshNotifFeed &&
+      this.props.route.params.refreshNotifFeed == true
+    ) {
       this.refreshFeeds();
     }
   }
@@ -164,7 +168,7 @@ export default class HomeScreen extends Component {
   refreshFeeds = async () => {
     //this.refs.FeedsDisplayer.resetFeedState();
     // await this.refs.FeedsDisplayer.triggerGetItemsFromDB(false);
-    this.props.navigation.setParams({refreshNotifFeed: false})
+    this.props.navigation.setParams({ refreshNotifFeed: false });
 
     this.setState({ refresh: !this.state.refresh }, () => {
       if (this.state.refresh == true) {
@@ -205,7 +209,6 @@ export default class HomeScreen extends Component {
     const { wallet, pkey } = this.props.route.params;
 
     return (
-
       <View style={styles.container}>
         <ScreenFinishedTransition
           runAfterScreenTransition={() => {
@@ -219,7 +222,7 @@ export default class HomeScreen extends Component {
 
         <SafeAreaView style={styles.container}>
           <StatusBar
-            barStyle={'dark-content'}
+            barStyle={"dark-content"}
             translucent
             backgroundColor="transparent"
           />
@@ -230,7 +233,7 @@ export default class HomeScreen extends Component {
               privateKey={this.props.route.params.pkey}
               refreshNotifFeeds={this.state.refresh}
               ToasterFunc={(msg, icon, type, tapCB, screenTime) => {
-                this.showToast(msg, icon, type, tapCB, screenTime)
+                this.showToast(msg, icon, type, tapCB, screenTime);
               }}
             />
             {/*

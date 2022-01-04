@@ -26,7 +26,7 @@ const ChannelsScreen = ({ style, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar
-        barStyle={'dark-content'}
+        barStyle={"dark-content"}
         translucent
         backgroundColor="transparent"
       />
@@ -34,6 +34,7 @@ const ChannelsScreen = ({ style, route }) => {
       <View style={styles.content}>
         <ChannelsDisplayer
           wallet={route.params.wallet}
+          pKey={route.params.pkey}
         />
       </View>
     </SafeAreaView>

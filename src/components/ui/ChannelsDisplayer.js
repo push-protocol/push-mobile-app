@@ -22,8 +22,7 @@ import ChannelItem from "src/components/ui/ChannelItem";
 import ENV_CONFIG from "src/env.config";
 import GLOBALS from "src/Globals";
 
-const ChannelsDisplayer = ({ style, wallet }) => {
-
+const ChannelsDisplayer = ({ style, wallet, pKey }) => {
   const [channels, setChannels] = useState([]);
   const [page, setPage] = useState(1);
 
@@ -101,8 +100,8 @@ const ChannelsDisplayer = ({ style, wallet }) => {
   };
 
   return (
-    <SafeAreaView style={[ styles.container, style ]}>
-      {channels.length == 0 &&
+    <SafeAreaView style={[styles.container, style]}>
+      {channels.length == 0 && (
         <View style={[styles.infodisplay, styles.noPendingFeeds]}>
           <EPNSActivity style={styles.activity} size="small" />
           <StylishLabel
@@ -111,12 +110,12 @@ const ChannelsDisplayer = ({ style, wallet }) => {
             title="[dg:Fetching Channels!]"
           />
         </View>
-      }
-      {channels.length != 0 &&
+      )}
+      {channels.length != 0 && (
         <FlatList
           data={channels}
           style={styles.channels}
-          contentContainerStyle={{paddingVertical:10}}
+          contentContainerStyle={{ paddingVertical: 10 }}
           keyExtractor={(item) => item.channel.toString()}
           initialNumToRender={20}
           showsVerticalScrollIndicator={false}
@@ -126,6 +125,7 @@ const ChannelsDisplayer = ({ style, wallet }) => {
               item={item}
               wallet={wallet}
               contract={contract}
+              pKey={pKey}
             />
           )}
           ListFooterComponent={() => {
@@ -133,10 +133,10 @@ const ChannelsDisplayer = ({ style, wallet }) => {
               <View style={{ paddingBottom: 20, marginTop: 20 }}>
                 <EPNSActivity style={styles.activity} size="small" />
               </View>
-            ) : null
+            ) : null;
           }}
         />
-      }
+      )}
     </SafeAreaView>
   );
 };
@@ -145,7 +145,7 @@ const ChannelsDisplayer = ({ style, wallet }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
+    width: "100%",
   },
   channels: {
     flex: 1,

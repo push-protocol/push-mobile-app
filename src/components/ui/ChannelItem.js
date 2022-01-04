@@ -22,61 +22,54 @@ const openURL = async (url) => {
   await Linking.openURL(url);
 };
 
-const ChannelItem = ({ style, item, wallet, contract }) => {
+const ChannelItem = ({ style, item, wallet, contract, pKey }) => {
+  return item.icon && item.name ? (
+    <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => {
+          openURL(item.url);
+        }}
+      >
+        <View style={styles.inner}>
+          <View style={styles.iconContainer}>
+            <Image source={{ uri: item.icon }} style={styles.icon} />
+          </View>
 
-  return (
-    item.icon && item.name ? (
-      <View style={styles.container}>
-        <TouchableOpacity
-          onPress={() => {
-            openURL(item.url);
-          }}
-        >
-          <View style={styles.inner}>
-            <View style={styles.iconContainer}>
-              <Image
-                source={{ uri: item.icon }}
-                style={styles.icon}
-              />
+          <View style={styles.contentContainer}>
+            <View style={styles.contentTop}>
+              <Text style={styles.contentTitle}>{item.name}</Text>
             </View>
-
-            <View style={styles.contentContainer}>
-              <View style={styles.contentTop}>
-                <Text style={styles.contentTitle}>
-                  {item.name}
-                </Text>
-              </View>
-              <View style={styles.contentBottom}>
-                <Text
-                  style={{
-                    flex: 1,
-                    flexWrap: "wrap",
-                    fontSize: 10,
-                  }}
-                >
-                  {item.info}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.controlsContainer}>
-              <SubscriptionStatus
-                channel={item.channel}
-                user={wallet}
-              />
+            <View style={styles.contentBottom}>
+              <Text
+                style={{
+                  flex: 1,
+                  flexWrap: "wrap",
+                  fontSize: 10,
+                }}
+              >
+                {item.info}
+              </Text>
             </View>
           </View>
-        </TouchableOpacity>
-      </View>
-    ) : null
-  );
+
+          <View style={styles.controlsContainer}>
+            <SubscriptionStatus
+              channel={item.channel}
+              user={wallet}
+              pKey={pKey}
+            />
+          </View>
+        </View>
+      </TouchableOpacity>
+    </View>
+  ) : null;
 };
 
 // Styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
+    width: "100%",
   },
   inner: {
     backgroundColor: GLOBALS.COLORS.WHITE,
@@ -85,17 +78,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "#eee",
     borderWidth: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
     shadowColor: "#000",
     shadowOffset: {
-    	width: 0,
-    	height: 4,
+      width: 0,
+      height: 4,
     },
     shadowOpacity: 0.15,
     shadowRadius: 4.65,
     elevation: 8,
   },
-  iconContainer : {
+  iconContainer: {
     flex: 0.2,
     margin: 10,
     minHeight: 50,
@@ -103,12 +96,12 @@ const styles = StyleSheet.create({
     borderColor: "#eee",
     borderWidth: 1,
     borderRadius: 10,
-    justifyContent: 'center',
-    overflow: 'hidden',
+    justifyContent: "center",
+    overflow: "hidden",
   },
   icon: {
-    overflow: 'hidden',
-    resizeMode: 'contain',
+    overflow: "hidden",
+    resizeMode: "contain",
     flex: 1,
   },
   contentContainer: {
@@ -118,7 +111,7 @@ const styles = StyleSheet.create({
   },
   contentTop: {
     paddingVertical: 5,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   contentTitle: {
     fontWeight: "600",
@@ -126,7 +119,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.1,
     fontSize: 14,
     flexWrap: "wrap",
-    color: GLOBALS.COLORS.GRADIENT_PRIMARY
+    color: GLOBALS.COLORS.GRADIENT_PRIMARY,
   },
   contentBottom: {
     flex: 1,
@@ -139,8 +132,8 @@ const styles = StyleSheet.create({
   },
   controlsContainer: {
     flex: 0.15,
-    justifyContent: 'center',
-  }
+    justifyContent: "center",
+  },
 });
 
 export default ChannelItem;
