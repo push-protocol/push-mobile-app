@@ -21,9 +21,12 @@ import {
 } from '@walletconnect/react-native-dapp';
 import { ethers } from 'ethers';
 
+import "src/components/ui/SpamFeed";
+
 import GLOBALS from 'src/Globals';
 
-const SpamBoxScreen = ({ style }) => {
+const SpamBoxScreen = ({ style, route }) => {
+
   const {
     createSession,
     killSession,
@@ -137,6 +140,8 @@ const SpamBoxScreen = ({ style }) => {
         console.log("Signed EIP712")
         console.log(signature);
 
+
+
         // send it to server
         console.log("Sending to server")
         // https://backend-kovan.epns.io/apis/channels/unsubscribe_offchain
@@ -182,11 +187,6 @@ const SpamBoxScreen = ({ style }) => {
     //   });
   }
 
-
-    const initiateWalletConnect = async () => {
-      connector.connect()
-    }
-
   return (
     <SafeAreaView style={[ styles.container, style ]}>
       <StatusBar
@@ -195,30 +195,37 @@ const SpamBoxScreen = ({ style }) => {
         backgroundColor="transparent"
       />
 
-    <Text style={styles.textStyle}>Greetings! Started with ReactNative</Text>
-    <Text style={styles.subHeaderStyle}>My name is {name}</Text>
-      <TouchableOpacity
-        style={styles.button1}
-        onPress={() => {initiateWalletConnect()}}
-      >
-        <Text style={styles.textStyle}>
-          Sign In with Wallet Connect.{"  "}
-        </Text>
-      </TouchableOpacity>
-      {!connector.connected &&
-        <Button title="Connect" onPress={() => connector.connect()} />
-      }
 
-      {connector.connected &&
-        <>
-          <Button title="Sign Message" onPress={() => signMessageFunc()} />
-          <Button title="Kill Session" onPress={() => connector.killSession()} />
-        </>
-      }
+    <SpamFeed
+      wallet={route.params.wallet}
+    />
 
   </SafeAreaView>
   );
 };
+
+{/*
+  <Text style={styles.textStyle}>Greetings! Started with ReactNative</Text>
+  <Text style={styles.subHeaderStyle}>My name is {name}</Text>
+    <TouchableOpacity
+      style={styles.button1}
+      onPress={() => {connector.connect()}}
+    >
+      <Text style={styles.textStyle}>
+        Sign In with Wallet Connect.{"  "}
+      </Text>
+    </TouchableOpacity>
+    {!connector.connected &&
+      <Button title="Connect" onPress={() => connector.connect()} />
+    }
+
+    {connector.connected &&
+      <>
+        <Button title="Sign Message" onPress={() => signMessageFunc()} />
+        <Button title="Kill Session" onPress={() => connector.killSession()} />
+      </>
+    }
+    */}
 
 // Styling
 const styles = StyleSheet.create({

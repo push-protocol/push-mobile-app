@@ -76,7 +76,10 @@ export default class ProfileDisplayer extends Component {
 			active: toggle,
 		});
 
-		this.refs.OverlayBlur.changeRenderState(toggle, true);
+		// DEPRECATED
+		// Commented out till we find how to cover the entire screen
+		//this.refs.OverlayBlur.changeRenderState(toggle, true);
+		// DEPRECATION ENDS HERE
 
 		if (toggle) {
 			// Fade In

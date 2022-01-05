@@ -343,25 +343,10 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
           <View style={styles.modal}>
             <View style={[styles.optionsArea]}>
               <Text style={styles.textStyle}>
-                {action} is currently posible with MetaMask. You will be
-                redirected to the MetaMask app where you can sign into our Dapp
-                and carry out {action}.
+                {action} is currently posible with MetaMask. You will be redirected to the MetaMask app where you can sign into our Dapp and {action} to the channels of your choice.
               </Text>
             </View>
-            <View style={[styles.doneArea]}>
-              <TouchableHighlight
-                style={[styles.done]}
-                underlayColor={GLOBALS.COLORS.LIGHT_GRAY}
-                onPress={() => {
-                  // openURL(ENV_CONFIG.METAMASK_LINK)
-                }}
-              >
-                <Text style={styles.doneText}>
-                  Sign In with Wallet Connect {"  "}
-                  <FontAwesome5 name="external-link-alt" size={20} />
-                </Text>
-              </TouchableHighlight>
-            </View>
+
             <View style={[styles.doneArea]}>
               <TouchableHighlight
                 style={[styles.done]}
@@ -369,7 +354,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
                 onPress={() => openURL(ENV_CONFIG.METAMASK_LINK)}
               >
                 <Text style={styles.doneText}>
-                  Sign In with MetaMask {"  "}
+                  Opt In with MetaMask {"  "}
                   <FontAwesome5 name="external-link-alt" size={20} />
                 </Text>
               </TouchableHighlight>

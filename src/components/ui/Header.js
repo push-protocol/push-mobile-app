@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import SafeAreaView from 'react-native-safe-area-view';
+import Constants from "expo-constants";
 
 import ProfileDisplayer from "src/components/ui/ProfileDisplayer";
 import EPNSNotifierIcon from "src/components/custom/EPNSNotifierIcon";
@@ -96,8 +97,8 @@ const Header = ({ style, wallet }) => {
 // Styling
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    height: GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: GLOBALS.COLORS.WHITE
   },
   header: {
     flexDirection: "row",
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
     zIndex: 99,
-    height: '100%',
+    height: GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
   },
   profile: {
     // position: "absolute",
@@ -115,17 +116,15 @@ const styles = StyleSheet.create({
     // left: 0,
     // bottom: 0,
     // zIndex: 99,
-    height: '100%',
+    height: 60,
   },
   notifier: {
-    height: 60,
-    height: '100%',
+    height: GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
   },
   settings: {
     marginLeft: 10,
     width: 24,
-    height: 60,
-    height: '100%',
+    height: GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
   },
 });
 
