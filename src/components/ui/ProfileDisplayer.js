@@ -76,7 +76,10 @@ export default class ProfileDisplayer extends Component {
 			active: toggle,
 		});
 
-		this.refs.OverlayBlur.changeRenderState(toggle, true);
+		// DEPRECATED
+		// Commented out till we find how to cover the entire screen
+		//this.refs.OverlayBlur.changeRenderState(toggle, true);
+		// DEPRECATION ENDS HERE
 
 		if (toggle) {
 			// Fade In
@@ -111,7 +114,7 @@ export default class ProfileDisplayer extends Component {
 							pointerEvents="auto">
 							<Blockies
 								style={styles.blockies}
-								seed={wallet.toLowerCase()} //string content to generate icon
+								seed={wallet ? wallet.toLowerCase() : null} //string content to generate icon
 								dimension={40} // blocky icon size
 							/>
 							<ENSButton
@@ -140,6 +143,7 @@ export default class ProfileDisplayer extends Component {
 										<Text style={styles.walletText}>{wallet}</Text>
 									</View>
 
+									{/*
 									<View style={styles.interestEarned}>
 										<View style={styles.interestEarnedTitle}>
 											<MaskedView
@@ -165,6 +169,7 @@ export default class ProfileDisplayer extends Component {
 											<EPNSActivity style={styles.activity} size="small" />
 										</View>
 									</View>
+									*/}
 
 									<View style={styles.settings}>
 										<PrimaryButton
@@ -189,6 +194,7 @@ export default class ProfileDisplayer extends Component {
 
 				{/* Overlay Blur to show incase need to emphasize on something */}
 				<OverlayBlur
+					style={{backgroundColor: 'black'}}
 					ref="OverlayBlur"
 					onPress={() => {
 						// Exit Intent

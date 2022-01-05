@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import {
 	StyleSheet,
+	ActivityIndicator,
 	View,
 	Animated,
 	Dimensions,
@@ -31,6 +32,9 @@ const ToasterOptions = {
 		LONG: 3500,
 		SHORT: 2500,
 	},
+	ICON_TYPE: {
+		PROCESSING: 1,
+	}
 };
 
 const MAX_HEIGHT = 40;
@@ -193,7 +197,18 @@ class Toaster extends Component<Prop> {
 	renderInner = (msg, icon, type, iconStyle, iconFont) => {
 		if (!icon || icon === "") {
 			return <Text style={styles.message}>{msg}</Text>;
-		} else {
+		}
+		else if (icon === ToasterOptions.ICON_TYPE.PROCESSING) {
+			return (
+				<View style={styles.inner}>
+					<View style={[styles.animatedIconsStyle]}>
+						<ActivityIndicator size={iconFont} color={GLOBALS.COLORS.WHITE} />
+					</View>
+					<Text style={styles.message}>{msg}</Text>
+				</View>
+			);
+		}
+		else {
 			return (
 				<View style={styles.inner}>
 					<View style={[styles.iconstyle, iconStyle]}>
@@ -361,7 +376,7 @@ const styles = StyleSheet.create({
 	container: {
 		position: "absolute",
 		alignSelf: "center",
-		bottom: 50,
+		bottom: 30,
 		zIndex: 9999,
 	},
 	content: {
@@ -386,6 +401,11 @@ const styles = StyleSheet.create({
 	message: {
 		color: GLOBALS.COLORS.WHITE,
 		fontSize: 14,
+	},
+	animatedIconsStyle: {
+		paddingVertical: 2,
+		paddingHorizontal: 5,
+		marginRight: 10,
 	},
 	iconstyle: {
 		backgroundColor: GLOBALS.COLORS.WHITE,

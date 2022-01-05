@@ -3,9 +3,9 @@ import { ethers } from 'ethers';
 import Web3 from 'web3';
 const { default: Resolution } = require('@unstoppabledomains/resolution');
 
-import MetaStorage from 'src/singletons/MetaStorage';
+import MetaStorage from "src/singletons/MetaStorage";
 
-import ENV_CONFIG from 'src/env.config';
+import ENV_CONFIG from "src/env.config";
 
 // Web3 Helper Function
 const Web3Helper = {
@@ -14,7 +14,7 @@ const Web3Helper = {
     return new Web3.providers.HttpProvider(ENV_CONFIG.INFURA_API);
   },
   // To Get Web3
-  getWeb3: function(provider) {
+  getWeb3: function (provider) {
     if (!provider) {
       provider = Web3Helper.getWeb3Provider();
     }
@@ -34,43 +34,42 @@ const Web3Helper = {
     return new ethers.VoidSigner(address, provider);
   },
   // To Get ENS
-  getENS: function(provider) {
+  getENS: function (provider) {
     return new ENS(provider);
   },
   // To verify a given wallet
-  getWalletVerification: async function(wallet) {
-    utils . getAddress ( address )
+  getWalletVerification: async function (wallet) {
+    utils.getAddress(address);
   },
   // To get Wallet Address from Private Key
-  getWalletAddress: async function(pkey, provider, web3) {
+  getWalletAddress: async function (pkey, provider, web3) {
     if (!provider) {
-      provider = Web3Helper.getWeb3Provider();
+      provider = await Web3Helper.getWeb3Provider();
     }
 
     if (!web3) {
-      web3 = Web3Helper.getWeb3(provider);
+      web3 = await Web3Helper.getWeb3(provider);
     }
 
     try {
       const pkToAcc = await web3.eth.accounts.privateKeyToAccount(pkey);
       const response = {
         success: true,
-        wallet: pkToAcc.address
-      }
+        wallet: pkToAcc.address,
+      };
 
       return response;
-    }
-    catch (e) {
+    } catch (e) {
       const response = {
         success: false,
-        info: e
-      }
+        info: e,
+      };
 
       return response;
     }
   },
   // To get ENS Rever Domain from Wallet
-  getENSReverseDomain: async function(wallet, provider) {
+  getENSReverseDomain: async function (wallet, provider) {
     if (!provider) {
       provider = Web3Helper.getWeb3Provider();
     }
@@ -81,24 +80,22 @@ const Web3Helper = {
 
       // console.log("Fetched Name... Forward Checking now: " + name);
 
-      if (wallet != await ens.resolver(name).addr()) {
+      if (wallet != (await ens.resolver(name).addr())) {
         name = null;
         throw "Name Didn't Match";
-      }
-      else {
+      } else {
         const response = {
           success: true,
-          ens: name
-        }
+          ens: name,
+        };
 
         return response;
       }
-    }
-    catch (e) {
+    } catch (e) {
       const response = {
         success: false,
-        info: e
-      }
+        info: e,
+      };
 
       return response;
     }
@@ -110,14 +107,20 @@ const Web3Helper = {
 
     // Check for Time Stamp, if more than 24 hours than refresh ens records
     const currentTime = new Date().getTime() / 1000;
-    const storedTime = storedWalletObject.ensRefreshTime == null ? 0 : storedWalletObject.ensRefreshTime;
+    const storedTime =
+      storedWalletObject.ensRefreshTime == null
+        ? 0
+        : storedWalletObject.ensRefreshTime;
 
-    if (storedWalletObject.wallet != null
-        && currentTime - storedWalletObject.ensRefreshTime > 1
-      ) {
-      const response = await Web3Helper.getENSReverseDomain(storedWalletObject.wallet);
+    if (
+      storedWalletObject.wallet != null &&
+      currentTime - storedWalletObject.ensRefreshTime > 1
+    ) {
+      const response = await Web3Helper.getENSReverseDomain(
+        storedWalletObject.wallet
+      );
 
-      let ens = '';
+      let ens = "";
       let timestamp = currentTime;
 
       if (response.success) {
@@ -145,18 +148,18 @@ const Web3Helper = {
     const apiURL = endpoint + "?owner=" + wallet + "&extension=crypto";
 
     return await fetch(apiURL, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
       .then((response) => response.json())
       .then((responseJson) => {
         let response = {
           success: false,
-          cns: ''
-        }
+          cns: "",
+        };
 
         if (responseJson["domains"].length > 0) {
           response.success = true;
@@ -191,14 +194,21 @@ const Web3Helper = {
 
     // Check for Time Stamp, if more than 24 hours than refresh ens records
     const currentTime = new Date().getTime() / 1000;
-    const storedTime = storedWalletObject.cnsRefreshTime == null ? 0 : storedWalletObject.cnsRefreshTime;
+    const storedTime =
+      storedWalletObject.cnsRefreshTime == null
+        ? 0
+        : storedWalletObject.cnsRefreshTime;
 
-    if (storedWalletObject.wallet != null
-        && (currentTime - storedWalletObject.cnsRefreshTime > 1 || !storedWalletObject.cnsRefreshTime)
-      ) {
-      const response = await Web3Helper.getCNSReverseDomain(storedWalletObject.wallet);
+    if (
+      storedWalletObject.wallet != null &&
+      (currentTime - storedWalletObject.cnsRefreshTime > 1 ||
+        !storedWalletObject.cnsRefreshTime)
+    ) {
+      const response = await Web3Helper.getCNSReverseDomain(
+        storedWalletObject.wallet
+      );
 
-      let cns = '';
+      let cns = "";
       let timestamp = currentTime;
 
       if (response.success) {

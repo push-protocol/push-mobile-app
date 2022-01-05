@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   StyleSheet,
   View,
@@ -6,19 +6,19 @@ import {
   Image,
   TouchableWithoutFeedback,
   TouchableOpacity,
-} from 'react-native';
-import * as FileSystem from 'expo-file-system';
+} from "react-native";
+import * as FileSystem from "expo-file-system";
 
-import Video from 'react-native-video';
-import YouTube from 'react-native-youtube';
+import Video from "react-native-video";
+import YouTube from "react-native-youtube";
 
-import ProgressCircle from 'react-native-progress-circle';
-import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import ProgressCircle from "react-native-progress-circle";
+import EPNSActivity from "src/components/loaders/EPNSActivity";
 
-import DownloadHelper from 'src/helpers/DownloadHelper';
+import DownloadHelper from "src/helpers/DownloadHelper";
 
-import ENV_CONFIG from 'src/env.config';
-import GLOBALS from 'src/Globals';
+import ENV_CONFIG from "src/env.config";
+import GLOBALS from "src/Globals";
 
 const MAX_ATTEMPTS = 3;
 
@@ -31,11 +31,11 @@ export default class VideoDownloadWithIndicator extends Component {
       indicator: false,
       downloading: true,
       downloadProgress: 0,
-      fileURI: '',
+      fileURI: "",
 
       attemptNumber: 0,
       defaulted: false,
-    }
+    };
 
     // Set Mounted
     this._isMounted = false;
@@ -56,7 +56,7 @@ export default class VideoDownloadWithIndicator extends Component {
         indicator: true,
         downloading: true,
         downloadProgress: 0,
-        fileURI: '',
+        fileURI: "",
       });
 
       this.checkAndInitiateOperation(this.props.fileURL);
@@ -65,7 +65,7 @@ export default class VideoDownloadWithIndicator extends Component {
 
   // COMPONENT UNMOUNTED
   componentWillUnmount() {
-     this._isMounted = false;
+    this._isMounted = false;
   }
 
   // FUNCTIONS
@@ -76,8 +76,8 @@ export default class VideoDownloadWithIndicator extends Component {
       this.setState({
         indicator: false,
         downloading: false,
-        downloadProgress: '100%',
-        fileURI: fileURL
+        downloadProgress: "100%",
+        fileURI: fileURL,
       });
 
       return;
@@ -92,38 +92,35 @@ export default class VideoDownloadWithIndicator extends Component {
           indicator: false,
           downloading: false,
           downloadProgress: 100,
-          fileURI: localFileURI
+          fileURI: localFileURI,
         });
       }
 
       // console.log("File Exists on: |" + localFileURI + "|");
-    }
-    else {
+    } else {
       if (this.state.attemptNumber <= MAX_ATTEMPTS) {
         if (this._isMounted) {
-            this.setState({
-              indicator: false,
-              downloading: true,
-              downloadProgress: 0,
-              attemptNumber: this.state.attemptNumber + 1,
-            });
-          }
+          this.setState({
+            indicator: false,
+            downloading: true,
+            downloadProgress: 0,
+            attemptNumber: this.state.attemptNumber + 1,
+          });
+        }
 
         await this.startDownload(fileURL);
-      }
-      else {
+      } else {
         // Image can't be retrieved, Display bad image
         this.setState({
           indicator: false,
           downloading: false,
-          downloadProgress: '100%',
-          fileURI: require('assets/ui/frownface.png'),
+          downloadProgress: "100%",
+          fileURI: require("assets/ui/frownface.png"),
           defaulted: true,
         });
       }
-
     }
-  }
+  };
 
   // To Start Download
   startDownload = async (fileURL) => {
@@ -135,7 +132,8 @@ export default class VideoDownloadWithIndicator extends Component {
       localFileTempURI,
       {},
       (dwProg) => {
-        const progress = dwProg.totalBytesWritten / dwProg.totalBytesExpectedToWrite;
+        const progress =
+          dwProg.totalBytesWritten / dwProg.totalBytesExpectedToWrite;
         const progressPerc = Number((progress * 100).toFixed(2));
         //console.log("Progress for " + fileURL + ": " + progressPerc);
 
@@ -144,7 +142,7 @@ export default class VideoDownloadWithIndicator extends Component {
             downloadProgress: progressPerc,
           });
         }
-      },
+      }
     );
 
     // Initiate
@@ -158,48 +156,44 @@ export default class VideoDownloadWithIndicator extends Component {
       try {
         await FileSystem.moveAsync({
           from: uri,
-          to: DownloadHelper.getActualSaveLocation(fileURL)
+          to: DownloadHelper.getActualSaveLocation(fileURL),
         });
-      }
-      catch (e) {
+      } catch (e) {
         console.warn(e);
       }
 
       // Go Back to check and initiate operation
       await this.checkAndInitiateOperation(fileURL);
-
     } catch (e) {
       console.warn(e);
     }
-  }
+  };
 
   // on video bufferring
-  onBuffer = (response) => {
-
-  }
+  onBuffer = (response) => {};
 
   // When Errored
   videoError = (error) => {
-    console.log("Error on playback" + error);
+    // console.log("Error on playback" + error);
 
     this.setState({
       indicator: false,
       downloading: false,
-      downloadProgress: '100%',
-      fileURI: require('assets/ui/frownface.png'),
+      downloadProgress: "100%",
+      fileURI: require("assets/ui/frownface.png"),
       defaulted: true,
     });
-  }
+  };
 
   // handle on press
   onPress = () => {
-    console.log("here");
+    // console.log("here");
     this.player.presentFullscreenPlayer();
 
     if (this.props.onPress) {
       this.props.onPress();
     }
-  }
+  };
 
   // RENDER
   render() {
@@ -213,7 +207,7 @@ export default class VideoDownloadWithIndicator extends Component {
       onPress,
     } = this.props;
 
-    let contentContainerStyle = {}
+    let contentContainerStyle = {};
     if (margin) {
       contentContainerStyle.margin = margin;
     }
@@ -225,73 +219,67 @@ export default class VideoDownloadWithIndicator extends Component {
 
     return (
       <TouchableWithoutFeedback
-        style = {[ styles.container ]}
-        onPress = {() => {
+        style={[styles.container]}
+        onPress={() => {
           this.onPress(this.state.fileURI);
         }}
         disabled={true}
       >
-        <View style = {[ styles.innerContainer, style ]}>
-          <View style = {[ styles.contentContainer, contentContainerStyle]}>
-          {
-            this.state.indicator
-              ? <EPNSActivity
-                  style={styles.activity}
-                  size="small"
-                />
-              : this.state.downloading
-                ? <View style = {styles.downloading}>
-                    {
-                      miniProgressLoader == true
-                      ? <EPNSActivity
-                          style={styles.activity}
-                          size="small"
-                        />
-                      : <ProgressCircle
-                          percent={this.state.downloadProgress}
-                          radius={20}
-                          borderWidth={20}
-                          color={GLOBALS.COLORS.GRADIENT_SECONDARY}
-                          shadowColor={GLOBALS.COLORS.LIGHT_GRAY}
-                          bgColor={GLOBALS.COLORS.WHITE}
-                        >
-                        </ProgressCircle>
-                      }
-                  </View>
-                : this.state.defaulted == true
-                  ? <Image
-                      style = {styles.image}
-                      source = {require('assets/ui/frownface.png')}
-                      resizeMode = {modifiedResizeMode}
-                    />
-                  : DownloadHelper.isMediaExternalEmbed(this.state.fileURI) == false
-                    ? <Video source={{uri: `${this.state.fileURI}`}}
-                         ref={(ref) => {
-                           this.player = ref
-                         }}
-                         onBuffer={this.onBuffer}
-                         onError={this.videoError}
-                         style={styles.backgroundVideo}
-                         resizeMode='cover'
-                         controls={true}
-                         paused={true}
-                         allowFullScreen={true}
-                      />
-                    : <YouTube
-                        videoId={DownloadHelper.getYoutubeID(this.state.fileURI)}
-                        apiKey={ENV_CONFIG.YOUTUBE_API_KEY}
-                        play={false}
-                        fullscreen={false}
-                        loop={false}
-                        controls={1}
-                        onReady={e => this.setState({ isReady: true })}
-                        onChangeState={e => this.setState({ status: e.state })}
-                        onChangeQuality={e => this.setState({ quality: e.quality })}
-                        onError={e => this.setState({ error: e.error })}
-                        style={styles.backgroundVideo}
-                      />
-
-          }
+        <View style={[styles.innerContainer, style]}>
+          <View style={[styles.contentContainer, contentContainerStyle]}>
+            {this.state.indicator ? (
+              <EPNSActivity style={styles.activity} size="small" />
+            ) : this.state.downloading ? (
+              <View style={styles.downloading}>
+                {miniProgressLoader == true ? (
+                  <EPNSActivity style={styles.activity} size="small" />
+                ) : (
+                  <ProgressCircle
+                    percent={this.state.downloadProgress}
+                    radius={20}
+                    borderWidth={20}
+                    color={GLOBALS.COLORS.GRADIENT_SECONDARY}
+                    shadowColor={GLOBALS.COLORS.LIGHT_GRAY}
+                    bgColor={GLOBALS.COLORS.WHITE}
+                  ></ProgressCircle>
+                )}
+              </View>
+            ) : this.state.defaulted == true ? (
+              <Image
+                style={styles.image}
+                source={require("assets/ui/frownface.png")}
+                resizeMode={modifiedResizeMode}
+              />
+            ) : DownloadHelper.isMediaExternalEmbed(this.state.fileURI) ==
+              false ? (
+              <Video
+                source={{ uri: `${this.state.fileURI}` }}
+                ref={(ref) => {
+                  this.player = ref;
+                }}
+                onBuffer={this.onBuffer}
+                onError={this.videoError}
+                style={styles.backgroundVideo}
+                resizeMode="cover"
+                controls={true}
+                paused={true}
+                allowFullScreen={true}
+              />
+            ) : (
+              <YouTube
+                videoId={DownloadHelper.getYoutubeID(this.state.fileURI)}
+                apiKey={ENV_CONFIG.YOUTUBE_API_KEY}
+                play={false}
+                fullscreen={false}
+                loop={false}
+                controls={1}
+                onReady={(e) => this.setState({ isReady: true })}
+                onChangeState={(e) => this.setState({ status: e.state })}
+                onChangeQuality={(e) => this.setState({ quality: e.quality })}
+                onError={(e) => this.setState({ error: e.error })}
+                style={styles.backgroundVideo}
+              />
+            )}
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -302,33 +290,32 @@ export default class VideoDownloadWithIndicator extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   innerContainer: {
     flex: 1,
-    height: '100%',
-    overflow: 'hidden',
+    height: "100%",
+    overflow: "hidden",
   },
   contentContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     aspectRatio: 1,
-    width: '100%',
-    overflow: 'hidden',
+    width: "100%",
+    overflow: "hidden",
   },
   downloading: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
     padding: 40,
   },
   backgroundVideo: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     bottom: 0,
     right: 0,
   },
-
 });

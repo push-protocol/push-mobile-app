@@ -248,3 +248,6 @@ RNTester/Pods/*
 google-services.json
 GoogleService-Info.plist
 dump.rdb
+/android/app/build
+yarn.lock
+/android/app/release.keystore

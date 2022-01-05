@@ -185,6 +185,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
+    minHeight: 40,
   },
   ensbox: {
     paddingVertical: 10,
