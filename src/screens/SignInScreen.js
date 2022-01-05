@@ -17,7 +17,7 @@ import {
   withWalletConnect,
   RenderQrcodeModalProps,
   WalletService,
-} from '@walletconnect/react-native-dapp';
+} from "@walletconnect/react-native-dapp";
 
 import StylishLabel from "src/components/labels/StylishLabel";
 import DetailedInfoPresenter from "src/components/misc/DetailedInfoPresenter";
@@ -71,12 +71,8 @@ const SignInScreen = ({ style, route, navigation }) => {
   const [walletAddressVerified, setWalletAddressVerified] = useState("");
 
   // Wallet Connect functionality
-  const {
-    createSession,
-    killSession,
-    session,
-    signTransaction,
-  } = useWalletConnect();
+  const { createSession, killSession, session, signTransaction } =
+    useWalletConnect();
   const connector = useWalletConnect();
 
   // Setup Refs
@@ -138,7 +134,7 @@ const SignInScreen = ({ style, route, navigation }) => {
 
   // Detect PK Code
   const onWalletDetect = (code) => {
-    setWalletAddress(code)
+    setWalletAddress(code);
   };
 
   // Reset PK Code
@@ -148,8 +144,8 @@ const SignInScreen = ({ style, route, navigation }) => {
       connector.killSession();
     }
 
-    setWalletAddress("")
-    setWalletAddressVerified(false)
+    setWalletAddress("");
+    setWalletAddressVerified(false);
     Animated.timing(fader, {
       toValue: 1,
       duration: 250,
@@ -159,10 +155,10 @@ const SignInScreen = ({ style, route, navigation }) => {
 
   // Handle Profile Info
   const profileInfoFetched = (wallet, cns, ens) => {
-    setWalletAddress(wallet)
-    setCNS(cns)
-    setENS(ens)
-    setWalletAddressVerified(true)
+    setWalletAddress(wallet);
+    setCNS(cns);
+    setENS(ens);
+    setWalletAddressVerified(true);
   };
 
   useEffect(() => {
@@ -173,18 +169,17 @@ const SignInScreen = ({ style, route, navigation }) => {
         useNativeDriver: true,
       }).start();
     }
-	}, [walletAddress, walletAddressVerified]);
+  }, [walletAddress, walletAddressVerified]);
 
   useEffect(() => {
     if (connector.connected) {
-      setWalletAddress(connector.accounts[0])
+      setWalletAddress(connector.accounts[0]);
     }
-	}, [connector.connected]);
-
+  }, [connector.connected]);
 
   // When Animation is Finished
   const animationFinished = () => {
-    setDetailedInfoPresetned(true)
+    setDetailedInfoPresetned(true);
     Animated.timing(fader, {
       toValue: 1,
       duration: 250,
@@ -226,7 +221,7 @@ const SignInScreen = ({ style, route, navigation }) => {
       <SafeAreaView style={styles.container}>
         <ScreenFinishedTransition
           setScreenTransitionAsDone={() => {
-            setTransitionFinished(true)
+            setTransitionFinished(true);
           }}
         />
 
@@ -271,7 +266,7 @@ const SignInScreen = ({ style, route, navigation }) => {
             <View style={styles.entryFooter}>
               <PrimaryButton
                 iconFactory="Image"
-                icon={require('assets/ui/walletConnect.png')}
+                icon={require("assets/ui/walletConnect.png")}
                 iconSize={24}
                 title={!connector.connected ? "WalletConnect" : "Disconnect"}
                 fontSize={16}
@@ -282,8 +277,7 @@ const SignInScreen = ({ style, route, navigation }) => {
                 onPress={() => {
                   if (connector.connected) {
                     connector.killSession();
-                  }
-                  else {
+                  } else {
                     connector.connect();
                   }
                 }}
@@ -292,8 +286,8 @@ const SignInScreen = ({ style, route, navigation }) => {
               <View style={styles.divider}></View>
 
               <PrimaryButton
-                iconFactory="Ionicons"
-                icon="ios-qr-scanner"
+                iconFactory="MaterialIcons"
+                icon="qr-code-scanner"
                 iconSize={24}
                 title="Scan via QR Code"
                 fontSize={16}
@@ -390,7 +384,7 @@ const SignInScreen = ({ style, route, navigation }) => {
         />
 
         {/* Overlay Blur and Notice to show in case permissions for camera aren't given */}
-        <OverlayBlur ref={OverlayBlurRef}/>
+        <OverlayBlur ref={OverlayBlurRef} />
 
         <NoticePrompt
           ref={NoticePromptRef}
@@ -414,7 +408,7 @@ const SignInScreen = ({ style, route, navigation }) => {
       </SafeAreaView>
     </>
   );
-}
+};
 
 // Styling
 const styles = StyleSheet.create({

@@ -272,8 +272,8 @@ export default class SignInScreenAdvance extends Component {
             {this.state.privateKey === "" ? (
               <View style={styles.entryFooter}>
                 <PrimaryButton
-                  iconFactory="Ionicons"
-                  icon="ios-qr-scanner"
+                  iconFactory="MaterialIcons"
+                  icon="qr-code-scanner"
                   iconSize={24}
                   title="Scan via QR Code"
                   fontSize={16}
@@ -288,8 +288,8 @@ export default class SignInScreenAdvance extends Component {
                 <View style={styles.divider}></View>
                 <View style={styles.columnizer}>
                   <PrimaryButton
-                    iconFactory="Ionicons"
-                    icon="ios-arrow-dropleft"
+                    iconFactory="MaterialCommunityIcons"
+                    icon="arrow-left"
                     iconSize={24}
                     iconAlignToLeft={true}
                     title="Back"

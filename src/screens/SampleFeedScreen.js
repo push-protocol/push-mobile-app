@@ -1,7 +1,6 @@
-
 import SpamFeed from "../components/ui/SpamFeed";
 
-import React from 'react';
+import React, { useState } from "react";
 import {
   StatusBar,
   View,
@@ -10,22 +9,51 @@ import {
   StyleSheet,
   Button,
   TouchableOpacity,
-  FlatList
-} from 'react-native';
-import SafeAreaView from 'react-native-safe-area-view';
-
+  FlatList,
+} from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
+import { Asset } from "expo-asset";
+import ImageView from "react-native-image-viewing";
+import ImagePreviewFooter from "src/components/ui/ImagePreviewFooter";
 import FeedItemComponent from "src/components/ui/testFeed/FeedItemComponents.js";
 import EPNSActivity from "src/components/loaders/EPNSActivity";
 import StylishLabel from "src/components/labels/StylishLabel";
 
-import sampleFeed from 'src/jsons/SampleFeed'
-import GLOBALS from 'src/Globals';
+import sampleFeed from "src/jsons/SampleFeed";
+import GLOBALS from "src/Globals";
 
 const SampleFeedScreen = ({ style }) => {
+  const showImagePreview = async (fileURL) => {
+    let validPaths = [];
+    let fileIndex = -1;
+
+    // Add Image
+    // Download the file if not done already
+    await Asset.loadAsync(fileURL);
+
+    // Push to valid path
+    validPaths.push({
+      uri: Asset.fromModule(fileURL).uri,
+      id: fileURL,
+    });
+
+    fileIndex = validPaths.length - 1;
+
+    // console.log("LOADED IMAGES:");
+    // console.log(validPaths);
+
+    setLoadedImages(validPaths);
+    setRenderGallery(true);
+    setStartFromIndex(fileIndex);
+  };
+
+  const [loadedImages, setLoadedImages] = useState([]);
+  const [renderGallery, setRenderGallery] = useState(false);
+  const [startFromIndex, setStartFromIndex] = useState(0);
   return (
-    <SafeAreaView style={[ styles.container, style ]}>
+    <SafeAreaView style={[styles.container, style]}>
       <StatusBar
-        barStyle={'dark-content'}
+        barStyle={"dark-content"}
         translucent
         backgroundColor="transparent"
       />
@@ -57,7 +85,7 @@ const SampleFeedScreen = ({ style }) => {
             // itemArchived={(nid) => {
             // 	this.archiveItem(nid);
             // }}
-            // onImagePreview={(fileURL) => this.showImagePreview(fileURL)}
+            onImagePreview={(fileURL) => showImagePreview(fileURL)}
             // privateKey={privateKey}
           />
         )}
@@ -105,7 +133,23 @@ const SampleFeedScreen = ({ style }) => {
         // }}
       />
 
-  </SafeAreaView>
+      <ImageView
+        images={loadedImages}
+        imageIndex={startFromIndex}
+        visible={renderGallery}
+        swipeToCloseEnabled={true}
+        onRequestClose={() => {
+          setRenderGallery(false);
+        }}
+        FooterComponent={({ imageIndex }) => (
+          <ImagePreviewFooter
+            imageIndex={imageIndex}
+            imagesCount={loadedImages.length}
+            fileURI={loadedImages[imageIndex].uri}
+          />
+        )}
+      />
+    </SafeAreaView>
   );
 };
 
@@ -116,11 +160,11 @@ const styles = StyleSheet.create({
     backgroundColor: GLOBALS.COLORS.WHITE,
   },
   textStyle: {
-    fontSize: 45
+    fontSize: 45,
   },
   subHeaderStyle: {
-    fontSize: 20
-  }
+    fontSize: 20,
+  },
 });
 
 export default SampleFeedScreen;

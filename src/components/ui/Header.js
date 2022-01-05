@@ -1,12 +1,7 @@
-import React, { useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-} from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import SafeAreaView from 'react-native-safe-area-view';
+import React, { useEffect, useRef } from "react";
+import { View, Text, Image, StyleSheet } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import SafeAreaView from "react-native-safe-area-view";
 import Constants from "expo-constants";
 
 import ProfileDisplayer from "src/components/ui/ProfileDisplayer";
@@ -15,8 +10,11 @@ import ImageButton from "src/components/buttons/ImageButton";
 
 import Notify from "src/singletons/Notify";
 
-import AuthContext, { useAuthContext, APP_AUTH_STATES } from "src/components/auth/AuthContext";
-import GLOBALS from 'src/Globals';
+import AuthContext, {
+  useAuthContext,
+  APP_AUTH_STATES,
+} from "src/components/auth/AuthContext";
+import GLOBALS from "src/Globals";
 
 const Header = ({ style, wallet }) => {
   const navigation = useNavigation();
@@ -33,11 +31,11 @@ const Header = ({ style, wallet }) => {
     Notify.instance.setNotificationListenerCallback(() => {
       onNotificationListenerUpdate();
     });
-	}, []);
+  }, []);
 
   // To refresh the bell badge
   const onNotificationListenerUpdate = async () => {
-  	// Check Notifier
+    // Check Notifier
     await EPNSNotifierIconRef.current.getBadgeCountAndRefresh();
   };
 
@@ -47,7 +45,7 @@ const Header = ({ style, wallet }) => {
   };
 
   return (
-    <SafeAreaView style={[ styles.container, style ]}>
+    <SafeAreaView style={[styles.container, style]}>
       {/* Header Comes Here */}
       <View style={styles.header}>
         <ProfileDisplayer
@@ -65,10 +63,10 @@ const Header = ({ style, wallet }) => {
           onPress={() => {
             // Refresh the feeds
             navigation.navigate("Feed", {
-              refreshNotifFeed: true
+              refreshNotifFeed: true,
             });
 
-            navigation.setParams({refreshNotifFeed: true})
+            navigation.setParams({ refreshNotifFeed: true });
           }}
           onNewNotifications={() => {
             // Do nothing for now, bell is ringing in the module anyway
@@ -98,7 +96,7 @@ const Header = ({ style, wallet }) => {
 const styles = StyleSheet.create({
   container: {
     paddingTop: Constants.statusBarHeight,
-    backgroundColor: GLOBALS.COLORS.WHITE
+    backgroundColor: GLOBALS.COLORS.WHITE,
   },
   header: {
     flexDirection: "row",
@@ -116,6 +114,8 @@ const styles = StyleSheet.create({
     // left: 0,
     // bottom: 0,
     // zIndex: 99,
+    borderWidth: 1,
+    borderColor: "transparent",
     height: 60,
   },
   notifier: {

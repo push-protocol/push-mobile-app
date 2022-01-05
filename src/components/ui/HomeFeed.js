@@ -13,14 +13,16 @@ import {
   ScrollView,
 } from "react-native";
 import Toast from "react-native-simple-toast";
-
+import { Asset } from "expo-asset";
+import ImageView from "react-native-image-viewing";
+import ImagePreviewFooter from "src/components/ui/ImagePreviewFooter";
 import FeedItemWrapper from "src/components/ui/testFeed/FeedItemWrapperComponent.js";
 import FeedItemComponent from "src/components/ui/testFeed/FeedItemComponents.js";
 import EPNSActivity from "src/components/loaders/EPNSActivity";
 import StylishLabel from "src/components/labels/StylishLabel";
-import { ToasterOptions, Toaster } from 'src/components/indicators/Toaster';
+import { ToasterOptions, Toaster } from "src/components/indicators/Toaster";
 
-import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
+import AppBadgeHelper from "src/helpers/AppBadgeHelper";
 
 import ENV_CONFIG from "src/env.config";
 import { ActivityIndicator } from "react-native";
@@ -35,6 +37,10 @@ export default function TestFeed(props) {
   const [callOnScrollEnd, setCallOnScrollEnd] = useState(false);
   const [endReached, setEndReached] = useState(false);
   const [refresh, setRefresh] = useState(false);
+
+  const [loadedImages, setLoadedImages] = useState([]);
+  const [renderGallery, setRenderGallery] = useState(false);
+  const [startFromIndex, setStartFromIndex] = useState(0);
 
   // SET REFS
   const FlatListFeedsRef = useRef(null);
@@ -60,7 +66,7 @@ export default function TestFeed(props) {
 
     FlatListFeedsRef.current.scrollToOffset({ animated: true, offset: 0 });
     fetchFeed(true);
-  }
+  };
 
   // Perform some task to wait
   const performTimeConsumingTask = async () => {
@@ -69,6 +75,30 @@ export default function TestFeed(props) {
         resolve("result");
       }, 500)
     );
+  };
+
+  const showImagePreview = async (fileURL) => {
+    let validPaths = [];
+    let fileIndex = -1;
+
+    // Add Image
+    // Download the file if not done already
+    await Asset.loadAsync(fileURL);
+
+    // Push to valid path
+    validPaths.push({
+      uri: Asset.fromModule(fileURL).uri,
+      id: fileURL,
+    });
+
+    fileIndex = validPaths.length - 1;
+
+    // console.log("LOADED IMAGES:");
+    // console.log(validPaths);
+
+    setLoadedImages(validPaths);
+    setRenderGallery(true);
+    setStartFromIndex(fileIndex);
   };
 
   const fetchFeed = async (rewrite) => {
@@ -99,39 +129,45 @@ export default function TestFeed(props) {
             op: "read",
           }),
         })
-        .then((response) => response.json())
-        .then((resJson) => {
-          if (resJson.count != 0 && resJson.results != []) {
-            const data = feed;
+          .then((response) => response.json())
+          .then((resJson) => {
+            if (resJson.count != 0 && resJson.results != []) {
+              const data = feed;
 
-            // clear the notifs if present
-            AppBadgeHelper.setAppBadgeCount(0);
+              // clear the notifs if present
+              AppBadgeHelper.setAppBadgeCount(0);
 
-            // toast.current.show("New Notifications fetched");
-            if (rewrite) {
-              setFeed([...resJson.results]);
-              setEndReached(false);
+              // toast.current.show("New Notifications fetched");
+              if (rewrite) {
+                setFeed([...resJson.results]);
+                setEndReached(false);
+              } else {
+                setFeed([...data, ...resJson.results]);
+              }
+
+              setPage(paging + 1);
+
+              props.ToasterFunc(
+                "New Notifications Loaded!",
+                "",
+                ToasterOptions.TYPE.GRADIENT_PRIMARY
+              );
+            } else {
+              setEndReached(true);
+              props.ToasterFunc(
+                "No More Notifications",
+                "",
+                ToasterOptions.TYPE.ERROR
+              );
             }
-            else {
-              setFeed([...data, ...resJson.results]);
-            }
-
-            setPage(paging + 1);
-
-            props.ToasterFunc("New Notifications Loaded!", '', ToasterOptions.TYPE.GRADIENT_PRIMARY);
-          } else {
-            setEndReached(true);
-            props.ToasterFunc("No More Notifications", '', ToasterOptions.TYPE.ERROR);
-          }
-        })
-        .catch((error) => {
-          console.warn(error);
-        });
+          })
+          .catch((error) => {
+            console.warn(error);
+          });
 
         setloading(false);
         setRefreshing(false);
       }
-
     }
     // console.log(feed);
   };
@@ -166,6 +202,7 @@ export default function TestFeed(props) {
                 // 	})
                 // }
                 item={item}
+                onImagePreview={(fileURL) => showImagePreview(fileURL)}
                 // nid={item["nid"]}
                 // itemArchived={(nid) => {
                 // 	this.archiveItem(nid);
@@ -213,6 +250,23 @@ export default function TestFeed(props) {
                 </View>
               ) : null;
             }}
+          />
+
+          <ImageView
+            images={loadedImages}
+            imageIndex={startFromIndex}
+            visible={renderGallery}
+            swipeToCloseEnabled={true}
+            onRequestClose={() => {
+              setRenderGallery(false);
+            }}
+            FooterComponent={({ imageIndex }) => (
+              <ImagePreviewFooter
+                imageIndex={imageIndex}
+                imagesCount={loadedImages.length}
+                fileURI={loadedImages[imageIndex].uri}
+              />
+            )}
           />
 
           {/* {loading && (
