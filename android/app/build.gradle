@@ -78,8 +78,7 @@ import com.android.build.OutputFile
 project.ext.react = [
     entryFile: "index.js",
     enableHermes: false,
-    bundleInRelease: false,
-bundleInDebug: true
+    bundleInRelease: false
 ]
 
 apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
@@ -153,12 +152,6 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-         release {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
-        }
     }
     buildTypes {
         debug {
@@ -189,8 +182,6 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-randombytes')
-    implementation project(':@react-native-async-storage_async-storage')
     implementation project(':react-native-video')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules

@@ -1,4 +1,4 @@
-package io.epns.epnsstaging.generated;
+package io.epns.epnsproject.generated;
 
 import java.util.Arrays;
 import java.util.List;
