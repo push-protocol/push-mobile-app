@@ -174,7 +174,7 @@ export default class ProfileDisplayer extends Component {
 									<View style={styles.settings}>
 										<PrimaryButton
 											iconFactory="Ionicons"
-											icon="md-lock"
+											icon="md-lock-closed"
 											iconSize={24}
 											title="Lock App"
 											fontSize={16}

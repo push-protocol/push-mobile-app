@@ -125,15 +125,15 @@ const SettingsScreen = ({ style, navigation }) => {
   //   type: 'button',
   // })
 
-  // Swipe Reset
-  settingsOptions.push({
-    title: "Swipe / Reset Wallet",
-    img: require("assets/ui/unlink.png"),
-    func: () => {
-      resetWallet();
-    },
-    type: "button",
-  });
+  // // Swipe Reset
+  // settingsOptions.push({
+  //   title: "Swipe / Reset Wallet",
+  //   img: require("assets/ui/unlink.png"),
+  //   func: () => {
+  //     resetWallet();
+  //   },
+  //   type: "button",
+  // });
 
   // Wallet Connect Disconnect
   if (connector.connected) {

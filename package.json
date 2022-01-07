@@ -114,7 +114,7 @@
     "jetifier": "2.0.0",
     "react-native-dotenv": "^0.2.0",
     "react-test-renderer": "~16.9.0",
-    "rn-nodeify": "github:tradle/rn-nodeify"
+    "rn-nodeify": "10.3.0"
   },
   "jest": {
     "preset": "react-native"

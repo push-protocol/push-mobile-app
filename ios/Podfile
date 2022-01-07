@@ -5,7 +5,6 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 target 'NotificationServiceExtension' do
    pod 'Firebase/Messaging'
-   pod 'Firebase/Analytics'
 end
 
 target 'epns' do
@@ -55,19 +54,16 @@ target 'epns' do
 
   pod 'react-native-video', :path => '../node_modules/react-native-video'
 
-  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
-
-  pod 'react-native-randombytes', :path => '../node_modules/react-native-randombytes'
-
 end
 
 post_install do |installer|
   ## Fix for XCode 12.5
-      find_and_replace("../node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm",
-      "_initializeModules:(NSArray<id<RCTBridgeModule>> *)modules", "_initializeModules:(NSArray<Class> *)modules")
-      find_and_replace("../node_modules/react-native/ReactCommon/turbomodule/core/platform/ios/RCTTurboModuleManager.mm",
-      "RCTBridgeModuleNameForClass(module))", "RCTBridgeModuleNameForClass(Class(module)))")
-  end
+  find_and_replace("../node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm",
+    "_initializeModules:(NSArray<id<RCTBridgeModule>> *)modules", "_initializeModules:(NSArray<Class> *)modules")
+  find_and_replace("../node_modules/react-native/ReactCommon/turbomodule/core/platform/ios/RCTTurboModuleManager.mm",
+     "RCTBridgeModuleNameForClass(module))", "RCTBridgeModuleNameForClass(Class(module)))")
+end
+
 
 def find_and_replace(dir, findstr, replacestr)
   Dir[dir].each do |name|
