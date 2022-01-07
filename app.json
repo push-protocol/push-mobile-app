@@ -1,10 +1,11 @@
 {
   "name": "epns",
-  "displayName": "epns",
+  "displayName": "EPNS",
   "expo": {
     "name": "epns",
     "slug": "epns",
-    "version": "0.5.1",
+    "version": "0.6",
+    "scheme": "epns",
     "platforms": [
       "ios",
       "android",

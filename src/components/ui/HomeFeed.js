@@ -13,24 +13,23 @@ import {
   ScrollView,
 } from "react-native";
 import Toast from "react-native-simple-toast";
-
+import { Asset } from "expo-asset";
+import ImageView from "react-native-image-viewing";
+import ImagePreviewFooter from "src/components/ui/ImagePreviewFooter";
 import FeedItemWrapper from "src/components/ui/testFeed/FeedItemWrapperComponent.js";
 import FeedItemComponent from "src/components/ui/testFeed/FeedItemComponents.js";
 import EPNSActivity from "src/components/loaders/EPNSActivity";
 import StylishLabel from "src/components/labels/StylishLabel";
+import { ToasterOptions, Toaster } from "src/components/indicators/Toaster";
+
+import AppBadgeHelper from "src/helpers/AppBadgeHelper";
 
 import ENV_CONFIG from "src/env.config";
 import { ActivityIndicator } from "react-native";
 
 export default function TestFeed(props) {
-  // const toast = useRef(null);
-
-  const DEVICE_HEIGHT = Dimensions.get("window").height;
-  useEffect(() => {
-    fetchFeed();
-    setRefresh(props.refresh);
-  }, []);
-
+  // SET STATES
+  const [initialized, setInitialized] = useState(false);
   const [feed, setFeed] = useState([]);
   const [page, setPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
@@ -39,58 +38,138 @@ export default function TestFeed(props) {
   const [endReached, setEndReached] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
+  const [loadedImages, setLoadedImages] = useState([]);
+  const [renderGallery, setRenderGallery] = useState(false);
+  const [startFromIndex, setStartFromIndex] = useState(0);
+
+  // SET REFS
+  const FlatListFeedsRef = useRef(null);
+
+  // LOGIC
   useEffect(() => {
-    onRefreshFunction();
-    setFeed([]);
-    setEndReached(false);
-    setPage(1);
-    fetchFeed();
-  }, [props.refresh]);
-
-  const fetchFeed = async () => {
-    if (!endReached) {
-      setloading(true);
-      const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_GET_FEEDS;
-
-      const wallet = props.wallet;
-      const response = await fetch(apiURL, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user: wallet.toLowerCase(),
-          page: page,
-          pageSize: 10,
-          op: "read",
-        }),
-      });
-      const resJson = await response.json();
-      if (resJson.count != 0 && resJson.results != []) {
-        const data = feed;
-        // toast.current.show("New Notifications fetched");
-        await setFeed([...data, ...resJson.results]);
-        await setPage(page + 1);
-        Toast.show("More Notifications Loaded.", 0.1);
-      } else {
-        setEndReached(true);
-        Toast.show("No More Notifications.", Toast.SHORT);
-      }
-      setloading(false);
-      setRefreshing(false);
+    if (!initialized) {
+      fetchInitializedFeeds();
     }
-    // console.log(feed);
+  }, [initialized]);
+
+  useEffect(() => {
+    if (props.refreshNotifFeeds) {
+      setInitialized(false);
+    }
+  }, [props.refreshNotifFeeds]);
+
+  // Refresh Feed
+  const fetchInitializedFeeds = async () => {
+    setInitialized(true);
+    setRefreshing(true);
+    await performTimeConsumingTask();
+
+    FlatListFeedsRef.current.scrollToOffset({ animated: true, offset: 0 });
+    fetchFeed(true);
   };
 
-  const onRefreshFunction = async () => {
-    if (!endReached) {
-      setFeed([]);
-      setPage(1);
-      setEndReached(false);
-      setRefreshing(true);
-      fetchFeed();
+  // Perform some task to wait
+  const performTimeConsumingTask = async () => {
+    return new Promise((resolve) =>
+      setTimeout(() => {
+        resolve("result");
+      }, 500)
+    );
+  };
+
+  const showImagePreview = async (fileURL) => {
+    let validPaths = [];
+    let fileIndex = -1;
+
+    // Add Image
+    // Download the file if not done already
+    await Asset.loadAsync(fileURL);
+
+    // Push to valid path
+    validPaths.push({
+      uri: Asset.fromModule(fileURL).uri,
+      id: fileURL,
+    });
+
+    fileIndex = validPaths.length - 1;
+
+    // console.log("LOADED IMAGES:");
+    // console.log(validPaths);
+
+    setLoadedImages(validPaths);
+    setRenderGallery(true);
+    setStartFromIndex(fileIndex);
+  };
+
+  const fetchFeed = async (rewrite) => {
+    if (!endReached || rewrite == true) {
+      if (!loading) {
+        //props.ToasterFunc("Fetching Notifs!", ToasterOptions.ICON_TYPE.PROCESSING, ToasterOptions.TYPE.GRADIENT_PRIMARY);
+
+        // Check if this is a rewrite
+        let paging = page;
+        if (rewrite) {
+          paging = 1;
+        }
+
+        setloading(true);
+        const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_GET_FEEDS;
+
+        const wallet = props.wallet;
+        await fetch(apiURL, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user: wallet.toLowerCase(),
+            page: paging,
+            pageSize: 20,
+            op: "read",
+          }),
+        })
+          .then((response) => response.json())
+          .then((resJson) => {
+            if (resJson.count != 0 && resJson.results != []) {
+              const data = feed;
+
+              // clear the notifs if present
+              AppBadgeHelper.setAppBadgeCount(0);
+
+              // toast.current.show("New Notifications fetched");
+              if (rewrite) {
+                setFeed([...resJson.results]);
+                setEndReached(false);
+              } else {
+                setFeed([...data, ...resJson.results]);
+              }
+
+              setPage(paging + 1);
+
+              props.ToasterFunc(
+                "New Notifications Loaded!",
+                "",
+                ToasterOptions.TYPE.GRADIENT_PRIMARY
+              );
+            } else {
+              setEndReached(true);
+              props.ToasterFunc(
+                "No More Notifications",
+                "",
+                ToasterOptions.TYPE.ERROR
+              );
+            }
+          })
+          .catch((error) => {
+            console.warn(error);
+          });
+
+        setloading(false);
+        setRefreshing(false);
+      }
     }
+    // console.log(feed);
   };
 
   return (
@@ -99,6 +178,7 @@ export default function TestFeed(props) {
         {/* {feed != [] && ( */}
         <View style={{ flex: 1 }}>
           <FlatList
+            ref={FlatListFeedsRef}
             data={feed}
             keyExtractor={(item) => item.payload_id.toString()}
             // onEndReached={() => {
@@ -122,6 +202,7 @@ export default function TestFeed(props) {
                 // 	})
                 // }
                 item={item}
+                onImagePreview={(fileURL) => showImagePreview(fileURL)}
                 // nid={item["nid"]}
                 // itemArchived={(nid) => {
                 // 	this.archiveItem(nid);
@@ -130,12 +211,12 @@ export default function TestFeed(props) {
                 privateKey={props.privateKey}
               />
             )}
-            onEndReached={async () => (!endReached ? await fetchFeed() : null)}
+            onEndReached={async () => (!endReached ? fetchFeed(false) : null)}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={() => {
-                  onRefreshFunction();
+                  setInitialized(false);
                 }}
               />
             }
@@ -164,11 +245,28 @@ export default function TestFeed(props) {
             }
             ListFooterComponent={() => {
               return loading ? (
-                <View style={{ paddingBottom: 20, marginTop: 20 }}>
-                  <ActivityIndicator size="large" color="#000000" />
+                <View style={{ paddingBottom: 30, marginTop: 20 }}>
+                  <EPNSActivity style={styles.activity} size="small" />
                 </View>
               ) : null;
             }}
+          />
+
+          <ImageView
+            images={loadedImages}
+            imageIndex={startFromIndex}
+            visible={renderGallery}
+            swipeToCloseEnabled={true}
+            onRequestClose={() => {
+              setRenderGallery(false);
+            }}
+            FooterComponent={({ imageIndex }) => (
+              <ImagePreviewFooter
+                imageIndex={imageIndex}
+                imagesCount={loadedImages.length}
+                fileURI={loadedImages[imageIndex].uri}
+              />
+            )}
           />
 
           {/* {loading && (

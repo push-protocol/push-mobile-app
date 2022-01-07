@@ -78,7 +78,8 @@ import com.android.build.OutputFile
 project.ext.react = [
     entryFile: "index.js",
     enableHermes: false,
-    bundleInRelease: false
+    bundleInRelease: false,
+bundleInDebug: true
 ]
 
 apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
@@ -134,8 +135,8 @@ android {
         applicationId "io.epns.epns"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 49
-        versionName "0.5.6"
+        versionCode 50
+        versionName "0.6"
     }
     splits {
         abi {
@@ -147,6 +148,12 @@ android {
     }
     signingConfigs {
         debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+         release {
             storeFile file('debug.keystore')
             storePassword 'android'
             keyAlias 'androiddebugkey'
@@ -182,6 +189,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-randombytes')
+    implementation project(':@react-native-async-storage_async-storage')
     implementation project(':react-native-video')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules

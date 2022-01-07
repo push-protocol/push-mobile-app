@@ -4,12 +4,19 @@ import {
   TouchableWithoutFeedback,
   Text,
   Animated,
+  Image,
   ActivityIndicator,
   Easing,
   StyleSheet
 } from 'react-native';
 import {
   Ionicons,
+  FontAwesome,
+  FontAwesome5,
+  MaterialIcons,
+  MaterialCommunityIcons,
+  Feather,
+  AntDesign
 } from '@expo/vector-icons';
 
 import GLOBALS from 'src/Globals';
@@ -109,7 +116,9 @@ export default class PrimaryButton extends Component {
   };
 
   // Render Icon
-  renderIcon = (iconFactory, icon, color, size, iconAlignToLeft) => {
+  renderIcon = (iconFactory, icon, color, size, iconAlignToLeft, title) => {
+    let Factory;
+
     // Need to import to enable them
     switch (iconFactory) {
       case 'FontAwesome':
@@ -121,28 +130,44 @@ export default class PrimaryButton extends Component {
       case 'EvilIcons':
         Factory = EvilIcons;
         break;
+      case 'MaterialIcons':
+        Factory = MaterialIcons;
+      break;
       case 'MaterialCommunityIcons':
         Factory = MaterialCommunityIcons;
+        break;
+      case 'Feather':
+        Factory = Feather;
         break;
       default:
         Factory = Ionicons;
     }
 
     if (iconFactory) {
-      let iconStyle = styles.iconAlignRight;
-      if (iconAlignToLeft) {
-        iconStyle = styles.iconAlignLeft;
-      }
 
-      return (
-        <View style={iconStyle}>
-          <Factory
-            name = {icon}
-            color = {color}
-            size = {size}
-          />
-        </View>
-      );
+      let iconStyle = null;
+
+      if (iconFactory != "Image") {
+        return (
+          <View style={[styles.iconContainer, iconStyle]}>
+            <Factory
+              name = {icon}
+              color = {color}
+              size = {size}
+            />
+          </View>
+        );
+      }
+      else {
+        return (
+          <View style={[styles.iconContainer, iconStyle]}>
+            <Image
+                style={[{width: size}, styles.iconImage]}
+                source={icon}
+            />
+          </View>
+        );
+      }
     }
     else {
       return null;
@@ -153,12 +178,16 @@ export default class PrimaryButton extends Component {
   render() {
     const {
       style,
+      setButtonStyle,
+      setButtonInnerStyle,
       iconFactory,
       icon,
       iconSize,
+      iconColor,
       iconAlignToLeft,
       title,
       fontSize,
+      setHeight,
       loading,
       disabled,
       onPress
@@ -189,6 +218,11 @@ export default class PrimaryButton extends Component {
       containerItemsPlacementStyle.flexDirection='row-reverse';
     }
 
+    let outerContainerStyle = {};
+    if (setHeight) {
+      updatedButtonStyle.height=setHeight;
+    }
+
     return (
       <View style={[ style, styles.outerContainer ]}>
         <TouchableWithoutFeedback
@@ -201,6 +235,7 @@ export default class PrimaryButton extends Component {
           <Animated.View
             style = {[
               styles.innerContainer,
+              setButtonStyle,
               updatedButtonStyle,
               animatedStyle
             ]}
@@ -216,17 +251,20 @@ export default class PrimaryButton extends Component {
                 ? <ActivityIndicator
                     style={styles.activity}
                     size="small"
-                    color={GLOBALS.COLORS.WHITE}
+                    color={iconColor ? iconColor : this.state.fontColor}
                   />
-                : <View style={[ styles.container, containerItemsPlacementStyle ]}>
-                    <Text style = {[styles.title, fontStyle ]}>{title}</Text>
+                : <View style={[ styles.container, setButtonInnerStyle, containerItemsPlacementStyle ]}>
+                    {title &&
+                      <Text style = {[styles.title, fontStyle ]}>{title}</Text>
+                    }
                     {
                       this.renderIcon(
                         iconFactory,
                         icon,
-                        this.state.fontColor,
+                        iconColor ? iconColor : this.state.fontColor,
                         iconSize,
-                        iconAlignToLeft
+                        iconAlignToLeft,
+                        title
                       )
                     }
                   </View>
@@ -246,7 +284,6 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     alignSelf: 'stretch',
     flexGrow: 1,
-    maxHeight: 56,
   },
   innerContainer: {
     flexDirection: 'row',
@@ -271,6 +308,14 @@ const styles = StyleSheet.create({
     color: GLOBALS.COLORS.WHITE,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 5,
+  },
+  iconContainer: {
+    marginHorizontal: 5,
+  },
+  iconImage: {
+    resizeMode: 'contain',
+    flex: 1,
   },
   iconAlignRight: {
     paddingLeft: 10,
