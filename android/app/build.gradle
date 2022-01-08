@@ -135,8 +135,8 @@ android {
         applicationId "io.epns.epnsstaging"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 13
-        versionName "0.6"
+        versionCode 14
+        versionName "0.6.1"
     }
     splits {
         abi {
