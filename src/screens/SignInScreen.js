@@ -316,6 +316,7 @@ const SignInScreen = ({ style, route, navigation }) => {
                   }}
                 />
 
+              {/*
                 <View style={styles.colDivider}></View>
 
                 <PrimaryButton
@@ -331,6 +332,7 @@ const SignInScreen = ({ style, route, navigation }) => {
                     loadAdvanceScreen();
                   }}
                 />
+              */}
               </View>
             </View>
           ) : (
