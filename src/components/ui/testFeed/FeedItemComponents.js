@@ -67,20 +67,20 @@ const FeedItem = (props) => {
 
   // }
 
-  const onPress = (url) => {
-    if (validURL(url) || 1) {
-      // console.log("OPENING URL ", url);
-      // Bypassing the check so that custom app domains can be opened
-      Linking.canOpenURL(url).then((supported) => {
-        if (supported) {
-          Linking.openURL(url);
-        } else {
-          // showToast("Device Not Supported", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
-        }
-      });
-    } else {
-      // showToast("Link not valid", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
-    }
+  const onPress = async (url) => {
+    // if (validURL(url) || 1) {
+    // console.log("OPENING URL ", url);
+    // Bypassing the check so that custom app domains can be opened
+    // Linking.canOpenURL(url).then((supported) => {
+    //   if (supported) {
+    await Linking.openURL(url);
+    // } else {
+    // showToast("Device Not Supported", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
+    // }
+    // });
+    // } else {
+    //   // showToast("Link not valid", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
+    // }
   };
 
   // to check valid url
