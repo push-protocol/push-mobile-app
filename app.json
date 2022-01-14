@@ -4,7 +4,7 @@
   "expo": {
     "name": "epns",
     "slug": "epns",
-    "version": "0.6",
+    "version": "0.6.5",
     "scheme": "epns",
     "platforms": [
       "ios",
