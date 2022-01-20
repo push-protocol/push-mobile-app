@@ -266,7 +266,7 @@ const SignInScreen = ({ style, route, navigation }) => {
             <View style={styles.entryFooter}>
               <PrimaryButton
                 iconFactory="Image"
-                icon={require("assets/ui/walletConnect.png")}
+                icon={require("assets/ui/walletconnect.png")}
                 iconSize={24}
                 title={!connector.connected ? "WalletConnect" : "Disconnect"}
                 fontSize={16}
