@@ -14,7 +14,6 @@ const ComponentsScreen = ({ style }) => {
 
   return (
     <SafeAreaView style={[ styles.container, style ]}>
-      <Image source={imageSource} />
       <Text style={styles.textStyle}>Greetings! Started with ReactNative</Text>
       <Text style={styles.subHeaderStyle}>My name is {name}</Text>
     </SafeAreaView>

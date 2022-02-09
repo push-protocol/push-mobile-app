@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   },
   badge: {
     position: 'absolute',
-    top: -2,
+    top: 8,
     left: -4,
     backgroundColor: GLOBALS.COLORS.BADGE_RED,
     paddingVertical: 2,

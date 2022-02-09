@@ -1,18 +1,26 @@
 import "./web3globals.js";
 import "./shim.js";
+import crypto from "crypto";
+
 import "react-native-gesture-handler";
 
 import React, { useState, useCallback } from "react";
-import { Alert, AsyncStorage } from "react-native";
+import { StatusBar, Alert, View, Text, TouchableOpacity } from "react-native";
+import Constants from "expo-constants";
+
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import AppBadgeHelper from "./src/helpers/AppBadgeHelper";
 import messaging from "@react-native-firebase/messaging";
 
+import WalletConnectProvider from "@walletconnect/react-native-dapp";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import Header from "src/components/ui/Header";
+import Tabs from "src/components/ui/Tabs";
+
 import SplashScreen from "src/screens/SplashScreen";
-import SampleFeed from "src/screens/SampleFeed";
 import HomeScreen from "src/screens/HomeScreen";
 import SettingsScreen from "src/screens/SettingsScreen";
 
@@ -22,15 +30,15 @@ import SignInScreenAdvance from "src/screens/SignInScreenAdvance";
 import BiometricScreen from "src/screens/BiometricScreen";
 import PushNotifyScreen from "src/screens/PushNotifyScreen";
 import SetupCompleteScreen from "src/screens/SetupCompleteScreen";
-import Tabs from "./src/screens/Tabs";
+import OnboardingChannelScreen from "./src/screens/OnboardingChannelScreen";
 
+import AppBadgeHelper from "src/helpers/AppBadgeHelper";
 import MetaStorage from "src/singletons/MetaStorage";
 import Notify from "src/singletons/Notify";
 
 import AuthContext, { APP_AUTH_STATES } from "src/components/auth/AuthContext";
 import ENV_CONFIG from "src/env.config";
 import GLOBALS from "src/Globals";
-import OnboardingChannel from "./src/screens/OnboardingChannel";
 
 // Assign console.log to nothing
 if (!ENV_CONFIG.SHOW_CONSOLE) {
@@ -131,12 +139,17 @@ export default function App({ navigation }) {
               pkey: userPKey,
             }}
           /> */}
-
           <Stack.Screen
             name="Tabs"
             component={Tabs}
             options={{
-              headerShown: false,
+              statusBar: {
+                backgroundColor: "white",
+                style: "dark",
+              },
+              header: () => (
+                <Header wallet={userWallet} navigation={navigation} />
+              ),
             }}
             initialParams={{
               wallet: userWallet,
@@ -151,18 +164,9 @@ export default function App({ navigation }) {
               title: "Settings",
               headerStyle: {
                 backgroundColor: GLOBALS.COLORS.WHITE,
-              },
-              headerTintColor: GLOBALS.COLORS.MID_GRAY,
-            }}
-          />
-
-          <Stack.Screen
-            name="SampleFeed"
-            component={SampleFeed}
-            options={{
-              title: "Example Feed",
-              headerStyle: {
-                backgroundColor: GLOBALS.COLORS.WHITE,
+                height:
+                  Constants.statusBarHeight +
+                  GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
               },
               headerTintColor: GLOBALS.COLORS.MID_GRAY,
             }}
@@ -220,8 +224,8 @@ export default function App({ navigation }) {
           />
 
           {/* <Stack.Screen
-            name="OnboardingChannel"
-            component={OnboardingChannel}
+            name="OnboardingChannelScreen"
+            component={OnboardingChannelScreen}
             options={{
               headerShown: false,
             }}
@@ -230,7 +234,6 @@ export default function App({ navigation }) {
               pkey: userPKey,
             }}
           /> */}
-
           <Stack.Screen
             name="SetupComplete"
             component={SetupCompleteScreen}
@@ -262,7 +265,19 @@ export default function App({ navigation }) {
   // RENDER
   return (
     <AuthContext.Provider value={authContext}>
-      <SafeAreaProvider>
+      <WalletConnectProvider
+        redirectUrl={`${ENV_CONFIG.DEEPLINK_URL}`}
+        bridge="https://bridge.walletconnect.org"
+        clientMeta={{
+          description: "Connect with WalletConnect",
+          url: "https://walletconnect.org",
+          icons: ["https://walletconnect.org/walletconnect-logo.png"],
+          name: "WalletConnect",
+        }}
+        storageOptions={{
+          asyncStorage: AsyncStorage,
+        }}
+      >
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{
@@ -290,7 +305,7 @@ export default function App({ navigation }) {
             {renderSelectiveScreens()}
           </Stack.Navigator>
         </NavigationContainer>
-      </SafeAreaProvider>
+      </WalletConnectProvider>
     </AuthContext.Provider>
   );
 }
