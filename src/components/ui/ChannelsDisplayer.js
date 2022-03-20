@@ -10,7 +10,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   Linking,
+  TextInput
 } from "react-native";
+
+
+
 import { useNavigation } from "@react-navigation/native";
 
 import StylishLabel from "src/components/labels/StylishLabel";
@@ -22,6 +26,8 @@ import ChannelItem from "src/components/ui/ChannelItem";
 import ENV_CONFIG from "src/env.config";
 import GLOBALS from "src/Globals";
 
+
+
 const ChannelsDisplayer = ({ style, wallet, pKey }) => {
   const [channels, setChannels] = useState([]);
   const [page, setPage] = useState(1);
@@ -30,6 +36,10 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
 
   const [contract, setContract] = useState(null);
   const [endReached, setEndReached] = useState(false);
+
+  const [searchTimer, setSearchTimer] = useState(null);
+  const [isSearchEnded, setIsSearchEnded] = useState(false);
+
 
   useEffect(() => {
     setRefreshing(true);
@@ -99,16 +109,99 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
     return !!pattern.test(str);
   };
 
+  const searchForChannel = async (channelName) => {
+    setChannels([])
+    
+    // normal fetch for empty query
+    if (channelName.trim() === ""){
+      console.log("trim called");
+      await fetchChannels();
+      return;
+    }
+     
+    setIsSearchEnded(false)
+    console.log("searching ....",search);
+    const apiURL = "https://backend-kovan.epns.io/apis/channels/search"; 
+    const searchRes = await fetch(apiURL,{
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body:JSON.stringify({
+        "chainId": 42,
+        "page": 1,
+        "pageSize": 5,
+        "op": "read",
+        "query": channelName
+      })
+    });
+
+    const resJson = await searchRes.json();
+    setChannels(resJson.channels);
+    setIsSearchEnded(true)
+    console.log("found res",resJson);
+
+  }
+
+  const handleChannelSearch = async(searchQuery)=>{
+    if (searchTimer) {
+      clearTimeout(searchTimer);
+    }
+    setSearch(searchQuery);
+    setSearchTimer(
+        setTimeout(() => {
+            searchForChannel(searchQuery);
+        }, DEBOUNCE_TIMEOUT),
+    );
+  }
+
+  const DEBOUNCE_TIMEOUT = 500; //time in millisecond which we want to wait for then to finish typing
+  // React.useEffect(() => {
+  //   console.log("i was changed");
+  //   searchForChannel()
+  // }, [search]);
+
+  const [search, setSearch] = React.useState("");
+
   return (
     <SafeAreaView style={[styles.container, style]}>
+      <View style={styles.searchView}>
+        <TextInput
+          style={styles.searchBar}
+          onChangeText={(e)=>{
+            handleChannelSearch(e)
+          }}
+          value={search}
+          placeholder={"Search by name/address"}
+        />
+        <Image
+          source={require("assets/ui/search.png")}
+          style={styles.imageLogoStyle}
+        />
+      </View>
+
       {channels.length == 0 && (
         <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-          <EPNSActivity style={styles.activity} size="small" />
-          <StylishLabel
-            style={styles.infoText}
-            fontSize={16}
-            title="[dg:Fetching Channels!]"
-          />
+          {isSearchEnded 
+            ?
+              // Show channel not found label
+              <StylishLabel
+                style={styles.infoText}
+                fontSize={16}
+                title="[dg:No channels match your query, please search for another name/address]"
+              /> 
+            :
+              // Show channel fetching label
+              <>
+                <EPNSActivity style={styles.activity} size="small" />
+                <StylishLabel
+                  style={styles.infoText}
+                  fontSize={16}
+                  title="[dg:Fetching Channels!]"
+                />
+              </>
+          }
         </View>
       )}
       {channels.length != 0 && (
@@ -119,7 +212,7 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
           keyExtractor={(item) => item.channel.toString()}
           initialNumToRender={20}
           showsVerticalScrollIndicator={false}
-          onEndReached={async () => (!endReached ? setRefreshing(true) : null)}
+          onEndReached={async () => (!endReached && search === "" ? setRefreshing(true) : null)}
           renderItem={({ item }) => (
             <ChannelItem
               item={item}
@@ -166,6 +259,34 @@ const styles = StyleSheet.create({
   infoText: {
     marginVertical: 10,
   },
+  searchView:{
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 60,
+    margin: 12,
+    borderWidth: 1.5,
+    borderColor:'1px solid rgba(169, 169, 169, 0.5)',
+    borderRadius:10,
+    padding:4
+  },
+  searchBar:{
+    fontSize:18,
+    textTransform:'capitalize',
+    height:55,
+    paddingLeft:35,
+    paddingRight:30,
+  },
+  imageLogoStyle:{
+    padding: 15,
+    margin: 5,
+    height: 50,
+    width: 50,
+    resizeMode: 'stretch',
+    alignItems: 'center',
+  }
 });
+
+
 
 export default ChannelsDisplayer;

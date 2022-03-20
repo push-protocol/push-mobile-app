@@ -40,11 +40,15 @@ import AuthContext, { APP_AUTH_STATES } from "src/components/auth/AuthContext";
 import ENV_CONFIG from "src/env.config";
 import GLOBALS from "src/Globals";
 
+
+
 // Assign console.log to nothing
 if (!ENV_CONFIG.SHOW_CONSOLE) {
   console.log("Production Environment... disabling console!");
   // console.log = () => {};
 }
+
+
 
 // Create Stack Navigator
 const Stack = createStackNavigator();
@@ -58,6 +62,8 @@ export default function App({ navigation }) {
   const [userWallet, setUserWallet] = useState("");
   const [userPKey, setUserPKey] = useState("");
 
+  console.disableYellowBox = true;
+  
   // HANDLE ON APP START
   React.useEffect(() => {
     // PUSH NOTIFICATIONS HANDLING
