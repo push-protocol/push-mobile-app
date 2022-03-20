@@ -1,32 +1,19 @@
 import "@ethersproject/shims";
-import { ethers } from "ethers";
 import React, { useState, useEffect } from "react";
 import {
   View,
-  Text,
   SafeAreaView,
   FlatList,
   Image,
   StyleSheet,
-  TouchableOpacity,
   Linking,
   TextInput
 } from "react-native";
 
-
-
-import { useNavigation } from "@react-navigation/native";
-
 import StylishLabel from "src/components/labels/StylishLabel";
 import EPNSActivity from "src/components/loaders/EPNSActivity";
-
-import SubscriptionStatus from "src/components/buttons/SubscriptionStatus";
 import ChannelItem from "src/components/ui/ChannelItem";
-
 import ENV_CONFIG from "src/env.config";
-import GLOBALS from "src/Globals";
-
-
 
 const ChannelsDisplayer = ({ style, wallet, pKey }) => {
   const [channels, setChannels] = useState([]);
@@ -40,6 +27,8 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
   const [searchTimer, setSearchTimer] = useState(null);
   const [isSearchEnded, setIsSearchEnded] = useState(false);
 
+  const DEBOUNCE_TIMEOUT = 500; //time in millisecond which we want to wait for then to finish typing
+  const [search, setSearch] = React.useState("");
 
   useEffect(() => {
     setRefreshing(true);
@@ -81,7 +70,6 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
 
   const openURL = (url) => {
     if (validURL(url) || 1) {
-      // console.log("OPENING URL ", url);
       // Bypassing the check so that custom app domains can be opened
       Linking.canOpenURL(url).then((supported) => {
         if (supported) {
@@ -114,14 +102,12 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
     
     // normal fetch for empty query
     if (channelName.trim() === ""){
-      console.log("trim called");
       await fetchChannels();
       return;
     }
      
     setIsSearchEnded(false)
-    console.log("searching ....",search);
-    const apiURL = "https://backend-kovan.epns.io/apis/channels/search"; 
+    const apiURL =  ENV_CONFIG.EPNS_SERVER + "/channels/search"; 
     const searchRes = await fetch(apiURL,{
       method: "POST",
       headers: {
@@ -131,7 +117,7 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
       body:JSON.stringify({
         "chainId": 42,
         "page": 1,
-        "pageSize": 5,
+        "pageSize": 20,
         "op": "read",
         "query": channelName
       })
@@ -140,7 +126,6 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
     const resJson = await searchRes.json();
     setChannels(resJson.channels);
     setIsSearchEnded(true)
-    console.log("found res",resJson);
 
   }
 
@@ -155,14 +140,6 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
         }, DEBOUNCE_TIMEOUT),
     );
   }
-
-  const DEBOUNCE_TIMEOUT = 500; //time in millisecond which we want to wait for then to finish typing
-  // React.useEffect(() => {
-  //   console.log("i was changed");
-  //   searchForChannel()
-  // }, [search]);
-
-  const [search, setSearch] = React.useState("");
 
   return (
     <SafeAreaView style={[styles.container, style]}>
@@ -286,7 +263,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   }
 });
-
-
 
 export default ChannelsDisplayer;
