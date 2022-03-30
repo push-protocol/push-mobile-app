@@ -7,6 +7,8 @@ import Notify from "src/singletons/Notify";
 
 import App from "./App";
 
+
+
 // Register background handler
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
 	return new Promise(async (resolve, reject) => {
@@ -16,6 +18,7 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
 		resolve(true);
 	});
 });
+
 
 function HeadlessCheck({ isHeadless }) {
 	if (isHeadless) {
