@@ -1769,7 +1769,7 @@
     "@types/yargs" "^15.0.0"
     "chalk" "^3.0.0"
 
-"@react-native-async-storage/async-storage@1.15.14":
+"@react-native-async-storage/async-storage@^1.15.14":
   "integrity" "sha512-eJF2horabXazwszCyyXDe4w7sBSWlB0WPA8akKXuN2n7WXKHYeQJPN41lS9OahrhSZuZwqftNFE9VWgPXA8wyA=="
   "resolved" "https://registry.npmjs.org/@react-native-async-storage/async-storage/-/async-storage-1.15.14.tgz"
   "version" "1.15.14"
@@ -10562,8 +10562,7 @@
     "bn.js" "^5.2.0"
 
 "rn-nodeify@github:tradle/rn-nodeify":
-  "integrity" "sha512-urcIXrwPTTDAiGYPQifhpNsjVbi6Y+iBLDWr3e8+M7/3rD0cYv+ZyxNe6MnA5Bt8cNZmMNWxunpfQ9tuX27pcw=="
-  "resolved" "https://codeload.github.com/tradle/rn-nodeify/tar.gz/338d8d6ba8438403093e9409e9a9d88ad884926f"
+  "resolved" "git+ssh://git@github.com/tradle/rn-nodeify.git#338d8d6ba8438403093e9409e9a9d88ad884926f"
   "version" "10.3.0"
   dependencies:
     "@yarnpkg/lockfile" "^1.0.0"

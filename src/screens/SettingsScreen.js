@@ -103,7 +103,8 @@ const SettingsScreen = ({ style, navigation }) => {
   // To Reset Wallet
   const resetWallet = async () => {
     await AuthenticationHelper.resetSignedInUser();
-
+    await MetaStorage.instance.clearStorage()
+    
     authContext.handleAppAuthState(APP_AUTH_STATES.INITIALIZING);
   };
 
