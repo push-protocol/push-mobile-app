@@ -1,14 +1,10 @@
 import './web3globals.js'
 import './shim.js'
-import crypto from 'crypto'
 
 import 'react-native-gesture-handler'
 
-import React, { useState, useCallback } from 'react'
-import { StatusBar, Alert, View, Text, TouchableOpacity } from 'react-native'
+import React, { useState } from 'react'
 import Constants from 'expo-constants'
-
-import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -21,7 +17,6 @@ import Header from 'src/components/ui/Header'
 import Tabs from 'src/components/ui/Tabs'
 
 import SplashScreen from 'src/screens/SplashScreen'
-import HomeScreen from 'src/screens/HomeScreen'
 import SettingsScreen from 'src/screens/SettingsScreen'
 
 import WelcomeScreen from 'src/screens/WelcomeScreen'
@@ -30,17 +25,14 @@ import SignInScreenAdvance from 'src/screens/SignInScreenAdvance'
 import BiometricScreen from 'src/screens/BiometricScreen'
 import PushNotifyScreen from 'src/screens/PushNotifyScreen'
 import SetupCompleteScreen from 'src/screens/SetupCompleteScreen'
-import OnboardingChannelScreen from './src/screens/OnboardingChannelScreen'
 
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper'
-import MetaStorage from 'src/singletons/MetaStorage'
 import Notify from 'src/singletons/Notify'
 
 import AuthContext, { APP_AUTH_STATES } from 'src/components/auth/AuthContext'
 import ENV_CONFIG from 'src/env.config'
 import GLOBALS from 'src/Globals'
-import { Provider } from 'react-redux'
-import store from 'redux-store'
+import { useSelector } from 'react-redux'
 
 // Assign console.log to nothing
 if (!ENV_CONFIG.SHOW_CONSOLE) {
@@ -52,13 +44,30 @@ if (!ENV_CONFIG.SHOW_CONSOLE) {
 const Stack = createStackNavigator()
 
 export default function App({ navigation }) {
+  const state = useSelector((state) => state)
+
+  console.log({ state })
   // State Settings
   // VALID APP AUTH STATES
   const [appAuthState, setAppAuthState] = useState(APP_AUTH_STATES.INITIALIZING)
   const [userWallet, setUserWallet] = useState('')
   const [userPKey, setUserPKey] = useState('')
 
-  console.log({ appAuthState })
+  const handleAppNotificationBadge = async () => {
+    await AppBadgeHelper.setAppBadgeCount(0)
+  }
+
+  // HANDLE AUTH FLOW
+  const authContext = React.useMemo(
+    () => ({
+      handleAppAuthState: (newAuthState, wallet, pkey) => {
+        setUserWallet(wallet)
+        setUserPKey(pkey)
+        setAppAuthState(newAuthState)
+      },
+    }),
+    [],
+  )
 
   // HANDLE ON APP START
   React.useEffect(() => {
@@ -97,50 +106,12 @@ export default function App({ navigation }) {
     }
   }, [])
 
-  React.useEffect(() => {
-    //
-    // messaging()
-    //   .getInitialNotification()
-    //   .then(remoteMessage => {
-    //     if (remoteMessage) {
-    //       Notify.instance.triggerNotificationListenerCallback();
-    //     }
-    //   });
-  }, [])
-
-  const handleAppNotificationBadge = async () => {
-    await AppBadgeHelper.setAppBadgeCount(0)
-  }
-
-  // HANDLE AUTH FLOW
-  const authContext = React.useMemo(
-    () => ({
-      handleAppAuthState: (newAuthState, wallet, pkey) => {
-        setUserWallet(wallet)
-        setUserPKey(pkey)
-        setAppAuthState(newAuthState)
-      },
-    }),
-    [],
-  )
-
   // RENDER ASSIST
   renderSelectiveScreens = () => {
     // User is Authenticated
     if (appAuthState == APP_AUTH_STATES.AUTHENTICATED) {
       return (
         <React.Fragment>
-          {/* <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{
-              headerShown: false,
-            }}
-            initialParams={{
-              wallet: userWallet,
-              pkey: userPKey,
-            }}
-          /> */}
           <Stack.Screen
             name="Tabs"
             component={Tabs}
@@ -225,17 +196,6 @@ export default function App({ navigation }) {
             }}
           />
 
-          {/* <Stack.Screen
-            name="OnboardingChannelScreen"
-            component={OnboardingChannelScreen}
-            options={{
-              headerShown: false,
-            }}
-            initialParams={{
-              wallet: userWallet,
-              pkey: userPKey,
-            }}
-          /> */}
           <Stack.Screen
             name="SetupComplete"
             component={SetupCompleteScreen}
@@ -266,50 +226,48 @@ export default function App({ navigation }) {
 
   // RENDER
   return (
-    <Provider store={store}>
-      <AuthContext.Provider value={authContext}>
-        <WalletConnectProvider
-          redirectUrl={`${ENV_CONFIG.DEEPLINK_URL}`}
-          bridge="https://bridge.walletconnect.org"
-          clientMeta={{
-            description: 'Connect with WalletConnect',
-            url: 'https://walletconnect.org',
-            icons: ['https://walletconnect.org/walletconnect-logo.png'],
-            name: 'WalletConnect',
-          }}
-          storageOptions={{
-            asyncStorage: AsyncStorage,
-          }}
-        >
-          <NavigationContainer>
-            <Stack.Navigator
-              screenOptions={{
-                title: '',
-                headerStyle: {
-                  backgroundColor: GLOBALS.COLORS.WHITE,
-                  shadowColor: 'transparent',
-                  shadowRadius: 0,
-                  shadowOffset: {
-                    height: 0,
-                  },
-                  elevation: 0,
+    <AuthContext.Provider value={authContext}>
+      <WalletConnectProvider
+        redirectUrl={`${ENV_CONFIG.DEEPLINK_URL}`}
+        bridge="https://bridge.walletconnect.org"
+        clientMeta={{
+          description: 'Connect with WalletConnect',
+          url: 'https://walletconnect.org',
+          icons: ['https://walletconnect.org/walletconnect-logo.png'],
+          name: 'WalletConnect',
+        }}
+        storageOptions={{
+          asyncStorage: AsyncStorage,
+        }}
+      >
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              title: '',
+              headerStyle: {
+                backgroundColor: GLOBALS.COLORS.WHITE,
+                shadowColor: 'transparent',
+                shadowRadius: 0,
+                shadowOffset: {
+                  height: 0,
                 },
-                headerTitleStyle: {
-                  color: GLOBALS.COLORS.BLACK,
-                },
-                headerBackTitleStyle: {
-                  color: GLOBALS.COLORS.PRIMARY,
-                },
-                headerTintColor: GLOBALS.COLORS.BLACK,
-                headerTitleAlign: 'center',
-                headerBackTitleVisible: false,
-              }}
-            >
-              {renderSelectiveScreens()}
-            </Stack.Navigator>
-          </NavigationContainer>
-        </WalletConnectProvider>
-      </AuthContext.Provider>
-    </Provider>
+                elevation: 0,
+              },
+              headerTitleStyle: {
+                color: GLOBALS.COLORS.BLACK,
+              },
+              headerBackTitleStyle: {
+                color: GLOBALS.COLORS.PRIMARY,
+              },
+              headerTintColor: GLOBALS.COLORS.BLACK,
+              headerTitleAlign: 'center',
+              headerBackTitleVisible: false,
+            }}
+          >
+            {renderSelectiveScreens()}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </WalletConnectProvider>
+    </AuthContext.Provider>
   )
 }

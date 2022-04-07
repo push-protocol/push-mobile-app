@@ -1,4 +1,4 @@
-import { SIGNIN_USER, SIGNOUT_USER } from 'redux-store/constants'
+import { SIGNIN_USER, SIGNOUT_USER } from '../constants'
 
 export const signIn = (data) => {
   return {
