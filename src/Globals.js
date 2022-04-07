@@ -1,5 +1,4 @@
 export default {
-
   LINKS: {
     APPBOT_NAME: 'App Bot',
     APP_WEBSITE: 'https://epns.io',
@@ -26,10 +25,10 @@ export default {
   },
 
   CONSTANTS: {
-    CRED_TYPE_WALLET: "TypeWallet",
-    CRED_TYPE_PRIVATE_KEY: "TypePrivateKey",
+    CRED_TYPE_WALLET: 'TypeWallet',
+    CRED_TYPE_PRIVATE_KEY: 'TypePrivateKey',
 
-    NULL_EXCEPTION: "NULL",
+    NULL_EXCEPTION: 'NULL',
 
     MAX_PASSCODE_ATTEMPTS: 5,
 
@@ -89,4 +88,14 @@ export default {
     LIGHT_MAROON: 'rgba(159.0, 0.0, 0.0, 1.0)',
     LIGHTER_MAROON: 'rgba(129.0, 0.0, 0.0, 1.0)',
   },
-};
+  SCREENS: {
+    WELCOME: 'Welcome',
+    SIGNIN: 'SignIn',
+    SIGNINADVANCE: 'SignInAdvance',
+    BIOMETRIC: 'Biometric',
+    PUSHNOTIFY: 'PushNotify',
+    SETUPCOMPLETE: 'SetupComplete',
+    TABS: 'Tabs',
+    SETTINGS: 'Settings',
+  },
+}

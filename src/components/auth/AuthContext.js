@@ -1,18 +1,17 @@
-import React, { Component, createContext } from 'react';
+import React from 'react'
 
-const AuthContext = React.createContext({});
-export default AuthContext;
+const AuthContext = React.createContext({})
 
-export const useAuthContext = () => React.useContext(AuthContext);
+export default AuthContext
+
+export const useAuthContext = () => React.useContext(AuthContext)
 
 export const APP_AUTH_STATES = {
   INITIALIZING: 1,
   ONBOARDING: 2,
   ONBOARDED: 3,
-  AUTHENTICATED: 4
-};
-
-
+  AUTHENTICATED: 4,
+}
 
 // LOOK INTO IT LATER
 

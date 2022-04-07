@@ -94,7 +94,9 @@
     "react-native-youtube": "2.0.1",
     "react-navigation": "4.3.9",
     "react-navigation-stack": "2.5.1",
+    "react-redux": "^7.2.8",
     "readable-stream": "1.1.14",
+    "redux": "^4.1.2",
     "secp256k1-v4": "https://github.com/HarshRajat/secp256k1-node",
     "stream-browserify": "^1.0.0",
     "string_decoder": "^0.10.31",
@@ -109,6 +111,7 @@
   "devDependencies": {
     "@babel/core": "7.9.6",
     "babel-jest": "~25.2.6",
+    "babel-plugin-module-resolver": "^4.1.0",
     "babel-preset-react-native": "^4.0.1",
     "jest": "~25.2.6",
     "jetifier": "2.0.0",

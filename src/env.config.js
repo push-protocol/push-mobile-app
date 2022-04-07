@@ -1,4 +1,3 @@
-import { Platform } from "react-native";
 import {
   TESTNET_INFURA_API,
   MAINNET_INFURA_API,
@@ -19,10 +18,10 @@ import {
   APP_VERSION,
   METAMASK_LINK_PROD,
   METAMASK_LINK_STAGING,
-} from "react-native-dotenv";
+} from 'react-native-dotenv'
 
-const IS_PROD_ENV = 1; // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work
-const SHOW_CONSOLE = 1; // Show or disable console
+const IS_PROD_ENV = 1 // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work
+const SHOW_CONSOLE = 1 // Show or disable console
 
 export default {
   PROD_ENV: IS_PROD_ENV,
@@ -55,4 +54,4 @@ export default {
 
   // App Version
   APP_VERSION: APP_VERSION,
-};
+}

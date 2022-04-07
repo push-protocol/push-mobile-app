@@ -121,6 +121,7 @@ export default class HomeScreen extends Component {
     if (firstSignIn) {
       // Request new device token
       await Notify.instance.requestDeviceToken(true);
+      
 
       // Set it to false for future
       await MetaStorage.instance.setFirstSignInByUser(false);
