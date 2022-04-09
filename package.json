@@ -54,7 +54,7 @@
     "expo-sharing": "8.1.0",
     "expo-updates": "0.2.12",
     "https-browserify": "0.0.1",
-    "moment": "2.27.0",
+    "moment": "2.29.2",
     "node-libs-browser": "^2.2.1",
     "patch-package": "^6.2.1",
     "path-browserify": "0.0.0",
