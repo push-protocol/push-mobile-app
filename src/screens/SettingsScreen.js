@@ -1,4 +1,4 @@
-import React, { Component, useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import {
   StatusBar,
   View,
@@ -11,30 +11,22 @@ import SafeAreaView from 'react-native-safe-area-view'
 
 import { useWalletConnect } from '@walletconnect/react-native-dapp'
 
-import ProfileDisplayer from 'src/components/ui/ProfileDisplayer'
-import ImageButton from 'src/components/buttons/ImageButton'
-import PrimaryButton from 'src/components/buttons/PrimaryButton'
-
 import ImageTitleButton from 'src/components/buttons/ImageTitleButton'
 import ImageTitleSwitchButton from 'src/components/buttons/ImageTitleSwitchButton'
 
 import OverlayBlur from 'src/components/modals/OverlayBlur'
 import { ToasterOptions, Toaster } from 'src/components/indicators/Toaster'
 
-import Web3Helper from 'src/helpers/Web3Helper'
 import AuthenticationHelper from 'src/helpers/AuthenticationHelper'
-import MetaStorage from 'src/singletons/MetaStorage'
 
 import FeedDBHelper from 'src/helpers/FeedDBHelper'
-import AuthContext, {
-  useAuthContext,
-  APP_AUTH_STATES,
-} from 'src/components/auth/AuthContext'
 import ENV_CONFIG from 'src/env.config'
 import GLOBALS from 'src/Globals'
+import { setAuthState, signOut } from 'src/redux-store/actions/signin'
+import { useDispatch } from 'react-redux'
 
-const SettingsScreen = ({ style, navigation }) => {
-  const authContext = useAuthContext()
+const SettingsScreen = ({ navigation }) => {
+  const dispatch = useDispatch()
 
   // Wallet Connect functionality
   const connector = useWalletConnect()
@@ -94,15 +86,14 @@ const SettingsScreen = ({ style, navigation }) => {
     )
 
     setTimeout(() => {
-      authContext.handleAppAuthState(APP_AUTH_STATES.ONBOARDED)
+      dispatch(setAuthState(GLOBALS.APP_AUTH_STATES.ONBOARDED))
     }, 1500)
   }
 
   // To Reset Wallet
   const resetWallet = async () => {
     await AuthenticationHelper.resetSignedInUser()
-
-    authContext.handleAppAuthState(APP_AUTH_STATES.INITIALIZING)
+    dispatch(signOut())
   }
 
   // TO SHOW TOASTER

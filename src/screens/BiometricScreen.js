@@ -1,9 +1,8 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 import {
   View,
   Text,
   TextInput,
-  Image,
   InteractionManager,
   ActivityIndicator,
   Keyboard,
@@ -11,60 +10,58 @@ import {
   Vibration,
   Animated,
   StyleSheet,
-} from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
-import { SafeAreaView, useSafeArea } from "react-native-safe-area-context";
+} from 'react-native'
+import { useFocusEffect } from '@react-navigation/native'
+import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context'
 
-import messaging from "@react-native-firebase/messaging";
+import messaging from '@react-native-firebase/messaging'
 
-import { BlurView } from "expo-blur";
-import * as LocalAuthentication from "expo-local-authentication";
-import * as Permissions from "expo-permissions";
+import * as LocalAuthentication from 'expo-local-authentication'
 
-import * as Keychain from "react-native-keychain";
+import * as Keychain from 'react-native-keychain'
 
-import StylishLabel from "src/components/labels/StylishLabel";
-import DetailedInfoPresenter from "src/components/misc/DetailedInfoPresenter";
-import PrimaryButton from "src/components/buttons/PrimaryButton";
+import StylishLabel from 'src/components/labels/StylishLabel'
+import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter'
+import PrimaryButton from 'src/components/buttons/PrimaryButton'
 
-import OverlayBlur from "src/components/modals/OverlayBlur";
-import NoticePrompt from "src/components/modals/NoticePrompt";
+import OverlayBlur from 'src/components/modals/OverlayBlur'
+import NoticePrompt from 'src/components/modals/NoticePrompt'
 
-import CryptoHelper from "src/helpers/CryptoHelper";
-import BiometricHelper from "src/helpers/BiometricHelper";
-import MetaStorage from "src/singletons/MetaStorage";
+import CryptoHelper from 'src/helpers/CryptoHelper'
+import BiometricHelper from 'src/helpers/BiometricHelper'
+import MetaStorage from 'src/singletons/MetaStorage'
 
-import GLOBALS from "src/Globals";
+import GLOBALS from 'src/Globals'
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
     React.useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         // After screen is loaded
-        setScreenTransitionAsDone();
-      });
+        setScreenTransitionAsDone()
+      })
 
-      return () => task.cancel();
-    }, [])
-  );
+      return () => task.cancel()
+    }, []),
+  )
 
-  return null;
+  return null
 }
 
 function GetScreenInsets() {
-  const insets = useSafeArea();
+  const insets = useSafeArea()
   if (insets.bottom > 0) {
     // Adjust inset by
-    return <View style={styles.insetAdjustment}></View>;
+    return <View style={styles.insetAdjustment}></View>
   } else {
-    return <View style={styles.noInsetAdjustment}></View>;
+    return <View style={styles.noInsetAdjustment}></View>
   }
 }
 
 export default class BiometricScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       transitionFinished: false,
       detailedInfoPresetned: false,
@@ -72,18 +69,18 @@ export default class BiometricScreen extends Component {
       fader: new Animated.Value(0),
       passcodeFader: new Animated.Value(1),
 
-      passcode: "",
-      passcodeMirror: "",
+      passcode: '',
+      passcodeMirror: '',
       passcodeMismatched: false,
       passcodeVerifyStep: false,
       passcodeConfirmedStep: false,
 
       pkeyEncrypted: false,
-      encryptedPKey: "",
+      encryptedPKey: '',
 
       biometricSupported: false, // false or as per LocalAuthentication
       biometricEnabled: false,
-    };
+    }
   }
 
   // FUNCTIONS
@@ -91,59 +88,58 @@ export default class BiometricScreen extends Component {
   validatePassCode = async (value) => {
     if (value.length != 6) {
       // if the value isn't equal to 6, it's not complete yet
-      return;
+      return
     }
 
     if (this.state.passcodeVerifyStep == false) {
       const callback = () => {
         this.setState(
           {
-            passcodeMirror: "",
+            passcodeMirror: '',
             passcodeVerifyStep: true,
           },
           () => {
             if (this.refs.PasscodeInput) {
-              this.refs.PasscodeInput.focus();
+              this.refs.PasscodeInput.focus()
             }
-          }
-        );
-      };
+          },
+        )
+      }
 
-      this.fadeInPasscode(callback);
+      this.fadeInPasscode(callback)
     } else {
       if (this.state.passcode !== this.state.passcodeMirror) {
         // Password mismatch, re-enter
-        Vibration.vibrate();
-        this.fadeInPasscode(this.resetPassCode());
+        Vibration.vibrate()
+        this.fadeInPasscode(this.resetPassCode())
       } else {
-        Keyboard.dismiss();
+        Keyboard.dismiss()
 
         // Encrypt Private Key and Do Hashing
-        const { privateKey } = this.props.route.params;
-        let encrptedPkey;
+        const { privateKey } = this.props.route.params
+        let encrptedPkey
 
         if (!privateKey) {
           // encrypted private key is empty to support wallet sign in
-          encryptedPkey = "";
+          encryptedPkey = ''
         } else {
           encryptedPkey = CryptoHelper.encryptWithAES(
             privateKey,
-            this.state.passcode
-          );
+            this.state.passcode,
+          )
         }
         const hashedCode = await CryptoHelper.hashWithSha256(
-          this.state.passcode
-        );
+          this.state.passcode,
+        )
 
         // Store private key and hashed code and continue
         await MetaStorage.instance.setEncryptedPKeyAndHashedPasscode(
           encryptedPkey,
-          hashedCode
-        );
+          hashedCode,
+        )
 
         // Check if biometric is available
-        const biometricSupported =
-          await BiometricHelper.getSupportedBiometric();
+        const biometricSupported = await BiometricHelper.getSupportedBiometric()
 
         this.setState({
           passcodeConfirmedStep: true,
@@ -151,46 +147,46 @@ export default class BiometricScreen extends Component {
           encryptedPKey: encryptedPkey,
 
           biometricSupported: biometricSupported,
-        });
+        })
       }
     }
-  };
+  }
 
   resetPassCode = (value) => {
     this.setState({
-      passcode: "",
-      passcodeMirror: "",
+      passcode: '',
+      passcodeMirror: '',
       passcodeMismatched: true,
       passcodeVerifyStep: false,
       passcodeConfirmedStep: false,
-    });
-  };
+    })
+  }
 
   // Set Pass Code
   changePassCode = (value) => {
     // accept only digits
-    if (/^\d+$/.test(value) || value === "") {
+    if (/^\d+$/.test(value) || value === '') {
       if (this.state.passcodeVerifyStep == false) {
         this.setState(
           {
             passcode: value,
           },
           () => {
-            this.validatePassCode(value);
-          }
-        );
+            this.validatePassCode(value)
+          },
+        )
       } else {
         this.setState(
           {
             passcodeMirror: value,
           },
           () => {
-            this.validatePassCode(value);
-          }
-        );
+            this.validatePassCode(value)
+          },
+        )
       }
     }
-  };
+  }
 
   fadeInPasscode = (callback) => {
     this.setState(
@@ -199,17 +195,17 @@ export default class BiometricScreen extends Component {
       },
       () => {
         if (callback) {
-          callback();
+          callback()
         }
 
         Animated.timing(this.state.passcodeFader, {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }).start();
-      }
-    );
-  };
+        }).start()
+      },
+    )
+  }
 
   // Open Notice Prompt With Overlay Blur
   toggleNoticePrompt = (
@@ -218,42 +214,42 @@ export default class BiometricScreen extends Component {
     title,
     subtitle,
     notice,
-    showIndicator
+    showIndicator,
   ) => {
     // Set Notice First
     if (title) {
-      this.refs.NoticePrompt.changeTitle(title);
+      this.refs.NoticePrompt.changeTitle(title)
     }
 
     if (subtitle) {
-      this.refs.NoticePrompt.changeSubtitle(subtitle);
+      this.refs.NoticePrompt.changeSubtitle(subtitle)
     }
 
     if (notice) {
-      this.refs.NoticePrompt.changeNotice(notice);
+      this.refs.NoticePrompt.changeNotice(notice)
     }
 
     if (showIndicator) {
-      this.refs.NoticePrompt.changeIndicator(showIndicator);
+      this.refs.NoticePrompt.changeIndicator(showIndicator)
     }
 
     // Set render state of this and the animate the blur modal in
-    this.refs.OverlayBlur.changeRenderState(toggle, animate);
-    this.refs.NoticePrompt.changeRenderState(toggle, animate);
-  };
+    this.refs.OverlayBlur.changeRenderState(toggle, animate)
+    this.refs.NoticePrompt.changeRenderState(toggle, animate)
+  }
 
   // Detect PK Code
   onPKDetect = (code) => {
     this.setState({
       pkey: code,
-    });
-  };
+    })
+  }
 
   // Reset PK Code
   resetPKey = () => {
     this.setState(
       {
-        pkey: "",
+        pkey: '',
         pkeyVerified: false,
 
         fader: new Animated.Value(0),
@@ -263,10 +259,10 @@ export default class BiometricScreen extends Component {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }).start();
-      }
-    );
-  };
+        }).start()
+      },
+    )
+  }
 
   // When Animation is Finished
   animationFinished = () => {
@@ -279,61 +275,61 @@ export default class BiometricScreen extends Component {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }).start();
-      }
-    );
-  };
+        }).start()
+      },
+    )
+  }
 
   // Load the Next Screen
   loadNextScreenAfterAdditionalSetup = async () => {
     // Check if biometric is present, if so present authentication
     // If authenticated, store the passcode on secure chain
     if (this.state.biometricSupported) {
-      let biometricType = "Null";
+      let biometricType = 'Null'
 
       if (
         this.state.biometricSupported ==
         LocalAuthentication.AuthenticationType.FINGERPRINT
       ) {
-        biometricType = "TouchID";
+        biometricType = 'TouchID'
       } else if (
         this.state.biometricSupported ==
         LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
       ) {
-        biometricType = "FaceID";
+        biometricType = 'FaceID'
       }
 
-      const options = {};
-      options.promptMessage = `Allow ${biometricType} to Authenticate you quickly and securely.`;
-      options.cancelLabel = "Skip for Now";
-      options.fallbackLabel = "";
-      options.disableDeviceFallback = true;
+      const options = {}
+      options.promptMessage = `Allow ${biometricType} to Authenticate you quickly and securely.`
+      options.cancelLabel = 'Skip for Now'
+      options.fallbackLabel = ''
+      options.disableDeviceFallback = true
 
-      const response = await LocalAuthentication.authenticateAsync(options);
+      const response = await LocalAuthentication.authenticateAsync(options)
 
-      let biometricEnabled = false;
+      let biometricEnabled = false
       if (response.success) {
-        biometricEnabled = true;
+        biometricEnabled = true
       }
 
       if (biometricEnabled) {
         // Store passcode and encrypted private key in keychain
-        const username = String(this.state.passcode);
+        const username = String(this.state.passcode)
 
         // since private key can be absent and android doesn't support that...
-        let pass = this.state.encryptedPKey;
+        let pass = this.state.encryptedPKey
         if (!pass) {
-          pass = GLOBALS.CONSTANTS.NULL_EXCEPTION;
+          pass = GLOBALS.CONSTANTS.NULL_EXCEPTION
         }
-        const password = String(pass);
+        const password = String(pass)
         const AUTH_OPTIONS = {
           accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
           accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
-        };
+        }
 
-        await Keychain.setGenericPassword(username, password, AUTH_OPTIONS);
+        await Keychain.setGenericPassword(username, password, AUTH_OPTIONS)
 
-        this.loadNextScreen();
+        this.loadNextScreen()
       } else {
         // Display enabling push notification message and move on
         this.toggleNoticePrompt(
@@ -342,92 +338,92 @@ export default class BiometricScreen extends Component {
           `${biometricType} Skipped`,
           `${biometricType} is recommended for added security and to quickly authenticate you`,
           `If you wish to enable ${biometricType} in the future, you can do so from the [appsettings:App Settings]`,
-          false
-        );
+          false,
+        )
       }
     } else {
-      this.loadNextScreen();
+      this.loadNextScreen()
     }
-  };
+  }
 
   loadNextScreenSequential = () => {
-    this.loadNextScreen();
-  };
+    this.loadNextScreen()
+  }
 
   loadNextScreen = async () => {
     // Goto Next Screen
     // Check if the push notification permission is waiting for first grant
     // If not, skip this step completely as user either gave permission or denied it
-    const authorizationStatus = await messaging().hasPermission();
-    const { privateKey } = this.props.route.params;
+    const authorizationStatus = await messaging().hasPermission()
+    const { privateKey } = this.props.route.params
 
     if (authorizationStatus == messaging.AuthorizationStatus.NOT_DETERMINED) {
-      this.props.navigation.navigate("PushNotify", {
+      this.props.navigation.navigate('PushNotify', {
         privateKey: privateKey,
         wallet: this.props.route.params.wallet,
         fromOnboarding: this.props.route.params.fromOnboarding,
-      });
+      })
     } else {
-      this.props.navigation.navigate("SetupComplete", {
+      this.props.navigation.navigate('SetupComplete', {
         privateKey: privateKey,
         wallet: this.props.route.params.wallet,
         fromOnboarding: this.props.route.params.fromOnboarding,
-      });
+      })
     }
-  };
+  }
 
   // RETURN
   render() {
-    const { navigation } = this.props;
+    const { navigation } = this.props
 
     // Keyboard Behavior
-    let keyboardAvoidBehavior = "padding";
-    if (Platform.OS === "android") {
-      keyboardAvoidBehavior = "height";
+    let keyboardAvoidBehavior = 'padding'
+    if (Platform.OS === 'android') {
+      keyboardAvoidBehavior = 'height'
     }
 
     // Pick Passcode
-    let passcodeSegment;
+    let passcodeSegment
 
     if (this.state.passcodeVerifyStep == false) {
-      passcodeSegment = this.state.passcode.split("");
+      passcodeSegment = this.state.passcode.split('')
     } else if (!this.state.passcodeConfirmedStep) {
-      passcodeSegment = this.state.passcodeMirror.split("");
+      passcodeSegment = this.state.passcodeMirror.split('')
     }
 
     // For Changing Text Prompt
-    let prompt = "[d:Pick a Passcode for your Vault]";
+    let prompt = '[d:Pick a Passcode for your Vault]'
     if (this.state.passcodeMismatched && !this.state.passcodeVerifyStep) {
-      prompt = "[e:Passcode Mismatch, Please Try Again]";
+      prompt = '[e:Passcode Mismatch, Please Try Again]'
     }
     if (this.state.passcodeVerifyStep == true) {
-      prompt = "[t:Re-enter your Passcode to verify]";
+      prompt = '[t:Re-enter your Passcode to verify]'
     }
 
     // For Biometric Optional Prompt
-    let continuePrompt = "Continue";
-    let continueIcon = "ios-arrow-forward";
+    let continuePrompt = 'Continue'
+    let continueIcon = 'ios-arrow-forward'
 
-    let biometricType = "Null";
-    let biometricPrompt = "";
+    let biometricType = 'Null'
+    let biometricPrompt = ''
 
     if (this.state.biometricSupported) {
       if (
         this.state.biometricSupported ==
         LocalAuthentication.AuthenticationType.FINGERPRINT
       ) {
-        biometricType = "TouchID";
+        biometricType = 'TouchID'
       } else if (
         this.state.biometricSupported ==
         LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
       ) {
-        biometricType = "FaceID";
+        biometricType = 'FaceID'
       }
 
-      continueIcon = "md-finger-print";
-      continuePrompt = `Enable ${biometricType} and Continue`;
+      continueIcon = 'md-finger-print'
+      continuePrompt = `Enable ${biometricType} and Continue`
 
-      biometricPrompt = `Enabling [b:${biometricType} is optional] but further improves your security. It also gives you [d:fast and secure access].`;
+      biometricPrompt = `Enabling [b:${biometricType} is optional] but further improves your security. It also gives you [d:fast and secure access].`
     }
 
     return (
@@ -437,10 +433,10 @@ export default class BiometricScreen extends Component {
             setScreenTransitionAsDone={() => {
               this.setState({
                 transitionFinished: true,
-              });
+              })
 
               if (this.refs.PasscodeInput) {
-                this.refs.PasscodeInput.focus();
+                this.refs.PasscodeInput.focus()
               }
             }}
           />
@@ -449,7 +445,7 @@ export default class BiometricScreen extends Component {
           <View style={styles.inner}>
             <DetailedInfoPresenter
               style={styles.intro}
-              icon={require("assets/ui/biometric.png")}
+              icon={require('assets/ui/biometric.png')}
               contentView={
                 <View style={styles.introContent}>
                   {this.state.passcodeConfirmedStep == false ? (
@@ -481,7 +477,7 @@ export default class BiometricScreen extends Component {
                           style={styles.input}
                           maxLength={6}
                           contextMenuHidden={true}
-                          keyboardType={"numeric"}
+                          keyboardType={'numeric'}
                           autoCorrect={false}
                           onChangeText={(value) => this.changePassCode(value)}
                           value={
@@ -614,7 +610,7 @@ export default class BiometricScreen extends Component {
               animated={!this.state.detailedInfoPresetned}
               startAnimation={this.state.transitionFinished}
               animationCompleteCallback={() => {
-                this.animationFinished();
+                this.animationFinished()
               }}
             />
           </View>
@@ -633,7 +629,7 @@ export default class BiometricScreen extends Component {
                     bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
                     disabled={false}
                     onPress={() => {
-                      this.loadNextScreenAfterAdditionalSetup();
+                      this.loadNextScreenAfterAdditionalSetup()
                     }}
                   />
                 </React.Fragment>
@@ -651,12 +647,12 @@ export default class BiometricScreen extends Component {
           ref="NoticePrompt"
           closeTitle="OK"
           closeFunc={() => {
-            this.toggleNoticePrompt(false, true);
-            this.loadNextScreenSequential();
+            this.toggleNoticePrompt(false, true)
+            this.loadNextScreenSequential()
           }}
         />
       </React.Fragment>
-    );
+    )
   }
 }
 
@@ -665,27 +661,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: GLOBALS.COLORS.WHITE,
-    alignItems: "center",
-    justifyContent: "space-between",
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   header: {
     fontSize: 32,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     paddingTop: 40,
     paddingHorizontal: 20,
   },
   inner: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     bottom: 0,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 20,
     maxWidth: 540,
   },
   intro: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: GLOBALS.COLORS.WHITE,
   },
   introContent: {
@@ -699,8 +695,8 @@ const styles = StyleSheet.create({
   },
   paracenter: {
     marginBottom: 20,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   paraend: {
     marginBottom: 0,
@@ -715,11 +711,11 @@ const styles = StyleSheet.create({
   },
   fancyTextContainer: {
     ...StyleSheet.absoluteFill,
-    position: "absolute",
+    position: 'absolute',
     padding: 10,
-    alignItems: "center",
-    justifyContent: "space-around",
-    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    flexDirection: 'row',
   },
   fancyTextView: {
     borderBottomWidth: 1,
@@ -738,7 +734,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     minWidth: 24,
     minHeight: 36,
-    textAlign: "center",
+    textAlign: 'center',
     color: GLOBALS.COLORS.TRANSPARENT,
   },
   fancyTextPrimary: {
@@ -751,12 +747,12 @@ const styles = StyleSheet.create({
     color: GLOBALS.COLORS.GRADIENT_THIRD,
   },
   footer: {
-    width: "100%",
+    width: '100%',
     paddingHorizontal: 20,
   },
   divider: {
     marginVertical: 10,
-    width: "100%",
+    width: '100%',
   },
   insetAdjustment: {
     paddingBottom: 5,
@@ -764,4 +760,4 @@ const styles = StyleSheet.create({
   noInsetAdjustment: {
     paddingBottom: 20,
   },
-});
+})

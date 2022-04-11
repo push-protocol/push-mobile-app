@@ -1,4 +1,10 @@
-import { SIGNIN_USER, SIGNOUT_USER } from '../constants'
+import {
+  SIGNIN_USER,
+  SIGNOUT,
+  SET_AUTH_STATE,
+  SET_INITIAL_USER,
+} from '../constants'
+import Globals from 'src/Globals'
 
 const initialCurrentUserState = {
   wallet: '',
@@ -9,10 +15,23 @@ const initialCurrentUserState = {
 const initialState = {
   currentUser: initialCurrentUserState,
   users: [],
+  authState: Globals.APP_AUTH_STATES.INITIALIZING,
 }
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SET_INITIAL_USER:
+      return {
+        ...state,
+        currentUser: action.payload,
+      }
+
+    case SET_AUTH_STATE:
+      return {
+        ...state,
+        authState: action.payload,
+      }
+
     case SIGNIN_USER:
       return {
         ...state,
@@ -20,35 +39,8 @@ const authReducer = (state = initialState, action) => {
         users: [...state.users, action.payload.data],
       }
 
-    case SIGNOUT_USER:
-      let allUsers = [...state.users]
-      let index = allUsers.findIndex(
-        (user) => user.wallet === action.payload.wallet,
-      )
-
-      allUsers.splice(index, 1)
-
-      let previousUser = initialCurrentUserState
-
-      if (state.users.length > 1) {
-        const user = state.users[state.users.length - 1]
-
-        const index = state.users.findIndex((object) => {
-          return object.id === 'b'
-        })
-
-        previousUser.wallet = user.wallet
-        previousUser.userPKey = user.userPKey
-      }
-
-      return {
-        ...state,
-        currentUser:
-          state.users.length === 1
-            ? initialCurrentUserState
-            : state.users[state.users.length - 1].wallet,
-        users: allUsers,
-      }
+    case SIGNOUT:
+      return initialState
 
     default:
       return state

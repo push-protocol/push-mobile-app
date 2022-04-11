@@ -98,4 +98,10 @@ export default {
     TABS: 'Tabs',
     SETTINGS: 'Settings',
   },
+  APP_AUTH_STATES: {
+    INITIALIZING: 1,
+    ONBOARDING: 2,
+    ONBOARDED: 3,
+    AUTHENTICATED: 4,
+  },
 }

@@ -1,68 +1,53 @@
-import React, { Component } from "react";
-import {
-  StatusBar,
-  View,
-  Text,
-  InteractionManager,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
-import { useFocusEffect } from "@react-navigation/native";
+import React, { Component } from 'react'
+import { StatusBar, View, InteractionManager, StyleSheet } from 'react-native'
+import SafeAreaView from 'react-native-safe-area-view'
+import { useFocusEffect } from '@react-navigation/native'
 
-import messaging from "@react-native-firebase/messaging";
-import HomeFeed from "src/components/ui/HomeFeed";
-import FeedsDisplayer from "src/components/ui/FeedsDisplayer";
+import HomeFeed from 'src/components/ui/HomeFeed'
+import FeedsDisplayer from 'src/components/ui/FeedsDisplayer'
 
-import ImageButton from "src/components/buttons/ImageButton";
-import PrimaryButton from "src/components/buttons/PrimaryButton";
-import OverlayBlur from "src/components/modals/OverlayBlur";
-import { Feather } from "@expo/vector-icons";
+import OverlayBlur from 'src/components/modals/OverlayBlur'
 
-import { ToasterOptions, Toaster } from "src/components/indicators/Toaster";
+import { Toaster } from 'src/components/indicators/Toaster'
 
-import CryptoHelper from "src/helpers/CryptoHelper";
-import FeedDBHelper from "src/helpers/FeedDBHelper";
-import AppBadgeHelper from "src/helpers/AppBadgeHelper";
-import ServerHelper from "src/helpers/ServerHelper";
+import CryptoHelper from 'src/helpers/CryptoHelper'
+import ServerHelper from 'src/helpers/ServerHelper'
 
-import Notify from "src/singletons/Notify";
-import MetaStorage from "src/singletons/MetaStorage";
-import Utilities from "src/singletons/Utilities";
+import Notify from 'src/singletons/Notify'
+import MetaStorage from 'src/singletons/MetaStorage'
+import Utilities from 'src/singletons/Utilities'
 
-import AuthContext, { APP_AUTH_STATES } from "src/components/auth/AuthContext";
-import GLOBALS from "src/Globals";
+import GLOBALS from 'src/Globals'
 
 function ScreenFinishedTransition({ runAfterScreenTransition }) {
   useFocusEffect(
     React.useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         // After screen is loaded
-        runAfterScreenTransition();
-      });
+        runAfterScreenTransition()
+      })
 
-      return () => task.cancel();
-    }, [])
-  );
+      return () => task.cancel()
+    }, []),
+  )
 
-  return null;
+  return null
 }
 
 export default class HomeScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       transitionFinished: false,
       refresh: false,
-    };
+    }
   }
 
   // COMPONENT MOUNTED
   async componentDidMount() {
-    await this.maintainer();
+    await this.maintainer()
 
     // To Output msg payload for testing
     // this.outputSecretMsgPayload();
@@ -84,7 +69,7 @@ export default class HomeScreen extends Component {
         this.props.route.params.refreshNotifFeed &&
       this.props.route.params.refreshNotifFeed == true
     ) {
-      this.refreshFeeds();
+      this.refreshFeeds()
     }
   }
 
@@ -101,12 +86,12 @@ export default class HomeScreen extends Component {
 
     // Since User is logged in, reset passcode attempts
     await MetaStorage.instance.setRemainingPasscodeAttempts(
-      GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
-    );
+      GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS,
+    )
 
     // Initialize Utilities
-    Utilities.instance.initialize();
-  };
+    Utilities.instance.initialize()
+  }
 
   // Run After Transition is finished
   afterTransitionMaintainer = async () => {
@@ -117,42 +102,32 @@ export default class HomeScreen extends Component {
     // END DEPRECATION
 
     // First sign in by user
-    const firstSignIn = await MetaStorage.instance.getFirstSignInByUser();
+    const firstSignIn = await MetaStorage.instance.getFirstSignInByUser()
     if (firstSignIn) {
       // Request new device token
-      await Notify.instance.requestDeviceToken(true);
-      
+      await Notify.instance.requestDeviceToken(true)
 
       // Set it to false for future
-      await MetaStorage.instance.setFirstSignInByUser(false);
+      await MetaStorage.instance.setFirstSignInByUser(false)
     }
 
     // Refresh feed automatically
     // await this.refreshFeeds();
 
     // Get signed type and register device for push
-    let signedInType = await MetaStorage.instance.getSignedInType();
+    let signedInType = await MetaStorage.instance.getSignedInType()
     if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
-      ServerHelper.associateTokenToServerNoAuth(this.props.route.params.wallet);
+      ServerHelper.associateTokenToServerNoAuth(this.props.route.params.wallet)
     } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
       // Finally associate token to server if not done
       const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(
-        this.props.route.params.pkey
-      );
-      const privateKey = this.props.route.params.pkey;
+        this.props.route.params.pkey,
+      )
+      const privateKey = this.props.route.params.pkey
 
       // While an async function, there is no need to wait
-      ServerHelper.associateTokenToServer(publicKey, privateKey);
+      ServerHelper.associateTokenToServer(publicKey, privateKey)
     }
-  };
-
-  // Component Unmounted
-  componentWillUnmount() {
-    // DEPRECATED
-    // IN FAVOR OF /src/components/ui/Header.js handles it now
-    // // Reset Callback of notification
-    // Notify.instance.setNotificationListenerCallback(null);
-    // END DEPRECATION
   }
 
   // FUNCTIONS
@@ -169,14 +144,14 @@ export default class HomeScreen extends Component {
   refreshFeeds = async () => {
     //this.refs.FeedsDisplayer.resetFeedState();
     // await this.refs.FeedsDisplayer.triggerGetItemsFromDB(false);
-    this.props.navigation.setParams({ refreshNotifFeed: false });
+    this.props.navigation.setParams({ refreshNotifFeed: false })
 
     this.setState({ refresh: !this.state.refresh }, () => {
       if (this.state.refresh == true) {
-        this.setState({ refresh: false });
+        this.setState({ refresh: false })
       }
-    });
-  };
+    })
+  }
 
   // DEPRECATED
   // IN FAVOR OF /src/components/ui/Header.js handles it now
@@ -187,27 +162,26 @@ export default class HomeScreen extends Component {
 
   // To output secret msg payload, only used in testing
   outputSecretMsgPayload = async () => {
-    const pkey = this.props.route.params.pkey; // The private key used
+    const pkey = this.props.route.params.pkey // The private key used
 
-    const secret = "Random15Pass"; // 15 or less characters
-    const sub = "Hey this is subject"; // This is subject
+    const secret = 'Random15Pass' // 15 or less characters
+    const sub = 'Hey this is subject' // This is subject
     const msg =
-      "This message can go up to 200 letters I think, This message can go up to 200 letters I think"; // The intended msg
-    const cta = "https://someurl.com/"; // the call to action
-    const imgurl = "https://someimageurl.com/image.jpeg"; // the url of image
+      'This message can go up to 200 letters I think, This message can go up to 200 letters I think' // The intended msg
+    const cta = 'https://someurl.com/' // the call to action
+    const imgurl = 'https://someimageurl.com/image.jpeg' // the url of image
 
-    CryptoHelper.outputMsgPayload(secret, sub, msg, cta, imgurl, pkey);
-  };
+    CryptoHelper.outputMsgPayload(secret, sub, msg, cta, imgurl, pkey)
+  }
 
   // TO SHOW TOASTER
   showToast = (msg, icon, type, tapCB, screenTime) => {
-    this.refs.Toaster.showToast(msg, icon, type, tapCB, screenTime);
-  };
+    this.refs.Toaster.showToast(msg, icon, type, tapCB, screenTime)
+  }
 
   // RENDER
   render() {
-    const { navigation } = this.props;
-    const { wallet, pkey } = this.props.route.params;
+    const { wallet, pkey } = this.props.route.params
 
     return (
       <View style={styles.container}>
@@ -215,15 +189,15 @@ export default class HomeScreen extends Component {
           runAfterScreenTransition={() => {
             this.setState({
               transitionFinished: true,
-            });
+            })
 
-            this.afterTransitionMaintainer();
+            this.afterTransitionMaintainer()
           }}
         />
 
         <SafeAreaView style={styles.container}>
           <StatusBar
-            barStyle={"dark-content"}
+            barStyle={'dark-content'}
             translucent
             backgroundColor="transparent"
           />
@@ -234,7 +208,7 @@ export default class HomeScreen extends Component {
               privateKey={this.props.route.params.pkey}
               refreshNotifFeeds={this.state.refresh}
               ToasterFunc={(msg, icon, type, tapCB, screenTime) => {
-                this.showToast(msg, icon, type, tapCB, screenTime);
+                this.showToast(msg, icon, type, tapCB, screenTime)
               }}
             />
             {/*
@@ -256,25 +230,22 @@ export default class HomeScreen extends Component {
         <OverlayBlur
           ref="OverlayBlur"
           onPress={() => {
-            this.exitIntentOnOverleyBlur();
+            this.exitIntentOnOverleyBlur()
           }}
         />
 
         {/* Toaster Always goes here in the end after safe area */}
         <Toaster ref="Toaster" onToastTap />
       </View>
-    );
+    )
   }
 }
-
-// Connect to Auth Context
-HomeScreen.contextType = AuthContext;
 
 // Styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
+    width: '100%',
     // justifyContent: "center",
     // alignItems: "center",
     backgroundColor: GLOBALS.COLORS.WHITE,
@@ -288,10 +259,10 @@ const styles = StyleSheet.create({
     // zIndex: 99,
   },
   header: {
-    flexDirection: "row",
-    alignSelf: "stretch",
+    flexDirection: 'row',
+    alignSelf: 'stretch',
     // justifyContent: "flex-end",
-    alignItems: "center",
+    alignItems: 'center',
     marginHorizontal: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
     zIndex: 99,
     height: 55,
@@ -312,12 +283,12 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   feedDisplayer: {
     flex: 1,
-    width: "100%",
+    width: '100%',
   },
-});
+})

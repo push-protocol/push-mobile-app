@@ -29,7 +29,6 @@ import SetupCompleteScreen from 'src/screens/SetupCompleteScreen'
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper'
 import Notify from 'src/singletons/Notify'
 
-import AuthContext, { APP_AUTH_STATES } from 'src/components/auth/AuthContext'
 import ENV_CONFIG from 'src/env.config'
 import GLOBALS from 'src/Globals'
 import { useSelector } from 'react-redux'
@@ -44,30 +43,11 @@ if (!ENV_CONFIG.SHOW_CONSOLE) {
 const Stack = createStackNavigator()
 
 export default function App({ navigation }) {
-  const { auth } = useSelector((state) => state)
-
-  // State Settings
-  // VALID APP AUTH STATES
-  const [appAuthState, setAppAuthState] = useState(APP_AUTH_STATES.INITIALIZING)
-  const [userWallet, setUserWallet] = useState('')
-  const [userPKey, setUserPKey] = useState('')
+  const { authState, currentUser } = useSelector((state) => state.auth)
 
   const handleAppNotificationBadge = async () => {
     await AppBadgeHelper.setAppBadgeCount(0)
   }
-
-  // HANDLE AUTH FLOW
-  const authContext = React.useMemo(
-    () => ({
-      handleAppAuthState: (newAuthState, wallet, pkey) => {
-        console.log({ newAuthState, wallet, pkey })
-        setUserWallet(wallet)
-        setUserPKey(pkey)
-        setAppAuthState(newAuthState)
-      },
-    }),
-    [],
-  )
 
   // HANDLE ON APP START
   React.useEffect(() => {
@@ -109,7 +89,7 @@ export default function App({ navigation }) {
   // RENDER ASSIST
   renderSelectiveScreens = () => {
     // User is Authenticated
-    if (appAuthState == APP_AUTH_STATES.AUTHENTICATED) {
+    if (authState == GLOBALS.APP_AUTH_STATES.AUTHENTICATED) {
       return (
         <React.Fragment>
           <Stack.Screen
@@ -121,12 +101,12 @@ export default function App({ navigation }) {
                 style: 'dark',
               },
               header: () => (
-                <Header wallet={userWallet} navigation={navigation} />
+                <Header wallet={currentUser.wallet} navigation={navigation} />
               ),
             }}
             initialParams={{
-              wallet: userWallet,
-              pkey: userPKey,
+              wallet: currentUser.wallet,
+              pkey: currentUser.userPKey,
             }}
           />
 
@@ -148,7 +128,7 @@ export default function App({ navigation }) {
       )
     }
     // User is logging in
-    else if (appAuthState == APP_AUTH_STATES.ONBOARDING) {
+    else if (authState == GLOBALS.APP_AUTH_STATES.ONBOARDING) {
       return (
         <React.Fragment>
           <Stack.Screen
@@ -209,8 +189,8 @@ export default function App({ navigation }) {
     }
     // App is loading or User is getting authenticated
     else if (
-      appAuthState == APP_AUTH_STATES.INITIALIZING ||
-      appAuthState == APP_AUTH_STATES.ONBOARDED
+      authState == GLOBALS.APP_AUTH_STATES.INITIALIZING ||
+      authState == GLOBALS.APP_AUTH_STATES.ONBOARDED
     ) {
       return (
         <Stack.Screen
@@ -226,48 +206,46 @@ export default function App({ navigation }) {
 
   // RENDER
   return (
-    <AuthContext.Provider value={authContext}>
-      <WalletConnectProvider
-        redirectUrl={`${ENV_CONFIG.DEEPLINK_URL}`}
-        bridge="https://bridge.walletconnect.org"
-        clientMeta={{
-          description: 'Connect with WalletConnect',
-          url: 'https://walletconnect.org',
-          icons: ['https://walletconnect.org/walletconnect-logo.png'],
-          name: 'WalletConnect',
-        }}
-        storageOptions={{
-          asyncStorage: AsyncStorage,
-        }}
-      >
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              title: '',
-              headerStyle: {
-                backgroundColor: GLOBALS.COLORS.WHITE,
-                shadowColor: 'transparent',
-                shadowRadius: 0,
-                shadowOffset: {
-                  height: 0,
-                },
-                elevation: 0,
+    <WalletConnectProvider
+      redirectUrl={`${ENV_CONFIG.DEEPLINK_URL}`}
+      bridge="https://bridge.walletconnect.org"
+      clientMeta={{
+        description: 'Connect with WalletConnect',
+        url: 'https://walletconnect.org',
+        icons: ['https://walletconnect.org/walletconnect-logo.png'],
+        name: 'WalletConnect',
+      }}
+      storageOptions={{
+        asyncStorage: AsyncStorage,
+      }}
+    >
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            title: '',
+            headerStyle: {
+              backgroundColor: GLOBALS.COLORS.WHITE,
+              shadowColor: 'transparent',
+              shadowRadius: 0,
+              shadowOffset: {
+                height: 0,
               },
-              headerTitleStyle: {
-                color: GLOBALS.COLORS.BLACK,
-              },
-              headerBackTitleStyle: {
-                color: GLOBALS.COLORS.PRIMARY,
-              },
-              headerTintColor: GLOBALS.COLORS.BLACK,
-              headerTitleAlign: 'center',
-              headerBackTitleVisible: false,
-            }}
-          >
-            {renderSelectiveScreens()}
-          </Stack.Navigator>
-        </NavigationContainer>
-      </WalletConnectProvider>
-    </AuthContext.Provider>
+              elevation: 0,
+            },
+            headerTitleStyle: {
+              color: GLOBALS.COLORS.BLACK,
+            },
+            headerBackTitleStyle: {
+              color: GLOBALS.COLORS.PRIMARY,
+            },
+            headerTintColor: GLOBALS.COLORS.BLACK,
+            headerTitleAlign: 'center',
+            headerBackTitleVisible: false,
+          }}
+        >
+          {renderSelectiveScreens()}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </WalletConnectProvider>
   )
 }

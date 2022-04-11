@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from 'react'
 import {
   View,
   Text,
@@ -6,80 +6,85 @@ import {
   InteractionManager,
   Animated,
   StyleSheet,
-} from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
-import { SafeAreaView, useSafeArea } from "react-native-safe-area-context";
+} from 'react-native'
+import { useFocusEffect } from '@react-navigation/native'
+import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context'
 
-import * as Permissions from "expo-permissions";
+import * as Permissions from 'expo-permissions'
 
 import {
   useWalletConnect,
   withWalletConnect,
   RenderQrcodeModalProps,
   WalletService,
-} from "@walletconnect/react-native-dapp";
+} from '@walletconnect/react-native-dapp'
 
-import StylishLabel from "src/components/labels/StylishLabel";
-import DetailedInfoPresenter from "src/components/misc/DetailedInfoPresenter";
-import PrimaryButton from "src/components/buttons/PrimaryButton";
+import StylishLabel from 'src/components/labels/StylishLabel'
+import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter'
+import PrimaryButton from 'src/components/buttons/PrimaryButton'
 
-import OverlayBlur from "src/components/modals/OverlayBlur";
-import NoticePrompt from "src/components/modals/NoticePrompt";
-import PKEntryPrompt from "src/components/modals/PKEntryPrompt";
-import QRScanner from "src/components/modals/QRScanner";
+import OverlayBlur from 'src/components/modals/OverlayBlur'
+import NoticePrompt from 'src/components/modals/NoticePrompt'
+import PKEntryPrompt from 'src/components/modals/PKEntryPrompt'
+import QRScanner from 'src/components/modals/QRScanner'
 
-import PKProfileBuilder from "src/components/web3/PKProfileBuilder";
+import PKProfileBuilder from 'src/components/web3/PKProfileBuilder'
 
-import MetaStorage from "src/singletons/MetaStorage";
+import MetaStorage from 'src/singletons/MetaStorage'
 
-import GLOBALS from "src/Globals";
+import GLOBALS from 'src/Globals'
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
     React.useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         // After screen is loaded
-        setScreenTransitionAsDone();
-      });
+        setScreenTransitionAsDone()
+      })
 
-      return () => task.cancel();
-    }, [])
-  );
+      return () => task.cancel()
+    }, []),
+  )
 
-  return null;
+  return null
 }
 
 function GetScreenInsets() {
-  const insets = useSafeArea();
+  const insets = useSafeArea()
   if (insets.bottom > 0) {
     // Adjust inset by
-    return <View style={styles.insetAdjustment}></View>;
+    return <View style={styles.insetAdjustment}></View>
   } else {
-    return <View style={styles.noInsetAdjustment}></View>;
+    return <View style={styles.noInsetAdjustment}></View>
   }
 }
 
 const SignInScreen = ({ style, route, navigation }) => {
   // Setup state
-  const [transitionFinished, setTransitionFinished] = useState(false);
-  const [detailedInfoPresetned, setDetailedInfoPresetned] = useState(false);
+  const [transitionFinished, setTransitionFinished] = useState(false)
+  const [detailedInfoPresetned, setDetailedInfoPresetned] = useState(false)
 
-  const [fader, setFader] = useState(new Animated.Value(0));
-  const [walletAddress, setWalletAddress] = useState("");
-  const [cns, setCNS] = useState("");
-  const [ens, setENS] = useState("");
-  const [walletAddressVerified, setWalletAddressVerified] = useState("");
+  const [fader, setFader] = useState(new Animated.Value(0))
+  const [walletAddress, setWalletAddress] = useState('')
+
+  const [cns, setCNS] = useState('')
+  const [ens, setENS] = useState('')
+  const [walletAddressVerified, setWalletAddressVerified] = useState('')
 
   // Wallet Connect functionality
-  const { createSession, killSession, session, signTransaction } =
-    useWalletConnect();
-  const connector = useWalletConnect();
+  const {
+    createSession,
+    killSession,
+    session,
+    signTransaction,
+  } = useWalletConnect()
+  const connector = useWalletConnect()
 
   // Setup Refs
-  const QRScannerRef = useRef(null);
-  const OverlayBlurRef = useRef(null);
-  const NoticePromptRef = useRef(null);
-  const TextEntryPromptRef = useRef(null);
+  const QRScannerRef = useRef(null)
+  const OverlayBlurRef = useRef(null)
+  const NoticePromptRef = useRef(null)
+  const TextEntryPromptRef = useRef(null)
 
   // FUNCTIONS
   // Open Notice Prompt With Overlay Blur
@@ -89,77 +94,77 @@ const SignInScreen = ({ style, route, navigation }) => {
     title,
     subtitle,
     notice,
-    showIndicator
+    showIndicator,
   ) => {
     // Set Notice First
-    NoticePromptRef.current.changeTitle(title);
-    NoticePromptRef.current.changeSubtitle(subtitle);
-    NoticePromptRef.current.changeNotice(notice);
-    NoticePromptRef.current.changeIndicator(showIndicator);
+    NoticePromptRef.current.changeTitle(title)
+    NoticePromptRef.current.changeSubtitle(subtitle)
+    NoticePromptRef.current.changeNotice(notice)
+    NoticePromptRef.current.changeIndicator(showIndicator)
 
     // Set render state of this and the animate the blur modal in
-    OverlayBlurRef.current.changeRenderState(toggle, animate);
-    NoticePromptRef.current.changeRenderState(toggle, animate);
-  };
+    OverlayBlurRef.current.changeRenderState(toggle, animate)
+    NoticePromptRef.current.changeRenderState(toggle, animate)
+  }
 
   // Open Text Prompt With Overlay Blur
   const toggleTextEntryPrompt = (toggle, animate) => {
     // Set render state of this and the animate the blur modal in
-    OverlayBlurRef.current.changeRenderState(toggle, animate);
-    TextEntryPromptRef.current.changeRenderState(toggle, animate);
-  };
+    OverlayBlurRef.current.changeRenderState(toggle, animate)
+    TextEntryPromptRef.current.changeRenderState(toggle, animate)
+  }
 
   // Open QR Scanner
   const toggleQRScanner = (toggle, navigation) => {
-    QRScannerRef.current.changeRenderState(toggle, navigation);
-  };
+    QRScannerRef.current.changeRenderState(toggle, navigation)
+  }
 
   // Users Permissions
   const getCameraPermissionAsync = async (navigation) => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    if (status !== "granted") {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA)
+    if (status !== 'granted') {
       toggleNoticePrompt(
         true,
         true,
-        "Camera Access",
-        "Need Camera Permissions for scanning QR Code",
-        "Please enable Camera Permissions from [appsettings:App Settings] to continue",
-        false
-      );
+        'Camera Access',
+        'Need Camera Permissions for scanning QR Code',
+        'Please enable Camera Permissions from [appsettings:App Settings] to continue',
+        false,
+      )
     } else {
       // All Clear, open QR Scanner
-      toggleQRScanner(true, navigation);
+      toggleQRScanner(true, navigation)
     }
-  };
+  }
 
   // Detect PK Code
   const onWalletDetect = (code) => {
-    setWalletAddress(code);
-  };
+    setWalletAddress(code)
+  }
 
   // Reset PK Code
   const resetWalletAddress = () => {
     // Kill Wallet Conenct
     if (connector.connected) {
-      connector.killSession();
+      connector.killSession()
     }
 
-    setWalletAddress("");
-    setWalletAddressVerified(false);
+    setWalletAddress('')
+    setWalletAddressVerified(false)
     Animated.timing(fader, {
       toValue: 1,
       duration: 250,
       useNativeDriver: true,
-    }).start();
-  };
+    }).start()
+  }
 
   // Handle Profile Info
   const profileInfoFetched = (wallet, cns, ens) => {
-    setWalletAddress(wallet);
-    setCNS(cns);
-    setENS(ens);
-    setWalletAddressVerified(true);
-  };
+    setWalletAddress(wallet)
+    setCNS(cns)
+    setENS(ens)
+    setWalletAddressVerified(true)
+  }
 
   useEffect(() => {
     if (walletAddressVerified && walletAddress) {
@@ -167,25 +172,25 @@ const SignInScreen = ({ style, route, navigation }) => {
         toValue: 1,
         duration: 250,
         useNativeDriver: true,
-      }).start();
+      }).start()
     }
-  }, [walletAddress, walletAddressVerified]);
+  }, [walletAddress, walletAddressVerified])
 
   useEffect(() => {
     if (connector.connected) {
-      setWalletAddress(connector.accounts[0]);
+      setWalletAddress(connector.accounts[0])
     }
-  }, [connector.connected]);
+  }, [connector.connected])
 
   // When Animation is Finished
   const animationFinished = () => {
-    setDetailedInfoPresetned(true);
+    setDetailedInfoPresetned(true)
     Animated.timing(fader, {
       toValue: 1,
       duration: 250,
       useNativeDriver: true,
-    }).start();
-  };
+    }).start()
+  }
 
   // Load the Next Screen
   const loadNextScreen = async () => {
@@ -195,42 +200,42 @@ const SignInScreen = ({ style, route, navigation }) => {
       cns: cns,
       ens: ens,
       wallet: walletAddress,
-    };
+    }
     // console.log(walletObj);
 
-    await MetaStorage.instance.setStoredWallet(walletObj);
+    await MetaStorage.instance.setStoredWallet(walletObj)
 
     // Goto Next Screen
-    navigation.navigate("Biometric", {
+    navigation.navigate('Biometric', {
       wallet: walletAddress,
       fromOnboarding: route.params.fromOnboarding,
-    });
-  };
+    })
+  }
 
   // Load Advvance Screen
   const loadAdvanceScreen = async () => {
     // Goto Next Screen
-    navigation.navigate("SignInAdvance", {
+    navigation.navigate('SignInAdvance', {
       wallet: walletAddress,
       fromOnboarding: route.params.fromOnboarding,
-    });
-  };
+    })
+  }
 
   return (
     <>
       <SafeAreaView style={styles.container}>
         <ScreenFinishedTransition
           setScreenTransitionAsDone={() => {
-            setTransitionFinished(true);
+            setTransitionFinished(true)
           }}
         />
 
         <Text style={styles.header}>Wallet Address!</Text>
         <View style={styles.inner}>
-          {walletAddress === "" ? (
+          {walletAddress === '' ? (
             <DetailedInfoPresenter
               style={styles.intro}
-              icon={require("assets/ui/wallet.png")}
+              icon={require('assets/ui/wallet.png')}
               contentView={
                 <View style={styles.introContent}>
                   <StylishLabel
@@ -243,7 +248,7 @@ const SignInScreen = ({ style, route, navigation }) => {
               animated={!detailedInfoPresetned}
               startAnimation={transitionFinished}
               animationCompleteCallback={() => {
-                animationFinished();
+                animationFinished()
               }}
             />
           ) : (
@@ -252,23 +257,23 @@ const SignInScreen = ({ style, route, navigation }) => {
               profileKey={walletAddress}
               profileType={GLOBALS.CONSTANTS.CRED_TYPE_WALLET}
               resetFunc={() => {
-                resetWalletAddress();
+                resetWalletAddress()
               }}
               profileInfoFetchedFunc={(wallet, cns, ens) => {
-                profileInfoFetched(wallet, cns, ens);
+                profileInfoFetched(wallet, cns, ens)
               }}
             />
           )}
         </View>
 
         <Animated.View style={[styles.footer, { opacity: fader }]}>
-          {walletAddress === "" ? (
+          {walletAddress === '' ? (
             <View style={styles.entryFooter}>
               <PrimaryButton
                 iconFactory="Image"
-                icon={require("assets/ui/walletConnect.png")}
+                icon={require('assets/ui/walletConnect.png')}
                 iconSize={24}
-                title={!connector.connected ? "WalletConnect" : "Disconnect"}
+                title={!connector.connected ? 'WalletConnect' : 'Disconnect'}
                 fontSize={16}
                 fontColor={GLOBALS.COLORS.WHITE}
                 bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
@@ -276,9 +281,9 @@ const SignInScreen = ({ style, route, navigation }) => {
                 disabled={false}
                 onPress={() => {
                   if (connector.connected) {
-                    connector.killSession();
+                    connector.killSession()
                   } else {
-                    connector.connect();
+                    connector.connect()
                   }
                 }}
               />
@@ -295,7 +300,7 @@ const SignInScreen = ({ style, route, navigation }) => {
                 bgColor={GLOBALS.COLORS.GRADIENT_SECONDARY}
                 disabled={false}
                 onPress={() => {
-                  getCameraPermissionAsync(navigation);
+                  getCameraPermissionAsync(navigation)
                 }}
               />
 
@@ -312,7 +317,7 @@ const SignInScreen = ({ style, route, navigation }) => {
                   bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
                   disabled={false}
                   onPress={() => {
-                    toggleTextEntryPrompt(true, true);
+                    toggleTextEntryPrompt(true, true)
                   }}
                 />
 
@@ -328,7 +333,7 @@ const SignInScreen = ({ style, route, navigation }) => {
                   bgColor={GLOBALS.COLORS.BLACK}
                   disabled={false}
                   onPress={() => {
-                    loadAdvanceScreen();
+                    loadAdvanceScreen()
                   }}
                 />
               </View>
@@ -347,7 +352,7 @@ const SignInScreen = ({ style, route, navigation }) => {
                     bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
                     disabled={false}
                     onPress={() => {
-                      resetWalletAddress();
+                      resetWalletAddress()
                     }}
                   />
                   <View style={styles.divider}></View>
@@ -362,7 +367,7 @@ const SignInScreen = ({ style, route, navigation }) => {
                     bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
                     disabled={false}
                     onPress={() => {
-                      loadNextScreen();
+                      loadNextScreen()
                     }}
                   />
                 </>
@@ -378,7 +383,7 @@ const SignInScreen = ({ style, route, navigation }) => {
           navigation={navigation}
           title="[wb:Please scan your] [d:wallet's address] [wb:to connect it to EPNS.]"
           doneFunc={(code) => {
-            onWalletDetect(code);
+            onWalletDetect(code)
           }}
           closeFunc={() => toggleQRScanner(false, navigation)}
         />
@@ -400,44 +405,44 @@ const SignInScreen = ({ style, route, navigation }) => {
           allowDomainDetection={true}
           doneTitle="Verify!"
           doneFunc={(code) => {
-            onWalletDetect(code);
+            onWalletDetect(code)
           }}
           closeTitle="Cancel"
           closeFunc={() => toggleTextEntryPrompt(false, true)}
         />
       </SafeAreaView>
     </>
-  );
-};
+  )
+}
 
 // Styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: GLOBALS.COLORS.WHITE,
-    alignItems: "stretch",
-    justifyContent: "space-between",
+    alignItems: 'stretch',
+    justifyContent: 'space-between',
   },
   header: {
     fontSize: 32,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     paddingTop: 40,
     paddingHorizontal: 20,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   inner: {
-    position: "absolute",
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
     top: 0,
     bottom: 0,
     padding: 20,
     maxWidth: 540,
   },
   intro: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   introContent: {
     marginTop: 20,
@@ -454,14 +459,14 @@ const styles = StyleSheet.create({
   },
   divider: {
     marginVertical: 10,
-    width: "100%",
+    width: '100%',
   },
   columnizer: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   colDivider: {
     marginHorizontal: 10,
-    height: "100%",
+    height: '100%',
   },
   insetAdjustment: {
     paddingBottom: 5,
@@ -469,6 +474,6 @@ const styles = StyleSheet.create({
   noInsetAdjustment: {
     paddingBottom: 20,
   },
-});
+})
 
-export default SignInScreen;
+export default SignInScreen

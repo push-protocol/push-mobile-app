@@ -1,48 +1,45 @@
-import React, { useEffect, useRef } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import SafeAreaView from "react-native-safe-area-view";
-import Constants from "expo-constants";
+import React, { useEffect, useRef } from 'react'
+import { View, StyleSheet } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import SafeAreaView from 'react-native-safe-area-view'
+import Constants from 'expo-constants'
 
-import ProfileDisplayer from "src/components/ui/ProfileDisplayer";
-import EPNSNotifierIcon from "src/components/custom/EPNSNotifierIcon";
-import ImageButton from "src/components/buttons/ImageButton";
+import ProfileDisplayer from 'src/components/ui/ProfileDisplayer'
+import EPNSNotifierIcon from 'src/components/custom/EPNSNotifierIcon'
+import ImageButton from 'src/components/buttons/ImageButton'
 
-import Notify from "src/singletons/Notify";
+import Notify from 'src/singletons/Notify'
 
-import AuthContext, {
-  useAuthContext,
-  APP_AUTH_STATES,
-} from "src/components/auth/AuthContext";
-import GLOBALS from "src/Globals";
+import GLOBALS from 'src/Globals'
+import { setAuthState } from 'src/redux-store/actions/signin'
+import { useDispatch } from 'react-redux'
 
 const Header = ({ style, wallet }) => {
-  const navigation = useNavigation();
-  const route = useRoute();
+  const navigation = useNavigation()
 
-  const authContext = useAuthContext();
+  const dispatch = useDispatch()
 
   // Setup Refs
-  const ProfileDisplayerRef = useRef(null);
-  const EPNSNotifierIconRef = useRef(null);
+  const ProfileDisplayerRef = useRef(null)
+  const EPNSNotifierIconRef = useRef(null)
 
   useEffect(() => {
     // Set Notification Listener
     Notify.instance.setNotificationListenerCallback(() => {
-      onNotificationListenerUpdate();
-    });
-  }, []);
+      onNotificationListenerUpdate()
+    })
+  }, [])
 
   // To refresh the bell badge
   const onNotificationListenerUpdate = async () => {
     // Check Notifier
-    await EPNSNotifierIconRef.current.getBadgeCountAndRefresh();
-  };
+    await EPNSNotifierIconRef.current.getBadgeCountAndRefresh()
+  }
 
   // Overlay Blur exit intent
   const exitIntentOnOverleyBlur = () => {
-    ProfileDisplayerRef.current.toggleActive(false);
-  };
+    ProfileDisplayerRef.current.toggleActive(false)
+  }
 
   return (
     <SafeAreaView style={[styles.container, style]}>
@@ -53,7 +50,7 @@ const Header = ({ style, wallet }) => {
           style={styles.profile}
           wallet={wallet}
           lockApp={() => {
-            authContext.handleAppAuthState(APP_AUTH_STATES.ONBOARDED);
+            dispatch(setAuthState(GLOBALS.APP_AUTH_STATES.ONBOARDED))
           }}
         />
         <EPNSNotifierIcon
@@ -62,11 +59,11 @@ const Header = ({ style, wallet }) => {
           iconSize={32}
           onPress={() => {
             // Refresh the feeds
-            navigation.navigate("Feed", {
+            navigation.navigate('Feed', {
               refreshNotifFeed: true,
-            });
+            })
 
-            navigation.setParams({ refreshNotifFeed: true });
+            navigation.setParams({ refreshNotifFeed: true })
           }}
           onNewNotifications={() => {
             // Do nothing for now, bell is ringing in the module anyway
@@ -74,7 +71,7 @@ const Header = ({ style, wallet }) => {
         />
         <ImageButton
           style={styles.settings}
-          src={require("assets/ui/settings.png")}
+          src={require('assets/ui/settings.png')}
           iconSize={24}
           onPress={() => {
             // // Finally associate token to server if not done
@@ -84,13 +81,13 @@ const Header = ({ style, wallet }) => {
             // // While an async function, there is no need to wait
             // ServerHelper.associateTokenToServer(publicKey, privateKey);
 
-            navigation.navigate("Settings", {});
+            navigation.navigate('Settings', {})
           }}
         />
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 // Styling
 const styles = StyleSheet.create({
@@ -99,10 +96,10 @@ const styles = StyleSheet.create({
     backgroundColor: GLOBALS.COLORS.WHITE,
   },
   header: {
-    flexDirection: "row",
-    alignSelf: "stretch",
+    flexDirection: 'row',
+    alignSelf: 'stretch',
     // justifyContent: "flex-end",
-    alignItems: "center",
+    alignItems: 'center',
     marginHorizontal: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
     zIndex: 99,
     height: GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
@@ -115,7 +112,7 @@ const styles = StyleSheet.create({
     // bottom: 0,
     // zIndex: 99,
     borderWidth: 1,
-    borderColor: "transparent",
+    borderColor: 'transparent',
     height: 60,
   },
   notifier: {
@@ -126,6 +123,6 @@ const styles = StyleSheet.create({
     width: 24,
     height: GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
   },
-});
+})
 
-export default Header;
+export default Header
