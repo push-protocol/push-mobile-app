@@ -1,5 +1,5 @@
-import "@ethersproject/shims";
-import React, { useState, useEffect } from "react";
+import '@ethersproject/shims'
+import React, { useState, useEffect } from 'react'
 import {
   View,
   SafeAreaView,
@@ -7,138 +7,120 @@ import {
   Image,
   StyleSheet,
   Linking,
-  TextInput
-} from "react-native";
+  TextInput,
+} from 'react-native'
 
-import StylishLabel from "src/components/labels/StylishLabel";
-import EPNSActivity from "src/components/loaders/EPNSActivity";
-import ChannelItem from "src/components/ui/ChannelItem";
-import ENV_CONFIG from "src/env.config";
+import StylishLabel from 'src/components/labels/StylishLabel'
+import EPNSActivity from 'src/components/loaders/EPNSActivity'
+import ChannelItem from 'src/components/ui/ChannelItem'
+import ENV_CONFIG from 'src/env.config'
 
 const ChannelsDisplayer = ({ style, wallet, pKey }) => {
-  const [channels, setChannels] = useState([]);
-  const [page, setPage] = useState(1);
+  const [channels, setChannels] = useState([])
+  const [page, setPage] = useState(1)
 
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false)
 
-  const [contract, setContract] = useState(null);
-  const [endReached, setEndReached] = useState(false);
+  const [contract, setContract] = useState(null)
+  const [endReached, setEndReached] = useState(false)
 
-  const [searchTimer, setSearchTimer] = useState(null);
-  const [isSearchEnded, setIsSearchEnded] = useState(false);
+  const [searchTimer, setSearchTimer] = useState(null)
+  const [isSearchEnded, setIsSearchEnded] = useState(false)
 
-  const DEBOUNCE_TIMEOUT = 500; //time in millisecond which we want to wait for then to finish typing
-  const [search, setSearch] = React.useState("");
+  const DEBOUNCE_TIMEOUT = 500 //time in millisecond which we want to wait for then to finish typing
+  const [search, setSearch] = React.useState('')
 
   useEffect(() => {
-    setRefreshing(true);
-  }, []);
+    setRefreshing(true)
+  }, [])
 
   const fetchChannels = async () => {
-    // const apiURL =
-    // "https://backend-staging.epns.io/apis/channels/fetch_channels";
-    const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_CHANNELS;
+    const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_CHANNELS
 
     const response = await fetch(apiURL, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         page: page,
         pageSize: 10,
-        op: "write",
+        op: 'write',
       }),
-    });
-    const resJson = await response.json();
+    })
+    const resJson = await response.json()
 
     if (resJson.count != 0 && resJson.results != []) {
-      const data = channels;
-      await setChannels([...data, ...resJson.results]);
-      await setPage(page + 1);
+      const data = channels
+      setChannels([...data, ...resJson.results])
+      setPage(page + 1)
     }
 
-    setRefreshing(false);
-  };
+    setRefreshing(false)
+  }
 
   useEffect(() => {
     if (refreshing == true) {
-      fetchChannels();
+      fetchChannels()
     }
-  }, [refreshing]);
-
-  const openURL = (url) => {
-    if (validURL(url) || 1) {
-      // Bypassing the check so that custom app domains can be opened
-      Linking.canOpenURL(url).then((supported) => {
-        if (supported) {
-          Linking.openURL(url);
-        } else {
-          // showToast("Device Not Supported", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
-        }
-      });
-    } else {
-      // showToast("Link not valid", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
-    }
-  };
+  }, [refreshing])
 
   // to check valid url
   const validURL = (str) => {
     var pattern = new RegExp(
-      "^(https?:\\/\\/)?" + // protocol
-        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-        "(\\#[-a-z\\d_]*)?$",
-      "i"
-    ); // fragment locator
-    return !!pattern.test(str);
-  };
+      '^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$',
+      'i',
+    ) // fragment locator
+    return !!pattern.test(str)
+  }
 
   const searchForChannel = async (channelName) => {
     setChannels([])
-    
+
     // normal fetch for empty query
-    if (channelName.trim() === ""){
-      await fetchChannels();
-      return;
+    if (channelName.trim() === '') {
+      await fetchChannels()
+      return
     }
-     
+
     setIsSearchEnded(false)
-    const apiURL =  ENV_CONFIG.EPNS_SERVER + "/channels/search"; 
-    const searchRes = await fetch(apiURL,{
-      method: "POST",
+    const apiURL = ENV_CONFIG.EPNS_SERVER + '/channels/search'
+    const searchRes = await fetch(apiURL, {
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
-      body:JSON.stringify({
-        "chainId": 42,
-        "page": 1,
-        "pageSize": 20,
-        "op": "read",
-        "query": channelName
-      })
-    });
+      body: JSON.stringify({
+        chainId: 42,
+        page: 1,
+        pageSize: 20,
+        op: 'read',
+        query: channelName,
+      }),
+    })
 
-    const resJson = await searchRes.json();
-    setChannels(resJson.channels);
+    const resJson = await searchRes.json()
+    setChannels(resJson.channels)
     setIsSearchEnded(true)
-
   }
 
-  const handleChannelSearch = async(searchQuery)=>{
+  const handleChannelSearch = async (searchQuery) => {
     if (searchTimer) {
-      clearTimeout(searchTimer);
+      clearTimeout(searchTimer)
     }
-    setSearch(searchQuery);
+    setSearch(searchQuery)
     setSearchTimer(
-        setTimeout(() => {
-            searchForChannel(searchQuery);
-        }, DEBOUNCE_TIMEOUT),
-    );
+      setTimeout(() => {
+        searchForChannel(searchQuery)
+      }, DEBOUNCE_TIMEOUT),
+    )
   }
 
   return (
@@ -146,41 +128,41 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
       <View style={styles.searchView}>
         <TextInput
           style={styles.searchBar}
-          onChangeText={(e)=>{
+          onChangeText={(e) => {
             handleChannelSearch(e)
           }}
           value={search}
-          placeholder={"Search by name/address"}
+          placeholder={'Search by name/address'}
         />
         <Image
-          source={require("assets/ui/search.png")}
+          source={require('assets/ui/search.png')}
           style={styles.imageLogoStyle}
         />
       </View>
 
       {channels.length == 0 && (
         <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-          {isSearchEnded 
-            ?
-              // Show channel not found label
+          {isSearchEnded ? (
+            // Show channel not found label
+            <StylishLabel
+              style={styles.infoText}
+              fontSize={16}
+              title="[dg:No channels match your query, please search for another name/address]"
+            />
+          ) : (
+            // Show channel fetching label
+            <>
+              <EPNSActivity style={styles.activity} size="small" />
               <StylishLabel
                 style={styles.infoText}
                 fontSize={16}
-                title="[dg:No channels match your query, please search for another name/address]"
-              /> 
-            :
-              // Show channel fetching label
-              <>
-                <EPNSActivity style={styles.activity} size="small" />
-                <StylishLabel
-                  style={styles.infoText}
-                  fontSize={16}
-                  title="[dg:Fetching Channels!]"
-                />
-              </>
-          }
+                title="[dg:Fetching Channels!]"
+              />
+            </>
+          )}
         </View>
       )}
+      
       {channels.length != 0 && (
         <FlatList
           data={channels}
@@ -189,7 +171,9 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
           keyExtractor={(item) => item.channel.toString()}
           initialNumToRender={20}
           showsVerticalScrollIndicator={false}
-          onEndReached={async () => (!endReached && search === "" ? setRefreshing(true) : null)}
+          onEndReached={async () =>
+            !endReached && search === '' ? setRefreshing(true) : null
+          }
           renderItem={({ item }) => (
             <ChannelItem
               item={item}
@@ -203,65 +187,65 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
               <View style={{ paddingBottom: 20, marginTop: 20 }}>
                 <EPNSActivity style={styles.activity} size="small" />
               </View>
-            ) : null;
+            ) : null
           }}
         />
       )}
     </SafeAreaView>
-  );
-};
+  )
+}
 
 // Styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
+    width: '100%',
   },
   channels: {
     flex: 1,
-    width: "100%",
+    width: '100%',
   },
   infodisplay: {
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 20,
   },
   infoIcon: {
     height: 48,
-    resizeMode: "contain",
+    resizeMode: 'contain',
     margin: 10,
   },
   infoText: {
     marginVertical: 10,
   },
-  searchView:{
+  searchView: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     height: 60,
     margin: 12,
     borderWidth: 1.5,
-    borderColor:'1px solid rgba(169, 169, 169, 0.5)',
-    borderRadius:10,
-    padding:4
+    borderColor: '1px solid rgba(169, 169, 169, 0.5)',
+    borderRadius: 10,
+    padding: 4,
   },
-  searchBar:{
-    fontSize:18,
-    textTransform:'capitalize',
-    height:55,
-    paddingLeft:35,
-    paddingRight:30,
+  searchBar: {
+    fontSize: 18,
+    textTransform: 'capitalize',
+    height: 55,
+    paddingLeft: 35,
+    paddingRight: 30,
   },
-  imageLogoStyle:{
+  imageLogoStyle: {
     padding: 15,
     margin: 5,
     height: 50,
     width: 50,
     resizeMode: 'stretch',
     alignItems: 'center',
-  }
-});
+  },
+})
 
-export default ChannelsDisplayer;
+export default ChannelsDisplayer

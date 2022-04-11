@@ -44,9 +44,8 @@ if (!ENV_CONFIG.SHOW_CONSOLE) {
 const Stack = createStackNavigator()
 
 export default function App({ navigation }) {
-  const state = useSelector((state) => state)
+  const { auth } = useSelector((state) => state)
 
-  console.log({ state })
   // State Settings
   // VALID APP AUTH STATES
   const [appAuthState, setAppAuthState] = useState(APP_AUTH_STATES.INITIALIZING)
@@ -61,6 +60,7 @@ export default function App({ navigation }) {
   const authContext = React.useMemo(
     () => ({
       handleAppAuthState: (newAuthState, wallet, pkey) => {
+        console.log({ newAuthState, wallet, pkey })
         setUserWallet(wallet)
         setUserPKey(pkey)
         setAppAuthState(newAuthState)

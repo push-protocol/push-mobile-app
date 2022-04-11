@@ -1,7 +1,13 @@
 import { SIGNIN_USER, SIGNOUT_USER } from '../constants'
 
+const initialCurrentUserState = {
+  wallet: '',
+  userPKey: '',
+  index: 0,
+}
+
 const initialState = {
-  currentUser: '',
+  currentUser: initialCurrentUserState,
   users: [],
 }
 
@@ -10,7 +16,7 @@ const authReducer = (state = initialState, action) => {
     case SIGNIN_USER:
       return {
         ...state,
-        currentUser: action.payload.wallet,
+        currentUser: action.payload.user,
         users: [...state.users, action.payload.data],
       }
 
@@ -19,13 +25,27 @@ const authReducer = (state = initialState, action) => {
       let index = allUsers.findIndex(
         (user) => user.wallet === action.payload.wallet,
       )
+
       allUsers.splice(index, 1)
+
+      let previousUser = initialCurrentUserState
+
+      if (state.users.length > 1) {
+        const user = state.users[state.users.length - 1]
+
+        const index = state.users.findIndex((object) => {
+          return object.id === 'b'
+        })
+
+        previousUser.wallet = user.wallet
+        previousUser.userPKey = user.userPKey
+      }
 
       return {
         ...state,
         currentUser:
           state.users.length === 1
-            ? ''
+            ? initialCurrentUserState
             : state.users[state.users.length - 1].wallet,
         users: allUsers,
       }

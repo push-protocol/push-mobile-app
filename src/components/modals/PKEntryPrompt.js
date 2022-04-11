@@ -10,7 +10,6 @@ import {
   Keyboard,
   Animated
 } from 'react-native';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
 import styled from 'styled-components/native'
 
 import Web3Helper from 'src/helpers/Web3Helper';
