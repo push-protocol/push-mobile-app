@@ -64,7 +64,10 @@ class SplashScreen extends Component {
 
       // Do The Bell Once and then proceed
       this.refs.bellicon.animateBell(() => {
-        this.props.setAuthState(GLOBALS.APP_AUTH_STATES.ONBOARDING)
+        this.props.setAuthState({
+          index: this.props.auth.activeUser,
+          authState: GLOBALS.APP_AUTH_STATES.ONBOARDING,
+        })
       })
     } else {
       // User is signed in, handle Authentication flow
@@ -102,11 +105,14 @@ class SplashScreen extends Component {
       console.log('SS Auth response', response)
       // Do The Bell Once and then proceed
       this.refs.bellicon.animateBell(() => {
-        this.props.setAuthState(GLOBALS.APP_AUTH_STATES.AUTHENTICATED)
+        this.props.setAuthState({
+          index: this.props.auth.activeUser,
+          authState: GLOBALS.APP_AUTH_STATES.AUTHENTICATED,
+        })
+
         this.props.setInitialUser({
           wallet: response.wallet,
           userPKey: response.pkey,
-          index: 0,
         })
       })
     } else {
@@ -243,11 +249,13 @@ class SplashScreen extends Component {
 
     if (response.success) {
       console.log('SS Auth via passcode response', response)
-      this.props.setAuthState(GLOBALS.APP_AUTH_STATES.AUTHENTICATED)
+      this.props.setAuthState({
+        index: this.props.auth.activeUser,
+        authState: GLOBALS.APP_AUTH_STATES.AUTHENTICATED,
+      })
       this.props.setInitialUser({
         wallet: response.wallet,
         userPKey: response.pkey,
-        index: 0,
       })
     } else {
       // Passcode Attempt Failed
@@ -432,7 +440,10 @@ class SplashScreen extends Component {
   // Reset Wallet
   resetWallet = async () => {
     await AuthenticationHelper.resetSignedInUser()
-    this.props.setAuthState(GLOBALS.APP_AUTH_STATES.ONBOARDING)
+    this.props.setAuthState({
+      index: this.props.auth.activeUser,
+      authState: GLOBALS.APP_AUTH_STATES.ONBOARDING,
+    })
   }
 
   // RENDER

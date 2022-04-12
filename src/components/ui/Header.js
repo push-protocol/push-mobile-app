@@ -12,11 +12,11 @@ import Notify from 'src/singletons/Notify'
 
 import GLOBALS from 'src/Globals'
 import { setAuthState } from 'src/redux-store/actions/signin'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Header = ({ style, wallet }) => {
   const navigation = useNavigation()
-
+  const { activeUser } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
 
   // Setup Refs
@@ -50,7 +50,12 @@ const Header = ({ style, wallet }) => {
           style={styles.profile}
           wallet={wallet}
           lockApp={() => {
-            dispatch(setAuthState(GLOBALS.APP_AUTH_STATES.ONBOARDED))
+            dispatch(
+              setAuthState({
+                index: activeUser,
+                authState: GLOBALS.APP_AUTH_STATES.ONBOARDED,
+              }),
+            )
           }}
         />
         <EPNSNotifierIcon

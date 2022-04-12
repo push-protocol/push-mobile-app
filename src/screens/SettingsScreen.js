@@ -23,10 +23,11 @@ import FeedDBHelper from 'src/helpers/FeedDBHelper'
 import ENV_CONFIG from 'src/env.config'
 import GLOBALS from 'src/Globals'
 import { setAuthState, signOut } from 'src/redux-store/actions/signin'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 const SettingsScreen = ({ navigation }) => {
   const dispatch = useDispatch()
+  const { activeUser } = useSelector((state) => state.auth)
 
   // Wallet Connect functionality
   const connector = useWalletConnect()
@@ -86,7 +87,12 @@ const SettingsScreen = ({ navigation }) => {
     )
 
     setTimeout(() => {
-      dispatch(setAuthState(GLOBALS.APP_AUTH_STATES.ONBOARDED))
+      dispatch(
+        setAuthState({
+          index: activeUser,
+          authState: GLOBALS.APP_AUTH_STATES.ONBOARDED,
+        }),
+      )
     }, 1500)
   }
 

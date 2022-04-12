@@ -2,16 +2,12 @@ import React, { Component } from 'react'
 import {
   View,
   Text,
-  Image,
   TouchableOpacity,
-  ActivityIndicator,
   Animated,
   Dimensions,
   StyleSheet,
 } from 'react-native'
 import SafeAreaView from 'react-native-safe-area-view'
-
-import { Ionicons } from '@expo/vector-icons'
 
 import MaskedView from '@react-native-community/masked-view'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -27,10 +23,12 @@ import ENSButton from 'src/components/buttons/ENSButton'
 import Web3Helper from 'src/helpers/Web3Helper'
 
 import GLOBALS from 'src/Globals'
+import { switchUser } from 'src/redux-store/actions/signin'
+import { connect } from 'react-redux'
 
 const MARGIN_RIGHT = 120
 
-export default class ProfileDisplayer extends Component {
+class ProfileDisplayer extends Component {
   // CONSTRUCTOR
   constructor(props) {
     super(props)
@@ -100,25 +98,9 @@ export default class ProfileDisplayer extends Component {
 
   // RENDER
   render() {
-    const { style, wallet, lockApp } = this.props
-
-    const walletOptions = [
-      {
-        isActive: true,
-        wallet,
-        onPress: () => {
-          console.log('First wallet')
-        },
-      },
-      {
-        isActive: false,
-        wallet,
-        onPress: () => {
-          console.log('Second wallet')
-        },
-      },
-    ]
-
+    const { style, lockApp, auth } = this.props
+    const wallet = auth.users[auth.activeUser].wallet
+    
     return (
       <View style={[styles.container, style]} pointerEvents="box-none">
         <SafeAreaView style={[styles.container, styles.safeContainer]}>
@@ -153,12 +135,14 @@ export default class ProfileDisplayer extends Component {
               >
                 <View style={styles.upArrow} />
                 <View style={styles.content}>
-                  {walletOptions.map(({ isActive, wallet, onPress }) =>
-                    isActive ? (
-                      <TouchableOpacity
-                        style={styles.activeWalletInfo}
-                        onPress={onPress}
-                      >
+                  {auth.users.map(({ wallet, index }) => {
+                    const isActive = auth.activeUser === index
+                    const onPress = () => {
+                      this.props.switchUser(index)
+                    }
+
+                    return isActive ? (
+                      <TouchableOpacity style={styles.activeWalletInfo}>
                         <StylishLabel
                           style={styles.para}
                           fontSize={16}
@@ -173,8 +157,8 @@ export default class ProfileDisplayer extends Component {
                       >
                         <Text style={styles.walletText}>{wallet}</Text>
                       </TouchableOpacity>
-                    ),
-                  )}
+                    )
+                  })}
 
                   {/* 
                   <View style={styles.interestEarned}>
@@ -393,3 +377,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 })
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+})
+
+export default connect(mapStateToProps, { switchUser })(ProfileDisplayer)

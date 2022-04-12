@@ -36,14 +36,13 @@ import { useSelector } from 'react-redux'
 // Assign console.log to nothing
 if (!ENV_CONFIG.SHOW_CONSOLE) {
   console.log('Production Environment... disabling console!')
-  // console.log = () => {};
 }
 
 // Create Stack Navigator
 const Stack = createStackNavigator()
 
 export default function App({ navigation }) {
-  const { authState, currentUser } = useSelector((state) => state.auth)
+  const { users, activeUser } = useSelector((state) => state.auth)
 
   const handleAppNotificationBadge = async () => {
     await AppBadgeHelper.setAppBadgeCount(0)
@@ -89,7 +88,7 @@ export default function App({ navigation }) {
   // RENDER ASSIST
   renderSelectiveScreens = () => {
     // User is Authenticated
-    if (authState == GLOBALS.APP_AUTH_STATES.AUTHENTICATED) {
+    if (users[activeUser].authState == GLOBALS.APP_AUTH_STATES.AUTHENTICATED) {
       return (
         <React.Fragment>
           <Stack.Screen
@@ -101,12 +100,15 @@ export default function App({ navigation }) {
                 style: 'dark',
               },
               header: () => (
-                <Header wallet={currentUser.wallet} navigation={navigation} />
+                <Header
+                  wallet={users[activeUser].wallet}
+                  navigation={navigation}
+                />
               ),
             }}
             initialParams={{
-              wallet: currentUser.wallet,
-              pkey: currentUser.userPKey,
+              wallet: users[activeUser].wallet,
+              pkey: users[activeUser].userPKey,
             }}
           />
 
@@ -128,7 +130,9 @@ export default function App({ navigation }) {
       )
     }
     // User is logging in
-    else if (authState == GLOBALS.APP_AUTH_STATES.ONBOARDING) {
+    else if (
+      users[activeUser].authState == GLOBALS.APP_AUTH_STATES.ONBOARDING
+    ) {
       return (
         <React.Fragment>
           <Stack.Screen
@@ -189,8 +193,8 @@ export default function App({ navigation }) {
     }
     // App is loading or User is getting authenticated
     else if (
-      authState == GLOBALS.APP_AUTH_STATES.INITIALIZING ||
-      authState == GLOBALS.APP_AUTH_STATES.ONBOARDED
+      users[activeUser].authState == GLOBALS.APP_AUTH_STATES.INITIALIZING ||
+      users[activeUser].authState == GLOBALS.APP_AUTH_STATES.ONBOARDED
     ) {
       return (
         <Stack.Screen
