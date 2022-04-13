@@ -48,6 +48,7 @@ const FeedDBHelper = {
     await FeedDBHelper.runQuery(db, dropTable)
     await FeedDBHelper.runQuery(db, createTable)
   },
+
   // To get Feeds, return Object of Objects
   getFeeds: async (db, startIndex, numRows, isHistorical) => {
     // RETURN ARRAY OF OBJECTS (JSON) or empty array if no feed remaining

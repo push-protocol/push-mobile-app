@@ -18,7 +18,7 @@ import OverlayBlur from 'src/components/modals/OverlayBlur'
 import { ToasterOptions, Toaster } from 'src/components/indicators/Toaster'
 
 import AuthenticationHelper from 'src/helpers/AuthenticationHelper'
-
+import MetaStorage from 'src/singletons/MetaStorage'
 import FeedDBHelper from 'src/helpers/FeedDBHelper'
 import ENV_CONFIG from 'src/env.config'
 import GLOBALS from 'src/Globals'
@@ -99,8 +99,9 @@ const SettingsScreen = ({ navigation }) => {
   // To Reset Wallet
   const resetWallet = async () => {
     await AuthenticationHelper.resetSignedInUser()
+    await MetaStorage.instance.clearStorage()
     dispatch(signOut(null))
-    navigation.navigate('Splash')
+    navigation.navigate('Welcome')
   }
 
   // TO SHOW TOASTER
@@ -126,9 +127,11 @@ const SettingsScreen = ({ navigation }) => {
     title: 'Sign in with another wallet',
     img: require('assets/ui/brokenkey.png'),
     func: () => {
-      navigation.navigate('SignIn', {
+      navigation.navigate('NewWalletSignIn', {
         fromOnboarding: false,
       })
+
+      // dispatch(createNewWallet({ wallet: '', userPKey: '' }))
     },
     type: 'button',
   })

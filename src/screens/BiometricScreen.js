@@ -32,6 +32,8 @@ import BiometricHelper from 'src/helpers/BiometricHelper'
 import MetaStorage from 'src/singletons/MetaStorage'
 
 import GLOBALS from 'src/Globals'
+import { connect } from 'react-redux'
+import { setAuthState, setInitialUser } from 'src/redux-store/actions/signin'
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
@@ -58,7 +60,7 @@ function GetScreenInsets() {
   }
 }
 
-export default class BiometricScreen extends Component {
+class BiometricScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
     super(props)
@@ -355,7 +357,12 @@ export default class BiometricScreen extends Component {
     // Check if the push notification permission is waiting for first grant
     // If not, skip this step completely as user either gave permission or denied it
     const authorizationStatus = await messaging().hasPermission()
-    const { privateKey } = this.props.route.params
+    const { privateKey, wallet, fromOnboarding } = this.props.route.params
+    console.log({ params: this.props.route.params })
+    this.props.setInitialUser({
+      wallet: this.props.route.params.wallet,
+      userPKey: privateKey,
+    })
 
     if (authorizationStatus == messaging.AuthorizationStatus.NOT_DETERMINED) {
       this.props.navigation.navigate('PushNotify', {
@@ -761,3 +768,11 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
 })
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+})
+
+export default connect(mapStateToProps, { setAuthState, setInitialUser })(
+  BiometricScreen,
+)

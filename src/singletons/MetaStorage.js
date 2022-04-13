@@ -295,6 +295,47 @@ export default class MetaStorage {
     }
   }
 
+  setWalletDetails = async (walletObject, index) => {
+    try {
+      await AsyncStorage.setItem(
+        `${GLOBALS.STORAGE.STORED_WALLET_OBJ}-${index}`,
+        JSON.stringify(walletObject),
+      )
+    } catch (error) {
+      // Error saving data
+      console.warn(error)
+      return false
+    }
+  }
+
+  getWalletDetails = async (index) => {
+    try {
+      // Then Fetch Wallet
+      let walletObj = await AsyncStorage.getItem(
+        `${GLOBALS.STORAGE.STORED_WALLET_OBJ}-${index}`,
+      )
+
+      // Set Default Value
+      if (walletObj == null) {
+        walletObj = {
+          cnsRefreshTime: 0, // Time in epoch
+          cns: '',
+          ensRefreshTime: 0, // Time in epoch
+          ens: '',
+          wallet: '',
+        }
+
+        await MetaStorage.instance.setWalletDetails(walletObj, index)
+        walletObj = JSON.stringify(walletObj)
+      }
+
+      return JSON.parse(walletObj)
+    } catch (error) {
+      console.warn(error)
+      return false
+    }
+  }
+
   // GET NUMBER OF ATTEMPTS
   getRemainingPasscodeAttempts = async () => {
     try {
@@ -454,5 +495,10 @@ export default class MetaStorage {
       console.warn(error)
       return false
     }
+  }
+
+  clearStorage = async () => {
+    const keys = await AsyncStorage.getAllKeys()
+    await AsyncStorage.multiRemove(keys)
   }
 }

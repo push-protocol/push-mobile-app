@@ -214,9 +214,10 @@ class SetupCompleteScreen extends Component {
     // Add to Feed DB
     // await FeedDBHelper.addFeedFromPayloadObject(db, payload);
 
-    this.props.setAuthState({
-      index: this.props.auth.activeUser,
-      authState: GLOBALS.APP_AUTH_STATES.ONBOARDED,
+    this.props.navigation.navigate('Splash', {
+      privateKey: privateKey,
+      wallet: this.props.route.params.wallet,
+      fromOnboarding: this.props.route.params.fromOnboarding,
     })
   }
 

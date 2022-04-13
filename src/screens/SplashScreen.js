@@ -69,6 +69,8 @@ class SplashScreen extends Component {
           authState: GLOBALS.APP_AUTH_STATES.ONBOARDING,
         })
       })
+
+      this.props.navigation.navigate('Welcome')
     } else {
       // User is signed in, handle Authentication flow
       this.setState(
@@ -114,6 +116,8 @@ class SplashScreen extends Component {
           wallet: response.wallet,
           userPKey: response.pkey,
         })
+
+        this.props.navigation.navigate('Tabs')
       })
     } else {
       // Verify
@@ -257,6 +261,8 @@ class SplashScreen extends Component {
         wallet: response.wallet,
         userPKey: response.pkey,
       })
+
+      this.props.navigation.navigate('Tabs')
     } else {
       // Passcode Attempt Failed
 
@@ -459,7 +465,7 @@ class SplashScreen extends Component {
 
     // Customize Prompt
     let prompt = '[d:Please enter your Passcode]'
-    const maxAttempts = GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
+
     if (
       this.state.remainingAttempts < GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
     ) {

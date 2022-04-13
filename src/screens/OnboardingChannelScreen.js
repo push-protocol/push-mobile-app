@@ -1,6 +1,6 @@
-import "@ethersproject/shims";
-import { ethers } from "ethers";
-import React, { useState, useEffect } from "react";
+import '@ethersproject/shims'
+import { ethers } from 'ethers'
+import React, { useState, useEffect } from 'react'
 import {
   View,
   Text,
@@ -10,87 +10,88 @@ import {
   StyleSheet,
   TouchableOpacity,
   Linking,
-} from "react-native";
-import ENV_CONFIG from "src/env.config";
-import addresses from "../templates/addresses";
-import EPNSABI from "../abis/epnscore.json";
-import GLOBALS from "src/Globals";
-import SubscriptionStatus from "../components/buttons/SubscriptionStatus";
-import { useNavigation } from "@react-navigation/native";
-import DetailedInfoPresenter from "src/components/misc/DetailedInfoPresenter";
-import StylishLabel from "src/components/labels/StylishLabel";
-import PrimaryButton from "src/components/buttons/PrimaryButton";
+} from 'react-native'
+import ENV_CONFIG from 'src/env.config'
+import addresses from '../templates/addresses'
+import EPNSABI from '../abis/epnscore.json'
+import GLOBALS from 'src/Globals'
+import SubscriptionStatus from '../components/buttons/SubscriptionStatus'
+import { useNavigation } from '@react-navigation/native'
+import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter'
+import StylishLabel from 'src/components/labels/StylishLabel'
+import PrimaryButton from 'src/components/buttons/PrimaryButton'
 
 export default function OnboardingChannelScreen(props) {
-  const navigation = useNavigation();
+  const navigation = useNavigation()
 
-  const { wallet, pkey } = props.route.params;
-  const [channels, setChannels] = useState([]);
-  const [page, setPage] = useState(1);
-  const [refreshing, setRefreshing] = useState(false);
-  const [contract, setContract] = useState(null);
-  const [loading, setloading] = useState(false);
-  const [provider, setProvider] = useState(null);
-  const [endReached, setEndReached] = useState(false);
+  const { wallet, pkey } = props.route.params
+  const [channels, setChannels] = useState([])
+  const [page, setPage] = useState(1)
+  const [refreshing, setRefreshing] = useState(false)
+  const [contract, setContract] = useState(null)
+  const [loading, setloading] = useState(false)
+  const [provider, setProvider] = useState(null)
+  const [endReached, setEndReached] = useState(false)
 
+  console.log({ wallet, pkey })
   useEffect(() => {
-    console.log(props);
+    console.log(props)
     // fetchChannels();
-    const network = "ropsten";
+    const network = 'ropsten'
     const providerState = ethers.getDefaultProvider(network, {
-      etherscan: "TZCWZ8YCQDH4THP54865SDGTG3XXY8ZAQU",
+      etherscan: 'TZCWZ8YCQDH4THP54865SDGTG3XXY8ZAQU',
       infura: ENV_CONFIG.INFURA_PROJECT_ID
         ? {
             projectId: ENV_CONFIG.INFURA_PROJECT_ID,
             projectSecret: ENV_CONFIG.INFURA_PROJECT_SECRET,
           }
         : null,
-      alchemy: "wxQBUQ4vvHpc8HJBJWw1YjWoCMDwiHh2",
-    });
-    setProvider(providerState);
-    initiateContractInstance(providerState);
-  }, []);
+      alchemy: 'wxQBUQ4vvHpc8HJBJWw1YjWoCMDwiHh2',
+    })
+    setProvider(providerState)
+    initiateContractInstance(providerState)
+  }, [])
 
   const initiateContractInstance = async (provider) => {
     const contractInstanceState = await new ethers.Contract(
       addresses.epnscore,
       EPNSABI,
-      provider
-    );
+      provider,
+    )
 
-    setContract(contractInstanceState);
-  };
+    setContract(contractInstanceState)
+  }
 
   useEffect(() => {
-    fetchChannels();
-  }, [contract]);
+    fetchChannels()
+  }, [contract])
 
   const fetchChannels = async () => {
-    const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_CHANNELS;
+    const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_CHANNELS
 
     // const apiURL =
     // "https://backend-staging.epns.io/apis/channels/fetch_channels";
 
     const response = await fetch(apiURL, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         page: page,
         pageSize: 10,
-        op: "read",
+        op: 'read',
       }),
-    });
-    const resJson = await response.json();
+    })
+    const resJson = await response.json()
 
     if (resJson.count != 0 && resJson.results != []) {
-      const data = channels;
-      await setChannels([...data, ...resJson.results]);
-      await setPage(page + 1);
+      const data = channels
+      await setChannels([...data, ...resJson.results])
+      await setPage(page + 1)
     }
-  };
+  }
 
   const openURL = (url) => {
     if (validURL(url) || 1) {
@@ -98,32 +99,32 @@ export default function OnboardingChannelScreen(props) {
       // Bypassing the check so that custom app domains can be opened
       Linking.canOpenURL(url).then((supported) => {
         if (supported) {
-          Linking.openURL(url);
+          Linking.openURL(url)
         } else {
           // showToast("Device Not Supported", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
         }
-      });
+      })
     } else {
       // showToast("Link not valid", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
     }
-  };
+  }
 
   // to check valid url
   const validURL = (str) => {
     var pattern = new RegExp(
-      "^(https?:\\/\\/)?" + // protocol
-        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-        "(\\#[-a-z\\d_]*)?$",
-      "i"
-    ); // fragment locator
-    return !!pattern.test(str);
-  };
+      '^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$',
+      'i',
+    ) // fragment locator
+    return !!pattern.test(str)
+  }
 
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+    <SafeAreaView style={{ backgroundColor: '#fff', flex: 1 }}>
       <DetailedInfoPresenter
         contentView={
           <View style={styles.introContent}>
@@ -200,7 +201,7 @@ export default function OnboardingChannelScreen(props) {
         /> */}
       <FlatList
         data={channels}
-        style={{ backgroundColor: "#fff", marginBottom: 60, height: "80%" }}
+        style={{ backgroundColor: '#fff', marginBottom: 60, height: '80%' }}
         keyExtractor={(item) => item.channel.toString()}
         initialNumToRender={5}
         showsVerticalScrollIndicator={false}
@@ -211,11 +212,11 @@ export default function OnboardingChannelScreen(props) {
               <View
                 style={{
                   flex: 1,
-                  flexDirection: "row",
+                  flexDirection: 'row',
                   marginVertical: 10,
                   marginHorizontal: 20,
                   borderWidth: 1,
-                  borderColor: "#ccc",
+                  borderColor: '#ccc',
                   padding: 10,
                   borderRadius: 10,
                 }}
@@ -224,7 +225,7 @@ export default function OnboardingChannelScreen(props) {
                   style={{
                     flex: 0.2,
                     // justifyContent: "center",
-                    alignItems: "center",
+                    alignItems: 'center',
                     marginVertical: 10,
                   }}
                 >
@@ -235,7 +236,7 @@ export default function OnboardingChannelScreen(props) {
                         width: 50,
                         height: 50,
                         borderWidth: 1,
-                        borderColor: "#ccc",
+                        borderColor: '#ccc',
                       }}
                     />
                   ) : null}
@@ -249,15 +250,15 @@ export default function OnboardingChannelScreen(props) {
                 >
                   <TouchableOpacity
                     onPress={() => {
-                      openURL(item.url);
+                      openURL(item.url)
                     }}
                   >
                     <Text
                       style={{
-                        color: "#E10780",
-                        fontWeight: "bold",
+                        color: '#E10780',
+                        fontWeight: 'bold',
                         fontSize: 14,
-                        flexWrap: "wrap",
+                        flexWrap: 'wrap',
                       }}
                     >
                       {item.name}
@@ -266,7 +267,7 @@ export default function OnboardingChannelScreen(props) {
                   <Text
                     style={{
                       flex: 1,
-                      flexWrap: "wrap",
+                      flexWrap: 'wrap',
                       marginTop: 5,
                       fontSize: 10,
                     }}
@@ -276,8 +277,8 @@ export default function OnboardingChannelScreen(props) {
                   <View
                     style={{
                       marginTop: 10,
-                      justifyContent: "flex-end",
-                      alignItems: "flex-end",
+                      justifyContent: 'flex-end',
+                      alignItems: 'flex-end',
                     }}
                   >
                     <SubscriptionStatus
@@ -294,11 +295,11 @@ export default function OnboardingChannelScreen(props) {
       />
       <View
         style={{
-          width: "70%",
+          width: '70%',
           height: 75,
-          position: "absolute",
+          position: 'absolute',
           bottom: 0,
-          alignSelf: "center",
+          alignSelf: 'center',
         }}
       >
         <PrimaryButton
@@ -311,22 +312,22 @@ export default function OnboardingChannelScreen(props) {
           bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
           disabled={false}
           onPress={() => {
-            navigation.navigate("SetupComplete", {
+            navigation.navigate('SetupComplete', {
               privateKey: props.route.params.privateKey,
               fromOnboarding: props.route.params.fromOnboarding,
-            });
+            })
           }}
         />
       </View>
     </SafeAreaView>
-  );
+  )
 }
 
 // Styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
+    width: '100%',
     // justifyContent: "center",
     // alignItems: "center",
     backgroundColor: GLOBALS.COLORS.WHITE,
@@ -340,10 +341,10 @@ const styles = StyleSheet.create({
     // zIndex: 99,
   },
   header: {
-    flexDirection: "row",
-    alignSelf: "stretch",
+    flexDirection: 'row',
+    alignSelf: 'stretch',
     // justifyContent: "flex-end",
-    alignItems: "center",
+    alignItems: 'center',
     marginHorizontal: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
     zIndex: 99,
     height: 55,
@@ -363,18 +364,18 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   feedDisplayer: {
     flex: 1,
-    width: "100%",
+    width: '100%',
   },
   introContent: {
     marginBottom: 20,
     paddingHorizontal: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-});
+})

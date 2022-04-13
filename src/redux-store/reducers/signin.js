@@ -58,8 +58,9 @@ const authReducer = (state = initialState, action) => {
       const modifiedUsers = [...state.users]
       modifiedUsers.push(newUser)
 
+      console.log(JSON.stringify(modifiedUsers))
+
       return {
-        ...state,
         users: modifiedUsers,
         activeUser: newIndex,
       }
