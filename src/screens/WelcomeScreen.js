@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   View,
   Text,
@@ -7,69 +7,69 @@ import {
   Animated,
   AsyncStorage,
   StyleSheet,
-} from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
+} from 'react-native'
+import { useFocusEffect } from '@react-navigation/native'
+import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context'
 
-import StylishLabel from 'src/components/labels/StylishLabel';
-import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
-import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import StylishLabel from 'src/components/labels/StylishLabel'
+import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter'
+import PrimaryButton from 'src/components/buttons/PrimaryButton'
 
-import GLOBALS from 'src/Globals';
+import GLOBALS from 'src/Globals'
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
     React.useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         // After screen is loaded
-        setScreenTransitionAsDone();
-      });
+        setScreenTransitionAsDone()
+      })
 
-      return () => task.cancel();
-    }, [])
-  );
+      return () => task.cancel()
+    }, []),
+  )
 
-  return null;
+  return null
 }
 
 function GetScreenInsets() {
-  const insets = useSafeArea();
+  const insets = useSafeArea()
   if (insets.bottom > 0) {
     // Adjust inset by
-    return <View style={styles.insetAdjustment}></View>;
-  }
-  else {
-    return <View style={styles.noInsetAdjustment}></View>;
+    return <View style={styles.insetAdjustment}></View>
+  } else {
+    return <View style={styles.noInsetAdjustment}></View>
   }
 }
 
 export default class WelcomeScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       transitionFinished: false,
       detailedInfoPresetned: false,
 
-      fader: new Animated.Value(0)
+      fader: new Animated.Value(0),
     }
   }
 
   // FUNCTIONS
   // When Animation is Finished
   animationFinished = () => {
-    this.setState({
-      detailedInfoPresetned: true,
-    }, ()=> {
-      Animated.timing(
-        this.state.fader, {
+    this.setState(
+      {
+        detailedInfoPresetned: true,
+      },
+      () => {
+        Animated.timing(this.state.fader, {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }
-      ).start();
-    })
+        }).start()
+      },
+    )
   }
 
   // Load the Next Screen
@@ -77,25 +77,21 @@ export default class WelcomeScreen extends Component {
     // Goto Next Screen
     this.props.navigation.navigate('SignIn', {
       fromOnboarding: true,
-    });
+    })
   }
 
   // RETURN
   render() {
-    const { navigation } = this.props;
-
     return (
       <SafeAreaView style={styles.container}>
         <ScreenFinishedTransition
-          setScreenTransitionAsDone={
-            () => {
-              this.setState({
-                transitionFinished: true
-              });
-            }
-          }
+          setScreenTransitionAsDone={() => {
+            this.setState({
+              transitionFinished: true,
+            })
+          }}
         />
-      <Text style={styles.header}>Welcome!</Text>
+        <Text style={styles.header}>Welcome!</Text>
         <View style={styles.inner}>
           <DetailedInfoPresenter
             style={styles.intro}
@@ -105,41 +101,45 @@ export default class WelcomeScreen extends Component {
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title='Welcome to [b:Ethereum Push Notifications Service] (EPNS).'
+                  title="Welcome to [b:Ethereum Push Notifications Service] (EPNS)."
                 />
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title='[b:EPNS] is a an innovative way to recieve notifications from different [bi:dApps] or [bi:Smart Contracts]. Think notifications but coming from blockchain ecosystem.'
+                  title="[b:EPNS] is a an innovative way to recieve notifications from different [bi:dApps] or [bi:Smart Contracts]. Think notifications but coming from blockchain ecosystem."
                 />
                 <StylishLabel
                   style={styles.paraend}
                   fontSize={16}
-                  title='Visit [u:epns.io||https://epns.io] to learn more about it.'
+                  title="Visit [u:epns.io||https://epns.io] to learn more about it."
                 />
               </View>
             }
             animated={!this.state.detailedInfoPresetned}
             startAnimation={this.state.transitionFinished}
-            animationCompleteCallback={() => {this.animationFinished()}}
+            animationCompleteCallback={() => {
+              this.animationFinished()
+            }}
           />
         </View>
-        <Animated.View style={[ styles.footer, {opacity: this.state.fader} ]}>
+        <Animated.View style={[styles.footer, { opacity: this.state.fader }]}>
           <PrimaryButton
-            iconFactory='Ionicons'
-            icon='ios-arrow-forward'
+            iconFactory="Ionicons"
+            icon="ios-arrow-forward"
             iconSize={24}
-            title='Continue'
+            title="Continue"
             fontSize={16}
             fontColor={GLOBALS.COLORS.WHITE}
             bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
             disabled={false}
-            onPress={() => {this.loadNextScreen()}}
+            onPress={() => {
+              this.loadNextScreen()
+            }}
           />
           <GetScreenInsets />
         </Animated.View>
       </SafeAreaView>
-    );
+    )
   }
 }
 
@@ -188,5 +188,5 @@ const styles = StyleSheet.create({
   },
   noInsetAdjustment: {
     paddingBottom: 20,
-  }
-});
+  },
+})

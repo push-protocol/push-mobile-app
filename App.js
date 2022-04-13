@@ -43,7 +43,7 @@ if (!ENV_CONFIG.SHOW_CONSOLE) {
 const Stack = createStackNavigator()
 
 export default function App({ navigation }) {
-  const { users, activeUser } = useSelector((state) => state.auth)
+  const { users, activeUser, authState } = useSelector((state) => state.auth)
 
   const handleAppNotificationBadge = async () => {
     await AppBadgeHelper.setAppBadgeCount(0)
@@ -86,63 +86,12 @@ export default function App({ navigation }) {
     }
   }, [])
 
-  // RENDER
-  return (
-    <WalletConnectProvider
-      redirectUrl={`${ENV_CONFIG.DEEPLINK_URL}`}
-      bridge="https://bridge.walletconnect.org"
-      clientMeta={{
-        description: 'Connect with WalletConnect',
-        url: 'https://walletconnect.org',
-        icons: ['https://walletconnect.org/walletconnect-logo.png'],
-        name: 'WalletConnect',
-      }}
-      storageOptions={{
-        asyncStorage: AsyncStorage,
-      }}
-    >
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            title: '',
-            headerStyle: {
-              backgroundColor: GLOBALS.COLORS.WHITE,
-              shadowColor: 'transparent',
-              shadowRadius: 0,
-              shadowOffset: {
-                height: 0,
-              },
-              elevation: 0,
-            },
-            headerTitleStyle: {
-              color: GLOBALS.COLORS.BLACK,
-            },
-            headerBackTitleStyle: {
-              color: GLOBALS.COLORS.PRIMARY,
-            },
-            headerTintColor: GLOBALS.COLORS.BLACK,
-            headerTitleAlign: 'center',
-            headerBackTitleVisible: false,
-          }}
-        >
-          <Stack.Screen
-            name="Welcome"
-            component={WelcomeScreen}
-            options={{
-              headerShown: false,
-              headerTintColor: GLOBALS.COLORS.MID_GRAY,
-            }}
-          />
-
-          <Stack.Screen
-            name="NewWalletSignIn"
-            component={NewWalletSignInScreen}
-            options={{
-              headerShown: false,
-              headerTintColor: GLOBALS.COLORS.MID_GRAY,
-            }}
-          />
-
+  // RENDER ASSIST
+  renderSelectiveScreens = () => {
+    // User is Authenticated
+    if (authState == GLOBALS.APP_AUTH_STATES.AUTHENTICATED) {
+      return (
+        <React.Fragment>
           <Stack.Screen
             name="Tabs"
             component={Tabs}
@@ -178,10 +127,34 @@ export default function App({ navigation }) {
               headerTintColor: GLOBALS.COLORS.MID_GRAY,
             }}
           />
+        </React.Fragment>
+      )
+    }
+    // User is logging in
+    else if (authState == GLOBALS.APP_AUTH_STATES.ONBOARDING) {
+      return (
+        <React.Fragment>
+          <Stack.Screen
+            name="Welcome"
+            component={WelcomeScreen}
+            options={{
+              headerShown: false,
+              headerTintColor: GLOBALS.COLORS.MID_GRAY,
+            }}
+          />
 
           <Stack.Screen
             name="SignIn"
             component={SignInScreen}
+            options={{
+              headerShown: false,
+              headerTintColor: GLOBALS.COLORS.MID_GRAY,
+            }}
+          />
+
+          <Stack.Screen
+            name="NewWalletSignIn"
+            component={NewWalletSignInScreen}
             options={{
               headerShown: false,
               headerTintColor: GLOBALS.COLORS.MID_GRAY,
@@ -223,13 +196,66 @@ export default function App({ navigation }) {
               headerTintColor: GLOBALS.COLORS.MID_GRAY,
             }}
           />
-          <Stack.Screen
-            name="Splash"
-            component={SplashScreen}
-            options={{
-              headerTransparent: true,
-            }}
-          />
+        </React.Fragment>
+      )
+    }
+    // App is loading or User is getting authenticated
+    else if (
+      authState == GLOBALS.APP_AUTH_STATES.INITIALIZING ||
+      authState == GLOBALS.APP_AUTH_STATES.ONBOARDED
+    ) {
+      return (
+        <Stack.Screen
+          name="Splash"
+          component={SplashScreen}
+          options={{
+            headerTransparent: true,
+          }}
+        />
+      )
+    }
+  }
+
+  // RENDER
+  return (
+    <WalletConnectProvider
+      redirectUrl={`${ENV_CONFIG.DEEPLINK_URL}`}
+      bridge="https://bridge.walletconnect.org"
+      clientMeta={{
+        description: 'Connect with WalletConnect',
+        url: 'https://walletconnect.org',
+        icons: ['https://walletconnect.org/walletconnect-logo.png'],
+        name: 'WalletConnect',
+      }}
+      storageOptions={{
+        asyncStorage: AsyncStorage,
+      }}
+    >
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            title: '',
+            headerStyle: {
+              backgroundColor: GLOBALS.COLORS.WHITE,
+              shadowColor: 'transparent',
+              shadowRadius: 0,
+              shadowOffset: {
+                height: 0,
+              },
+              elevation: 0,
+            },
+            headerTitleStyle: {
+              color: GLOBALS.COLORS.BLACK,
+            },
+            headerBackTitleStyle: {
+              color: GLOBALS.COLORS.PRIMARY,
+            },
+            headerTintColor: GLOBALS.COLORS.BLACK,
+            headerTitleAlign: 'center',
+            headerBackTitleVisible: false,
+          }}
+        >
+          {renderSelectiveScreens()}
         </Stack.Navigator>
       </NavigationContainer>
     </WalletConnectProvider>

@@ -11,12 +11,12 @@ const initialCurrentUserState = {
   wallet: '',
   userPKey: '',
   index: 0,
-  authState: Globals.APP_AUTH_STATES.INITIALIZING,
 }
 
 const initialState = {
   users: [initialCurrentUserState],
   activeUser: 0,
+  authState: Globals.APP_AUTH_STATES.INITIALIZING,
 }
 
 const authReducer = (state = initialState, action) => {
@@ -35,21 +35,15 @@ const authReducer = (state = initialState, action) => {
       }
 
     case SET_AUTH_STATE:
-      const { index, authState } = action.payload
-      let updatedUsers = [...state.users]
-
-      updatedUsers[index].authState = authState
-
       return {
         ...state,
-        users: updatedUsers,
+        authState: action.payload,
       }
 
     case SIGNIN_USER:
       const { wallet, userPKey } = action.payload
       const newIndex = state.users.length
       const newUser = {
-        authState: Globals.APP_AUTH_STATES.INITIALIZING,
         index: newIndex,
         wallet,
         userPKey,
@@ -73,9 +67,9 @@ const authReducer = (state = initialState, action) => {
             wallet: '',
             userPKey: '',
             index: 0,
-            authState: Globals.APP_AUTH_STATES.INITIALIZING,
           },
         ],
+        authState: Globals.APP_AUTH_STATES.ONBOARDING,
       }
 
     default:

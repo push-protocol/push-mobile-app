@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from 'react'
 import {
   View,
   Text,
@@ -11,95 +11,95 @@ import {
   Dimensions,
   ToastAndroid,
   ScrollView,
-} from "react-native";
-import Toast from "react-native-simple-toast";
-import { Asset } from "expo-asset";
-import ImageView from "react-native-image-viewing";
-import ImagePreviewFooter from "src/components/ui/ImagePreviewFooter";
-import FeedItemWrapper from "src/components/ui/testFeed/FeedItemWrapperComponent.js";
-import FeedItemComponent from "src/components/ui/testFeed/FeedItemComponents.js";
-import EPNSActivity from "src/components/loaders/EPNSActivity";
-import StylishLabel from "src/components/labels/StylishLabel";
-import { ToasterOptions, Toaster } from "src/components/indicators/Toaster";
+} from 'react-native'
+import Toast from 'react-native-simple-toast'
+import { Asset } from 'expo-asset'
+import ImageView from 'react-native-image-viewing'
+import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter'
+import FeedItemWrapper from 'src/components/ui/testFeed/FeedItemWrapperComponent.js'
+import FeedItemComponent from 'src/components/ui/testFeed/FeedItemComponents.js'
+import EPNSActivity from 'src/components/loaders/EPNSActivity'
+import StylishLabel from 'src/components/labels/StylishLabel'
+import { ToasterOptions, Toaster } from 'src/components/indicators/Toaster'
 
-import AppBadgeHelper from "src/helpers/AppBadgeHelper";
+import AppBadgeHelper from 'src/helpers/AppBadgeHelper'
 
-import ENV_CONFIG from "src/env.config";
-import { ActivityIndicator } from "react-native";
+import ENV_CONFIG from 'src/env.config'
+import { ActivityIndicator } from 'react-native'
 
 export default function TestFeed(props) {
   // SET STATES
-  const [initialized, setInitialized] = useState(false);
-  const [feed, setFeed] = useState([]);
-  const [page, setPage] = useState(1);
-  const [refreshing, setRefreshing] = useState(false);
-  const [loading, setloading] = useState(false);
-  const [callOnScrollEnd, setCallOnScrollEnd] = useState(false);
-  const [endReached, setEndReached] = useState(false);
-  const [refresh, setRefresh] = useState(false);
+  const [initialized, setInitialized] = useState(false)
+  const [feed, setFeed] = useState([])
+  const [page, setPage] = useState(1)
+  const [refreshing, setRefreshing] = useState(false)
+  const [loading, setloading] = useState(false)
+  const [callOnScrollEnd, setCallOnScrollEnd] = useState(false)
+  const [endReached, setEndReached] = useState(false)
+  const [refresh, setRefresh] = useState(false)
 
-  const [loadedImages, setLoadedImages] = useState([]);
-  const [renderGallery, setRenderGallery] = useState(false);
-  const [startFromIndex, setStartFromIndex] = useState(0);
+  const [loadedImages, setLoadedImages] = useState([])
+  const [renderGallery, setRenderGallery] = useState(false)
+  const [startFromIndex, setStartFromIndex] = useState(0)
 
   // SET REFS
-  const FlatListFeedsRef = useRef(null);
+  const FlatListFeedsRef = useRef(null)
 
   // LOGIC
   useEffect(() => {
     if (!initialized) {
-      fetchInitializedFeeds();
+      fetchInitializedFeeds()
     }
-  }, [initialized]);
+  }, [initialized])
 
   useEffect(() => {
     if (props.refreshNotifFeeds) {
-      setInitialized(false);
+      setInitialized(false)
     }
-  }, [props.refreshNotifFeeds]);
+  }, [props.refreshNotifFeeds])
 
   // Refresh Feed
   const fetchInitializedFeeds = async () => {
-    setInitialized(true);
-    setRefreshing(true);
-    await performTimeConsumingTask();
+    setInitialized(true)
+    setRefreshing(true)
+    await performTimeConsumingTask()
 
-    FlatListFeedsRef.current.scrollToOffset({ animated: true, offset: 0 });
-    fetchFeed(true);
-  };
+    FlatListFeedsRef.current.scrollToOffset({ animated: true, offset: 0 })
+    fetchFeed(true)
+  }
 
   // Perform some task to wait
   const performTimeConsumingTask = async () => {
     return new Promise((resolve) =>
       setTimeout(() => {
-        resolve("result");
-      }, 500)
-    );
-  };
+        resolve('result')
+      }, 500),
+    )
+  }
 
   const showImagePreview = async (fileURL) => {
-    let validPaths = [];
-    let fileIndex = -1;
+    let validPaths = []
+    let fileIndex = -1
 
     // Add Image
     // Download the file if not done already
-    await Asset.loadAsync(fileURL);
+    await Asset.loadAsync(fileURL)
 
     // Push to valid path
     validPaths.push({
       uri: Asset.fromModule(fileURL).uri,
       id: fileURL,
-    });
+    })
 
-    fileIndex = validPaths.length - 1;
+    fileIndex = validPaths.length - 1
 
     // console.log("LOADED IMAGES:");
     // console.log(validPaths);
 
-    setLoadedImages(validPaths);
-    setRenderGallery(true);
-    setStartFromIndex(fileIndex);
-  };
+    setLoadedImages(validPaths)
+    setRenderGallery(true)
+    setStartFromIndex(fileIndex)
+  }
 
   const fetchFeed = async (rewrite) => {
     if (!endReached || rewrite == true) {
@@ -107,70 +107,71 @@ export default function TestFeed(props) {
         //props.ToasterFunc("Fetching Notifs!", ToasterOptions.ICON_TYPE.PROCESSING, ToasterOptions.TYPE.GRADIENT_PRIMARY);
 
         // Check if this is a rewrite
-        let paging = page;
+        let paging = page
         if (rewrite) {
-          paging = 1;
+          paging = 1
         }
 
-        setloading(true);
-        const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_GET_FEEDS;
+        setloading(true)
+        const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_GET_FEEDS
 
-        const wallet = props.wallet;
+        const wallet = props.wallet
         await fetch(apiURL, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             user: wallet.toLowerCase(),
             page: paging,
             pageSize: 20,
-            op: "read",
+            op: 'read',
           }),
         })
           .then((response) => response.json())
           .then((resJson) => {
+            console.log({ resJson })
             if (resJson.count != 0 && resJson.results != []) {
-              const data = feed;
+              const data = feed
 
               // clear the notifs if present
-              AppBadgeHelper.setAppBadgeCount(0);
+              AppBadgeHelper.setAppBadgeCount(0)
 
               // toast.current.show("New Notifications fetched");
               if (rewrite) {
-                setFeed([...resJson.results]);
-                setEndReached(false);
+                setFeed([...resJson.results])
+                setEndReached(false)
               } else {
-                setFeed([...data, ...resJson.results]);
+                setFeed([...data, ...resJson.results])
               }
 
-              setPage(paging + 1);
+              setPage(paging + 1)
 
               props.ToasterFunc(
-                "New Notifications Loaded!",
-                "",
-                ToasterOptions.TYPE.GRADIENT_PRIMARY
-              );
+                'New Notifications Loaded!',
+                '',
+                ToasterOptions.TYPE.GRADIENT_PRIMARY,
+              )
             } else {
-              setEndReached(true);
+              setEndReached(true)
               props.ToasterFunc(
-                "No More Notifications",
-                "",
-                ToasterOptions.TYPE.ERROR
-              );
+                'No More Notifications',
+                '',
+                ToasterOptions.TYPE.ERROR,
+              )
             }
           })
           .catch((error) => {
-            console.warn(error);
-          });
+            console.warn(error)
+          })
 
-        setloading(false);
-        setRefreshing(false);
+        setloading(false)
+        setRefreshing(false)
       }
     }
     // console.log(feed);
-  };
+  }
 
   return (
     <>
@@ -216,7 +217,7 @@ export default function TestFeed(props) {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={() => {
-                  setInitialized(false);
+                  setInitialized(false)
                 }}
               />
             }
@@ -233,7 +234,7 @@ export default function TestFeed(props) {
                 <View style={[styles.infodisplay, styles.noPendingFeeds]}>
                   <Image
                     style={styles.infoIcon}
-                    source={require("assets/ui/feed.png")}
+                    source={require('assets/ui/feed.png')}
                   />
                   <StylishLabel
                     style={styles.infoText}
@@ -248,7 +249,7 @@ export default function TestFeed(props) {
                 <View style={{ paddingBottom: 30, marginTop: 20 }}>
                   <EPNSActivity style={styles.activity} size="small" />
                 </View>
-              ) : null;
+              ) : null
             }}
           />
 
@@ -258,7 +259,7 @@ export default function TestFeed(props) {
             visible={renderGallery}
             swipeToCloseEnabled={true}
             onRequestClose={() => {
-              setRenderGallery(false);
+              setRenderGallery(false)
             }}
             FooterComponent={({ imageIndex }) => (
               <ImagePreviewFooter
@@ -321,27 +322,27 @@ export default function TestFeed(props) {
       </SafeAreaView>
       {/* <Toast ref={toast} duration={500} /> */}
     </>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
+    width: '100%',
   },
   infodisplay: {
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 20,
   },
   infoIcon: {
     height: 48,
-    resizeMode: "contain",
+    resizeMode: 'contain',
     margin: 10,
   },
   infoText: {
     marginVertical: 10,
   },
-});
+})

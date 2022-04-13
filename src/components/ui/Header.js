@@ -50,12 +50,7 @@ const Header = ({ style, wallet }) => {
           style={styles.profile}
           wallet={wallet}
           lockApp={() => {
-            dispatch(
-              setAuthState({
-                index: activeUser,
-                authState: GLOBALS.APP_AUTH_STATES.ONBOARDED,
-              }),
-            )
+            dispatch(setAuthState(GLOBALS.APP_AUTH_STATES.ONBOARDED))
           }}
         />
         <EPNSNotifierIcon

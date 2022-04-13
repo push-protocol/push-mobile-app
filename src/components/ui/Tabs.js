@@ -1,29 +1,29 @@
-import React from "react";
-import { View, Text, Image, SafeAreaView } from "react-native";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import React from 'react'
+import { View, Text, Image, SafeAreaView } from 'react-native'
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import {
   MaterialIcons,
   MaterialCommunityIcons,
   Ionicons,
   FontAwesome5,
-} from "@expo/vector-icons";
+} from '@expo/vector-icons'
 
-import HomeScreen from "src/screens/HomeScreen";
-import ChannelsScreen from "src/screens/ChannelsScreen";
-import SampleFeedScreen from "src/screens/SampleFeedScreen";
-import SpamBoxScreen from "src/screens/SpamBoxScreen";
-
-import GLOBALS from "src/Globals";
+import HomeScreen from 'src/screens/HomeScreen'
+import ChannelsScreen from 'src/screens/ChannelsScreen'
+import SampleFeedScreen from 'src/screens/SampleFeedScreen'
+import SpamBoxScreen from 'src/screens/SpamBoxScreen'
 
 export default function Tabs(props) {
-  const Tab = createMaterialBottomTabNavigator();
+  const Tab = createMaterialBottomTabNavigator()
+
+  console.log({ props: props.route.params })
 
   return (
     <Tab.Navigator
       initialRouteName="Feed"
       activeColor="#674c9f"
       inactiveColor="#ccc"
-      barStyle={{ backgroundColor: "#fefefe" }}
+      barStyle={{ backgroundColor: '#fefefe' }}
       shifting={true}
       labeled={true}
     >
@@ -31,7 +31,7 @@ export default function Tabs(props) {
         name="Feed"
         component={HomeScreen}
         options={{
-          tabBarLabel: "Inbox",
+          tabBarLabel: 'Inbox',
           tabBarIcon: ({ color }) => (
             <FontAwesome5 name="list-alt" color={color} size={20} />
           ),
@@ -46,15 +46,15 @@ export default function Tabs(props) {
         name="Channels"
         component={ChannelsScreen}
         options={{
-          tabBarLabel: "Channels",
+          tabBarLabel: 'Channels',
           tabBarIcon: ({ color }) => (
             <FontAwesome5
               name="wifi"
               color={color}
               size={20}
               style={{
-                transform: [{ rotate: "90deg" }],
-                position: "absolute",
+                transform: [{ rotate: '90deg' }],
+                position: 'absolute',
                 left: 0,
               }}
             />
@@ -70,7 +70,7 @@ export default function Tabs(props) {
         name="Spam"
         component={SpamBoxScreen}
         options={{
-          tabBarLabel: "Spam",
+          tabBarLabel: 'Spam',
           tabBarIcon: ({ color }) => (
             <FontAwesome5 name="trash" size={24} color={color} />
           ),
@@ -85,7 +85,7 @@ export default function Tabs(props) {
         name="SampleFeed"
         component={SampleFeedScreen}
         options={{
-          tabBarLabel: "Sample Feed",
+          tabBarLabel: 'Sample Feed',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="help-box" color={color} size={24} />
           ),
@@ -96,5 +96,5 @@ export default function Tabs(props) {
         }}
       />
     </Tab.Navigator>
-  );
+  )
 }

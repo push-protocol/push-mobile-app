@@ -33,7 +33,7 @@ import MetaStorage from 'src/singletons/MetaStorage'
 
 import GLOBALS from 'src/Globals'
 import { connect } from 'react-redux'
-import { setAuthState, setInitialUser } from 'src/redux-store/actions/signin'
+import { setInitialUser, setAuthState } from 'src/redux-store/actions/signin'
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
@@ -363,6 +363,8 @@ class BiometricScreen extends Component {
       wallet: this.props.route.params.wallet,
       userPKey: privateKey,
     })
+
+    this.props.setAuthState(GLOBALS.APP_AUTH_STATES.ONBOARDING)
 
     if (authorizationStatus == messaging.AuthorizationStatus.NOT_DETERMINED) {
       this.props.navigation.navigate('PushNotify', {
@@ -773,6 +775,6 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 })
 
-export default connect(mapStateToProps, { setAuthState, setInitialUser })(
+export default connect(mapStateToProps, { setInitialUser, setAuthState })(
   BiometricScreen,
 )

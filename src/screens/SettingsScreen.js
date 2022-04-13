@@ -87,12 +87,7 @@ const SettingsScreen = ({ navigation }) => {
     )
 
     setTimeout(() => {
-      dispatch(
-        setAuthState({
-          index: activeUser,
-          authState: GLOBALS.APP_AUTH_STATES.ONBOARDED,
-        }),
-      )
+      dispatch(setAuthState(GLOBALS.APP_AUTH_STATES.ONBOARDED))
     }, 1500)
   }
 
@@ -101,7 +96,6 @@ const SettingsScreen = ({ navigation }) => {
     await AuthenticationHelper.resetSignedInUser()
     await MetaStorage.instance.clearStorage()
     dispatch(signOut(null))
-    navigation.navigate('Welcome')
   }
 
   // TO SHOW TOASTER

@@ -18,8 +18,8 @@ import FeedDBHelper from 'src/helpers/FeedDBHelper'
 import MetaStorage from 'src/singletons/MetaStorage'
 
 import GLOBALS from 'src/Globals'
-import { setAuthState } from 'src/redux-store/actions/signin'
 import { connect } from 'react-redux'
+import { setAuthState } from 'src/redux-store/actions/signin'
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
@@ -214,11 +214,7 @@ class SetupCompleteScreen extends Component {
     // Add to Feed DB
     // await FeedDBHelper.addFeedFromPayloadObject(db, payload);
 
-    this.props.navigation.navigate('Splash', {
-      privateKey: privateKey,
-      wallet: this.props.route.params.wallet,
-      fromOnboarding: this.props.route.params.fromOnboarding,
-    })
+    this.props.setAuthState(GLOBALS.APP_AUTH_STATES.AUTHENTICATED)
   }
 
   // RETURN
