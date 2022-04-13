@@ -1,21 +1,14 @@
 import {
-  SIGNOUT,
   SIGNOUT_USER,
   SET_AUTH_STATE,
   SET_INITIAL_USER,
   SWITCH_USER,
 } from '../constants'
 
-export const signIn = (payload) => {
-  return {
-    type: SIGNOUT,
-    payload,
-  }
-}
-
-export const signOut = () => {
+export const signOut = (payload) => {
   return {
     type: SIGNOUT_USER,
+    payload,
   }
 }
 

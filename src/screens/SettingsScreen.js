@@ -27,7 +27,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 const SettingsScreen = ({ navigation }) => {
   const dispatch = useDispatch()
-  const { activeUser } = useSelector((state) => state.auth)
+  const { activeUser, users } = useSelector((state) => state.auth)
 
   // Wallet Connect functionality
   const connector = useWalletConnect()
@@ -99,7 +99,8 @@ const SettingsScreen = ({ navigation }) => {
   // To Reset Wallet
   const resetWallet = async () => {
     await AuthenticationHelper.resetSignedInUser()
-    dispatch(signOut())
+    dispatch(signOut(null))
+    navigation.navigate('Splash')
   }
 
   // TO SHOW TOASTER

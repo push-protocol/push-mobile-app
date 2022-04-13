@@ -1,6 +1,6 @@
 import {
   SIGNIN_USER,
-  SIGNOUT,
+  SIGNOUT_USER,
   SET_AUTH_STATE,
   SET_INITIAL_USER,
   SWITCH_USER,
@@ -64,8 +64,18 @@ const authReducer = (state = initialState, action) => {
         activeUser: newIndex,
       }
 
-    case SIGNOUT:
-      return initialState
+    case SIGNOUT_USER:
+      return {
+        activeUser: 0,
+        users: [
+          {
+            wallet: '',
+            userPKey: '',
+            index: 0,
+            authState: Globals.APP_AUTH_STATES.INITIALIZING,
+          },
+        ],
+      }
 
     default:
       return state
