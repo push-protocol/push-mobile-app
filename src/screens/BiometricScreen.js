@@ -357,11 +357,11 @@ class BiometricScreen extends Component {
     // Check if the push notification permission is waiting for first grant
     // If not, skip this step completely as user either gave permission or denied it
     const authorizationStatus = await messaging().hasPermission()
-    const { privateKey, wallet, fromOnboarding } = this.props.route.params
-    console.log({ params: this.props.route.params })
+    const { privateKey } = this.props.route.params
+
     this.props.setInitialUser({
       wallet: this.props.route.params.wallet,
-      userPKey: privateKey,
+      userPKey: privateKey == 'undefined' ? '' : privateKey,
     })
 
     this.props.setAuthState(GLOBALS.APP_AUTH_STATES.ONBOARDING)

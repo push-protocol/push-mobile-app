@@ -43,7 +43,9 @@ if (!ENV_CONFIG.SHOW_CONSOLE) {
 const Stack = createStackNavigator()
 
 export default function App({ navigation }) {
-  const { users, activeUser, authState } = useSelector((state) => state.auth)
+  const { users, activeUser, authState, isNew } = useSelector(
+    (state) => state.auth,
+  )
 
   const handleAppNotificationBadge = async () => {
     await AppBadgeHelper.setAppBadgeCount(0)
@@ -145,16 +147,7 @@ export default function App({ navigation }) {
 
           <Stack.Screen
             name="SignIn"
-            component={SignInScreen}
-            options={{
-              headerShown: false,
-              headerTintColor: GLOBALS.COLORS.MID_GRAY,
-            }}
-          />
-
-          <Stack.Screen
-            name="NewWalletSignIn"
-            component={NewWalletSignInScreen}
+            component={isNew === 1 ? NewWalletSignInScreen : SignInScreen}
             options={{
               headerShown: false,
               headerTintColor: GLOBALS.COLORS.MID_GRAY,

@@ -4,6 +4,8 @@ import {
   SET_INITIAL_USER,
   SWITCH_USER,
   SIGNIN_USER,
+  SET_USER,
+  SET_NEW_SIGNIN_STATUS,
 } from '../constants'
 
 export const signOut = (payload) => {
@@ -37,6 +39,20 @@ export const switchUser = (payload) => {
 export const createNewWallet = (payload) => {
   return {
     type: SIGNIN_USER,
+    payload,
+  }
+}
+
+export const setWallet = (payload) => {
+  return {
+    type: SET_USER,
+    payload,
+  }
+}
+
+export const setNewSignInStatus = (payload) => {
+  return {
+    type: SET_NEW_SIGNIN_STATUS,
     payload,
   }
 }

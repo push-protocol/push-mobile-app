@@ -27,8 +27,8 @@ import PKProfileBuilder from 'src/components/web3/PKProfileBuilder'
 import MetaStorage from 'src/singletons/MetaStorage'
 
 import GLOBALS from 'src/Globals'
-import { setInitialUser } from 'src/redux-store/actions/signin'
-import { useDispatch } from 'react-redux'
+import { setAuthState, setWallet } from 'src/redux-store/actions/signin'
+import { useDispatch, useSelector } from 'react-redux'
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
@@ -67,13 +67,12 @@ const SignInScreen = ({ route, navigation }) => {
   const [ens, setENS] = useState('')
   const [walletAddressVerified, setWalletAddressVerified] = useState('')
   const dispatch = useDispatch()
+  const { activeUser, users, authState, isNew } = useSelector(
+    (state) => state.auth,
+  )
+
   // Wallet Connect functionality
-  const {
-    createSession,
-    killSession,
-    session,
-    signTransaction,
-  } = useWalletConnect()
+
   const connector = useWalletConnect()
 
   // Setup Refs
@@ -199,19 +198,21 @@ const SignInScreen = ({ route, navigation }) => {
     }
 
     await MetaStorage.instance.setStoredWallet(walletObj)
-    await MetaStorage.instance.setWalletDetails(walletObj, 0)
+    await MetaStorage.instance.setWalletDetails(walletObj, activeUser)
     dispatch(
-      setInitialUser({
+      setWallet({
         wallet: walletAddress,
         userPKey: '',
-        index: 0,
+        index: activeUser,
       }),
     )
 
-    // Goto Next Screen
-    navigation.navigate('Biometric', {
+    dispatch(setAuthState(GLOBALS.APP_AUTH_STATES.ONBOARDING))
+
+    navigation.navigate('SetupComplete', {
+      privateKey: '',
       wallet: walletAddress,
-      fromOnboarding: route.params.fromOnboarding,
+      fromOnboarding: false,
     })
   }
 

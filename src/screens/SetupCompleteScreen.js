@@ -19,7 +19,10 @@ import MetaStorage from 'src/singletons/MetaStorage'
 
 import GLOBALS from 'src/Globals'
 import { connect } from 'react-redux'
-import { setAuthState } from 'src/redux-store/actions/signin'
+import {
+  setAuthState,
+  setNewSignInStatus,
+} from 'src/redux-store/actions/signin'
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
@@ -79,6 +82,7 @@ class SetupCompleteScreen extends Component {
 
   // Load the Next Screen
   loadNextScreen = async () => {
+    this.props.setNewSignInStatus(0)
     // Nothing to load, Basically Signing is completed
     // All done, set to true
     this.setState({
@@ -336,4 +340,4 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 })
 
-export default connect(mapStateToProps, { setAuthState })(SetupCompleteScreen)
+export default connect(mapStateToProps, { setAuthState,setNewSignInStatus })(SetupCompleteScreen)

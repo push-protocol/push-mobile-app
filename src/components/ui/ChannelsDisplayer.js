@@ -6,7 +6,6 @@ import {
   FlatList,
   Image,
   StyleSheet,
-  Linking,
   TextInput,
 } from 'react-native'
 
@@ -51,6 +50,7 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
     })
     const resJson = await response.json()
 
+    console.log({ resJson })
     if (resJson.count != 0 && resJson.results != []) {
       const data = channels
       setChannels([...data, ...resJson.results])
@@ -162,7 +162,7 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
           )}
         </View>
       )}
-      
+
       {channels.length != 0 && (
         <FlatList
           data={channels}

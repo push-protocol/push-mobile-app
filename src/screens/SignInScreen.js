@@ -68,12 +68,7 @@ const SignInScreen = ({ route, navigation }) => {
   const [walletAddressVerified, setWalletAddressVerified] = useState('')
   const dispatch = useDispatch()
   // Wallet Connect functionality
-  const {
-    createSession,
-    killSession,
-    session,
-    signTransaction,
-  } = useWalletConnect()
+
   const connector = useWalletConnect()
 
   // Setup Refs

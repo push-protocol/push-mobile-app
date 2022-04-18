@@ -22,12 +22,15 @@ import MetaStorage from 'src/singletons/MetaStorage'
 import FeedDBHelper from 'src/helpers/FeedDBHelper'
 import ENV_CONFIG from 'src/env.config'
 import GLOBALS from 'src/Globals'
-import { setAuthState, signOut } from 'src/redux-store/actions/signin'
-import { useDispatch, useSelector } from 'react-redux'
+import {
+  setAuthState,
+  signOut,
+  createNewWallet,
+} from 'src/redux-store/actions/signin'
+import { useDispatch } from 'react-redux'
 
 const SettingsScreen = ({ navigation }) => {
   const dispatch = useDispatch()
-  const { activeUser, users } = useSelector((state) => state.auth)
 
   // Wallet Connect functionality
   const connector = useWalletConnect()
@@ -121,11 +124,7 @@ const SettingsScreen = ({ navigation }) => {
     title: 'Sign in with another wallet',
     img: require('assets/ui/brokenkey.png'),
     func: () => {
-      navigation.navigate('NewWalletSignIn', {
-        fromOnboarding: false,
-      })
-
-      // dispatch(createNewWallet({ wallet: '', userPKey: '' }))
+      dispatch(createNewWallet({ wallet: '', userPKey: '' }))
     },
     type: 'button',
   })

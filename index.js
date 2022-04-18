@@ -11,8 +11,6 @@ import store from 'src/redux-store'
 // Register background handler
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
   return new Promise(async (resolve, reject) => {
-    console.log('Message handled in the background!', remoteMessage);
-    
     await Notify.instance.handleIncomingPushAppInBG(remoteMessage)
 
     resolve(true)

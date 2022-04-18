@@ -1,23 +1,21 @@
 import React from 'react'
-import { View, Text, Image, SafeAreaView } from 'react-native'
+
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
-import {
-  MaterialIcons,
-  MaterialCommunityIcons,
-  Ionicons,
-  FontAwesome5,
-} from '@expo/vector-icons'
+import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons'
 
 import HomeScreen from 'src/screens/HomeScreen'
 import ChannelsScreen from 'src/screens/ChannelsScreen'
 import SampleFeedScreen from 'src/screens/SampleFeedScreen'
 import SpamBoxScreen from 'src/screens/SpamBoxScreen'
+import { useSelector } from 'react-redux'
 
-export default function Tabs(props) {
+export default function Tabs() {
+  const { activeUser, users } = useSelector((state) => state.auth)
   const Tab = createMaterialBottomTabNavigator()
 
-  console.log({ props: props.route.params })
+  const { wallet, userPKey: pkey } = users[activeUser]
 
+  console.log({ wallet, pkey })
   return (
     <Tab.Navigator
       initialRouteName="Feed"
@@ -37,8 +35,8 @@ export default function Tabs(props) {
           ),
         }}
         initialParams={{
-          wallet: props.route.params.wallet,
-          pkey: props.route.params.pkey,
+          wallet,
+          pkey,
         }}
       />
 
@@ -61,8 +59,8 @@ export default function Tabs(props) {
           ),
         }}
         initialParams={{
-          wallet: props.route.params.wallet,
-          pkey: props.route.params.pkey,
+          wallet,
+          pkey,
         }}
       />
 
@@ -76,8 +74,8 @@ export default function Tabs(props) {
           ),
         }}
         initialParams={{
-          wallet: props.route.params.wallet,
-          pkey: props.route.params.pkey,
+          wallet,
+          pkey,
         }}
       />
 
@@ -91,8 +89,8 @@ export default function Tabs(props) {
           ),
         }}
         initialParams={{
-          wallet: props.route.params.wallet,
-          pkey: props.route.params.pkey,
+          wallet,
+          pkey,
         }}
       />
     </Tab.Navigator>

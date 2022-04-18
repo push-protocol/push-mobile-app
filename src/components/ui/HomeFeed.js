@@ -26,8 +26,12 @@ import AppBadgeHelper from 'src/helpers/AppBadgeHelper'
 
 import ENV_CONFIG from 'src/env.config'
 import { ActivityIndicator } from 'react-native'
+import { useSelector } from 'react-redux'
 
 export default function TestFeed(props) {
+  const { activeUser, users } = useSelector((state) => state.auth)
+  const { wallet } = users[activeUser]
+
   // SET STATES
   const [initialized, setInitialized] = useState(false)
   const [feed, setFeed] = useState([])
@@ -115,7 +119,6 @@ export default function TestFeed(props) {
         setloading(true)
         const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_GET_FEEDS
 
-        const wallet = props.wallet
         await fetch(apiURL, {
           method: 'POST',
           headers: {
@@ -131,7 +134,6 @@ export default function TestFeed(props) {
         })
           .then((response) => response.json())
           .then((resJson) => {
-            console.log({ resJson })
             if (resJson.count != 0 && resJson.results != []) {
               const data = feed
 
