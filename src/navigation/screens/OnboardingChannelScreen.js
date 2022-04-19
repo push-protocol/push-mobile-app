@@ -15,7 +15,7 @@ import ENV_CONFIG from 'src/env.config'
 import addresses from '../templates/addresses'
 import EPNSABI from '../abis/epnscore.json'
 import GLOBALS from 'src/Globals'
-import SubscriptionStatus from '../components/buttons/SubscriptionStatus'
+import SubscriptionStatus from 'src/components/buttons/SubscriptionStatus'
 import { useNavigation } from '@react-navigation/native'
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter'
 import StylishLabel from 'src/components/labels/StylishLabel'
@@ -24,18 +24,15 @@ import PrimaryButton from 'src/components/buttons/PrimaryButton'
 export default function OnboardingChannelScreen(props) {
   const navigation = useNavigation()
 
-  const { wallet, pkey } = props.route.params
   const [channels, setChannels] = useState([])
   const [page, setPage] = useState(1)
-  const [refreshing, setRefreshing] = useState(false)
+
   const [contract, setContract] = useState(null)
-  const [loading, setloading] = useState(false)
+
   const [provider, setProvider] = useState(null)
   const [endReached, setEndReached] = useState(false)
 
-  console.log({ wallet, pkey })
   useEffect(() => {
-    console.log(props)
     // fetchChannels();
     const network = 'ropsten'
     const providerState = ethers.getDefaultProvider(network, {
@@ -141,64 +138,8 @@ export default function OnboardingChannelScreen(props) {
             />
           </View>
         }
-        // animated={!this.state.detailedInfoPresetned}
-        // startAnimation={this.state.transitionFinished}
-        // animationCompleteCallback={() => {
-        //   this.animationFinished();
-        // }}
       />
-      {/* <ProfileDisplayer
-          // ref="ProfileDisplayer"
-          style={styles.profile}
-          wallet={wallet}
-          lockApp={() => {
-            const { handleAppAuthState } = this.context;
-            handleAppAuthState(APP_AUTH_STATES.ONBOARDED);
-          }}
-        /> */}
-      {/* Header Comes Here */}
-      {/* <EPNSNotifierIcon
-          // ref="EPNSNotifier"
-          style={styles.notifier}
-          iconSize={32}
-          onPress={() => {
-            // Refresh the feeds
-            // this.refreshFeeds();
-          }}
-          onNewNotifications={() => {
-            // Do nothing for now, bell is ringing in the module anyway
-          }}
-        /> */}
-      {/* <ImageButton
-          style={styles.help}
-          src={require("assets/ui/help.png")}
-          iconSize={24}
-          onPress={() => {
-            // // Finally associate token to server if not done
-            // const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
-            // const privateKey = this.props.route.params.pkey;
-            //
-            // // While an async function, there is no need to wait
-            // ServerHelper.associateTokenToServer(publicKey, privateKey);
 
-            navigation.navigate("SampleFeed", {});
-          }}
-        /> */}
-      {/* <ImageButton
-          style={styles.settings}
-          src={require("assets/ui/settings.png")}
-          iconSize={24}
-          onPress={() => {
-            // // Finally associate token to server if not done
-            // const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
-            // const privateKey = this.props.route.params.pkey;
-            //
-            // // While an async function, there is no need to wait
-            // ServerHelper.associateTokenToServer(publicKey, privateKey);
-
-            navigation.navigate("Settings", {});
-          }}
-        /> */}
       <FlatList
         data={channels}
         style={{ backgroundColor: '#fff', marginBottom: 60, height: '80%' }}
@@ -328,22 +269,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    // justifyContent: "center",
-    // alignItems: "center",
     backgroundColor: GLOBALS.COLORS.WHITE,
   },
-  profile: {
-    // position: "absolute",
-    // top: 0,
-    // right: 0,
-    // left: 0,
-    // bottom: 0,
-    // zIndex: 99,
-  },
+  profile: {},
   header: {
     flexDirection: 'row',
     alignSelf: 'stretch',
-    // justifyContent: "flex-end",
     alignItems: 'center',
     marginHorizontal: GLOBALS.ADJUSTMENTS.SCREEN_GAP_HORIZONTAL,
     zIndex: 99,

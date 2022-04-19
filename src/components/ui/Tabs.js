@@ -4,9 +4,9 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons'
 
 import HomeScreen from 'src/navigation/screens/HomeScreen'
-import ChannelsScreen from 'src/screens/ChannelsScreen'
-import SampleFeedScreen from 'src/screens/SampleFeedScreen'
-import SpamBoxScreen from 'src/screens/SpamBoxScreen'
+import ChannelsScreen from 'src/navigation/screens/ChannelsScreen'
+import SampleFeedScreen from 'src/navigation/screens/SampleFeedScreen'
+import SpamBoxScreen from 'src/navigation/screens/SpamBoxScreen'
 
 import { useSelector } from 'react-redux'
 import { selectUsers, selectCurrentUser } from 'src/redux/authSlice'
