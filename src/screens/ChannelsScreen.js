@@ -5,9 +5,13 @@ import ChannelsDisplayer from 'src/components/ui/ChannelsDisplayer'
 
 import GLOBALS from 'src/Globals'
 import { useSelector } from 'react-redux'
+import { selectUsers, selectCurrentUser } from 'src/redux/authSlice'
 
 const ChannelsScreen = () => {
-  const { activeUser, users } = useSelector((state) => state.auth)
+  const users = useSelector(selectUsers)
+  const currentUser = useSelector(selectCurrentUser)
+
+  const { wallet, userPKey } = users[currentUser]
 
   return (
     <SafeAreaView style={styles.container}>
@@ -18,10 +22,7 @@ const ChannelsScreen = () => {
       />
 
       <View style={styles.content}>
-        <ChannelsDisplayer
-          wallet={users[activeUser].wallet}
-          pKey={users[activeUser].pkey}
-        />
+        <ChannelsDisplayer wallet={wallet} pKey={userPKey} />
       </View>
     </SafeAreaView>
   )

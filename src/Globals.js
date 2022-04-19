@@ -97,11 +97,22 @@ export default {
     SETUPCOMPLETE: 'SetupComplete',
     TABS: 'Tabs',
     SETTINGS: 'Settings',
+    SPLASH: 'Splash',
+    FEED: 'Feed',
+    SETTINGS: 'Settings',
+    CHANNELS: 'Channels',
+    SPAM: 'Spam',
+    SAMPLEFEED: 'SampleFeed',
   },
   APP_AUTH_STATES: {
     INITIALIZING: 1,
     ONBOARDING: 2,
     ONBOARDED: 3,
     AUTHENTICATED: 4,
+  },
+  AUTH_STATE: {
+    INITIALIZING: 'INITIALIZING',
+    ONBOARDING: 'ONBOARDING',
+    AUTHENTICATED: 'AUTHENTICATED',
   },
 }

@@ -23,7 +23,7 @@ import ENSButton from 'src/components/buttons/ENSButton'
 import Web3Helper from 'src/helpers/Web3Helper'
 
 import GLOBALS from 'src/Globals'
-import { switchUser } from 'src/redux-store/actions/signin'
+import { switchUser } from 'src/redux/authSlice'
 import { connect } from 'react-redux'
 
 const MARGIN_RIGHT = 120
@@ -99,8 +99,8 @@ class ProfileDisplayer extends Component {
   // RENDER
   render() {
     const { style, lockApp, auth } = this.props
-    const wallet = auth.users[auth.activeUser].wallet
-    
+    const wallet = auth.users[auth.currentUser].wallet
+
     return (
       <View style={[styles.container, style]} pointerEvents="box-none">
         <SafeAreaView style={[styles.container, styles.safeContainer]}>

@@ -22,8 +22,9 @@ import MetaStorage from 'src/singletons/MetaStorage'
 import FeedDBHelper from 'src/helpers/FeedDBHelper'
 import ENV_CONFIG from 'src/env.config'
 import GLOBALS from 'src/Globals'
-import { setAuthState, setLogout, createNewWallet } from 'src/redux/authSlice'
+
 import { useDispatch } from 'react-redux'
+import { setAuthState, setLogout, createNewWallet } from 'src/redux/authSlice'
 
 const SettingsScreen = ({ navigation }) => {
   const dispatch = useDispatch()

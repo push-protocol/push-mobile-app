@@ -9,9 +9,16 @@ import {
 import { useFocusEffect } from '@react-navigation/native'
 import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context'
 
+import messaging from '@react-native-firebase/messaging'
+
 import StylishLabel from 'src/components/labels/StylishLabel'
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter'
 import PrimaryButton from 'src/components/buttons/PrimaryButton'
+
+import OverlayBlur from 'src/components/modals/OverlayBlur'
+import NoticePrompt from 'src/components/modals/NoticePrompt'
+
+import Notify from 'src/singletons/Notify'
 
 import GLOBALS from 'src/Globals'
 
@@ -40,7 +47,7 @@ function GetScreenInsets() {
   }
 }
 
-export default class WelcomeScreen extends Component {
+export default class PushNotifyScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
     super(props)
@@ -70,12 +77,67 @@ export default class WelcomeScreen extends Component {
     )
   }
 
+  // Open Notice Prompt With Overlay Blur
+  toggleNoticePrompt = (
+    toggle,
+    animate,
+    title,
+    subtitle,
+    notice,
+    showIndicator,
+  ) => {
+    // Set Notice First
+    if (title) {
+      this.refs.NoticePrompt.changeTitle(title)
+    }
+
+    if (subtitle) {
+      this.refs.NoticePrompt.changeSubtitle(subtitle)
+    }
+
+    if (notice) {
+      this.refs.NoticePrompt.changeNotice(notice)
+    }
+
+    if (showIndicator) {
+      this.refs.NoticePrompt.changeIndicator(showIndicator)
+    }
+
+    // Set render state of this and the animate the blur modal in
+    this.refs.OverlayBlur.changeRenderState(toggle, animate)
+    this.refs.NoticePrompt.changeRenderState(toggle, animate)
+  }
+
   // Load the Next Screen
-  loadNextScreen = () => {
+  loadNextScreenAfterAdditionalSetup = async () => {
+    const settings = await messaging().requestPermission()
+    if (settings == messaging.AuthorizationStatus.DENIED) {
+      // console.log('Permission settings:', settings);
+      // Display enabling push notification message and move on
+      this.toggleNoticePrompt(
+        true,
+        true,
+        'Push Notifications are Disabled',
+        'Having Push Notifications is recommended as EPNS uses this to deliver your messages to you.',
+        `If you wish to enable Push Notifations in the future, you can do so from the [appsettings:App Settings]`,
+        false,
+      )
+    } else {
+      this.loadNextScreen()
+    }
+  }
+
+  // Load real next screen
+  loadNextScreenSequential = () => {
+    this.loadNextScreen()
+  }
+
+  loadNextScreen = async () => {
+    // Save Device Token
+    Notify.instance.requestDeviceToken()
+
     // Goto Next Screen
-    this.props.navigation.navigate(GLOBALS.SCREENS.WELCOME, {
-      fromOnboarding: true,
-    })
+    this.props.navigation.navigate(GLOBALS.SCREENS.SETUPCOMPLETE)
   }
 
   // RETURN
@@ -89,27 +151,22 @@ export default class WelcomeScreen extends Component {
             })
           }}
         />
-        <Text style={styles.header}>Welcome!</Text>
+        <Text style={styles.header}>Notifications</Text>
         <View style={styles.inner}>
           <DetailedInfoPresenter
             style={styles.intro}
-            icon={require('assets/ui/fulllogo.png')}
+            icon={require('assets/ui/push.png')}
             contentView={
               <View style={styles.introContent}>
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title="Welcome to [b:Ethereum Push Notifications Service] (EPNS)."
-                />
-                <StylishLabel
-                  style={styles.para}
-                  fontSize={16}
-                  title="[b:EPNS] is a an innovative way to recieve notifications from different [bi:dApps] or [bi:Smart Contracts]. Think notifications but coming from blockchain ecosystem."
+                  title="EPNS uses push notifications to deliver messages from [d:different channels] which can be a [b:dApps] or [b:Smart Contracts] which you have subscribed to."
                 />
                 <StylishLabel
                   style={styles.paraend}
                   fontSize={16}
-                  title="Visit [u:epns.io||https://epns.io] to learn more about it."
+                  title="It's called [b:Ethereum Push Notification Service] after all [t::)]."
                 />
               </View>
             }
@@ -123,19 +180,31 @@ export default class WelcomeScreen extends Component {
         <Animated.View style={[styles.footer, { opacity: this.state.fader }]}>
           <PrimaryButton
             iconFactory="Ionicons"
-            icon="ios-arrow-forward"
+            icon="ios-notifications-outline"
             iconSize={24}
-            title="Continue"
+            title="Enable Notifications and Continue"
             fontSize={16}
             fontColor={GLOBALS.COLORS.WHITE}
             bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
             disabled={false}
             onPress={() => {
-              this.loadNextScreen()
+              this.loadNextScreenAfterAdditionalSetup()
             }}
           />
           <GetScreenInsets />
         </Animated.View>
+
+        {/* Overlay Blur and Notice to show in case biometric is skipped */}
+        <OverlayBlur ref="OverlayBlur" />
+
+        <NoticePrompt
+          ref="NoticePrompt"
+          closeTitle="OK"
+          closeFunc={() => {
+            this.toggleNoticePrompt(false, true)
+            this.loadNextScreenSequential()
+          }}
+        />
       </SafeAreaView>
     )
   }

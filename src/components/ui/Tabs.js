@@ -3,22 +3,28 @@ import React from 'react'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons'
 
-import HomeScreen from 'src/screens/HomeScreen'
+import HomeScreen from 'src/navigation/screens/HomeScreen'
 import ChannelsScreen from 'src/screens/ChannelsScreen'
 import SampleFeedScreen from 'src/screens/SampleFeedScreen'
 import SpamBoxScreen from 'src/screens/SpamBoxScreen'
+
 import { useSelector } from 'react-redux'
+import { selectUsers, selectCurrentUser } from 'src/redux/authSlice'
+
+import GLOBALS from 'src/Globals'
 
 export default function Tabs() {
-  const { activeUser, users } = useSelector((state) => state.auth)
+  const users = useSelector(selectUsers)
+  const currentUser = useSelector(selectCurrentUser)
+
   const Tab = createMaterialBottomTabNavigator()
 
-  const { wallet, userPKey: pkey } = users[activeUser]
+  const wallet = users[currentUser].wallet
+  const pkey = users[currentUser].userPKey
 
-  console.log({ wallet, pkey })
   return (
     <Tab.Navigator
-      initialRouteName="Feed"
+      initialRouteName={GLOBALS.SCREENS.FEED}
       activeColor="#674c9f"
       inactiveColor="#ccc"
       barStyle={{ backgroundColor: '#fefefe' }}
@@ -26,7 +32,7 @@ export default function Tabs() {
       labeled={true}
     >
       <Tab.Screen
-        name="Feed"
+        name={GLOBALS.SCREENS.FEED}
         component={HomeScreen}
         options={{
           tabBarLabel: 'Inbox',
@@ -36,12 +42,11 @@ export default function Tabs() {
         }}
         initialParams={{
           wallet,
-          pkey,
         }}
       />
 
       <Tab.Screen
-        name="Channels"
+        name={GLOBALS.SCREENS.CHANNELS}
         component={ChannelsScreen}
         options={{
           tabBarLabel: 'Channels',
@@ -65,7 +70,7 @@ export default function Tabs() {
       />
 
       <Tab.Screen
-        name="Spam"
+        name={GLOBALS.SCREENS.SPAM}
         component={SpamBoxScreen}
         options={{
           tabBarLabel: 'Spam',
@@ -80,7 +85,7 @@ export default function Tabs() {
       />
 
       <Tab.Screen
-        name="SampleFeed"
+        name={GLOBALS.SCREENS.SAMPLEFEED}
         component={SampleFeedScreen}
         options={{
           tabBarLabel: 'Sample Feed',

@@ -27,10 +27,13 @@ import AppBadgeHelper from 'src/helpers/AppBadgeHelper'
 import ENV_CONFIG from 'src/env.config'
 import { ActivityIndicator } from 'react-native'
 import { useSelector } from 'react-redux'
+import { selectUsers, selectCurrentUser } from 'src/redux/authSlice'
 
 export default function TestFeed(props) {
-  const { activeUser, users } = useSelector((state) => state.auth)
-  const { wallet } = users[activeUser]
+  const users = useSelector(selectUsers)
+  const currentUser = useSelector(selectCurrentUser)
+  
+  const { wallet } = users[currentUser]
 
   // SET STATES
   const [initialized, setInitialized] = useState(false)

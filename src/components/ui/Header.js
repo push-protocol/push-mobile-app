@@ -11,12 +11,19 @@ import ImageButton from 'src/components/buttons/ImageButton'
 import Notify from 'src/singletons/Notify'
 
 import GLOBALS from 'src/Globals'
-import { setAuthState } from 'src/redux-store/actions/signin'
-import { useDispatch, useSelector } from 'react-redux'
 
-const Header = ({ style, wallet }) => {
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  selectUsers,
+  selectCurrentUser,
+  setAuthState,
+} from 'src/redux/authSlice'
+
+const Header = ({ style }) => {
   const navigation = useNavigation()
-  const { activeUser } = useSelector((state) => state.auth)
+  const users = useSelector(selectUsers)
+  const currentUser = useSelector(selectCurrentUser)
+
   const dispatch = useDispatch()
 
   // Setup Refs
@@ -36,11 +43,6 @@ const Header = ({ style, wallet }) => {
     await EPNSNotifierIconRef.current.getBadgeCountAndRefresh()
   }
 
-  // Overlay Blur exit intent
-  const exitIntentOnOverleyBlur = () => {
-    ProfileDisplayerRef.current.toggleActive(false)
-  }
-
   return (
     <SafeAreaView style={[styles.container, style]}>
       {/* Header Comes Here */}
@@ -48,18 +50,19 @@ const Header = ({ style, wallet }) => {
         <ProfileDisplayer
           ref={ProfileDisplayerRef}
           style={styles.profile}
-          wallet={wallet}
+          wallet={users[currentUser].wallet}
           lockApp={() => {
-            dispatch(setAuthState(GLOBALS.APP_AUTH_STATES.ONBOARDED))
+            dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING))
           }}
         />
+
         <EPNSNotifierIcon
           ref={EPNSNotifierIconRef}
           style={styles.notifier}
           iconSize={32}
           onPress={() => {
             // Refresh the feeds
-            navigation.navigate('Feed', {
+            navigation.navigate(GLOBALS.SCREENS.FEED, {
               refreshNotifFeed: true,
             })
 
@@ -69,19 +72,13 @@ const Header = ({ style, wallet }) => {
             // Do nothing for now, bell is ringing in the module anyway
           }}
         />
+
         <ImageButton
           style={styles.settings}
           src={require('assets/ui/settings.png')}
           iconSize={24}
           onPress={() => {
-            // // Finally associate token to server if not done
-            // const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(this.props.route.params.pkey);
-            // const privateKey = this.props.route.params.pkey;
-            //
-            // // While an async function, there is no need to wait
-            // ServerHelper.associateTokenToServer(publicKey, privateKey);
-
-            navigation.navigate('Settings', {})
+            navigation.navigate(GLOBALS.SCREENS.SETTINGS)
           }}
         />
       </View>
@@ -105,12 +102,6 @@ const styles = StyleSheet.create({
     height: GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
   },
   profile: {
-    // position: "absolute",
-    // top: 0,
-    // right: 0,
-    // left: 0,
-    // bottom: 0,
-    // zIndex: 99,
     borderWidth: 1,
     borderColor: 'transparent',
     height: 60,

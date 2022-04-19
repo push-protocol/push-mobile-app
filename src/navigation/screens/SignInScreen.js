@@ -24,17 +24,10 @@ import QRScanner from 'src/components/modals/QRScanner'
 
 import PKProfileBuilder from 'src/components/web3/PKProfileBuilder'
 
-import MetaStorage from 'src/singletons/MetaStorage'
-
 import GLOBALS from 'src/Globals'
 
-import { useDispatch, useSelector } from 'react-redux'
-import {
-  setAuthState,
-  setUser,
-  selectUsers,
-  selectCurrentUser,
-} from 'src/redux/authSlice'
+import { setInitialSignin } from 'src/redux/authSlice'
+import { useDispatch } from 'react-redux'
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
@@ -73,10 +66,6 @@ const SignInScreen = ({ route, navigation }) => {
   const [ens, setENS] = useState('')
   const [walletAddressVerified, setWalletAddressVerified] = useState('')
   const dispatch = useDispatch()
-
-  const users = useSelector(selectUsers)
-  const currentUser = useSelector(selectCurrentUser)
-
   // Wallet Connect functionality
 
   const connector = useWalletConnect()
@@ -195,37 +184,27 @@ const SignInScreen = ({ route, navigation }) => {
 
   // Load the Next Screen
   const loadNextScreen = async () => {
-    // Store ENS and Wallet in Storage and then move ahead
-    const walletObj = {
-      ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
-      cns: cns,
-      ens: ens,
-      wallet: walletAddress,
-    }
+    // Store ENS and Wallet in Redux Storage and then move ahead
 
-    await MetaStorage.instance.setStoredWallet(walletObj)
-    await MetaStorage.instance.setWalletDetails(walletObj, currentUser)
     dispatch(
-      setUser({
+      setInitialSignin({
         wallet: walletAddress,
         userPKey: '',
-        index: currentUser,
+        ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
+        cns: cns,
+        ens: ens,
+        index: 0,
       }),
     )
 
-    dispatch(setAuthState(GLOBALS.AUTH_STATES.ONBOARDING))
-
-    navigation.navigate('SetupComplete', {
-      privateKey: '',
-      wallet: walletAddress,
-      fromOnboarding: false,
-    })
+    // Goto Next Screen
+    navigation.navigate(GLOBALS.SCREENS.BIOMETRIC)
   }
 
   // Load Advvance Screen
   const loadAdvanceScreen = async () => {
     // Goto Next Screen
-    navigation.navigate('SignInAdvance', {
+    navigation.navigate(GLOBALS.SCREENS.SIGNINADVANCE, {
       wallet: walletAddress,
       fromOnboarding: route.params.fromOnboarding,
     })

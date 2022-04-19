@@ -5,8 +5,6 @@ import messaging from '@react-native-firebase/messaging'
 import Notify from 'src/singletons/Notify'
 
 import App from './App'
-import { Provider } from 'react-redux'
-import store from 'src/redux-store'
 
 // Register background handler
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
@@ -23,11 +21,7 @@ function HeadlessCheck({ isHeadless }) {
     return null
   }
 
-  return (
-    <Provider store={store}>
-      <App />
-    </Provider>
-  )
+  return <App />
 }
 
 AppRegistry.registerComponent('main', () => HeadlessCheck)

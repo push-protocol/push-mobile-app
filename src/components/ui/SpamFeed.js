@@ -22,10 +22,14 @@ import StylishLabel from 'src/components/labels/StylishLabel'
 import ENV_CONFIG from 'src/env.config'
 import { ActivityIndicator } from 'react-native'
 import { useSelector } from 'react-redux'
+import { selectUsers, selectCurrentUser } from 'src/redux/authSlice'
 
 export default function SpamFeed(props) {
-  const { activeUser, users } = useSelector((state) => state.auth)
-  const { wallet } = users[activeUser]
+  const users = useSelector(selectUsers)
+  const currentUser = useSelector(selectCurrentUser)
+
+  const { wallet } = users[currentUser]
+
   // const toast = useRef(null);
 
   useEffect(() => {

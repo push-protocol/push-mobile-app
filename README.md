@@ -89,5 +89,3 @@ TBA, We are still contemplating storing a cache on the epns server or handle it 
 | aimg | *url (Optional)* | The image to display with the message (if any) |
 | hidden | *integer* | The message if hidden from device, 0 or 1 |
 | epoch | *integer* | The timestamp of the message (with milliseconds) |
-
-FyZJicPoTZfhTPtpxfyRAOJlHJmuqXvtYoloXevJQaEnFOW
