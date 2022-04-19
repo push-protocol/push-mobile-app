@@ -28,7 +28,7 @@ export default function TestFeed(props) {
   const users = useSelector(selectUsers)
   const currentUser = useSelector(selectCurrentUser)
 
-  const { wallet } = users[currentUser]
+  const { wallet, userPKey } = users[currentUser]
 
   // SET STATES
   const [initialized, setInitialized] = useState(false)
@@ -168,85 +168,82 @@ export default function TestFeed(props) {
   }
 
   return (
-    <>
-      <SafeAreaView style={styles.container}>
-        {/* {feed != [] && ( */}
-        <View style={{ flex: 1 }}>
-          <FlatList
-            ref={FlatListFeedsRef}
-            data={feed}
-            keyExtractor={(item) => item.payload_id.toString()}
-            initialNumToRender={10}
-            style={{ flex: 1 }}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <FeedItemComponent
-                loading={loading}
-                item={item}
-                onImagePreview={(fileURL) => showImagePreview(fileURL)}
-                privateKey={props.privateKey}
-              />
-            )}
-            onEndReached={async () => (!endReached ? fetchFeed(false) : null)}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={() => {
-                  setInitialized(false)
-                }}
-              />
-            }
-            ListEmptyComponent={
-              refreshing ? (
-                <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-                  <StylishLabel
-                    style={styles.infoText}
-                    fontSize={16}
-                    title="[dg:Please wait, Refreshing feed.!]"
-                  />
-                </View>
-              ) : (
-                <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-                  <Image
-                    style={styles.infoIcon}
-                    source={require('assets/ui/feed.png')}
-                  />
-                  <StylishLabel
-                    style={styles.infoText}
-                    fontSize={16}
-                    title="[dg:No Notifications!]"
-                  />
-                </View>
-              )
-            }
-            ListFooterComponent={() => {
-              return loading ? (
-                <View style={{ paddingBottom: 30, marginTop: 20 }}>
-                  <EPNSActivity style={styles.activity} size="small" />
-                </View>
-              ) : null
-            }}
-          />
+    <SafeAreaView style={styles.container}>
+      <View style={{ flex: 1 }}>
+        <FlatList
+          ref={FlatListFeedsRef}
+          data={feed}
+          keyExtractor={(item) => item.payload_id.toString()}
+          initialNumToRender={10}
+          style={{ flex: 1 }}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <FeedItemComponent
+              loading={loading}
+              item={item}
+              onImagePreview={(fileURL) => showImagePreview(fileURL)}
+              privateKey={userPKey}
+            />
+          )}
+          onEndReached={async () => (!endReached ? fetchFeed(false) : null)}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => {
+                setInitialized(false)
+              }}
+            />
+          }
+          ListEmptyComponent={
+            refreshing ? (
+              <View style={[styles.infodisplay, styles.noPendingFeeds]}>
+                <StylishLabel
+                  style={styles.infoText}
+                  fontSize={16}
+                  title="[dg:Please wait, Refreshing feed.!]"
+                />
+              </View>
+            ) : (
+              <View style={[styles.infodisplay, styles.noPendingFeeds]}>
+                <Image
+                  style={styles.infoIcon}
+                  source={require('assets/ui/feed.png')}
+                />
+                <StylishLabel
+                  style={styles.infoText}
+                  fontSize={16}
+                  title="[dg:No Notifications!]"
+                />
+              </View>
+            )
+          }
+          ListFooterComponent={() => {
+            return loading ? (
+              <View style={{ paddingBottom: 30, marginTop: 20 }}>
+                <EPNSActivity style={styles.activity} size="small" />
+              </View>
+            ) : null
+          }}
+        />
 
-          <ImageView
-            images={loadedImages}
-            imageIndex={startFromIndex}
-            visible={renderGallery}
-            swipeToCloseEnabled={true}
-            onRequestClose={() => {
-              setRenderGallery(false)
-            }}
-            FooterComponent={({ imageIndex }) => (
-              <ImagePreviewFooter
-                imageIndex={imageIndex}
-                imagesCount={loadedImages.length}
-                fileURI={loadedImages[imageIndex].uri}
-              />
-            )}
-          />
-        </View>
-      </SafeAreaView>
-    </>
+        <ImageView
+          images={loadedImages}
+          imageIndex={startFromIndex}
+          visible={renderGallery}
+          swipeToCloseEnabled={true}
+          onRequestClose={() => {
+            setRenderGallery(false)
+          }}
+          FooterComponent={({ imageIndex }) => (
+            <ImagePreviewFooter
+              imageIndex={imageIndex}
+              imagesCount={loadedImages.length}
+              fileURI={loadedImages[imageIndex].uri}
+            />
+          )}
+        />
+      </View>
+    </SafeAreaView>
   )
 }
 

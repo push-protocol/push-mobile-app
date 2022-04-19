@@ -29,7 +29,13 @@ import MetaStorage from 'src/singletons/MetaStorage'
 import GLOBALS from 'src/Globals'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { setAuthState, setUser, selectCurrentUser } from 'src/redux/authSlice'
+import {
+  setUser,
+  selectCurrentUser,
+  selectUsers,
+  switchUser,
+  deleteUser,
+} from 'src/redux/authSlice'
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
@@ -70,6 +76,7 @@ const SignInScreen = ({ route, navigation }) => {
   const dispatch = useDispatch()
 
   const currentUser = useSelector(selectCurrentUser)
+  const users = useSelector(selectUsers)
 
   // Wallet Connect functionality
 
@@ -189,16 +196,24 @@ const SignInScreen = ({ route, navigation }) => {
 
   // Load the Next Screen
   const loadNextScreen = async () => {
-    dispatch(
-      setUser({
-        ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
-        cns: cns,
-        ens: ens,
-        wallet: walletAddress,
-        userPKey: '',
-        index: currentUser,
-      }),
-    )
+    const isExists =
+      users.filter((user) => walletAddress === user.wallet).length > 0
+
+    if (isExists) {
+      dispatch(deleteUser(currentUser))
+      dispatch(switchUser(0))
+    } else {
+      dispatch(
+        setUser({
+          ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
+          cns: cns,
+          ens: ens,
+          wallet: walletAddress,
+          userPKey: '',
+          index: currentUser,
+        }),
+      )
+    }
 
     navigation.navigate(GLOBALS.SCREENS.SETUPCOMPLETE)
   }

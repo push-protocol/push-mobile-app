@@ -128,22 +128,25 @@ const SettingsScreen = ({ navigation }) => {
     title: 'Sign in with another wallet',
     img: require('assets/ui/brokenkey.png'),
     func: () => {
-      dispatch(createNewWallet({ wallet: '', userPKey: '' }))
-      dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING))
+      if (users.length < 5) {
+        dispatch(createNewWallet({ wallet: '', userPKey: '' }))
+        dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING))
+      }
     },
     type: 'button',
   })
 
-  users.map(({ wallet, index }) =>
-    settingsOptions.push({
-      title: `Sign in out of ${wallet}`,
-      img: require('assets/ui/brokenkey.png'),
-      func: () => {
-        dispatch(deleteUser(index))
-      },
-      type: 'button',
-    }),
-  )
+  users.length > 1 &&
+    users.map(({ wallet, index }) =>
+      settingsOptions.push({
+        title: `Sign in out of ${wallet}`,
+        img: require('assets/ui/brokenkey.png'),
+        func: () => {
+          dispatch(deleteUser(index))
+        },
+        type: 'button',
+      }),
+    )
 
   // Swipe Reset
   settingsOptions.push({
