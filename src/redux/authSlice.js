@@ -58,6 +58,17 @@ const authSlice = createSlice({
     deleteUser: (state, action) => {
       state.users.splice(action.payload, 1)
       state.currentUser = state.users.length - 1
+
+      const allUsers = [...state.users]
+      const newUsers = []
+
+      for (let i = 0; i < allUsers.length; i++) {
+        let newUser = allUsers[i]
+        newUser.index = i
+        newUsers.push(newUser)
+      }
+
+      state.users = newUsers
     },
   },
 })
