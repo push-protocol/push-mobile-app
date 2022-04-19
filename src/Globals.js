@@ -103,6 +103,7 @@ export default {
     CHANNELS: 'Channels',
     SPAM: 'Spam',
     SAMPLEFEED: 'SampleFeed',
+    NEWWALLETSIGNIN:'NewWalletSignIn'
   },
   APP_AUTH_STATES: {
     INITIALIZING: 1,

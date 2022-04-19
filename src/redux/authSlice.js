@@ -6,6 +6,7 @@ const initialState = {
   users: [],
   currentUser: null,
   isLoggedIn: false,
+  newWallet: false,
 }
 
 // wallet: walletAddress,
@@ -50,6 +51,8 @@ const authSlice = createSlice({
     createNewWallet: (state, action) => {
       state.currentUser = state.users.length
       state.users = [...state.users, action.payload]
+      state.authState = GLOBALS.AUTH_STATE.ONBOARDING
+      state.newWallet = true
     },
   },
 })

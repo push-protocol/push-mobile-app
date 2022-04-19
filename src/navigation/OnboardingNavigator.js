@@ -5,6 +5,7 @@ import GLOBALS from 'src/Globals'
 
 import BiometricScreen from './screens/BiometricScreen'
 import SignInScreen from './screens/SignInScreen'
+import NewWalletSignInScreen from './screens/NewWalletSignInScreen'
 import WelcomeScreen from './screens/WelcomeScreen'
 import PushNotifyScreen from './screens/PushNotifyScreen'
 import SetupCompleteScreen from './screens/SetupCompleteScreen'
@@ -47,6 +48,11 @@ const OnboardingNavigator = () => {
       />
 
       <Stack.Screen name={GLOBALS.SCREENS.SIGNIN} component={SignInScreen} />
+
+      <Stack.Screen
+        name={GLOBALS.SCREENS.NEWWALLETSIGNIN}
+        component={NewWalletSignInScreen}
+      />
 
       <Stack.Screen
         name={GLOBALS.SCREENS.BIOMETRIC}

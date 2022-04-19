@@ -14,6 +14,8 @@ import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter'
 import PrimaryButton from 'src/components/buttons/PrimaryButton'
 
 import GLOBALS from 'src/Globals'
+import { switchUser } from 'src/redux/authSlice'
+import { connect } from 'react-redux'
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
@@ -40,7 +42,7 @@ function GetScreenInsets() {
   }
 }
 
-export default class WelcomeScreen extends Component {
+class WelcomeScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
     super(props)
@@ -72,7 +74,11 @@ export default class WelcomeScreen extends Component {
 
   // Load the Next Screen
   loadNextScreen = () => {
-    this.props.navigation.navigate(GLOBALS.SCREENS.SIGNIN)
+    this.props.navigation.navigate(
+      this.props.auth.newWallet
+        ? GLOBALS.SCREENS.NEWWALLETSIGNIN
+        : GLOBALS.SCREENS.SIGNIN,
+    )
   }
 
   // RETURN
@@ -185,3 +191,9 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
 })
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+})
+
+export default connect(mapStateToProps, { switchUser })(WelcomeScreen)

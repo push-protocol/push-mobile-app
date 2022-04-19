@@ -136,7 +136,7 @@ class ProfileDisplayer extends Component {
                 <View style={styles.upArrow} />
                 <View style={styles.content}>
                   {auth.users.map(({ wallet, index }) => {
-                    const isActive = auth.activeUser === index
+                    const isActive = auth.currentUser === index
                     const onPress = () => {
                       this.props.switchUser(index)
                     }

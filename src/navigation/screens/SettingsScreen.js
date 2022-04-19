@@ -122,6 +122,7 @@ const SettingsScreen = ({ navigation }) => {
     img: require('assets/ui/brokenkey.png'),
     func: () => {
       dispatch(createNewWallet({ wallet: '', userPKey: '' }))
+      dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING))
     },
     type: 'button',
   })
