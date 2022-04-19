@@ -67,7 +67,7 @@ export default function SpamFeed(props) {
       }),
     })
     const resJson = await response.json()
-    console.log('SPAM RESPONSE', resJson)
+
     if (resJson.count != 0 && resJson.results != []) {
       const data = feed
       // toast.current.show("New Notifications fetched");

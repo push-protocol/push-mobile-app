@@ -86,6 +86,12 @@ class SetupCompleteScreen extends Component {
       singingUserIn: true,
     })
 
+    // Set SignedIn to true
+    await MetaStorage.instance.setIsSignedIn(true)
+
+    // Set First Sign in to true
+    await MetaStorage.instance.setFirstSignInByUser(true)
+
     // Reset number of passcode attempts since it's a valid login
     await MetaStorage.instance.setRemainingPasscodeAttempts(
       GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS,

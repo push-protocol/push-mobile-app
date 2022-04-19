@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import { StatusBar, View, InteractionManager, StyleSheet } from 'react-native'
-import {  SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useFocusEffect } from '@react-navigation/native'
 
 import HomeFeed from 'src/components/ui/HomeFeed'
-import FeedsDisplayer from 'src/components/ui/FeedsDisplayer'
 
 import OverlayBlur from 'src/components/modals/OverlayBlur'
 
@@ -198,18 +197,6 @@ class HomeScreen extends Component {
               ToasterFunc={(msg, icon, type, tapCB, screenTime) => {
                 this.showToast(msg, icon, type, tapCB, screenTime)
               }}
-            />
-
-            <FeedsDisplayer
-              ref="FeedsDisplayer"
-              style={styles.feedDisplayer}
-              onFeedRefreshed={() => {
-                this.onNotificationListenerUpdate()
-              }}
-              showToast={(msg, icon, type, tapCB, screenTime) => {
-                this.showToast(msg, icon, type, tapCB, screenTime)
-              }}
-              privateKey={pkey}
             />
           </View>
         </SafeAreaView>
