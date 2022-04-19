@@ -54,6 +54,11 @@ const authSlice = createSlice({
       state.authState = GLOBALS.AUTH_STATE.ONBOARDING
       state.newWallet = true
     },
+
+    deleteUser: (state, action) => {
+      state.users.splice(action.payload, 1)
+      state.currentUser = state.users.length - 1
+    },
   },
 })
 
@@ -68,6 +73,7 @@ export const {
   setUser,
   switchUser,
   createNewWallet,
+  deleteUser,
 } = authSlice.actions
 
 export default authSlice.reducer

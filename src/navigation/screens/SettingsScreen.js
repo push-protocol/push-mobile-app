@@ -23,11 +23,18 @@ import FeedDBHelper from 'src/helpers/FeedDBHelper'
 import ENV_CONFIG from 'src/env.config'
 import GLOBALS from 'src/Globals'
 
-import { useDispatch } from 'react-redux'
-import { setAuthState, setLogout, createNewWallet } from 'src/redux/authSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  setAuthState,
+  setLogout,
+  createNewWallet,
+  selectUsers,
+  deleteUser,
+} from 'src/redux/authSlice'
 
 const SettingsScreen = ({ navigation }) => {
   const dispatch = useDispatch()
+  const users = useSelector(selectUsers)
 
   // Wallet Connect functionality
   const connector = useWalletConnect()
@@ -126,6 +133,17 @@ const SettingsScreen = ({ navigation }) => {
     },
     type: 'button',
   })
+
+  users.map(({ wallet, index }) =>
+    settingsOptions.push({
+      title: `Sign in out of ${wallet}`,
+      img: require('assets/ui/brokenkey.png'),
+      func: () => {
+        dispatch(deleteUser(index))
+      },
+      type: 'button',
+    }),
+  )
 
   // Swipe Reset
   settingsOptions.push({
