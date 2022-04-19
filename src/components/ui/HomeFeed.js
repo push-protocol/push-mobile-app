@@ -51,7 +51,7 @@ export default function TestFeed(props) {
     if (!initialized) {
       fetchInitializedFeeds()
     }
-  }, [initialized])
+  }, [initialized, currentUser])
 
   useEffect(() => {
     if (props.refreshNotifFeeds) {

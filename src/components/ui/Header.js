@@ -54,6 +54,7 @@ const Header = ({ style }) => {
           lockApp={() => {
             dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING))
           }}
+          navigation={navigation}
         />
 
         <EPNSNotifierIcon

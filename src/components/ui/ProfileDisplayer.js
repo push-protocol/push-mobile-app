@@ -9,12 +9,8 @@ import {
 } from 'react-native'
 import SafeAreaView from 'react-native-safe-area-view'
 
-import MaskedView from '@react-native-community/masked-view'
-import { LinearGradient } from 'expo-linear-gradient'
-
 import StylishLabel from 'src/components/labels/StylishLabel'
 import PrimaryButton from 'src/components/buttons/PrimaryButton'
-import EPNSActivity from 'src/components/loaders/EPNSActivity'
 
 import OverlayBlur from 'src/components/modals/OverlayBlur'
 import Blockies from 'src/components/web3/Blockies'
@@ -74,11 +70,6 @@ class ProfileDisplayer extends Component {
       active: toggle,
     })
 
-    // DEPRECATED
-    // Commented out till we find how to cover the entire screen
-    //this.refs.OverlayBlur.changeRenderState(toggle, true);
-    // DEPRECATION ENDS HERE
-
     if (toggle) {
       // Fade In
       Animated.timing(this.state.fader, {
@@ -98,7 +89,7 @@ class ProfileDisplayer extends Component {
 
   // RENDER
   render() {
-    const { style, lockApp, auth } = this.props
+    const { style, lockApp, auth, navigation } = this.props
     const wallet = auth.users[auth.currentUser].wallet
 
     return (
@@ -135,10 +126,15 @@ class ProfileDisplayer extends Component {
               >
                 <View style={styles.upArrow} />
                 <View style={styles.content}>
-                  {auth.users.map(({ wallet, index }) => {
+                  {auth.users.map(({ wallet, index, userPKey }) => {
                     const isActive = auth.currentUser === index
+
                     const onPress = () => {
                       this.props.switchUser(index)
+                      navigation.navigate(GLOBALS.SCREENS.FEED, {
+                        refreshNotifFeed: true,
+                      })
+                      navigation.setParams({ refreshNotifFeed: true })
                     }
 
                     return isActive ? (
@@ -159,35 +155,6 @@ class ProfileDisplayer extends Component {
                       </TouchableOpacity>
                     )
                   })}
-
-                  {/* 
-                  <View style={styles.interestEarned}>
-                    <View style={styles.interestEarnedTitle}>
-                      <MaskedView
-                        style={styles.maskedView}
-                        maskElement={
-                          <View style={styles.maskedElementView}>
-                            <Text style={styles.maskedTitle}>
-                              Interest Earned
-                            </Text>
-                          </View>
-                        }
-                      >
-                        <LinearGradient
-                          colors={[
-                            GLOBALS.COLORS.GRADIENT_PRIMARY,
-                            GLOBALS.COLORS.GRADIENT_SECONDARY,
-                          ]}
-                          style={styles.fullgradient}
-                          start={[0.1, 0.3]}
-                          end={[1, 1]}
-                        ></LinearGradient>
-                      </MaskedView>
-                    </View>
-                    <View style={styles.interestEarnedText}>
-                      <EPNSActivity style={styles.activity} size="small" />
-                    </View>
-                  </View> */}
 
                   <View style={styles.settings}>
                     <PrimaryButton

@@ -167,9 +167,6 @@ class HomeScreen extends Component {
 
   // RENDER
   render() {
-    const wallet = this.props.auth.users[this.props.auth.currentUser].wallet
-    const pkey = this.props.auth.users[this.props.auth.currentUser].userPKey
-
     return (
       <View style={styles.container}>
         <ScreenFinishedTransition
@@ -191,8 +188,6 @@ class HomeScreen extends Component {
 
           <View style={styles.content}>
             <HomeFeed
-              wallet={wallet}
-              privateKey={pkey}
               refreshNotifFeeds={this.state.refresh}
               ToasterFunc={(msg, icon, type, tapCB, screenTime) => {
                 this.showToast(msg, icon, type, tapCB, screenTime)
