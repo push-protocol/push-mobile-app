@@ -1,65 +1,64 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 import {
   View,
   Text,
   Image,
   InteractionManager,
   Animated,
-  AsyncStorage,
   StyleSheet,
-} from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
-import { SafeAreaView, useSafeArea } from "react-native-safe-area-context";
+} from 'react-native'
+import { useFocusEffect } from '@react-navigation/native'
+import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context'
 
-import messaging from "@react-native-firebase/messaging";
+import messaging from '@react-native-firebase/messaging'
 
-import StylishLabel from "src/components/labels/StylishLabel";
-import DetailedInfoPresenter from "src/components/misc/DetailedInfoPresenter";
-import PrimaryButton from "src/components/buttons/PrimaryButton";
+import StylishLabel from 'src/components/labels/StylishLabel'
+import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter'
+import PrimaryButton from 'src/components/buttons/PrimaryButton'
 
-import OverlayBlur from "src/components/modals/OverlayBlur";
-import NoticePrompt from "src/components/modals/NoticePrompt";
+import OverlayBlur from 'src/components/modals/OverlayBlur'
+import NoticePrompt from 'src/components/modals/NoticePrompt'
 
-import Notify from "src/singletons/Notify";
+import Notify from 'src/singletons/Notify'
 
-import GLOBALS from "src/Globals";
+import GLOBALS from 'src/Globals'
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
     React.useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         // After screen is loaded
-        setScreenTransitionAsDone();
-      });
+        setScreenTransitionAsDone()
+      })
 
-      return () => task.cancel();
-    }, [])
-  );
+      return () => task.cancel()
+    }, []),
+  )
 
-  return null;
+  return null
 }
 
 function GetScreenInsets() {
-  const insets = useSafeArea();
+  const insets = useSafeArea()
   if (insets.bottom > 0) {
     // Adjust inset by
-    return <View style={styles.insetAdjustment}></View>;
+    return <View style={styles.insetAdjustment}></View>
   } else {
-    return <View style={styles.noInsetAdjustment}></View>;
+    return <View style={styles.noInsetAdjustment}></View>
   }
 }
 
 export default class PushNotifyScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       transitionFinished: false,
       detailedInfoPresetned: false,
 
       fader: new Animated.Value(0),
-    };
+    }
   }
 
   // FUNCTIONS
@@ -74,10 +73,10 @@ export default class PushNotifyScreen extends Component {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }).start();
-      }
-    );
-  };
+        }).start()
+      },
+    )
+  }
 
   // Open Notice Prompt With Overlay Blur
   toggleNoticePrompt = (
@@ -86,71 +85,71 @@ export default class PushNotifyScreen extends Component {
     title,
     subtitle,
     notice,
-    showIndicator
+    showIndicator,
   ) => {
     // Set Notice First
     if (title) {
-      this.refs.NoticePrompt.changeTitle(title);
+      this.refs.NoticePrompt.changeTitle(title)
     }
 
     if (subtitle) {
-      this.refs.NoticePrompt.changeSubtitle(subtitle);
+      this.refs.NoticePrompt.changeSubtitle(subtitle)
     }
 
     if (notice) {
-      this.refs.NoticePrompt.changeNotice(notice);
+      this.refs.NoticePrompt.changeNotice(notice)
     }
 
     if (showIndicator) {
-      this.refs.NoticePrompt.changeIndicator(showIndicator);
+      this.refs.NoticePrompt.changeIndicator(showIndicator)
     }
 
     // Set render state of this and the animate the blur modal in
-    this.refs.OverlayBlur.changeRenderState(toggle, animate);
-    this.refs.NoticePrompt.changeRenderState(toggle, animate);
-  };
+    this.refs.OverlayBlur.changeRenderState(toggle, animate)
+    this.refs.NoticePrompt.changeRenderState(toggle, animate)
+  }
 
   // Load the Next Screen
   loadNextScreenAfterAdditionalSetup = async () => {
-    const settings = await messaging().requestPermission();
+    const settings = await messaging().requestPermission()
     if (settings == messaging.AuthorizationStatus.DENIED) {
       // console.log('Permission settings:', settings);
       // Display enabling push notification message and move on
       this.toggleNoticePrompt(
         true,
         true,
-        "Push Notifications are Disabled",
-        "Having Push Notifications is recommended as EPNS uses this to deliver your messages to you.",
+        'Push Notifications are Disabled',
+        'Having Push Notifications is recommended as EPNS uses this to deliver your messages to you.',
         `If you wish to enable Push Notifations in the future, you can do so from the [appsettings:App Settings]`,
-        false
-      );
+        false,
+      )
     } else {
-      this.loadNextScreen();
+      this.loadNextScreen()
     }
-  };
+  }
 
   // Load real next screen
   loadNextScreenSequential = () => {
-    this.loadNextScreen();
-  };
+    this.loadNextScreen()
+  }
 
   loadNextScreen = async () => {
     // Save Device Token
-    Notify.instance.requestDeviceToken();
+    Notify.instance.requestDeviceToken()
 
-    const { privateKey } = this.props.route.params;
+    const { privateKey } = this.props.route.params
 
     // Goto Next Screen
-    this.props.navigation.navigate("SetupComplete", {
+    this.props.navigation.navigate('SetupComplete', {
       wallet: this.props.route.params.walletAddress,
       privateKey: privateKey,
       fromOnboarding: this.props.route.params.fromOnboarding,
-    });
-  };
+    })
+  }
 
   // RETURN
   render() {
-    const { navigation } = this.props;
+    const { navigation } = this.props
 
     return (
       <SafeAreaView style={styles.container}>
@@ -158,14 +157,14 @@ export default class PushNotifyScreen extends Component {
           setScreenTransitionAsDone={() => {
             this.setState({
               transitionFinished: true,
-            });
+            })
           }}
         />
         <Text style={styles.header}>Notifications</Text>
         <View style={styles.inner}>
           <DetailedInfoPresenter
             style={styles.intro}
-            icon={require("assets/ui/push.png")}
+            icon={require('assets/ui/push.png')}
             contentView={
               <View style={styles.introContent}>
                 <StylishLabel
@@ -183,7 +182,7 @@ export default class PushNotifyScreen extends Component {
             animated={!this.state.detailedInfoPresetned}
             startAnimation={this.state.transitionFinished}
             animationCompleteCallback={() => {
-              this.animationFinished();
+              this.animationFinished()
             }}
           />
         </View>
@@ -198,7 +197,7 @@ export default class PushNotifyScreen extends Component {
             bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
             disabled={false}
             onPress={() => {
-              this.loadNextScreenAfterAdditionalSetup();
+              this.loadNextScreenAfterAdditionalSetup()
             }}
           />
           <GetScreenInsets />
@@ -211,12 +210,12 @@ export default class PushNotifyScreen extends Component {
           ref="NoticePrompt"
           closeTitle="OK"
           closeFunc={() => {
-            this.toggleNoticePrompt(false, true);
-            this.loadNextScreenSequential();
+            this.toggleNoticePrompt(false, true)
+            this.loadNextScreenSequential()
           }}
         />
       </SafeAreaView>
-    );
+    )
   }
 }
 
@@ -225,19 +224,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: GLOBALS.COLORS.WHITE,
-    alignItems: "center",
-    justifyContent: "space-between",
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   header: {
     fontSize: 32,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     paddingTop: 40,
     paddingHorizontal: 20,
   },
   inner: {
-    position: "absolute",
-    alignItems: "center",
-    justifyContent: "center",
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
     top: 0,
     bottom: 0,
     left: 0,
@@ -257,7 +256,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   footer: {
-    width: "100%",
+    width: '100%',
     paddingHorizontal: 20,
   },
   insetAdjustment: {
@@ -266,4 +265,4 @@ const styles = StyleSheet.create({
   noInsetAdjustment: {
     paddingBottom: 20,
   },
-});
+})

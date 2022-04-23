@@ -8,7 +8,10 @@
     "start": "react-native start",
     "postinstall": "patch-package",
     "prepare": "patch-package",
-    "test": "jest"
+    "test": "jest",
+    "build:android-bundle": "cd android && ./gradlew bundleRelease",
+    "build:android-apk": "cd android && ./gradlew assembleRelease --stacktrace -x ':app:bundleReleaseExpoUpdatesAssets'",
+    "build:android-apk-debug":"./gradlew assembleDebug"
   },
   "dependencies": {
     "@ethersproject/shims": "^5.4.0",
