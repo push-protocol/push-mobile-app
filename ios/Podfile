@@ -34,7 +34,7 @@ target 'epnsstaging' do
   pod 'React-jsi', :path => "#{rnPrefix}/ReactCommon/jsi"
   pod 'React-jsiexecutor', :path => "#{rnPrefix}/ReactCommon/jsiexecutor"
   pod 'React-jsinspector', :path => "#{rnPrefix}/ReactCommon/jsinspector"
-  pod 'ReactCommon/jscallinvoker', :path => "#{rnPrefix}/ReactCommon"
+  pod 'React-callinvoker', :path => "../node_modules/react-native/ReactCommon/callinvoker"
   pod 'ReactCommon/turbomodule/core', :path => "#{rnPrefix}/ReactCommon"
   pod 'Yoga', :path => "#{rnPrefix}/ReactCommon/yoga"
   pod 'DoubleConversion', :podspec => "#{rnPrefix}/third-party-podspecs/DoubleConversion.podspec"
@@ -44,15 +44,30 @@ target 'epnsstaging' do
   # Other native modules
 
   # Automatically detect installed unimodules
-  use_unimodules!
-
+  use_unimodules!(exclude: ['expo-splash-screen'])
+  
   # The community version of use_unimodules (used for react-native-firebase)
   use_native_modules!
 
   # react-native-cli autolinking
   use_native_modules!
-
-
   pod 'react-native-video', :path => '../node_modules/react-native-video'
+end
 
+post_install do |installer|
+  ## Fix for XCode 12.5
+  find_and_replace("../node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm", "_initializeModules:(NSArray<id<RCTBridgeModule>> *)modules", "_initializeModules:(NSArray<Class> *)modules")
+  find_and_replace("../node_modules/react-native/ReactCommon/turbomodule/core/platform/ios/RCTTurboModuleManager.mm", "RCTBridgeModuleNameForClass(strongModule))", "RCTBridgeModuleNameForClass(Class(strongModule)))")
+end
+def find_and_replace(dir, findstr, replacestr)
+Dir[dir].each do |name|
+    text = File.read(name)
+    replace = text.gsub(findstr,replacestr)
+    if text != replace
+        puts "Fix: " + name
+        File.open(name, "w") { |file| file.puts replace }
+        STDOUT.flush
+    end
+end
+Dir[dir + '*/'].each(&method(:find_and_replace))
 end
