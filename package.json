@@ -6,8 +6,6 @@
     "ios": "react-native run-ios",
     "web": "expo start --web",
     "start": "react-native start",
-    "postinstall": "patch-package",
-    "prepare": "patch-package",
     "test": "jest"
   },
   "dependencies": {
