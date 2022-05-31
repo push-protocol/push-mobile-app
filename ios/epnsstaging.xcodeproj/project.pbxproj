@@ -38,6 +38,7 @@
 		8547B2874FC64003914C097E /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F6E44F635C704D138878B5AE /* MaterialIcons.ttf */; };
 		900A3294A4A34AA6BE46EE3F /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C3F875CB16854BF085D8E45D /* AntDesign.ttf */; };
 		A772F4D3DA564A0EA3DFCD11 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8C211EEFD1514621980CE18C /* EvilIcons.ttf */; };
+		B6B1A1E86D52F0FC16E6723F /* libPods-epnsstaging.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6309C5EBC3E3D096FE0FD011 /* libPods-epnsstaging.a */; };
 		F171AD9039B54CA2B903421A /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F6AA224D0D649B09BB84DBD /* Octicons.ttf */; };
 /* End PBXBuildFile section */
 
@@ -133,6 +134,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6B1A1E86D52F0FC16E6723F /* libPods-epnsstaging.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
