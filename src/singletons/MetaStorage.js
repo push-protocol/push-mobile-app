@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage'
-
+import React from 'react'
 import GLOBALS from 'src/Globals'
 
 // STATIC SINGLETON
