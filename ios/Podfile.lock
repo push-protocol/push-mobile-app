@@ -709,7 +709,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  DoubleConversion: cde416483dac037923206447da6e1454df403714
+  DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   EXAV: 1f679b57367f8889b5ea15067413c9e2d95039fb
   EXBarCodeScanner: 1a76d3dc0dae2799af6012e3e4966100e4221a94
   EXBlur: 569d38c2b0b7b000866d928bc36acadfdc02ea8e
@@ -739,7 +739,7 @@ SPEC CHECKSUMS:
   FirebaseInstanceID: ad5135045a498d7775903efd39762d2cdfa1be27
   FirebaseMessaging: ecf9e04716b7ff1f1d92debab4d6f0e6bdb490aa
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
-  glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
+  glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   GoogleAppMeasurement: 7790ef975d1d463c8614cd949a847e612edf087a
   GoogleDataTransport: 116c84c4bdeb76be2a7a46de51244368f9794eab
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
