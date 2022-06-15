@@ -35,8 +35,8 @@ class ProfileDisplayer extends Component {
       ens: '',
       loading: true,
       active: false,
-
       fader: new Animated.Value(0),
+      wallet: this.props.auth.users[this.props.auth.currentUser].wallet,
     }
   }
 
@@ -58,10 +58,17 @@ class ProfileDisplayer extends Component {
       ens = walletObject.ens
     }
 
+    let ensWallet = await Web3Helper.getCNSReverseDomain(
+      this.props.auth.users[this.props.auth.currentUser].wallet,
+    )
+
     this.setState({
       cns: cns,
       ens: ens,
       loading: false,
+      wallet:
+        ensWallet.cns ||
+        this.props.auth.users[this.props.auth.currentUser].wallet,
     })
   }
 
@@ -91,7 +98,6 @@ class ProfileDisplayer extends Component {
   // RENDER
   render() {
     const { style, lockApp, auth, navigation } = this.props
-    const wallet = auth.users[auth.currentUser].wallet
 
     return (
       <View style={[styles.container, style]} pointerEvents="box-none">
@@ -106,7 +112,9 @@ class ProfileDisplayer extends Component {
             >
               <Blockies
                 style={styles.blockies}
-                seed={wallet ? wallet.toLowerCase() : null} //string content to generate icon
+                seed={
+                  this.state.wallet ? this.state.wallet.toLowerCase() : null
+                } //string content to generate icon
                 dimension={40} // blocky icon size
               />
               <ENSButton
@@ -115,7 +123,7 @@ class ProfileDisplayer extends Component {
                 loading={this.state.loading}
                 cns={this.state.cns}
                 ens={this.state.ens}
-                wallet={wallet}
+                wallet={this.state.wallet}
                 fontSize={14}
                 forProfile={true}
               />
@@ -131,7 +139,6 @@ class ProfileDisplayer extends Component {
                     const isActive = auth.currentUser === index
 
                     const onPress = () => {
-                      const { page, loading, endReached } = this.props
                       this.props.switchUser(index)
                       navigation.navigate(GLOBALS.SCREENS.FEED, {
                         refreshNotifFeed: true,
