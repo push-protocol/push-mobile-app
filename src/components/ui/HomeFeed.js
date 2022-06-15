@@ -15,33 +15,26 @@ import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter'
 import FeedItemComponent from 'src/components/ui/testFeed/FeedItemComponents.js'
 import EPNSActivity from 'src/components/loaders/EPNSActivity'
 import StylishLabel from 'src/components/labels/StylishLabel'
-import { ToasterOptions } from 'src/components/indicators/Toaster'
-
-import AppBadgeHelper from 'src/helpers/AppBadgeHelper'
-
-import ENV_CONFIG from 'src/env.config'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { selectUsers, selectCurrentUser } from 'src/redux/authSlice'
 import {
-  setFeed,
-  addMoreFeed,
   selectFeedState,
-  setPage,
   setRefreshing,
-  setLoading,
-  setEndReached,
+  fetchFeedData,
 } from 'src/redux/feedSlice'
 
 export default function TestFeed(props) {
   const dispatch = useDispatch()
   const users = useSelector(selectUsers)
   const currentUser = useSelector(selectCurrentUser)
-  const { feed, page, refreshing, loading, endReached } = useSelector(
+  const { feed, refreshing, loading, endReached, page } = useSelector(
     selectFeedState,
   )
 
-  const { wallet, userPKey } = users[currentUser]
+  console.log('Feed State: ', useSelector(selectFeedState))
+
+  const { userPKey, wallet } = users[currentUser]
 
   // SET STATES
   const [initialized, setInitialized] = useState(false)
@@ -73,7 +66,16 @@ export default function TestFeed(props) {
     await performTimeConsumingTask()
 
     FlatListFeedsRef.current.scrollToOffset({ animated: true, offset: 0 })
-    fetchFeed(true)
+    dispatch(
+      fetchFeedData({
+        rewrite: true,
+        page,
+        loading,
+        endReached,
+        wallet,
+        ToasterFunc: props.ToasterFunc,
+      }),
+    )
   }
 
   // Perform some task to wait
@@ -106,73 +108,6 @@ export default function TestFeed(props) {
     setStartFromIndex(fileIndex)
   }
 
-  const fetchFeed = async (rewrite) => {
-    if (!endReached || rewrite == true) {
-      if (!loading) {
-        // Check if this is a rewrite
-        let paging = page
-        if (rewrite) {
-          paging = 1
-        }
-
-        dispatch(setLoading(true))
-        const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_GET_FEEDS
-
-        await fetch(apiURL, {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            user: wallet.toLowerCase(),
-            page: paging,
-            pageSize: 20,
-            op: 'read',
-          }),
-        })
-          .then((response) => response.json())
-          .then((resJson) => {
-            if (resJson.count != 0 && resJson.results != []) {
-              const data = feed
-
-              // clear the notifs if present
-              AppBadgeHelper.setAppBadgeCount(0)
-
-              // toast.current.show('New Notifications fetched')
-              if (rewrite) {
-                dispatch(setFeed([...resJson.results]))
-                dispatch(setEndReached(false))
-              } else {
-                dispatch(setFeed([...data, ...resJson.results]))
-              }
-
-              dispatch(setPage(paging + 1))
-
-              props.ToasterFunc(
-                'New Notifications Loaded!',
-                '',
-                ToasterOptions.TYPE.GRADIENT_PRIMARY,
-              )
-            } else {
-              dispatch(setEndReached(true))
-              props.ToasterFunc(
-                'No More Notifications',
-                '',
-                ToasterOptions.TYPE.ERROR,
-              )
-            }
-          })
-          .catch((error) => {
-            console.warn(error)
-          })
-
-        dispatch(setLoading(false))
-        dispatch(setRefreshing(false))
-      }
-    }
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 1 }}>
@@ -191,7 +126,20 @@ export default function TestFeed(props) {
               privateKey={userPKey}
             />
           )}
-          onEndReached={async () => (!endReached ? fetchFeed(false) : null)}
+          onEndReached={async () =>
+            !endReached
+              ? dispatch(
+                  fetchFeedData({
+                    rewrite: false,
+                    page,
+                    loading,
+                    endReached,
+                    wallet,
+                    ToasterFunc: props.ToasterFunc,
+                  }),
+                )
+              : null
+          }
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

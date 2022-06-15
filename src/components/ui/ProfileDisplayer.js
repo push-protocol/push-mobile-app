@@ -20,6 +20,7 @@ import Web3Helper from 'src/helpers/Web3Helper'
 
 import GLOBALS from 'src/Globals'
 import { switchUser } from 'src/redux/authSlice'
+import { fetchFeedData, clearFeed } from 'src/redux/feedSlice'
 import { connect } from 'react-redux'
 
 const MARGIN_RIGHT = 120
@@ -126,15 +127,18 @@ class ProfileDisplayer extends Component {
               >
                 <View style={styles.upArrow} />
                 <View style={styles.content}>
-                  {auth.users.map(({ wallet, index, userPKey }) => {
+                  {auth.users.map(({ wallet, index }) => {
                     const isActive = auth.currentUser === index
 
                     const onPress = () => {
+                      const { page, loading, endReached } = this.props
                       this.props.switchUser(index)
                       navigation.navigate(GLOBALS.SCREENS.FEED, {
                         refreshNotifFeed: true,
                       })
                       navigation.setParams({ refreshNotifFeed: true })
+                      this.props.clearFeed(null)
+                      this.props.fetchFeedData({ rewrite: true, wallet })
                     }
 
                     return isActive ? (
@@ -349,4 +353,8 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 })
 
-export default connect(mapStateToProps, { switchUser })(ProfileDisplayer)
+export default connect(mapStateToProps, {
+  switchUser,
+  fetchFeedData,
+  clearFeed,
+})(ProfileDisplayer)

@@ -31,6 +31,7 @@ import {
   selectUsers,
   deleteUser,
 } from 'src/redux/authSlice'
+import { fetchFeedData, clearFeed } from 'src/redux/feedSlice'
 
 const SettingsScreen = ({ navigation }) => {
   const dispatch = useDispatch()
@@ -129,6 +130,7 @@ const SettingsScreen = ({ navigation }) => {
     img: require('assets/ui/brokenkey.png'),
     func: () => {
       if (users.length < 5) {
+        dispatch(clearFeed(null))
         dispatch(createNewWallet({ wallet: '', userPKey: '' }))
         dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING))
       }

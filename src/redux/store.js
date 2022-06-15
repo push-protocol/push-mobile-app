@@ -17,8 +17,8 @@ const persistConfig = {
   key: 'root',
   version: 1,
   storage: AsyncStorage,
-  whitelist: ['auth', 'feed'],
-  // blacklist: ['auth', 'feed'],
+  // whitelist: ['auth'],
+  blacklist: ['feed', 'auth'],
 }
 
 const rootReducer = combineReducers({
