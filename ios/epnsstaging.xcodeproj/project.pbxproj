@@ -133,11 +133,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-<<<<<<< HEAD
 				90266CA102B33CBD6FD7788D /* libPods-epnsstaging.a in Frameworks */,
-=======
-				B6B1A1E86D52F0FC16E6723F /* libPods-epnsstaging.a in Frameworks */,
->>>>>>> feature/delete-user-data-on-signout
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
