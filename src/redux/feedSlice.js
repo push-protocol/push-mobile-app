@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
 import ENV_CONFIG from 'src/env.config'
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper'
-import { ToasterOptions } from 'src/components/indicators/Toaster'
+import { ToasterOptions, Toaster } from 'src/components/indicators/Toaster'
 
 const initialState = {
   feed: [],
@@ -103,18 +103,20 @@ export const fetchFeedData = ({
 
               dispatch(setPage(paging + 1))
 
-              ToasterFunc(
-                'New Notifications Loaded!',
-                '',
-                ToasterOptions.TYPE.GRADIENT_PRIMARY,
-              )
+              ToasterFunc &&
+                ToasterFunc(
+                  'New Notifications Loaded!',
+                  '',
+                  ToasterOptions.TYPE.GRADIENT_PRIMARY,
+                )
             } else {
               dispatch(setEndReached(true))
-              ToasterFunc(
-                'No More Notifications',
-                '',
-                ToasterOptions.TYPE.ERROR,
-              )
+              ToasterFunc &&
+                ToasterFunc(
+                  'No More Notifications',
+                  '',
+                  ToasterOptions.TYPE.ERROR,
+                )
             }
           })
           .catch((error) => {

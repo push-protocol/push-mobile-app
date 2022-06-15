@@ -107,6 +107,7 @@ class ProfileDisplayer extends Component {
               style={[styles.header]}
               onPress={() => {
                 this.toggleActive(!this.state.active)
+                console.log('Press')
               }}
               pointerEvents="auto"
             >
@@ -145,7 +146,10 @@ class ProfileDisplayer extends Component {
                       })
                       navigation.setParams({ refreshNotifFeed: true })
                       this.props.clearFeed(null)
-                      this.props.fetchFeedData({ rewrite: true, wallet })
+                      this.props.fetchFeedData({
+                        rewrite: true,
+                        wallet,
+                      })
                     }
 
                     return isActive ? (
@@ -170,7 +174,7 @@ class ProfileDisplayer extends Component {
                   <View style={styles.settings}>
                     <PrimaryButton
                       iconFactory="Ionicons"
-                      icon="md-lock"
+                      icon=""
                       iconSize={24}
                       title="Lock App"
                       fontSize={16}
