@@ -9,13 +9,6 @@ const initialState = {
   newWallet: false,
 }
 
-// wallet: walletAddress,
-//         userPKey: '',
-//         ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
-//         cns: cns,
-//         ens: ens,
-//         index: 0,
-
 const authSlice = createSlice({
   name: 'auth',
   initialState,

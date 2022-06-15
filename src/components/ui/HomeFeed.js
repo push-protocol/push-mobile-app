@@ -21,23 +21,30 @@ import AppBadgeHelper from 'src/helpers/AppBadgeHelper'
 
 import ENV_CONFIG from 'src/env.config'
 
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { selectUsers, selectCurrentUser } from 'src/redux/authSlice'
+import {
+  setFeed,
+  addMoreFeed,
+  selectFeedState,
+  setPage,
+  setRefreshing,
+  setLoading,
+  setEndReached,
+} from 'src/redux/feedSlice'
 
 export default function TestFeed(props) {
+  const dispatch = useDispatch()
   const users = useSelector(selectUsers)
   const currentUser = useSelector(selectCurrentUser)
+  const { feed, page, refreshing, loading, endReached } = useSelector(
+    selectFeedState,
+  )
 
   const { wallet, userPKey } = users[currentUser]
 
   // SET STATES
   const [initialized, setInitialized] = useState(false)
-  const [feed, setFeed] = useState([])
-  const [page, setPage] = useState(1)
-  const [refreshing, setRefreshing] = useState(false)
-  const [loading, setloading] = useState(false)
-
-  const [endReached, setEndReached] = useState(false)
 
   const [loadedImages, setLoadedImages] = useState([])
   const [renderGallery, setRenderGallery] = useState(false)
@@ -62,7 +69,7 @@ export default function TestFeed(props) {
   // Refresh Feed
   const fetchInitializedFeeds = async () => {
     setInitialized(true)
-    setRefreshing(true)
+    dispatch(setRefreshing(true))
     await performTimeConsumingTask()
 
     FlatListFeedsRef.current.scrollToOffset({ animated: true, offset: 0 })
@@ -108,7 +115,7 @@ export default function TestFeed(props) {
           paging = 1
         }
 
-        setloading(true)
+        dispatch(setLoading(true))
         const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_GET_FEEDS
 
         await fetch(apiURL, {
@@ -132,15 +139,15 @@ export default function TestFeed(props) {
               // clear the notifs if present
               AppBadgeHelper.setAppBadgeCount(0)
 
-              // toast.current.show("New Notifications fetched");
+              // toast.current.show('New Notifications fetched')
               if (rewrite) {
-                setFeed([...resJson.results])
-                setEndReached(false)
+                dispatch(setFeed([...resJson.results]))
+                dispatch(setEndReached(false))
               } else {
-                setFeed([...data, ...resJson.results])
+                dispatch(setFeed([...data, ...resJson.results]))
               }
 
-              setPage(paging + 1)
+              dispatch(setPage(paging + 1))
 
               props.ToasterFunc(
                 'New Notifications Loaded!',
@@ -148,7 +155,7 @@ export default function TestFeed(props) {
                 ToasterOptions.TYPE.GRADIENT_PRIMARY,
               )
             } else {
-              setEndReached(true)
+              dispatch(setEndReached(true))
               props.ToasterFunc(
                 'No More Notifications',
                 '',
@@ -160,11 +167,10 @@ export default function TestFeed(props) {
             console.warn(error)
           })
 
-        setloading(false)
-        setRefreshing(false)
+        dispatch(setLoading(false))
+        dispatch(setRefreshing(false))
       }
     }
-    // console.log(feed);
   }
 
   return (
