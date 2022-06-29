@@ -7,7 +7,6 @@ import CryptoHelper from "src/helpers/CryptoHelper";
 import Notify from "src/singletons/Notify";
 
 import ENV_CONFIG from "src/env.config";
-import GLOBALS from "src/Globals";
 
 // Download Helper Function
 const ServerHelper = {

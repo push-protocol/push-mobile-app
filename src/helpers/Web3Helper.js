@@ -161,19 +161,19 @@ const Web3Helper = {
           cns: "",
         };
 
-        if (responseJson["domains"].length > 0) {
+        if (responseJson["domains"]?.length > 0) {
           response.success = true;
 
           let cns = '';
-          responseJson["domains"].map((item, i) => {
+          responseJson["domains"]?.map((item, i) => {
             cns = cns + item["name"];
 
-            if (i != responseJson["domains"].length - 1) {
+            if (i != responseJson["domains"]?.length - 1) {
               cns = cns + " | ";
             }
           })
 
-          if (responseJson["domains"].length > 1) {
+          if (responseJson["domains"]?.length > 1) {
             cns = `${cns}`;
           }
 

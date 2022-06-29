@@ -1,5 +1,5 @@
-import { id, serializeTransaction } from "ethers/lib/utils";
-import React, { useEffect, useState, useRef } from "react";
+import { id, serializeTransaction } from 'ethers/lib/utils'
+import React, { useEffect, useState, useRef } from 'react'
 import {
   View,
   Text,
@@ -9,235 +9,236 @@ import {
   Modal,
   TouchableOpacity,
   TouchableHighlight,
-} from "react-native";
-import { ethers } from "ethers";
+} from 'react-native'
+import { ethers } from 'ethers'
 
-import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons'
 
-import { useWalletConnect } from "@walletconnect/react-native-dapp";
+import { useWalletConnect } from '@walletconnect/react-native-dapp'
 
-import PrimaryButton from "src/components/buttons/PrimaryButton";
+import PrimaryButton from 'src/components/buttons/PrimaryButton'
 
-import OverlayBlur from "src/components/modals/OverlayBlur";
-import NoticePrompt from "src/components/modals/NoticePrompt";
+import OverlayBlur from 'src/components/modals/OverlayBlur'
+import NoticePrompt from 'src/components/modals/NoticePrompt'
 
-import MetaStorage from "src/singletons/MetaStorage";
+import MetaStorage from 'src/singletons/MetaStorage'
 
-import ENV_CONFIG from "src/env.config";
-import GLOBALS from "src/Globals";
+import ENV_CONFIG from 'src/env.config'
+import GLOBALS from 'src/Globals'
 
-const CHANNEL_OPT_IN = 1;
-const CHANNEL_OPT_OUT = 2;
+const CHANNEL_OPT_IN = 1
+const CHANNEL_OPT_OUT = 2
 
 const SubscriptionStatus = ({ channel, user, style, pKey }) => {
-  const [subscribed, setSubscribed] = useState(null);
+  const [subscribed, setSubscribed] = useState(null)
 
-  const [modal, setModal] = useState(false);
-  const [action, setAction] = useState("");
+  const [modal, setModal] = useState(false)
+  const [action, setAction] = useState('')
 
-  const [processing, setProcessing] = useState(false);
+  const [processing, setProcessing] = useState(false)
 
-  const apiURL =
-    ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_SUBSCRIPTION;
+  const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_SUBSCRIPTION
 
   //EIP 712 USING Private Key
 
-  var url = "https://kovan.infura.io/v3/ee27475cf9ec4421b6bdec5c428cc3c9";
-  var provider = new ethers.providers.JsonRpcProvider(url);
+  var url = 'https://kovan.infura.io/v3/ee27475cf9ec4421b6bdec5c428cc3c9'
+  var provider = new ethers.providers.JsonRpcProvider(url)
 
-  var wallet = "";
-  if (pKey != "") {
-    wallet = new ethers.Wallet(pKey);
+  var wallet = ''
+  if (pKey != '') {
+    wallet = new ethers.Wallet(pKey)
   }
 
   const EPNS_DOMAIN = {
-    name: "EPNS COMM V1",
+    name: 'EPNS COMM V1',
     chainId: 42,
-    verifyingContract: "0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC",
-  };
+    verifyingContract: '0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC',
+  }
 
   const subType = {
     Subscribe: [
-      { name: "channel", type: "address" },
-      { name: "subscriber", type: "address" },
-      { name: "action", type: "string" },
+      { name: 'channel', type: 'address' },
+      { name: 'subscriber', type: 'address' },
+      { name: 'action', type: 'string' },
     ],
-  };
+  }
   const unsubType = {
     Unsubscribe: [
-      { name: "channel", type: "address" },
-      { name: "unsubscriber", type: "address" },
-      { name: "action", type: "string" },
+      { name: 'channel', type: 'address' },
+      { name: 'unsubscriber', type: 'address' },
+      { name: 'action', type: 'string' },
     ],
-  };
+  }
 
   const subMessage = {
     channel: channel,
     subscriber: user,
-    action: "Subscribe",
-  };
+    action: 'Subscribe',
+  }
 
   const unsubMessage = {
     channel: channel,
     unsubscriber: user,
-    action: "Unsubscribe",
-  };
+    action: 'Unsubscribe',
+  }
 
   const handleSubscribe = async () => {
-    if (pKey != "") {
-      console.log("HERE->Subscribe");
+    if (pKey != '') {
       wallet._signTypedData(EPNS_DOMAIN, subType, subMessage).then((res) => {
-        offChainSubscribe(res);
-      });
+        offChainSubscribe(res)
+      })
     } else {
-      showPopUp();
+      showPopUp()
     }
-  };
+  }
 
   const handleUnsubscribe = async () => {
-    if (pKey != "") {
-      console.log("HERE->Unscubscribe");
+    if (pKey != '') {
       wallet
         ._signTypedData(EPNS_DOMAIN, unsubType, unsubMessage)
         .then((res) => {
-          offChainUnsubscribe(res);
-        });
+          offChainUnsubscribe(res)
+        })
     } else {
-      showPopUp();
+      showPopUp()
     }
-  };
+  }
 
   const offChainSubscribe = async (signature) => {
     const apiUrl =
-      ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_SUBSCRIBE_OFFCHAIN;
+      ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_SUBSCRIBE_OFFCHAIN
 
-    console.log("subscribe", apiUrl);
+    console.log('subscribe', apiUrl)
 
     const body = {
       signature: signature,
       message: subMessage,
-      contractAddress: "0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC",
+      contractAddress: '0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC',
       chainId: 42,
-      op: "write",
-    };
+      op: 'write',
+    }
 
     const response = await fetch(apiUrl, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
-    });
+    })
 
-    console.log("calling subscribe with body ->", body);
+    console.log('calling subscribe with body ->', body)
 
-    const subscribeResponse = await response.json();
-    console.log("subscribeResponse", subscribeResponse);
+    const subscribeResponse = await response.json()
+    console.log('subscribeResponse', subscribeResponse)
 
-    fetchSubscriptionStatus(user, channel);
-  };
+    fetchSubscriptionStatus(user, channel)
+  }
 
   const offChainUnsubscribe = async (signature) => {
     const apiUrl =
-      ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_UNSUBSCRIBE_OFFCHAIN;
-    console.log("called", apiUrl);
+      ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_UNSUBSCRIBE_OFFCHAIN
+    console.log('called', apiUrl)
 
     const response = await fetch(apiUrl, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         signature: signature,
         message: unsubMessage,
-        contractAddress: "0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC",
+        contractAddress: '0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC',
         chainId: 42,
-        op: "write",
+        op: 'write',
       }),
-    });
+    })
 
-    console.log("signature", signature);
+    console.log('signature', signature)
 
-    const unsubscribeResponse = await response.json();
-    console.log("unsubscribeRespone", unsubscribeResponse);
+    const unsubscribeResponse = await response.json()
+    console.log('unsubscribeRespone', unsubscribeResponse)
 
-    fetchSubscriptionStatus(user, channel);
-  };
+    fetchSubscriptionStatus(user, channel)
+  }
 
   // Wallet Connect functionality
-  const { createSession, killSession, session, signTransaction } =
-    useWalletConnect();
-  const connector = useWalletConnect();
+  const {
+    createSession,
+    killSession,
+    session,
+    signTransaction,
+  } = useWalletConnect()
+  const connector = useWalletConnect()
 
   // Setup Refs
-  const OverlayBlurRef = useRef(null);
-  const NoticePromptRef = useRef(null);
+  const OverlayBlurRef = useRef(null)
+  const NoticePromptRef = useRef(null)
 
   useEffect(() => {
-    let isMounted = true;
-    if (isMounted) fetchSubscriptionStatus(user, channel);
+    let isMounted = true
+    if (isMounted) fetchSubscriptionStatus(user, channel)
 
     return () => {
-      isMounted = false;
-    };
-  });
+      isMounted = false
+    }
+  })
 
   const handleOpts = async (action) => {
     // Check signin flow
-    setProcessing(true);
+    setProcessing(true)
 
-    const signedInType = await MetaStorage.instance.getSignedInType();
+    const signedInType = await MetaStorage.instance.getSignedInType()
     if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
       if (action == 1) {
-        handleSubscribe();
+        handleSubscribe()
       } else if (action == 2) {
-        handleUnsubscribe();
+        handleUnsubscribe()
       }
     } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
       // Give Options
-      showPopUp(action);
+      showPopUp(action)
     }
-  };
+  }
 
   const showPopUp = async (action) => {
     // Check if Wallet Connect
-    setModal(true);
+    setModal(true)
 
     if (action == 1) {
-      setAction("Opt-In");
+      setAction('Opt-In')
     } else if (action == 2) {
-      setAction("Opt-Out");
+      setAction('Opt-Out')
     }
-  };
+  }
 
   const fetchSubscriptionStatus = async (user, channel) => {
     const response = await fetch(apiURL, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         subscriber: user,
         channel: channel,
-        op: "read",
+        op: 'read',
       }),
-    });
+    })
 
-    const subscriptionStatus = await response.json();
+    const subscriptionStatus = await response.json()
 
     // console.log(subscriptionStatus);
-    setProcessing(false);
-    setSubscribed(subscriptionStatus);
-  };
+    setProcessing(false)
+    setSubscribed(subscriptionStatus)
+  }
 
   const openURL = async (url) => {
     // if (validURL(url) || 1) {
     // console.log("OPENING URL ", url);
     // Bypassing the check so that custom app domains can be opened
-    await Linking.openURL(url);
+    await Linking.openURL(url)
     // Linking.canOpenURL(url).then((supported) => {
     //   if (supported) {
     //     Linking.openURL(url);
@@ -248,7 +249,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
     // } else {
     // showToast("Link not valid", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
     // }
-  };
+  }
 
   // Open Notice Prompt With Overlay Blur
   const toggleNoticePrompt = (
@@ -257,24 +258,24 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
     title,
     subtitle,
     notice,
-    showIndicator
+    showIndicator,
   ) => {
     // Set Notice First
-    NoticePromptRef.current.changeTitle(title);
-    NoticePromptRef.current.changeSubtitle(subtitle);
-    NoticePromptRef.current.changeNotice(notice);
-    NoticePromptRef.current.changeIndicator(showIndicator);
+    NoticePromptRef.current.changeTitle(title)
+    NoticePromptRef.current.changeSubtitle(subtitle)
+    NoticePromptRef.current.changeNotice(notice)
+    NoticePromptRef.current.changeIndicator(showIndicator)
 
     // Set render state of this and the animate the blur modal in
-    OverlayBlurRef.current.changeRenderState(toggle, animate);
-    NoticePromptRef.current.changeRenderState(toggle, animate);
-  };
+    OverlayBlurRef.current.changeRenderState(toggle, animate)
+    NoticePromptRef.current.changeRenderState(toggle, animate)
+  }
 
   return (
     <View style={styles.container}>
       {subscribed == null && (
         <ActivityIndicator
-          size={"small"}
+          size={'small'}
           color={GLOBALS.COLORS.GRADIENT_PRIMARY}
         />
       )}
@@ -293,7 +294,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
           disabled={processing}
           loading={processing}
           onPress={() => {
-            handleOpts(CHANNEL_OPT_OUT);
+            handleOpts(CHANNEL_OPT_OUT)
           }}
         />
       )}
@@ -302,7 +303,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
         <PrimaryButton
           style={styles.controlPrimary}
           setButtonStyle={{ borderRadius: 0, padding: 0 }}
-          setButtonInnerStyle={{ flexDirection: "column-reverse" }}
+          setButtonInnerStyle={{ flexDirection: 'column-reverse' }}
           title="Opt In"
           iconFactory="MaterialCommunityIcons"
           icon="checkbox-blank-outline"
@@ -316,7 +317,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
           disabled={processing}
           loading={processing}
           onPress={() => {
-            handleOpts(CHANNEL_OPT_IN);
+            handleOpts(CHANNEL_OPT_IN)
           }}
         />
       )}
@@ -336,14 +337,16 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
         transparent={true}
         visible={modal}
         onRequestClose={() => {
-          setModal(!modal);
+          setModal(!modal)
         }}
       >
         <View style={styles.centeredView}>
           <View style={styles.modal}>
             <View style={[styles.optionsArea]}>
               <Text style={styles.textStyle}>
-                {action} is currently posible with MetaMask. You will be redirected to the MetaMask app where you can sign into our Dapp and {action} to the channels of your choice.
+                {action} is currently posible with MetaMask. You will be
+                redirected to the MetaMask app where you can sign into our Dapp
+                and {action} to the channels of your choice.
               </Text>
             </View>
 
@@ -354,7 +357,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
                 onPress={() => openURL(ENV_CONFIG.METAMASK_LINK)}
               >
                 <Text style={styles.doneText}>
-                  Opt In with MetaMask {"  "}
+                  Opt In with MetaMask {'  '}
                   <FontAwesome5 name="external-link-alt" size={20} />
                 </Text>
               </TouchableHighlight>
@@ -419,35 +422,35 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
         </View>
       </Modal> */}
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    overflow: "hidden",
+    overflow: 'hidden',
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   controlPrimary: {
     flex: 1,
-    maxHeight: "100%",
+    maxHeight: '100%',
   },
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 22,
-    backgroundColor: "rgba(255,255,255,0.75)",
+    backgroundColor: 'rgba(255,255,255,0.75)',
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -466,37 +469,37 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     elevation: 2,
-    backgroundColor: "#E20880",
+    backgroundColor: '#E20880',
   },
   buttonOpen: {
-    backgroundColor: "#228bc6",
+    backgroundColor: '#228bc6',
   },
   buttonClose: {
-    backgroundColor: "#228bc6",
+    backgroundColor: '#228bc6',
   },
   textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center",
+    textAlign: 'center',
   },
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     // marginTop: 22,
-    backgroundColor: "rgba(255,255,255,0.75)",
+    backgroundColor: 'rgba(255,255,255,0.75)',
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -515,38 +518,38 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     elevation: 2,
-    backgroundColor: "#E20880",
+    backgroundColor: '#E20880',
   },
   buttonOpen: {
-    backgroundColor: "#228bc6",
+    backgroundColor: '#228bc6',
   },
   buttonClose: {
-    backgroundColor: "#228bc6",
+    backgroundColor: '#228bc6',
   },
   textStyle: {
-    color: "black",
-    textAlign: "center",
+    color: 'black',
+    textAlign: 'center',
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center",
+    textAlign: 'center',
   },
 
   container: {
     ...StyleSheet.absoluteFill,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   keyboardAvoid: {
     ...StyleSheet.absoluteFill,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   modal: {
-    position: "absolute",
+    position: 'absolute',
     // display: "flex",
-    alignSelf: "center",
-    width: "75%",
+    alignSelf: 'center',
+    width: '75%',
     maxWidth: 300,
-    overflow: "hidden",
+    overflow: 'hidden',
     borderRadius: 10,
     borderWidth: 1,
     borderColor: GLOBALS.COLORS.LIGHT_GRAY,
@@ -559,9 +562,9 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 5,
     paddingHorizontal: 15,
-    justifyContent: "center",
-    textAlign: "center",
-    fontWeight: "bold",
+    justifyContent: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   subtitle: {
     paddingTop: 5,
@@ -569,7 +572,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: GLOBALS.COLORS.WHITE,
     color: GLOBALS.COLORS.BLACK,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 14,
   },
   optionsArea: {
@@ -593,14 +596,14 @@ const styles = StyleSheet.create({
   },
   lettercount: {
     flex: 1,
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     paddingTop: 2,
     color: GLOBALS.COLORS.MID_GRAY,
     fontSize: 12,
   },
   hintText: {
     color: GLOBALS.COLORS.GRADIENT_PRIMARY,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 14,
   },
   doneArea: {},
@@ -612,9 +615,9 @@ const styles = StyleSheet.create({
   },
   doneText: {
     color: GLOBALS.COLORS.GRADIENT_PRIMARY,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginRight: 10,
   },
   cancelArea: {},
@@ -626,9 +629,9 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     color: GLOBALS.COLORS.LINKS,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 16,
   },
-});
+})
 
-export default SubscriptionStatus;
+export default SubscriptionStatus
