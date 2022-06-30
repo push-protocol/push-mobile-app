@@ -83,6 +83,7 @@
     "react-native-image-viewing": "0.1.8",
     "react-native-keychain": "6.1.1",
     "react-native-level-fs": "^3.0.1",
+    "react-native-linear-gradient": "^2.5.6",
     "react-native-os": "^1.2.6",
     "react-native-paper": "^4.9.2",
     "react-native-parsed-text": "^0.0.21",

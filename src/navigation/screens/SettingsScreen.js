@@ -19,9 +19,10 @@ import { ToasterOptions, Toaster } from 'src/components/indicators/Toaster'
 
 import AuthenticationHelper from 'src/helpers/AuthenticationHelper'
 import MetaStorage from 'src/singletons/MetaStorage'
-import FeedDBHelper from 'src/helpers/FeedDBHelper'
+// import FeedDBHelper from 'src/helpers/FeedDBHelper'
 import ENV_CONFIG from 'src/env.config'
 import GLOBALS from 'src/Globals'
+import Dropdown from 'src/components/custom/Dropdown'
 
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -29,11 +30,10 @@ import {
   setLogout,
   createNewWallet,
   selectUsers,
-  deleteUser,
 } from 'src/redux/authSlice'
-import { fetchFeedData, clearFeed } from 'src/redux/feedSlice'
+import { clearFeed } from 'src/redux/feedSlice'
 
-const SettingsScreen = ({ navigation }) => {
+const SettingsScreen = ({}) => {
   const dispatch = useDispatch()
   const users = useSelector(selectUsers)
 
@@ -45,14 +45,14 @@ const SettingsScreen = ({ navigation }) => {
   const ToasterRef = useRef(null)
 
   // FUNCTIONS
-  // ADD HEADER COMPONENET
-  const addHeaderComponent = (navigation) => {
-    navigation.setOptions({
-      headerLeft: () => {
-        return null
-      },
-    })
-  }
+  // // ADD HEADER COMPONENET
+  // const addHeaderComponent = (navigation) => {
+  //   navigation.setOptions({
+  //     headerLeft: () => {
+  //       return null
+  //     },
+  //   })
+  // }
 
   // Render Items in Settings
   const renderItem = ({ item }) => {
@@ -81,23 +81,23 @@ const SettingsScreen = ({ navigation }) => {
   }
 
   // To Unarchive Message
-  const unarchiveMessages = async () => {
-    const db = FeedDBHelper.getDB()
-    await FeedDBHelper.unhideAllFeedItems(db)
+  // const unarchiveMessages = async () => {
+  //   const db = FeedDBHelper.getDB()
+  //   await FeedDBHelper.unhideAllFeedItems(db)
 
-    // Change the header back
-    addHeaderComponent(navigation)
+  //   // Change the header back
+  //   addHeaderComponent(navigation)
 
-    showToast(
-      'Messages Unarchived! Restarting...',
-      '',
-      ToasterOptions.TYPE.GRADIENT_PRIMARY,
-    )
+  //   showToast(
+  //     'Messages Unarchived! Restarting...',
+  //     '',
+  //     ToasterOptions.TYPE.GRADIENT_PRIMARY,
+  //   )
 
-    setTimeout(() => {
-      dispatch(setAuthState(GLOBALS.AUTH_STATES.ONBOARDING))
-    }, 1500)
-  }
+  //   setTimeout(() => {
+  //     dispatch(setAuthState(GLOBALS.AUTH_STATES.ONBOARDING))
+  //   }, 1500)
+  // }
 
   // To Reset Wallet
   const resetWallet = async () => {
@@ -138,27 +138,16 @@ const SettingsScreen = ({ navigation }) => {
     type: 'button',
   })
 
-  users.length > 1 &&
-    users.map(({ wallet, index }) =>
-      settingsOptions.push({
-        title: `Sign in out of ${wallet}`,
-        img: require('assets/ui/brokenkey.png'),
-        func: () => {
-          dispatch(deleteUser(index))
-        },
-        type: 'button',
-      }),
-    )
-
   // Swipe Reset
-  settingsOptions.push({
-    title: 'Swipe / Reset Wallet',
-    img: require('assets/ui/unlink.png'),
-    func: () => {
-      resetWallet()
-    },
-    type: 'button',
-  })
+  users.length == 1 &&
+    settingsOptions.push({
+      title: 'Swipe / Reset Wallet',
+      img: require('assets/ui/unlink.png'),
+      func: () => {
+        resetWallet()
+      },
+      type: 'button',
+    })
 
   // Wallet Connect Disconnect
   if (connector.connected) {
@@ -184,13 +173,22 @@ const SettingsScreen = ({ navigation }) => {
         />
 
         <View style={styles.settingsContainer}>
-          <FlatList
-            style={styles.settings}
-            bounces={true}
-            data={settingsOptions}
-            keyExtractor={(item) => item.title}
-            renderItem={renderItem}
-          />
+          <View style={{ marginBottom: 20 }}>
+            <FlatList
+              style={styles.settings}
+              bounces={true}
+              data={settingsOptions}
+              keyExtractor={(item) => item.title}
+              renderItem={renderItem}
+            />
+
+            {users.length > 1 && (
+              <View style={styles.dropdown}>
+                <Dropdown label="Logout" data={users} />
+              </View>
+            )}
+          </View>
+
           <View style={styles.appInfo}>
             <Text
               style={styles.appText}
@@ -226,7 +224,7 @@ const styles = StyleSheet.create({
   },
   settingsContainer: {
     flex: 1,
-    justifyContent: 'center',
+    position: 'relative',
   },
   settings: {},
   appInfo: {
@@ -236,6 +234,9 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 15,
     marginLeft: 80,
+    position: 'absolute',
+    right: 0,
+    bottom: 20,
   },
   appImage: {
     height: 40,
@@ -249,6 +250,12 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     fontSize: 12,
     color: GLOBALS.COLORS.MID_GRAY,
+  },
+  dropdown: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    marginTop: 5,
   },
 })
 
