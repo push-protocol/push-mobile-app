@@ -40,7 +40,7 @@ const Dropdown = ({ label, data }) => {
         style={styles.item}
         onPress={() => dispatch(deleteUser(item.index))}
       >
-        <Text style={styles.itemText}>{item.wallet}</Text>
+        <Text style={styles.itemText}>{item.ens || item.cns || item.wallet}</Text>
       </TouchableOpacity>
     )
   }

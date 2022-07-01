@@ -16,7 +16,6 @@ import OverlayBlur from 'src/components/modals/OverlayBlur'
 import Blockies from 'src/components/web3/Blockies'
 import ENSButton from 'src/components/buttons/ENSButton'
 
-import Web3Helper from 'src/helpers/Web3Helper'
 
 import GLOBALS from 'src/Globals'
 import { switchUser } from 'src/redux/authSlice'
@@ -25,50 +24,29 @@ import { connect } from 'react-redux'
 
 const MARGIN_RIGHT = 120
 
+getProperAddressLabel = (wallet,ens,cns) => ens || cns || wallet;
+
+
 class ProfileDisplayer extends Component {
   // CONSTRUCTOR
   constructor(props) {
     super(props)
 
     this.state = {
-      cns: '',
-      ens: '',
-      loading: true,
+      cns: this.props.auth.users[this.props.auth.currentUser].cns,
+      ens: this.props.auth.users[this.props.auth.currentUser].ens,
+      loading: false,
       active: false,
       fader: new Animated.Value(0),
       wallet: this.props.auth.users[this.props.auth.currentUser].wallet,
     }
   }
 
-  // COMPONENT MOUNTED
-  async componentDidMount() {
-    // do for CNS
-    let walletObject = await Web3Helper.updateCNSAndFetchWalletInfoObject()
-    let cns = ''
-
-    if (walletObject.cns !== '') {
-      cns = walletObject.cns
-    }
-
-    // do for ENS
-    walletObject = await Web3Helper.updateENSAndFetchWalletInfoObject()
-    let ens = ''
-
-    if (walletObject.ens !== '') {
-      ens = walletObject.ens
-    }
-
-    let ensWallet = await Web3Helper.getCNSReverseDomain(
-      this.props.auth.users[this.props.auth.currentUser].wallet,
-    )
-
+  setWalletState(idx){
     this.setState({
-      cns: cns,
-      ens: ens,
-      loading: false,
-      wallet:
-        ensWallet.cns ||
-        this.props.auth.users[this.props.auth.currentUser].wallet,
+      cns: this.props.auth.users[idx].cns,
+      ens: this.props.auth.users[idx].ens,
+      wallet: this.props.auth.users[idx].wallet,
     })
   }
 
@@ -137,8 +115,8 @@ class ProfileDisplayer extends Component {
               >
                 <View style={styles.upArrow} />
                 <View style={styles.content}>
-                  {auth.users.map(({ wallet, index }) => {
-                    const isActive = auth.currentUser === index
+                  {auth.users.map(({ wallet, index, ens, cns }) => {
+                    let isActive = auth.currentUser === index
 
                     const onPress = () => {
                       this.props.switchUser(index)
@@ -151,6 +129,9 @@ class ProfileDisplayer extends Component {
                         rewrite: true,
                         wallet,
                       })
+
+                      this.setWalletState(index)
+                      this.toggleActive(!this.state.active)
                     }
 
                     return isActive ? (
@@ -160,14 +141,14 @@ class ProfileDisplayer extends Component {
                           fontSize={16}
                           title="[t:Connected Wallet]"
                         />
-                        <Text style={styles.activeWalletText}>{wallet}</Text>
+                        <Text style={styles.activeWalletText}>{getProperAddressLabel(wallet,ens,cns)}</Text>
                       </TouchableOpacity>
                     ) : (
                       <TouchableOpacity
                         style={styles.walletInfo}
                         onPress={onPress}
                       >
-                        <Text style={styles.walletText}>{wallet}</Text>
+                        <Text style={styles.walletText}>{getProperAddressLabel(wallet,ens,cns)}</Text>
                       </TouchableOpacity>
                     )
                   })}

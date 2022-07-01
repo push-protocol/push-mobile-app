@@ -124,6 +124,7 @@ const SettingsScreen = ({}) => {
   //   type: 'button',
   // })
 
+
   // Sign in with another wallet
   settingsOptions.push({
     title: 'Sign in with another wallet',
