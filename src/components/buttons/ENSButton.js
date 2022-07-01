@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, Entypo } from '@expo/vector-icons'
 
 import GLOBALS from 'src/Globals'
 
@@ -41,6 +41,7 @@ export default class ENSButton extends Component {
       ens,
       wallet,
       fontSize,
+      dropdownIcon,
     } = this.props
 
     let showDomain = true
@@ -129,17 +130,26 @@ export default class ENSButton extends Component {
                 color={GLOBALS.COLORS.WHITE}
               />
             ) : showDomain == false ? (
-              <Text
-                style={[
-                  styles.ensName,
-                  { fontSize: fontSize },
-                  headerTextStyle,
-                ]}
-                numberOfLines={numberOfLines}
-                ellipsizeMode="middle"
+              <View
+                style={{ display: 'flex', width: '90%', position: 'relative' }}
               >
-                {title}
-              </Text>
+                <Text
+                  style={[
+                    styles.ensName,
+                    { fontSize: fontSize },
+                    headerTextStyle,
+                  ]}
+                  numberOfLines={numberOfLines}
+                  ellipsizeMode="middle"
+                >
+                  {title}
+                </Text>
+                <Text style={styles.caretStyle}>
+                  {dropdownIcon && (
+                    <Entypo name="chevron-down" size={16} color="white" />
+                  )}
+                </Text>
+              </View>
             ) : (
               <View style={styles.ensContainer}>
                 <View style={[styles.ensHeader, headerStyle]}>
@@ -218,5 +228,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: GLOBALS.COLORS.BLACK,
     fontWeight: 'bold',
+  },
+  caretStyle: {
+    marginLeft: 10,
+    paddingLeft: 10,
+    position: 'absolute',
+    top: 0,
+    right: -20,
   },
 })

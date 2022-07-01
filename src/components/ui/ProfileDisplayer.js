@@ -127,6 +127,7 @@ class ProfileDisplayer extends Component {
                 wallet={this.state.wallet}
                 fontSize={14}
                 forProfile={true}
+                dropdownIcon={auth.users.length > 1}
               />
             </TouchableOpacity>
             {this.state.active == false ? null : (
@@ -357,6 +358,11 @@ const styles = StyleSheet.create({
   interestEarnedText: {},
   settings: {
     marginTop: 10,
+  },
+  dropdown: {
+    position: 'absolute',
+    backgroundColor: '#fff',
+    top: 50,
   },
 })
 
