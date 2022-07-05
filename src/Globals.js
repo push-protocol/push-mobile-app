@@ -22,7 +22,7 @@ export default {
     PUSH_TOKEN_SERVER_SYNCED: 'PushTokenServerSynced',
     PUSH_BADGE_COUNT: 'PushBadgeCount',
     PUSH_BADGE_COUNT_PREVIOUS: 'PreviousPushBadgeCount',
-  },
+  }, 
 
   CONSTANTS: {
     CRED_TYPE_WALLET: 'TypeWallet',
@@ -114,6 +114,7 @@ export default {
   AUTH_STATE: {
     INITIALIZING: 'INITIALIZING',
     ONBOARDING: 'ONBOARDING',
+    ONBOARDED: "ONBOARDED",
     AUTHENTICATED: 'AUTHENTICATED',
   },
 }

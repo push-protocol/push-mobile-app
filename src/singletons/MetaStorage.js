@@ -183,8 +183,6 @@ export default class MetaStorage {
 
     try {
       return await AsyncStorage.multiSet(items, () => {
-        // console.log("Encrypted Key and Hashed Passcode");
-        // console.log(encryptedPKey + "|" + hashedPasscode);
       })
     } catch (error) {
       console.warn(error)
@@ -226,8 +224,6 @@ export default class MetaStorage {
 
     try {
       return await AsyncStorage.multiSet(items, () => {
-        // console.log("Encrypted Key and Hashed Passcode");
-        // console.log(encryptedPKey + "|" + hashedPasscode);
       })
     } catch (error) {
       console.warn(error)
@@ -285,6 +281,19 @@ export default class MetaStorage {
   setStoredWallet = async (walletObject) => {
     try {
       await AsyncStorage.setItem(
+        GLOBALS.STORAGE.STORED_WALLET_OBJ+"pin",
+        JSON.stringify(walletObject),
+      )
+    } catch (error) {
+      // Error saving data
+      console.warn(error)
+      return false
+    }
+  }
+
+  setStoredWallets = async (walletObject) => {
+    try {
+      await AsyncStorage.setItem(
         GLOBALS.STORAGE.STORED_WALLET_OBJ,
         JSON.stringify(walletObject),
       )
@@ -307,6 +316,24 @@ export default class MetaStorage {
       return false
     }
   }
+
+  getStoredWallets = async () => {
+    try {
+      // Then Fetch Wallet
+      let walletObj = await AsyncStorage.getItem(GLOBALS.STORAGE.STORED_WALLET_OBJ)
+
+      // Set Default Value
+      if (walletObj == null) {
+        walletObj = []
+        await MetaStorage.instance.setStoredWallets(walletObj)
+        walletObj = JSON.stringify(walletObj)
+      }
+      return JSON.parse(walletObj)
+    } catch (error) {
+      console.warn(error)
+      return false
+    }
+  } 
 
   getWalletDetails = async (index) => {
     try {

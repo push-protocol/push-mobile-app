@@ -27,7 +27,7 @@ import MetaStorage from 'src/singletons/MetaStorage'
 
 import GLOBALS from 'src/Globals'
 import { connect } from 'react-redux'
-import { setAuthState } from 'src/redux/authSlice'
+import { setAuthState, setAllUsers, switchUser } from 'src/redux/authSlice'
 
 // FOR SLIDING UP ANIMATION
 const SLIDE_UP_THRESHOLD = 100
@@ -35,9 +35,10 @@ const SLIDE_UP_THRESHOLD = 100
 class SplashScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
+      signedIn: false,
       passcodePrompt: false,
       userLocked: false,
 
@@ -50,121 +51,476 @@ class SplashScreen extends Component {
       userLockedFader: new Animated.Value(0),
 
       resetWalletFader: new Animated.Value(1),
+
     }
+    
+    this.PasscodeInput = React.createRef();
   }
 
   // COMPONENT MOUNTED
   async componentDidMount() {
+    console.log("Splash screen comes");
     const signedIn = this.props.auth.isLoggedIn
-
     if (!signedIn) {
-      console.log('User is not signed in')
-      // Sign In is the first step, don't proceed ahead
-      // Just Flip the switch
-      // Do The Bell Once and then proceed
-
-      this.refs.bellicon.animateBell(() => {
-        this.props.dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING))
-      })
-
-      // this.props.navigation.navigate(GLOBALS.SCREENS.WELCOME)
-    } else {
-      console.log('User is signed in')
-      // User is signed in, handle Authentication flow
-      // this.handleAuthenticationFlow(signedIn)
+      const wallet = await MetaStorage.instance.getStoredWallets();
+      if (wallet  && wallet.length > 0){
+        this.setState({
+          signedIn: true,
+        }, () => {
+          this.handleAuthenticationFlow(signedIn);
+        })
+      }else{
+        // Do The Bell Once and then proceed
+        this.refs.bellicon.animateBell(
+          () => {
+            this.props.dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING))
+          }
+        );
+      }
     }
+    else {
+      // User is signed in, handle Authentication flow
+      this.setState({
+        signedIn: true,
+      }, () => {
+        this.handleAuthenticationFlow(signedIn);
+      })
+    }
+  }
+  
+  setNewState = async()=>{
+    const wallet = await MetaStorage.instance.getStoredWallets();
+    this.props.dispatch(setAllUsers(wallet));
+    this.props.dispatch(switchUser(0));
+  }
+
+  // FUNCTIONS
+  // To Handle the logic flow
+  handleAuthenticationFlow = async (signedIn) => {
+    // Check for Account Lock First
+    const userLocked = await MetaStorage.instance.getUserLocked();
+    if (!userLocked) {
+      // Present Secuity Details
+      this.handleAuthentication(signedIn);
+    }
+    else {
+      this.transitionToUserLocked(true);
+    }
+  }
+
+  // To Handle Authentication
+  handleAuthentication = async (signedIn) => {
+    // First try biometric
+    const response = await this.authenticateViaBiometric();
+
+    if (response.success) {
+      // Do The Bell Once and then proceed
+      this.refs.bellicon.animateBell(
+        () => {
+          this.props.dispatch(setAuthState(GLOBALS.AUTH_STATE.AUTHENTICATED))
+        }
+      );
+    }
+    else {
+      // Verify
+      const passcodeAttemptsPending = await this.checkAndTakeActionOnAttempts(true);
+
+      if (passcodeAttemptsPending) {
+        // Set State
+        this.setState({
+          remainingAttempts: passcodeAttemptsPending
+        }, () => {
+          this.transitionToPasscodeAttempts();
+        });
+      }
+    }
+  }
+
+  // To Handle Authentication via biometric
+  authenticateViaBiometric = async () => {
+    let response = {};
+
+    // Check if biometric is available
+    const biometricSupported = await BiometricHelper.getSupportedBiometric();
+
+    if (biometricSupported) {
+      let biometricType = "Null";
+
+      if (biometricSupported == LocalAuthentication.AuthenticationType.FINGERPRINT) {
+        biometricType = "TouchID";
+      }
+      else if (biometricSupported == LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION) {
+        biometricType = "FaceID";
+      }
+
+      try {
+        const title = `Signing you with ${biometricType}`;
+        const cancel = 'Use Passcode';
+
+        const AUTH_OPTIONS = {
+          authenticationPrompt: {
+           title: title,
+           cancel: cancel,
+          }
+        }
+
+        // Retrieve the credentials
+        const credentials = await Keychain.getGenericPassword(AUTH_OPTIONS);
+
+        if (credentials) {
+          const hashedCode = await MetaStorage.instance.getHashedPasscode();
+          const signedInType = await MetaStorage.instance.getSignedInType();
+
+          let authResponse;
+          if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
+            authResponse = await AuthenticationHelper.getCodeVerification(
+              credentials.username,
+              hashedCode
+            )
+          }
+          else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+            authResponse = await AuthenticationHelper.returnDecryptedPKey(
+              credentials.password,
+              credentials.username,
+              hashedCode
+            );
+          }
+
+          if (authResponse.success) {
+            response.success = true;
+            response.wallet = authResponse.wallet;
+            response.pkey = authResponse.pkey;
+          }
+          else {
+            response.success = false;
+            response.info = pkey;
+          }
+        }
+        else {
+          response.success = false;
+          response.info = 'Biometric failed';
+        }
+      }
+      catch (error) {
+        // console.log("Keychain couldn't be accessed!", error);
+
+        response.success = false;
+        response.info = 'Biometric failed';
+      }
+
+      return response;
+    }
+    else {
+      response.success = false;
+      response.info = 'Biometric failed';
+    }
+
+    // Return Appropriate Response
+    return response;
+  }
+
+  // To Handle Authentication via passcode
+  authenticateViaPasscode = async (value) => {
+    if (value.length != 6) {
+      // if the value isn't equal to 6, it's not complete yet
+      return;
+    }
+
+    // Check if Passcode decrypts the key
+    const hashedCode = await MetaStorage.instance.getHashedPasscode();
+    const signedInType = await MetaStorage.instance.getSignedInType();
+
+    let response;
+    if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
+      response = await AuthenticationHelper.getCodeVerification(
+        value,
+        hashedCode
+      )
+    }
+    else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+      const encryptedPKey = await MetaStorage.instance.getEncryptedPkey();
+
+      response = await AuthenticationHelper.returnDecryptedPKey(
+        encryptedPKey,
+        value,
+        hashedCode
+      );
+    }
+
+    if (response.success) {
+      await this.setNewState();
+      // return
+      this.props.dispatch(setAuthState(GLOBALS.AUTH_STATE.AUTHENTICATED))
+    }
+    else {
+      // Passcode Attempt Failed
+
+      // Vibrate to indicate incorrect attempt
+      Vibration.vibrate();
+
+      // decrement the remaining attempts
+      const remainingAttempts = this.state.remainingAttempts - 1;
+
+      await MetaStorage.instance.setRemainingPasscodeAttempts(remainingAttempts);
+      const passcodeAttemptsPending = await this.checkAndTakeActionOnAttempts();
+
+      if (passcodeAttemptsPending) {
+        const callback = () => {
+          this.setState({
+            remainingAttempts: remainingAttempts,
+            passcode: '',
+          }, () => {
+
+          });
+        }
+
+        this.fadeInPasscode(callback);
+      }
+      else {
+        this.setState({
+          remainingAttempts: 0,
+          passcode: '',
+        });
+
+        await this.checkAndTakeActionOnAttempts();
+      }
+    }
+  }
+
+  // To transition to Passcode Attempts
+  transitionToPasscodeAttempts = () => {
+    Animated.parallel([
+      Animated.timing(this.state.signedInFader, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(this.state.passcodePromptFader, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      this.setState({
+        signedIn: false,
+        passcodePrompt: true,
+        userLocked: false,
+      }, () => {
+        if (this.PasscodeInput) {
+          this.PasscodeInput.current.focus();
+        }
+      })
+    });
+  }
+
+  // Set Pass Code
+  changePassCode = (value) => {
+    // accept only digits
+    if (/^\d+$/.test(value) || value === '') {
+      this.setState({
+        passcode: value
+      }, () => {
+        this.authenticateViaPasscode(value);
+      });
+    }
+  }
+
+  // Check Passcode Attempts
+  checkAndTakeActionOnAttempts = async (jumpFromSignedInToLocked) => {
+    const remainingAttempts = await MetaStorage.instance.getRemainingPasscodeAttempts();
+
+    if (remainingAttempts <= 0) {
+      // Lock User Account
+      await AuthenticationHelper.wipeSignedInUser();
+
+      this.setState({
+        signedIn: false,
+        passcodePrompt: false,
+        userLocked: true,
+      }, () => {
+        this.transitionToUserLocked(false);
+      });
+    }
+
+    return remainingAttempts;
+  }
+
+  // Fade In Passcode
+  fadeInPasscode = (callback) => {
+    this.setState({
+      passcodeFader: new Animated.Value(0),
+    }, () => {
+      if (callback) {
+        callback();
+      }
+
+      Animated.timing(this.state.passcodeFader, {
+        toValue: 1,
+      	duration: 250,
+        useNativeDriver: true,
+      }).start();
+    })
+  }
+
+  // Show Reset Wallet
+  fadeInResetWallet = () => {
+    Animated.timing(this.state.resetWalletFader, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+  }
+
+  // Transition to User Locked
+  transitionToUserLocked = (directlyFromSignIn) => {
+
+    if (directlyFromSignIn) {
+      Animated.parallel([
+        Animated.timing(this.state.signedInFader, {
+      		toValue: 0,
+          easing: Easing.easeOut,
+      		duration: 300,
+          useNativeDriver: true,
+      	}),
+        Animated.timing(this.state.userLockedFader, {
+      		toValue: 1,
+          easing: Easing.easeIn,
+      		duration: 500,
+          useNativeDriver: true,
+      	}),
+      ]).start(() => {
+        this.setState({
+          signedIn: false,
+          passcodePrompt: false,
+          userLocked: true,
+        })
+      });
+    }
+    else {
+      Keyboard.dismiss();
+
+      Animated.parallel([
+        Animated.timing(this.state.passcodePromptFader, {
+      		toValue: 0,
+          easing: Easing.easeOut,
+      		duration: 300,
+          useNativeDriver: true,
+      	}),
+        Animated.timing(this.state.userLockedFader, {
+      		toValue: 1,
+          easing: Easing.easeIn,
+      		duration: 500,
+          useNativeDriver: true,
+      	}),
+      ]).start(() => {
+        this.setState({
+          signedIn: false,
+          passcodePrompt: false,
+          userLocked: true,
+        })
+      });
+    }
+  }
+
+  // Reset Wallet
+  resetWallet = async () => {
+    await AuthenticationHelper.resetSignedInUser();
+    this.props.dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING))
+
   }
 
   // RENDER
   render() {
-    const passcodeSegment = this.state.passcode.split('')
+    const passcodeSegment = this.state.passcode.split("");
 
     // Keyboard Behavior
-    let keyboardAvoidBehavior = 'padding'
+    let keyboardAvoidBehavior = "padding";
     if (Platform.OS === 'android') {
-      keyboardAvoidBehavior = 'height'
+      keyboardAvoidBehavior = "height";
     }
 
     // Customize Prompt
-    let prompt = '[d:Please enter your Passcode]'
-
-    if (
-      this.state.remainingAttempts < GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
-    ) {
-      prompt = `[t:Incorrect Password, ${this.state.remainingAttempts} attempts pending]`
+    let prompt = "[d:Please enter your Passcode]";
+    const maxAttempts = GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS;
+    if (this.state.remainingAttempts < GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS) {
+      prompt = `[t:Incorrect Password, ${this.state.remainingAttempts} attempts pending]`;
     }
 
     return (
-      <View style={styles.container}>
-        {/* SignedInView or Default View, not in safe view to match splash screen */}
-        <View style={styles.innerWrapper}>
-          <Animated.View
-            style={[
-              styles.inner,
-              styles.signedInView,
-              {
-                opacity: this.state.signedInFader,
-                transform: [
-                  {
-                    translateY: this.state.signedInFader.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [-SLIDE_UP_THRESHOLD * 1.25, 0],
-                    }),
-                  },
-                ],
-              },
-            ]}
-          >
-            <AnimatedEPNSIcon ref="bellicon" style={styles.logo} />
-          </Animated.View>
-        </View>
+        <View style={styles.container}>
 
-        <View style={styles.safeContainer}>
-          {/* passcode view */}
+          {/* SignedInView or Default View, not in safe view to match splash screen */}
           <View style={styles.innerWrapper}>
-            <Animated.View
-              style={[
-                styles.inner,
-                styles.passcodePromptView,
+            <Animated.View style={[
+                styles.inner, styles.signedInView,
                 {
-                  opacity: this.state.passcodePromptFader,
+                  opacity: this.state.signedInFader,
                   transform: [
-                    {
-                      translateY: this.state.passcodePromptFader.interpolate({
-                        inputRange: [0.4, 1],
-                        outputRange: [SLIDE_UP_THRESHOLD, 0],
-                      }),
-                    },
-                  ],
-                },
+                     {
+                       translateY: this.state.signedInFader.interpolate({
+                         inputRange: [0, 1],
+                         outputRange: [-SLIDE_UP_THRESHOLD * 1.25, 0]
+                       })
+                     }
+                  ]
+                }
               ]}
             >
-              <DetailedInfoPresenter
-                style={styles.intro}
-                icon={require('assets/ui/biometric.png')}
-                contentView={
-                  <View style={styles.introContent}>
-                    <Animated.View style={styles.passcodeContainer}>
-                      <KeyboardAvoidingView
-                        style={styles.keyboardAvoid}
-                        behavior={keyboardAvoidBehavior}
-                        enabled
+              <AnimatedEPNSIcon
+                ref='bellicon'
+                style={styles.logo}
+              />
+            </Animated.View>
+          </View>
+
+          <View style={styles.safeContainer}>
+
+            {/* passcode view */}
+            <View style={styles.innerWrapper}>
+              <Animated.View style={[
+                  styles.inner, styles.passcodePromptView,
+                  {
+                    opacity: this.state.passcodePromptFader,
+                    transform: [
+                       {
+                         translateY: this.state.passcodePromptFader.interpolate({
+                           inputRange: [0.4, 1],
+                           outputRange: [SLIDE_UP_THRESHOLD, 0]
+                         })
+                       }
+                     ]
+                  }
+                ]}
+              >
+
+                <DetailedInfoPresenter
+                  style={styles.intro}
+                  icon={require('assets/ui/biometric.png')}
+                  contentView={
+                    <View style={styles.introContent}>
+                      <Animated.View
+                        style={styles.passcodeContainer}
                       >
+                        <KeyboardAvoidingView
+                          style={styles.keyboardAvoid}
+                          behavior={keyboardAvoidBehavior}
+                          enabled
+                        >
                         <View style={styles.introContentInner}>
                           <StylishLabel
-                            style={[styles.paracenter, styles.paraExtraMargin]}
+                            style={[ styles.paracenter, styles.paraExtraMargin ]}
                             fontSize={16}
                             title={prompt}
                           />
 
                           <TextInput
-                            ref="PasscodeInput"
+                            ref={this.PasscodeInput}
                             style={styles.input}
                             maxLength={6}
                             contextMenuHidden={true}
                             keyboardType={'numeric'}
                             autoCorrect={false}
-                            onChangeText={(value) => this.changePassCode(value)}
+                            onChangeText={(value) => (this.changePassCode(value))}
                             value={this.state.passcode}
                           />
 
@@ -172,180 +528,108 @@ class SplashScreen extends Component {
                             style={styles.fancyTextContainer}
                             pointerEvents="none"
                           >
-                            <View
-                              style={[
-                                styles.fancyTextView,
-                                styles.fancyTextViewPrimary,
-                              ]}
-                            >
-                              <Text
-                                style={[
-                                  styles.fancyText,
-                                  styles.fancyTextPrimary,
-                                ]}
-                              >
-                                {passcodeSegment[0]}
-                              </Text>
+                            <View style={[ styles.fancyTextView, styles.fancyTextViewPrimary ]}>
+                              <Text style={[ styles.fancyText, styles.fancyTextPrimary ]}>{passcodeSegment[0]}</Text>
                             </View>
-                            <View
-                              style={[
-                                styles.fancyTextView,
-                                styles.fancyTextViewPrimary,
-                              ]}
-                            >
-                              <Text
-                                style={[
-                                  styles.fancyText,
-                                  styles.fancyTextPrimary,
-                                ]}
-                              >
-                                {passcodeSegment[1]}
-                              </Text>
+                            <View style={[ styles.fancyTextView, styles.fancyTextViewPrimary ]}>
+                              <Text style={[ styles.fancyText, styles.fancyTextPrimary ]}>{passcodeSegment[1]}</Text>
                             </View>
-                            <View
-                              style={[
-                                styles.fancyTextView,
-                                styles.fancyTextViewThird,
-                              ]}
-                            >
-                              <Text
-                                style={[
-                                  styles.fancyText,
-                                  styles.fancyTextThird,
-                                ]}
-                              >
-                                {passcodeSegment[2]}
-                              </Text>
+                            <View style={[ styles.fancyTextView, styles.fancyTextViewThird ]}>
+                              <Text style={[ styles.fancyText, styles.fancyTextThird ]}>{passcodeSegment[2]}</Text>
                             </View>
-                            <View
-                              style={[
-                                styles.fancyTextView,
-                                styles.fancyTextViewThird,
-                              ]}
-                            >
-                              <Text
-                                style={[
-                                  styles.fancyText,
-                                  styles.fancyTextThird,
-                                ]}
-                              >
-                                {passcodeSegment[3]}
-                              </Text>
+                            <View style={[ styles.fancyTextView, styles.fancyTextViewThird ]}>
+                              <Text style={[ styles.fancyText, styles.fancyTextThird ]}>{passcodeSegment[3]}</Text>
                             </View>
-                            <View
-                              style={[
-                                styles.fancyTextView,
-                                styles.fancyTextViewSecondary,
-                              ]}
-                            >
-                              <Text
-                                style={[
-                                  styles.fancyText,
-                                  styles.fancyTextSecondary,
-                                ]}
-                              >
-                                {passcodeSegment[4]}
-                              </Text>
+                            <View style={[ styles.fancyTextView, styles.fancyTextViewSecondary ]}>
+                              <Text style={[ styles.fancyText, styles.fancyTextSecondary ]}>{passcodeSegment[4]}</Text>
                             </View>
-                            <View
-                              style={[
-                                styles.fancyTextView,
-                                styles.fancyTextViewSecondary,
-                              ]}
-                            >
-                              <Text
-                                style={[
-                                  styles.fancyText,
-                                  styles.fancyTextSecondary,
-                                ]}
-                              >
-                                {passcodeSegment[5]}
-                              </Text>
+                            <View style={[ styles.fancyTextView, styles.fancyTextViewSecondary ]}>
+                              <Text style={[ styles.fancyText, styles.fancyTextSecondary ]}>{passcodeSegment[5]}</Text>
                             </View>
                           </View>
                         </View>
                       </KeyboardAvoidingView>
                     </Animated.View>
                   </View>
-                }
-                animated={false}
-                startAnimation={false}
-              />
-            </Animated.View>
-          </View>
+                  }
+                  animated={false}
+                  startAnimation={false}
+                />
+              </Animated.View>
+            </View>
 
-          {/* locked user view */}
-          <View style={styles.innerWrapper}>
-            <Animated.View
-              style={[
-                styles.inner,
-                styles.userLockedView,
-                {
-                  opacity: this.state.userLockedFader,
-                  transform: [
-                    {
-                      translateY: this.state.userLockedFader.interpolate({
-                        inputRange: [0.4, 1],
-                        outputRange: [SLIDE_UP_THRESHOLD, 0],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            >
-              <DetailedInfoPresenter
-                style={styles.intro}
-                icon={require('assets/ui/brokenkey.png')}
-                contentView={
-                  <View style={styles.introContent}>
-                    <StylishLabel
-                      style={styles.paracenter}
-                      fontSize={24}
-                      title="[t:Credentials Wiped]"
-                    />
-                    <StylishLabel
-                      style={styles.para}
-                      fontSize={16}
-                      title="You ([d:or someone else]) exceeded the [b:passcode limit] to access your credentials."
-                    />
-                    <StylishLabel
-                      style={styles.para}
-                      fontSize={16}
-                      title="EPNS has [d:completely wiped] your credentials in order to preserve the integrity of your wallet."
-                    />
-                    <StylishLabel
-                      style={styles.paraend}
-                      fontSize={16}
-                      title="[d:Don't Sweat!:] Your messages are on [t:blockchain :)]. Just sign back in to gain access to them."
-                    />
-                  </View>
-                }
-                animated={false}
-                startAnimation={false}
-              />
+            {/* locked user view */}
+            <View style={styles.innerWrapper}>
+              <Animated.View style={[
+                  styles.inner, styles.userLockedView,
+                  {
+                    opacity: this.state.userLockedFader,
+                    transform: [
+                      {
+                        translateY: this.state.userLockedFader.interpolate({
+                          inputRange: [0.4, 1],
+                          outputRange: [SLIDE_UP_THRESHOLD, 0]
+                        })
+                      }
+                    ]
+                  }
+                ]}
+              >
 
-              {/* For the Footer Area */}
-              <PrimaryButton
-                style={styles.resetButton}
-                iconFactory="Ionicons"
-                icon="ios-refresh"
-                iconSize={24}
-                title="Reset / Use Different Wallet"
-                fontSize={16}
-                fontColor={GLOBALS.COLORS.WHITE}
-                bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
-                disabled={false}
-                onPress={() => {
-                  this.resetWallet()
-                }}
-              />
-            </Animated.View>
+                <DetailedInfoPresenter
+                  style={styles.intro}
+                  icon={require('assets/ui/brokenkey.png')}
+                  contentView={
+                    <View style={styles.introContent}>
+                      <StylishLabel
+                        style={styles.paracenter}
+                        fontSize={24}
+                        title='[t:Credentials Wiped]'
+                      />
+                      <StylishLabel
+                        style={styles.para}
+                        fontSize={16}
+                        title='You ([d:or someone else]) exceeded the [b:passcode limit] to access your credentials.'
+                      />
+                      <StylishLabel
+                        style={styles.para}
+                        fontSize={16}
+                        title='EPNS has [d:completely wiped] your credentials in order to preserve the integrity of your wallet.'
+                      />
+                      <StylishLabel
+                        style={styles.paraend}
+                        fontSize={16}
+                        title="[d:Don't Sweat!:] Your messages are on [t:blockchain :)]. Just sign back in to gain access to them."
+                      />
+                    </View>
+                  }
+                  animated={false}
+                  startAnimation={false}
+                />
+
+                {/* For the Footer Area */}
+                <PrimaryButton
+                  style={styles.resetButton}
+                  iconFactory='Ionicons'
+                  icon='ios-refresh'
+                  iconSize={24}
+                  title='Reset / Use Different Wallet'
+                  fontSize={16}
+                  fontColor={GLOBALS.COLORS.WHITE}
+                  bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
+                  disabled={false}
+                  onPress={() => {this.resetWallet()}}
+                />
+              </Animated.View>
+            </View>
+
+
           </View>
         </View>
-      </View>
-    )
+
+    );
   }
-}
+};
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
@@ -384,7 +668,8 @@ const styles = StyleSheet.create({
     padding: 20,
     maxWidth: 540,
   },
-  signedInView: {},
+  signedInView: {
+  },
   passcodePromptView: {
     width: '100%',
   },
@@ -445,7 +730,7 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'center',
     justifyContent: 'space-around',
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   fancyTextView: {
     borderBottomWidth: 1,
@@ -489,5 +774,5 @@ const styles = StyleSheet.create({
   },
   noInsetAdjustment: {
     paddingBottom: 20,
-  },
-})
+  }
+});
