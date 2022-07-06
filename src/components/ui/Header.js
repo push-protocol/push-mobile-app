@@ -17,6 +17,7 @@ import {
   selectUsers,
   selectCurrentUser,
   setAuthState,
+  setLogout,
 } from 'src/redux/authSlice'
 
 const Header = ({ style }) => {
@@ -52,7 +53,7 @@ const Header = ({ style }) => {
           style={styles.profile}
           wallet={users[currentUser].wallet}
           lockApp={() => {
-            dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING))
+            dispatch(setLogout(null))
           }}
           navigation={navigation}
         />

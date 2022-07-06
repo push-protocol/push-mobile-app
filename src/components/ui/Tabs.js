@@ -18,7 +18,6 @@ export default function Tabs() {
   const currentUser = useSelector(selectCurrentUser)
 
   const Tab = createMaterialBottomTabNavigator()
-
   const wallet = users[currentUser].wallet
   const pkey = users[currentUser].userPKey
 

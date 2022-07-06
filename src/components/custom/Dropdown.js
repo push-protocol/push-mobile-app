@@ -14,6 +14,7 @@ import { deleteUser } from 'src/redux/authSlice'
 
 import LinearGradient from 'react-native-linear-gradient'
 import MaskedView from '@react-native-community/masked-view'
+import MetaStorage from 'src/singletons/MetaStorage'
 
 const size = 30
 
@@ -34,11 +35,15 @@ const Dropdown = ({ label, data }) => {
     setVisible(true)
   }
 
+
   const renderItem = ({ item }) => {
     return (
       <TouchableOpacity
         style={styles.item}
-        onPress={() => dispatch(deleteUser(item.index))}
+        onPress={async() => {
+          dispatch(deleteUser(item.index));
+          // await MetaStorage.instance.setStoredWallets(data)
+        }}
       >
         <Text style={styles.itemText}>{item.ens || item.cns || item.wallet}</Text>
       </TouchableOpacity>

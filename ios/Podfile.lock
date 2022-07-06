@@ -1,7 +1,7 @@
 PODS:
   - boost-for-react-native (1.63.0)
-  - BVLinearGradient (2.5.6):
-    - React
+  - BVLinearGradient (2.6.0):
+    - React-Core
   - DoubleConversion (1.1.6)
   - EXAV (8.6.0):
     - UMCore
@@ -714,7 +714,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
+  BVLinearGradient: a957cb66102ba876529540b7ca96b91763da0001
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   EXAV: 1f679b57367f8889b5ea15067413c9e2d95039fb
   EXBarCodeScanner: 1a76d3dc0dae2799af6012e3e4966100e4221a94

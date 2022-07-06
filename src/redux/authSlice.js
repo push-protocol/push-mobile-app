@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import GLOBALS from 'src/Globals'
+import MetaStorage from 'src/singletons/MetaStorage'
 
 const initialState = {
   authState: GLOBALS.AUTH_STATE.INITIALIZING,
@@ -20,7 +21,6 @@ const authSlice = createSlice({
     },
 
     setAuthState: (state, action) => {
-      console.log('Set Auth State', action.payload)
       state.authState = action.payload
     },
 
@@ -34,6 +34,11 @@ const authSlice = createSlice({
     setUser: (state, action) => {
       let allUsers = [...state.users]
       allUsers[action.payload.index] = { ...action.payload }
+      state.users = allUsers
+    },
+
+    setAllUsers: (state, action) => {
+      let allUsers = [...action.payload]
       state.users = allUsers
     },
 
@@ -60,8 +65,10 @@ const authSlice = createSlice({
         newUser.index = i
         newUsers.push(newUser)
       }
-
       state.users = newUsers
+
+      // remove info from storage 
+      MetaStorage.instance.setStoredWallets(newUsers)
     },
   },
 })
@@ -78,6 +85,7 @@ export const {
   switchUser,
   createNewWallet,
   deleteUser,
+  setAllUsers,
 } = authSlice.actions
 
 export default authSlice.reducer
