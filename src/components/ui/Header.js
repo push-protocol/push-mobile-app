@@ -5,7 +5,8 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
-  Animated 
+  Animated,
+  Platform 
 } from 'react-native'
 
 import { useNavigation } from '@react-navigation/native'
@@ -32,6 +33,7 @@ import { fetchFeedData, clearFeed,  } from 'src/redux/feedSlice'
 import { connect } from 'react-redux'
 
 getProperAddressLabel = (wallet,ens,cns) => ens || cns || wallet;
+
 
 const Header = ({switchUser, setParams, fetchFeedData, style}) => {
   const navigation = useNavigation()
@@ -122,7 +124,7 @@ const Header = ({switchUser, setParams, fetchFeedData, style}) => {
 
         {show &&
           <Animated.View
-            style={[styles.activeProfile,{opacity:fader}]}
+            style={[styles.activeProfile,platfromSpecificStyle,{opacity:fader}]}
             pointerEvents="box-none"
           >
             <View style={styles.upArrow} />
@@ -245,6 +247,11 @@ const styles = StyleSheet.create({
     borderRadius: GLOBALS.ADJUSTMENTS.DEFAULT_MID_RADIUS,
     marginBottom: 10,
   },
+  activeWalletIos:{
+    position: 'absolute',
+    top: 70,
+    left: 20,
+  },
   walletInfo: {
     padding: 10,
     backgroundColor: GLOBALS.COLORS.DARK_BLACK_TRANS,
@@ -277,6 +284,8 @@ const styles = StyleSheet.create({
     borderBottomColor: GLOBALS.COLORS.WHITE,
   },
 })
+
+const platfromSpecificStyle = Platform.OS === "ios" ? styles.activeWalletIos : {}
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
