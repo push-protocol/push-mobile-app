@@ -13,7 +13,6 @@ import GLOBALS from 'src/Globals'
 
 const Screens = () => {
   const authState = useSelector(selectAuthState)
-  console.log('Current Auth State: ', authState)
 
   return (
     <NavigationContainer>
