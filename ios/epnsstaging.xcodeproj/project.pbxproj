@@ -172,6 +172,29 @@
 			path = Supporting;
 			sourceTree = "<group>";
 		};
+		275BB81056EE46368AC0E4B7 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C3F875CB16854BF085D8E45D /* AntDesign.ttf */,
+				E61224F3501F44CB89333A9D /* Entypo.ttf */,
+				8C211EEFD1514621980CE18C /* EvilIcons.ttf */,
+				3CF6CACC079D4DCDB622C901 /* Feather.ttf */,
+				9B517679665E4EF28F56CDC4 /* FontAwesome.ttf */,
+				A30DB243F01A49E993C80750 /* FontAwesome5_Brands.ttf */,
+				C19DB2CAAEBF43D0AAD660D0 /* FontAwesome5_Regular.ttf */,
+				D1490601FDF94CB1A5B35555 /* FontAwesome5_Solid.ttf */,
+				F2903CE8368A42C99507883E /* Fontisto.ttf */,
+				8040D23CC77F46C8B3B9E0FB /* Foundation.ttf */,
+				48FD2F9A05C24F62B269CD39 /* Ionicons.ttf */,
+				9B1D04FA8DB04861B49D5F30 /* MaterialCommunityIcons.ttf */,
+				F6E44F635C704D138878B5AE /* MaterialIcons.ttf */,
+				8F6AA224D0D649B09BB84DBD /* Octicons.ttf */,
+				49A4AD663A6A4F4E9E1DFC41 /* SimpleLineIcons.ttf */,
+				CF23D1FBEEA44B87AA18DDE9 /* Zocial.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -215,6 +238,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				72E5486571395D51695C2A02 /* Pods */,
+				275BB81056EE46368AC0E4B7 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -300,7 +324,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 940;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
@@ -351,6 +375,22 @@
 				1EA4F1A52561808300C5A483 /* LaunchScreen.xib in Resources */,
 				1EEDE088245F48F900B6993F /* GoogleService-Info.plist in Resources */,
 				1EA4F1AC2561808300C5A483 /* app.bundle in Resources */,
+				900A3294A4A34AA6BE46EE3F /* AntDesign.ttf in Resources */,
+				5F53A149943D4F948228BFAE /* Entypo.ttf in Resources */,
+				A772F4D3DA564A0EA3DFCD11 /* EvilIcons.ttf in Resources */,
+				6B537FFCF9E2424BABE9CACC /* Feather.ttf in Resources */,
+				360296694B3142C5B22FB51A /* FontAwesome.ttf in Resources */,
+				3FFEFC51D639403095BAEEB1 /* FontAwesome5_Brands.ttf in Resources */,
+				1F1474DC120A4E5488300C1A /* FontAwesome5_Regular.ttf in Resources */,
+				3185E73557214855AEC03C13 /* FontAwesome5_Solid.ttf in Resources */,
+				4A787F301E8349B088A75CDF /* Fontisto.ttf in Resources */,
+				673E985C3F294750AF6F10AC /* Foundation.ttf in Resources */,
+				61285D9F8D094899A05E4DEA /* Ionicons.ttf in Resources */,
+				4EA252828E4A4292A791EDDD /* MaterialCommunityIcons.ttf in Resources */,
+				8547B2874FC64003914C097E /* MaterialIcons.ttf in Resources */,
+				F171AD9039B54CA2B903421A /* Octicons.ttf in Resources */,
+				7BBF3A500F18477EB5AA49F6 /* SimpleLineIcons.ttf in Resources */,
+				50AACC77EB1D44BEB566DA20 /* Zocial.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,6 +484,7 @@
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+>>>>>>> main
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-epnsstaging/Pods-epnsstaging-resources.sh",
@@ -454,6 +495,34 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/WKYTPlayerView.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-epnsstaging/Pods-epnsstaging-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+<<<<<<< HEAD
+		BE498E712B4EB767CF4FB4E4 /* [CP] Copy Pods Resources */ = {
+=======
+		E9A3576687F56F25A98E8F20 /* [CP] Check Pods Manifest.lock */ = {
+>>>>>>> main
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-epnsstaging/Pods-epnsstaging-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+				"${PODS_ROOT}/YoutubePlayer-in-WKWebView/WKYTPlayerView/WKYTPlayerView.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+<<<<<<< HEAD
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/WKYTPlayerView.bundle",
+=======
+				"$(DERIVED_FILE_DIR)/Pods-NotificationServiceExtension-checkManifestLockResult.txt",
+>>>>>>> main
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -550,12 +619,14 @@
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/EPNS.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 71;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 62B7287GF5;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = epnsstaging/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.5;
+				MARKETING_VERSION = 0.8.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -577,9 +648,10 @@
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/EPNS.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 71;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				INFOPLIST_FILE = epnsstaging/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 0.5;
 				ONLY_ACTIVE_ARCH = YES;
@@ -755,7 +827,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -801,7 +873,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;

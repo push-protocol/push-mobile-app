@@ -19,30 +19,36 @@
     <!-- END OPTIONAL PERMISSIONS -->
 
     <application
-      android:name=".MainApplication"
-      android:label="@string/app_name"
-      android:icon="@mipmap/ic_launcher"
-      android:roundIcon="@mipmap/ic_launcher_round"
-      android:allowBackup="false"
-      android:theme="@style/AppTheme">
-
-      <meta-data android:name="expo.modules.updates.EXPO_UPDATE_URL" android:value="https://exp.host/@prodigy/epnsstaging" />
-      <meta-data android:name="expo.modules.updates.EXPO_SDK_VERSION" android:value="37.0.0" />
-
-      <meta-data android:name="expo.modules.updates.EXPO_RELEASE_CHANNEL" android:value="default" />
-
-  <activity
-    android:name=".MainActivity"
+        android:name=".MainApplication"
         android:label="@string/app_name"
-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-        android:launchMode="singleTask"
-        android:windowSoftInputMode="adjustResize">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-      </activity>
-      <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:allowBackup="false"
+        android:theme="@style/AppTheme">
+
+        <meta-data android:name="expo.modules.updates.EXPO_UPDATE_URL" android:value="https://exp.host/@prodigy/epnsstaging" />
+        <meta-data android:name="expo.modules.updates.EXPO_SDK_VERSION" android:value="37.0.0" />
+
+        <meta-data android:name="expo.modules.updates.EXPO_RELEASE_CHANNEL" android:value="default" />
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="epnsstaging" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
     </application>
 
 </manifest>

@@ -1,23 +1,23 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   View,
   TouchableOpacity,
   Text,
   ActivityIndicator,
-  StyleSheet
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+  StyleSheet,
+} from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
+import { Ionicons, Entypo } from '@expo/vector-icons'
 
-import GLOBALS from 'src/Globals';
+import GLOBALS from 'src/Globals'
 
-export default class ENSButton extends Component<Prop> {
+export default class ENSButton extends Component {
   // CONSTRUCTOR
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
-      active: false
+      active: false,
     }
   }
 
@@ -26,8 +26,8 @@ export default class ENSButton extends Component<Prop> {
   onPress = () => {
     // Change State to reflect expanded or contracted button
     this.setState({
-      active: !this.state.active
-    });
+      active: !this.state.active,
+    })
   }
 
   // Set Render
@@ -40,29 +40,29 @@ export default class ENSButton extends Component<Prop> {
       cns,
       ens,
       wallet,
-      fontSize
-    } = this.props;
+      fontSize,
+      dropdownIcon,
+    } = this.props
 
-    let showDomain = true;
-    let title = cns;
+    let showDomain = true
+    let title = cns
 
     if (cns === '') {
-      title = ens;
+      title = ens
     }
 
     if (ens === '' && cns === '') {
-      title = wallet;
-      showDomain = false;
+      title = wallet
+      showDomain = false
     }
 
-
-    let icon = 'ios-arrow-down';
+    let icon = 'ios-arrow-down'
     if (this.state.active) {
-      icon = 'ios-arrow-up';
+      icon = 'ios-arrow-up'
     }
 
     // Set number of lines and font size
-    let numberOfLines = 0;
+    let numberOfLines = 0
 
     // Set Gradient to show
     let gradient = [
@@ -72,18 +72,18 @@ export default class ENSButton extends Component<Prop> {
 
     // To set header text style
     let headerTextStyle = {
-      fontWeight: 'bold'
+      fontWeight: 'bold',
     }
 
     // To override loading style if need be
-    let loadingContainerStyle = {};
+    let loadingContainerStyle = {}
 
     // If For Profile, then change few visuals
     // Focus on ENS Name, Make address as single line, etc
-    let headerStyle = {};
+    let headerStyle = {}
     if (forProfile) {
-      numberOfLines = 1;
-      headerStyle.marginRight = 0;
+      numberOfLines = 1
+      headerStyle.marginRight = 0
 
       if (!showDomain && !loading) {
         // Colored look better
@@ -97,7 +97,7 @@ export default class ENSButton extends Component<Prop> {
         //   fontWeight: '300',
         // }
 
-        headerTextStyle={
+        headerTextStyle = {
           color: GLOBALS.COLORS.WHITE,
           fontWeight: '400',
         }
@@ -112,71 +112,78 @@ export default class ENSButton extends Component<Prop> {
     }
 
     return (
-      <View style={[ styles.container, style ]}>
+      <View style={[styles.container, style]}>
         <TouchableOpacity
-          onPress = {this.onPress}
+          onPress={this.onPress}
           disabled={!showDomain || forProfile}
         >
           <LinearGradient
             colors={gradient}
-            style={[ styles.ensbox, innerStyle, loadingContainerStyle ]}
+            style={[styles.ensbox, innerStyle, loadingContainerStyle]}
             start={[0.1, 0.3]}
             end={[1, 1]}
           >
-            {
-              loading == true
-                ? <ActivityIndicator
-                    style = {styles.activity}
-                    size = "small"
-                    color = {GLOBALS.COLORS.WHITE}
-                  />
-                : showDomain == false
-                  ? <Text
-                      style={[ styles.ensName, { fontSize: fontSize}, headerTextStyle ]}
-                      numberOfLines={numberOfLines}
-                      ellipsizeMode="middle"
+            {loading == true ? (
+              <ActivityIndicator
+                style={styles.activity}
+                size="small"
+                color={GLOBALS.COLORS.WHITE}
+              />
+            ) : showDomain == false ? (
+              <View
+                style={{ display: 'flex', width: '90%', position: 'relative' }}
+              >
+                <Text
+                  style={[
+                    styles.ensName,
+                    { fontSize: fontSize },
+                    headerTextStyle,
+                  ]}
+                  numberOfLines={numberOfLines}
+                  ellipsizeMode="middle"
+                >
+                  {title}
+                </Text>
+                <Text style={styles.caretStyle}>
+                  {dropdownIcon && (
+                    <Entypo name="chevron-down" size={16} color="white" />
+                  )}
+                </Text>
+              </View>
+            ) : (
+              <View style={styles.ensContainer}>
+                <View style={[styles.ensHeader, headerStyle]}>
+                  <Text
+                    style={[styles.ensName, { fontSize: fontSize }]}
+                    numberOfLines={numberOfLines}
+                  >
+                    {title}
+                  </Text>
+                  {forProfile == true ? null : (
+                    <Ionicons
+                      style={styles.ensIcon}
+                      name={icon}
+                      color={GLOBALS.COLORS.WHITE}
+                      size={fontSize * 1.2}
+                    />
+                  )}
+                </View>
+                {this.state.active == false ? null : (
+                  <View style={styles.ensContent}>
+                    <Text
+                      style={[styles.ensContentInner, { fontSize: fontSize }]}
                     >
-                      {title}
+                      {wallet}
                     </Text>
-                  : <View
-                      style={styles.ensContainer}
-                    >
-                      <View style={[ styles.ensHeader, headerStyle ]}>
-                        <Text
-                          style={[ styles.ensName, { fontSize: fontSize} ]}
-                          numberOfLines={numberOfLines}
-                        >
-                          {title}
-                        </Text>
-                        {
-                          forProfile == true
-                            ? null
-                            : <Ionicons
-                                style={styles.ensIcon}
-                                name={icon}
-                                color={GLOBALS.COLORS.WHITE}
-                                size={fontSize * 1.2}
-                              />
-                        }
-                      </View>
-                      {
-                        this.state.active == false
-                          ? null
-                          : <View style={styles.ensContent}>
-                              <Text
-                                style={[ styles.ensContentInner, { fontSize: fontSize} ]}
-                              >
-                                {wallet}
-                              </Text>
-                            </View>
-                      }
-                    </View>
-            }
+                  </View>
+                )}
+              </View>
+            )}
           </LinearGradient>
         </TouchableOpacity>
       </View>
-    );
-  };
+    )
+  }
 }
 
 // Styling
@@ -185,6 +192,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
+    minHeight: 40,
   },
   ensbox: {
     paddingVertical: 10,
@@ -196,9 +204,7 @@ const styles = StyleSheet.create({
     color: GLOBALS.COLORS.WHITE,
     fontWeight: 'bold',
   },
-  ensContainer: {
-
-  },
+  ensContainer: {},
   ensHeader: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -222,5 +228,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: GLOBALS.COLORS.BLACK,
     fontWeight: 'bold',
-  }
-});
+  },
+  caretStyle: {
+    marginLeft: 10,
+    paddingLeft: 10,
+    position: 'absolute',
+    top: 0,
+    right: -20,
+  },
+})

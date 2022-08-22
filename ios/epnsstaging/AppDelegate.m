@@ -23,6 +23,7 @@
 #import <React/RCTBridgeDelegate.h>
 #import <UIKit/UIKit.h>
 #import <FirebaseMessaging.h>
+#import <React/RCTLinkingManager.h>
 
 @interface AppDelegate ()
 
@@ -60,6 +61,21 @@
   [super application:application didFinishLaunchingWithOptions:launchOptions];
 
   return YES;
+}
+
+- (BOOL)application:(UIApplication *)application
+   openURL:(NSURL *)url
+   options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+  return [RCTLinkingManager application:application openURL:url options:options];
+}
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
+ restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
+{
+ return [RCTLinkingManager application:application
+                  continueUserActivity:userActivity
+                    restorationHandler:restorationHandler];
 }
 
 // CUSTOM CODE

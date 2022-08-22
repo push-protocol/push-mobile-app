@@ -1,9 +1,25 @@
 export default {
-
   LINKS: {
     APPBOT_NAME: 'App Bot',
-    APP_WEBSITE: 'https://epns.io',
+    APP_WEBSITE: 'https://epns.io',    
+    DEV_EPNS_SERVER:"https://backend-kovan.epns.io/apis",
+    PROD_EPNS_SERVER:"https://backend-kovan.epns.io/apis",
+    METAMASK_LINK_STAGING:"https://metamask.app.link/dapp/staging-app.epns.io",
+    METAMASK_LINK_PROD:"https://metamask.app.link/dapp/staging-app.epns.io",
+    DEEPLINK_URL:"https://metamask.app.link/dapp/staging-app.epns.io",
+    CNS_ENDPOINT:"https://unstoppabledomains.com/api/v1/resellers/udtesting/domains",
+
+    ENDPOINT_AUTHTOKEN:"/pushtokens/authtoken",
+    ENDPOINT_REGISTER_NO_AUTH:"/pushtokens/register_no_auth",
+    ENDPOINT_REGISTER:"/pushtokens/register",
+    ENDPOINT_GET_FEEDS:"/feeds/get_feeds",
+    ENDPOINT_GET_SPAM_FEEDS:"/feeds/get_spam_feeds",
+    ENDPOINT_FETCH_CHANNELS:"/channels/fetch_channels",
+    ENDPOINT_FETCH_SUBSCRIPTION:"/channels/is_user_subscribed",
+    ENDPOINT_SUBSCRIBE_OFFCHAIN:"/channels/subscribe_offchain",
+    ENDPOINT_UNSUBSCRIBE_OFFCHAIN:"/channels/unsubscribe_offchain",
   },
+
 
   // For Async Storage --> Represents Key and some Constants
   STORAGE: {
@@ -23,13 +39,13 @@ export default {
     PUSH_TOKEN_SERVER_SYNCED: 'PushTokenServerSynced',
     PUSH_BADGE_COUNT: 'PushBadgeCount',
     PUSH_BADGE_COUNT_PREVIOUS: 'PreviousPushBadgeCount',
-  },
+  }, 
 
   CONSTANTS: {
-    CRED_TYPE_WALLET: "TypeWallet",
-    CRED_TYPE_PRIVATE_KEY: "TypePrivateKey",
+    CRED_TYPE_WALLET: 'TypeWallet',
+    CRED_TYPE_PRIVATE_KEY: 'TypePrivateKey',
 
-    NULL_EXCEPTION: "NULL",
+    NULL_EXCEPTION: 'NULL',
 
     MAX_PASSCODE_ATTEMPTS: 5,
 
@@ -37,6 +53,8 @@ export default {
     PUSH_TYPE_ENCRYPTED_MSG: 2,
 
     FEED_ITEMS_TO_PULL: 20,
+
+    STATUS_BAR_HEIGHT: 60,
   },
 
   ADJUSTMENTS: {
@@ -77,6 +95,8 @@ export default {
     DARK_BLACK_TRANS: 'rgba(0.0, 0.0, 0.0, 0.75)',
     BLACK: 'rgba(0.0, 0.0, 0.0, 1.0)',
 
+    CONFIRM_GREEN: 'rgba(50.0, 205.0, 50.0, 1.0)',
+
     CONFIRM: 'rgba(34.0, 139.0, 34.0, 1.0)',
     WARNING: 'rgba(255.0, 153.0, 0.0, 1.0)',
 
@@ -85,4 +105,33 @@ export default {
     LIGHT_MAROON: 'rgba(159.0, 0.0, 0.0, 1.0)',
     LIGHTER_MAROON: 'rgba(129.0, 0.0, 0.0, 1.0)',
   },
-};
+  SCREENS: {
+    WELCOME: 'Welcome',
+    SIGNIN: 'SignIn',
+    SIGNINADVANCE: 'SignInAdvance',
+    BIOMETRIC: 'Biometric',
+    PUSHNOTIFY: 'PushNotify',
+    SETUPCOMPLETE: 'SetupComplete',
+    TABS: 'Tabs',
+    SETTINGS: 'Settings',
+    SPLASH: 'Splash',
+    FEED: 'Feed',
+    SETTINGS: 'Settings',
+    CHANNELS: 'Channels',
+    SPAM: 'Spam',
+    SAMPLEFEED: 'SampleFeed',
+    NEWWALLETSIGNIN:'NewWalletSignIn'
+  },
+  APP_AUTH_STATES: {
+    INITIALIZING: 1,
+    ONBOARDING: 2,
+    ONBOARDED: 3,
+    AUTHENTICATED: 4,
+  },
+  AUTH_STATE: {
+    INITIALIZING: 'INITIALIZING',
+    ONBOARDING: 'ONBOARDING',
+    ONBOARDED: "ONBOARDED",
+    AUTHENTICATED: 'AUTHENTICATED',
+  },
+}

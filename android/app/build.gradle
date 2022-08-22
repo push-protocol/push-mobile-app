@@ -135,8 +135,8 @@ android {
         applicationId "io.epns.epnsstaging"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10
-        versionName "0.5"
+        versionCode 14
+        versionName "0.6.1"
     }
     splits {
         abi {
@@ -148,6 +148,12 @@ android {
     }
     signingConfigs {
         debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+         release {
             storeFile file('debug.keystore')
             storePassword 'android'
             keyAlias 'androiddebugkey'
@@ -183,6 +189,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-randombytes')
+    implementation project(':@react-native-async-storage_async-storage')
     implementation project(':react-native-video')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules

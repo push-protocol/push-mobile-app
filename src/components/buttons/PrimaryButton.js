@@ -1,23 +1,30 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState } from 'react'
 import {
   View,
   TouchableWithoutFeedback,
   Text,
   Animated,
+  Image,
   ActivityIndicator,
   Easing,
-  StyleSheet
-} from 'react-native';
+  StyleSheet,
+} from 'react-native'
 import {
   Ionicons,
-} from '@expo/vector-icons';
+  FontAwesome,
+  FontAwesome5,
+  MaterialIcons,
+  MaterialCommunityIcons,
+  Feather,
+  AntDesign,
+} from '@expo/vector-icons'
 
-import GLOBALS from 'src/Globals';
+import GLOBALS from 'src/Globals'
 
 export default class PrimaryButton extends Component {
   // Constructor
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       bgColor: GLOBALS.COLORS.BLACK,
@@ -27,24 +34,24 @@ export default class PrimaryButton extends Component {
       toggleOverlay: false,
     }
 
-    this.AnimatedColor = new Animated.Value(0);
+    this.AnimatedColor = new Animated.Value(0)
   }
 
   // COMPONENT MOUNTED
   componentDidMount() {
     // Update Colors
-    const { bgColor, fontColor } = this.props;
-    this.updateColors(bgColor, fontColor);
+    const { bgColor, fontColor } = this.props
+    this.updateColors(bgColor, fontColor)
   }
 
   // COMPONENT UPDATED
   componentDidUpdate(prevProps) {
     if (
-      this.props.bgColor !== prevProps.bgColor
-      || this.props.fontColor !== prevProps.fontColor
+      this.props.bgColor !== prevProps.bgColor ||
+      this.props.fontColor !== prevProps.fontColor
     ) {
-      const { bgColor, fontColor } = this.props;
-      this.updateColors(bgColor, fontColor);
+      const { bgColor, fontColor } = this.props
+      this.updateColors(bgColor, fontColor)
     }
   }
 
@@ -53,99 +60,111 @@ export default class PrimaryButton extends Component {
     this.setState({
       bgColor: bgColor,
       fontColor: fontColor,
-    });
+    })
   }
 
   // Change Button Color
   setButtonColors = (newBgColor, newFontColor) => {
-    let bgColor = this.state.bgColor;
-    let fontColor = this.state.fontColor;
+    let bgColor = this.state.bgColor
+    let fontColor = this.state.fontColor
 
     if (newBgColor != null) {
-      bgColor = newBgColor;
+      bgColor = newBgColor
     }
 
     if (newFontColor != null) {
-      fontColor = newFontColor;
+      fontColor = newFontColor
     }
 
-    this.updateColors(bgColor, fontColor);
+    this.updateColors(bgColor, fontColor)
   }
 
   // Change Button Color with Animation
   fadeFromToWithTime = (oldBGColor, newBgColor, time) => {
-    let animTime = 250;
+    let animTime = 250
     if (time) {
-      animTime = time;
+      animTime = time
     }
 
-    this.setState({
-      bgColor: oldBGColor,
-      fadeColor: newBgColor,
-    }, () => {
-      Animated.timing(this.AnimatedColor, {
-        toValue: 100,
-        Easing: Easing.easeInOut,
-        duration: animTime,
-        useNativeDriver: true,
-      }).start(() => {
-
-        this.setState({
-          bgColor: newBgColor,
-          fadeColor: newBgColor,
-        }, () => {
-          this.AnimatedColor = new Animated.Value(0);
-        });
-
-      });
-    });
+    this.setState(
+      {
+        bgColor: oldBGColor,
+        fadeColor: newBgColor,
+      },
+      () => {
+        Animated.timing(this.AnimatedColor, {
+          toValue: 100,
+          Easing: Easing.easeInOut,
+          duration: animTime,
+          useNativeDriver: true,
+        }).start(() => {
+          this.setState(
+            {
+              bgColor: newBgColor,
+              fadeColor: newBgColor,
+            },
+            () => {
+              this.AnimatedColor = new Animated.Value(0)
+            },
+          )
+        })
+      },
+    )
   }
 
   // Change State to refresh Color
   toggleOverlay = (toggle) => {
     this.setState({
-      toggleOverlay: toggle
-    });
-  };
+      toggleOverlay: toggle,
+    })
+  }
 
   // Render Icon
-  renderIcon = (iconFactory, icon, color, size, iconAlignToLeft) => {
+  renderIcon = (iconFactory, icon, color, size, iconAlignToLeft, title) => {
+    let Factory
+
     // Need to import to enable them
     switch (iconFactory) {
       case 'FontAwesome':
-        Factory = FontAwesome;
-        break;
+        Factory = FontAwesome
+        break
       case 'FontAwesome5':
-        Factory = FontAwesome5;
-        break;
+        Factory = FontAwesome5
+        break
       case 'EvilIcons':
-        Factory = EvilIcons;
-        break;
+        Factory = EvilIcons
+        break
+      case 'MaterialIcons':
+        Factory = MaterialIcons
+        break
       case 'MaterialCommunityIcons':
-        Factory = MaterialCommunityIcons;
-        break;
+        Factory = MaterialCommunityIcons
+        break
+      case 'Feather':
+        Factory = Feather
+        break
       default:
-        Factory = Ionicons;
+        Factory = Ionicons
     }
 
     if (iconFactory) {
-      let iconStyle = styles.iconAlignRight;
-      if (iconAlignToLeft) {
-        iconStyle = styles.iconAlignLeft;
-      }
+      let iconStyle = null
 
-      return (
-        <View style={iconStyle}>
-          <Factory
-            name = {icon}
-            color = {color}
-            size = {size}
-          />
-        </View>
-      );
-    }
-    else {
-      return null;
+      if (iconFactory != 'Image') {
+        return (
+          <View style={[styles.iconContainer, iconStyle]}>
+            <Factory name={icon} color={color} size={size} />
+          </View>
+        )
+      } else {
+        return (
+          <View style={[styles.iconContainer, iconStyle]}>
+            <Image style={[{ width: size }, styles.iconImage]} source={icon} />
+          </View>
+        )
+      }
+    } else {
+      return null
     }
   }
 
@@ -153,90 +172,103 @@ export default class PrimaryButton extends Component {
   render() {
     const {
       style,
+      setButtonStyle,
+      setButtonInnerStyle,
       iconFactory,
       icon,
       iconSize,
+      iconColor,
       iconAlignToLeft,
       title,
       fontSize,
+      setHeight,
       loading,
       disabled,
-      onPress
-    } = this.props;
+      onPress,
+    } = this.props
 
     // for updating style
-    let updatedButtonStyle = {};
+    let updatedButtonStyle = {}
 
     let fontStyle = {
       color: this.state.fontColor,
-      fontSize: fontSize
+      fontSize: fontSize,
     }
 
     // For constructing color
     let interpolateColor = this.AnimatedColor.interpolate({
       inputRange: [0, 100],
-      outputRange: [this.state.bgColor, this.state.fadeColor]
+      outputRange: [this.state.bgColor, this.state.fadeColor],
     })
 
     const animatedStyle = {
       backgroundColor: interpolateColor,
     }
 
-    updatedButtonStyle.backgroundColor = this.state.bgColor;
+    updatedButtonStyle.backgroundColor = this.state.bgColor
 
-    let containerItemsPlacementStyle = {};
+    let containerItemsPlacementStyle = {}
     if (iconAlignToLeft) {
-      containerItemsPlacementStyle.flexDirection='row-reverse';
+      containerItemsPlacementStyle.flexDirection = 'row-reverse'
+    }
+
+    let outerContainerStyle = {}
+    if (setHeight) {
+      updatedButtonStyle.height = setHeight
     }
 
     return (
-      <View style={[ style, styles.outerContainer ]}>
+      <View style={[style, styles.outerContainer]}>
         <TouchableWithoutFeedback
-          onPress = {onPress}
-          onPressIn = {() => this.toggleOverlay(true)}
-          onPressOut = {() => this.toggleOverlay(false)}
-          onPress = {onPress}
-          disabled = {disabled || loading}
+          onPress={onPress}
+          onPressIn={() => this.toggleOverlay(true)}
+          onPressOut={() => this.toggleOverlay(false)}
+          disabled={disabled || loading}
         >
           <Animated.View
-            style = {[
+            style={[
               styles.innerContainer,
+              setButtonStyle,
               updatedButtonStyle,
-              animatedStyle
+              animatedStyle,
             ]}
           >
-            {
-              this.state.toggleOverlay == false
-                ? null
-                : <View style = {styles.overlayContainer}></View>
-            }
+            {this.state.toggleOverlay == false ? null : (
+              <View style={styles.overlayContainer}></View>
+            )}
 
-            {
-              loading == true
-                ? <ActivityIndicator
-                    style={styles.activity}
-                    size="small"
-                    color={GLOBALS.COLORS.WHITE}
-                  />
-                : <View style={[ styles.container, containerItemsPlacementStyle ]}>
-                    <Text style = {[styles.title, fontStyle ]}>{title}</Text>
-                    {
-                      this.renderIcon(
-                        iconFactory,
-                        icon,
-                        this.state.fontColor,
-                        iconSize,
-                        iconAlignToLeft
-                      )
-                    }
-                  </View>
-            }
-
+            {loading == true ? (
+              <ActivityIndicator
+                style={styles.activity}
+                size="small"
+                color={iconColor ? iconColor : this.state.fontColor}
+              />
+            ) : (
+              <View
+                style={[
+                  styles.container,
+                  setButtonInnerStyle,
+                  containerItemsPlacementStyle,
+                ]}
+              >
+                {title && (
+                  <Text style={[styles.title, fontStyle]}>{title}</Text>
+                )}
+                {this.renderIcon(
+                  iconFactory,
+                  icon,
+                  iconColor ? iconColor : this.state.fontColor,
+                  iconSize,
+                  iconAlignToLeft,
+                  title,
+                )}
+              </View>
+            )}
           </Animated.View>
         </TouchableWithoutFeedback>
       </View>
-    );
-  };
+    )
+  }
 }
 
 // Styling
@@ -246,7 +278,6 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     alignSelf: 'stretch',
     flexGrow: 1,
-    maxHeight: 56,
   },
   innerContainer: {
     flexDirection: 'row',
@@ -271,6 +302,14 @@ const styles = StyleSheet.create({
     color: GLOBALS.COLORS.WHITE,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 5,
+  },
+  iconContainer: {
+    marginHorizontal: 5,
+  },
+  iconImage: {
+    resizeMode: 'contain',
+    flex: 1,
   },
   iconAlignRight: {
     paddingLeft: 10,
@@ -278,4 +317,4 @@ const styles = StyleSheet.create({
   iconAlignLeft: {
     paddingRight: 10,
   },
-});
+})
