@@ -34,7 +34,7 @@
     "ethereum-ens": "^0.8.0",
     "ethers": "5.0.32",
     "events": "^1.1.1",
-    "expo": "^39.0.0",
+    "expo": "^40.0.0",
     "expo-asset": "~8.2.0",
     "expo-av": "~8.6.0",
     "expo-barcode-scanner": "~9.0.0",
