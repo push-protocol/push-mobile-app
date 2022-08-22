@@ -22,9 +22,9 @@ public class BasePackageList {
         new expo.modules.location.LocationPackage(),
         new expo.modules.permissions.PermissionsPackage(),
         new expo.modules.sharing.SharingPackage(),
+        new expo.modules.splashscreen.SplashScreenPackage(),
         new expo.modules.sqlite.SQLitePackage(),
-        new expo.modules.updates.UpdatesPackage(),
-        new expo.modules.webbrowser.WebBrowserPackage()
+        new expo.modules.updates.UpdatesPackage()
     );
   }
 }
