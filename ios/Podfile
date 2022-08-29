@@ -12,7 +12,7 @@ install! 'cocoapods', :deterministic_uuids => false
 
 production = ENV["PRODUCTION"] == "1"
 
-target 'epns_mobile_app' do
+target 'epnsstaging' do
   # RN FIREBASE addon
   use_frameworks! :linkage => :static
   # RN FIREBASE addon ends
@@ -46,7 +46,7 @@ target 'epns_mobile_app' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'epns_mobile_appTests' do
+  target 'epnsstagingTests' do
     inherit! :complete
     # Pods for testing
   end
