@@ -1,4 +1,14 @@
 {
   "name": "epns_mobile_app",
-  "displayName": "epns_mobile_app"
+  "displayName": "EPNS Staging",
+  "plugins": [
+    [
+      "expo-build-properties",
+      {
+        "ios": {
+          "useFrameworks": "static"
+        }
+      }
+    ]
+  ]
 }

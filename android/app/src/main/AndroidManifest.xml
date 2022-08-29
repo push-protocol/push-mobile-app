@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.epns_mobile_app">
+  package="io.epns.epnsstaging">
 
     <uses-permission android:name="android.permission.INTERNET" />
 

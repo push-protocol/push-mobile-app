@@ -1,3 +1,8 @@
+
+  # RN FIREBASE addon
+  $RNFirebaseAsStaticFramework = true
+  # RN FIREBASE addon ends
+
 require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
@@ -8,6 +13,10 @@ install! 'cocoapods', :deterministic_uuids => false
 production = ENV["PRODUCTION"] == "1"
 
 target 'epns_mobile_app' do
+  # RN FIREBASE addon
+  use_frameworks! :linkage => :static
+  # RN FIREBASE addon ends
+  
   use_expo_modules!
   post_integrate do |installer|
     begin
@@ -20,11 +29,7 @@ target 'epns_mobile_app' do
 
   # Flags change depending on the env values.
   flags = get_default_flags()
-
-  pod 'Firebase', :modular_headers => true
-  pod 'FirebaseCore', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true
-  $RNFirebaseAsStaticFramework = true
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -32,7 +37,11 @@ target 'epns_mobile_app' do
     :production => production,
     :hermes_enabled => flags[:hermes_enabled],
     :fabric_enabled => flags[:fabric_enabled],
-    :flipper_configuration => FlipperConfiguration.enabled,
+
+    # RN FIREBASE addon
+    :flipper_configuration => FlipperConfiguration.disabled,
+    # RN FIREBASE addon ends
+
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )

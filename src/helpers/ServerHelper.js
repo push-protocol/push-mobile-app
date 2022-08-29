@@ -1,13 +1,12 @@
 import { Platform } from "react-native";
 
-import messaging from "@react-native-firebase/messaging";
-
-import MetaStorage from "src/singletons/MetaStorage";
-import CryptoHelper from "src/helpers/CryptoHelper";
-import Notify from "src/singletons/Notify";
-
 import ENV_CONFIG from "src/env.config";
 
+import firebase from '@react-native-firebase/app';
+import messaging from '@react-native-firebase/messaging';
+import CryptoHelper from "src/helpers/CryptoHelper";
+import MetaStorage from "src/singletons/MetaStorage";
+import Notify from "src/singletons/Notify";
 // Download Helper Function
 const ServerHelper = {
   // Associate a device token to server
@@ -133,13 +132,15 @@ const ServerHelper = {
   // Disassociate Generated Token from server, should not be talking to server, this
   // should be handled from the device itself
   dissaociateTokenFromServer: async (wallet) => {
+    // FIREBASE
     // because of Firebase-react-native issue, call permissions again and again
-    // Dissassociate token with server | BUGGY react-native-firebase wasted my time
+    // Dissassociate token with server | BUGGY wasted my time
     const response = await messaging().deleteToken()
 
     // because of Firebase-react-native issue, call permissions again and again
     await messaging().requestPermission();
 
+    // Checking
     // messaging()
     //   .getToken()
     //   .then(token => {

@@ -53,37 +53,12 @@ PODS:
     - React-Core (= 0.69.4)
     - React-jsi (= 0.69.4)
     - ReactCommon/turbomodule/core (= 0.69.4)
-  - Firebase (9.4.0):
-    - Firebase/Core (= 9.4.0)
-  - Firebase/Analytics (9.4.0):
-    - Firebase/Core
-  - Firebase/Core (9.4.0):
+  - Firebase/CoreOnly (9.5.0):
+    - FirebaseCore (= 9.5.0)
+  - Firebase/Messaging (9.5.0):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (~> 9.4.0)
-  - Firebase/CoreOnly (9.4.0):
-    - FirebaseCore (= 9.4.0)
-  - Firebase/Messaging (9.4.0):
-    - Firebase/CoreOnly
-    - FirebaseMessaging (~> 9.4.0)
-  - FirebaseAnalytics (9.4.0):
-    - FirebaseAnalytics/AdIdSupport (= 9.4.0)
-    - FirebaseCore (~> 9.0)
-    - FirebaseInstallations (~> 9.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
-    - GoogleUtilities/MethodSwizzler (~> 7.7)
-    - GoogleUtilities/Network (~> 7.7)
-    - "GoogleUtilities/NSData+zlib (~> 7.7)"
-    - nanopb (< 2.30910.0, >= 2.30908.0)
-  - FirebaseAnalytics/AdIdSupport (9.4.0):
-    - FirebaseCore (~> 9.0)
-    - FirebaseInstallations (~> 9.0)
-    - GoogleAppMeasurement (= 9.4.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
-    - GoogleUtilities/MethodSwizzler (~> 7.7)
-    - GoogleUtilities/Network (~> 7.7)
-    - "GoogleUtilities/NSData+zlib (~> 7.7)"
-    - nanopb (< 2.30910.0, >= 2.30908.0)
-  - FirebaseCore (9.4.0):
+    - FirebaseMessaging (~> 9.5.0)
+  - FirebaseCore (9.5.0):
     - FirebaseCoreDiagnostics (~> 9.0)
     - FirebaseCoreInternal (~> 9.0)
     - GoogleUtilities/Environment (~> 7.7)
@@ -93,7 +68,7 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/Logger (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - FirebaseCoreExtension (9.4.0):
+  - FirebaseCoreExtension (9.5.0):
     - FirebaseCore (~> 9.0)
   - FirebaseCoreInternal (9.5.0):
     - "GoogleUtilities/NSData+zlib (~> 7.7)"
@@ -102,7 +77,7 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/UserDefaults (~> 7.7)
     - PromisesObjC (~> 2.1)
-  - FirebaseMessaging (9.4.0):
+  - FirebaseMessaging (9.5.0):
     - FirebaseCore (~> 9.0)
     - FirebaseInstallations (~> 9.0)
     - GoogleDataTransport (< 10.0.0, >= 9.1.4)
@@ -111,89 +86,8 @@ PODS:
     - GoogleUtilities/Reachability (~> 7.7)
     - GoogleUtilities/UserDefaults (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - Flipper (0.125.0):
-    - Flipper-Folly (~> 2.6)
-    - Flipper-RSocket (~> 1.4)
-  - Flipper-Boost-iOSX (1.76.0.1.11)
-  - Flipper-DoubleConversion (3.2.0.1)
-  - Flipper-Fmt (7.1.7)
-  - Flipper-Folly (2.6.10):
-    - Flipper-Boost-iOSX
-    - Flipper-DoubleConversion
-    - Flipper-Fmt (= 7.1.7)
-    - Flipper-Glog
-    - libevent (~> 2.1.12)
-    - OpenSSL-Universal (= 1.1.1100)
-  - Flipper-Glog (0.5.0.5)
-  - Flipper-PeerTalk (0.0.4)
-  - Flipper-RSocket (1.4.3):
-    - Flipper-Folly (~> 2.6)
-  - FlipperKit (0.125.0):
-    - FlipperKit/Core (= 0.125.0)
-  - FlipperKit/Core (0.125.0):
-    - Flipper (~> 0.125.0)
-    - FlipperKit/CppBridge
-    - FlipperKit/FBCxxFollyDynamicConvert
-    - FlipperKit/FBDefines
-    - FlipperKit/FKPortForwarding
-    - SocketRocket (~> 0.6.0)
-  - FlipperKit/CppBridge (0.125.0):
-    - Flipper (~> 0.125.0)
-  - FlipperKit/FBCxxFollyDynamicConvert (0.125.0):
-    - Flipper-Folly (~> 2.6)
-  - FlipperKit/FBDefines (0.125.0)
-  - FlipperKit/FKPortForwarding (0.125.0):
-    - CocoaAsyncSocket (~> 7.6)
-    - Flipper-PeerTalk (~> 0.0.4)
-  - FlipperKit/FlipperKitHighlightOverlay (0.125.0)
-  - FlipperKit/FlipperKitLayoutHelpers (0.125.0):
-    - FlipperKit/Core
-    - FlipperKit/FlipperKitHighlightOverlay
-    - FlipperKit/FlipperKitLayoutTextSearchable
-  - FlipperKit/FlipperKitLayoutIOSDescriptors (0.125.0):
-    - FlipperKit/Core
-    - FlipperKit/FlipperKitHighlightOverlay
-    - FlipperKit/FlipperKitLayoutHelpers
-    - YogaKit (~> 1.18)
-  - FlipperKit/FlipperKitLayoutPlugin (0.125.0):
-    - FlipperKit/Core
-    - FlipperKit/FlipperKitHighlightOverlay
-    - FlipperKit/FlipperKitLayoutHelpers
-    - FlipperKit/FlipperKitLayoutIOSDescriptors
-    - FlipperKit/FlipperKitLayoutTextSearchable
-    - YogaKit (~> 1.18)
-  - FlipperKit/FlipperKitLayoutTextSearchable (0.125.0)
-  - FlipperKit/FlipperKitNetworkPlugin (0.125.0):
-    - FlipperKit/Core
-  - FlipperKit/FlipperKitReactPlugin (0.125.0):
-    - FlipperKit/Core
-  - FlipperKit/FlipperKitUserDefaultsPlugin (0.125.0):
-    - FlipperKit/Core
-  - FlipperKit/SKIOSNetworkPlugin (0.125.0):
-    - FlipperKit/Core
-    - FlipperKit/FlipperKitNetworkPlugin
   - fmt (6.2.1)
   - glog (0.3.5)
-  - GoogleAppMeasurement (9.4.0):
-    - GoogleAppMeasurement/AdIdSupport (= 9.4.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
-    - GoogleUtilities/MethodSwizzler (~> 7.7)
-    - GoogleUtilities/Network (~> 7.7)
-    - "GoogleUtilities/NSData+zlib (~> 7.7)"
-    - nanopb (< 2.30910.0, >= 2.30908.0)
-  - GoogleAppMeasurement/AdIdSupport (9.4.0):
-    - GoogleAppMeasurement/WithoutAdIdSupport (= 9.4.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
-    - GoogleUtilities/MethodSwizzler (~> 7.7)
-    - GoogleUtilities/Network (~> 7.7)
-    - "GoogleUtilities/NSData+zlib (~> 7.7)"
-    - nanopb (< 2.30910.0, >= 2.30908.0)
-  - GoogleAppMeasurement/WithoutAdIdSupport (9.4.0):
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
-    - GoogleUtilities/MethodSwizzler (~> 7.7)
-    - GoogleUtilities/Network (~> 7.7)
-    - "GoogleUtilities/NSData+zlib (~> 7.7)"
-    - nanopb (< 2.30910.0, >= 2.30908.0)
   - GoogleDataTransport (9.2.0):
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
@@ -231,13 +125,11 @@ PODS:
     - GoogleUtilities/MethodSwizzler
   - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
-  - libevent (2.1.12)
   - nanopb (2.30909.0):
     - nanopb/decode (= 2.30909.0)
     - nanopb/encode (= 2.30909.0)
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
-  - OpenSSL-Universal (1.1.1100)
   - PromisesObjC (2.1.1)
   - RCT-Folly (2021.06.28.00-v2):
     - boost
@@ -567,19 +459,15 @@ PODS:
     - React-Core
   - RNCMaskedView (0.1.11):
     - React
-  - RNFBAnalytics (15.3.0):
-    - Firebase/Analytics (= 9.4.0)
+  - RNFBApp (15.4.0):
+    - Firebase/CoreOnly (= 9.5.0)
+    - React-Core
+  - RNFBMessaging (15.4.0):
+    - Firebase/Messaging (= 9.5.0)
+    - FirebaseCoreExtension (= 9.5.0)
     - React-Core
     - RNFBApp
-  - RNFBApp (15.3.0):
-    - Firebase/CoreOnly (= 9.4.0)
-    - React-Core
-  - RNFBMessaging (15.3.0):
-    - Firebase/Messaging (= 9.4.0)
-    - FirebaseCoreExtension (= 9.4.0)
-    - React-Core
-    - RNFBApp
-  - RNGestureHandler (2.5.0):
+  - RNGestureHandler (2.6.0):
     - React-Core
   - RNKeychain (8.1.1):
     - React-Core
@@ -590,11 +478,10 @@ PODS:
     - React-RCTImage
   - RNSVG (9.6.4):
     - React
-  - SocketRocket (0.6.0)
+  - TcpSockets (3.3.2):
+    - React
   - Toast (4.0.0)
   - Yoga (1.14.0)
-  - YogaKit (1.18.1):
-    - Yoga (~> 1.14)
   - ZXingObjC/Core (3.6.5)
   - ZXingObjC/OneD (3.6.5):
     - ZXingObjC/Core
@@ -624,32 +511,8 @@ DEPENDENCIES:
   - EXSharing (from `../node_modules/expo-sharing/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
-  - Firebase
-  - FirebaseCore
-  - Flipper (= 0.125.0)
-  - Flipper-Boost-iOSX (= 1.76.0.1.11)
-  - Flipper-DoubleConversion (= 3.2.0.1)
-  - Flipper-Fmt (= 7.1.7)
-  - Flipper-Folly (= 2.6.10)
-  - Flipper-Glog (= 0.5.0.5)
-  - Flipper-PeerTalk (= 0.0.4)
-  - Flipper-RSocket (= 1.4.3)
-  - FlipperKit (= 0.125.0)
-  - FlipperKit/Core (= 0.125.0)
-  - FlipperKit/CppBridge (= 0.125.0)
-  - FlipperKit/FBCxxFollyDynamicConvert (= 0.125.0)
-  - FlipperKit/FBDefines (= 0.125.0)
-  - FlipperKit/FKPortForwarding (= 0.125.0)
-  - FlipperKit/FlipperKitHighlightOverlay (= 0.125.0)
-  - FlipperKit/FlipperKitLayoutPlugin (= 0.125.0)
-  - FlipperKit/FlipperKitLayoutTextSearchable (= 0.125.0)
-  - FlipperKit/FlipperKitNetworkPlugin (= 0.125.0)
-  - FlipperKit/FlipperKitReactPlugin (= 0.125.0)
-  - FlipperKit/FlipperKitUserDefaultsPlugin (= 0.125.0)
-  - FlipperKit/SKIOSNetworkPlugin (= 0.125.0)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - GoogleUtilities
-  - OpenSSL-Universal (= 1.1.1100)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -658,7 +521,6 @@ DEPENDENCIES:
   - React-callinvoker (from `../node_modules/react-native/ReactCommon/callinvoker`)
   - React-Codegen (from `build/generated/ios`)
   - React-Core (from `../node_modules/react-native/`)
-  - React-Core/DevSupport (from `../node_modules/react-native/`)
   - React-Core/RCTWebSocket (from `../node_modules/react-native/`)
   - React-CoreModules (from `../node_modules/react-native/React/CoreModules`)
   - React-cxxreact (from `../node_modules/react-native/ReactCommon/cxxreact`)
@@ -686,7 +548,6 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
-  - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -694,39 +555,25 @@ DEPENDENCIES:
   - RNOS (from `../node_modules/react-native-os`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
+  - TcpSockets (from `../node_modules/react-native-tcp`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   trunk:
     - CocoaAsyncSocket
     - Firebase
-    - FirebaseAnalytics
     - FirebaseCore
     - FirebaseCoreDiagnostics
     - FirebaseCoreExtension
     - FirebaseCoreInternal
     - FirebaseInstallations
     - FirebaseMessaging
-    - Flipper
-    - Flipper-Boost-iOSX
-    - Flipper-DoubleConversion
-    - Flipper-Fmt
-    - Flipper-Folly
-    - Flipper-Glog
-    - Flipper-PeerTalk
-    - Flipper-RSocket
-    - FlipperKit
     - fmt
-    - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleUtilities
-    - libevent
     - nanopb
-    - OpenSSL-Universal
     - PromisesObjC
-    - SocketRocket
     - Toast
-    - YogaKit
     - ZXingObjC
 
 EXTERNAL SOURCES:
@@ -844,8 +691,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
-  RNFBAnalytics:
-    :path: "../node_modules/@react-native-firebase/analytics"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBMessaging:
@@ -860,6 +705,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNSVG:
     :path: "../node_modules/react-native-svg"
+  TcpSockets:
+    :path: "../node_modules/react-native-tcp"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -887,31 +734,18 @@ SPEC CHECKSUMS:
   EXSharing: 8530ef08cb899328a7c61de7f4836af6208b567b
   FBLazyVector: c71b8c429a8af2aff1013934a7152e9d9d0c937d
   FBReactNativeSpec: cb0df4f0084281b394f76bb9b4d1d9540f35963f
-  Firebase: 7703fc4022824b6d6db1bf7bea58d13b8e17ec46
-  FirebaseAnalytics: a1a24e72b7ba7f47045a4633f1abb545c07bd29c
-  FirebaseCore: 9a2b10270a854731c4d4d8a97d0aa8380ec3458d
+  Firebase: 800f16f07af493d98d017446a315c27af0552f41
+  FirebaseCore: 25c0400b670fd1e2f2104349cd3b5dcce8d9418f
   FirebaseCoreDiagnostics: 17cbf4e72b1dbd64bfdc33d4b1f07bce4f16f1d8
-  FirebaseCoreExtension: 2cf8c542b54ad3c2d4b746c22e8828b670dcd9b0
+  FirebaseCoreExtension: 2904492b693a6871ddbd1088c9d1fe6e54384050
   FirebaseCoreInternal: 50a8e39cae8abf72d5145d07ea34c3244f70862b
   FirebaseInstallations: 41f811b530c41dd90973d0174381cdb3fcb5e839
-  FirebaseMessaging: 4e220eddd356181469ba2ec5f7d5fafbc2312841
-  Flipper: 26fc4b7382499f1281eb8cb921e5c3ad6de91fe0
-  Flipper-Boost-iOSX: fd1e2b8cbef7e662a122412d7ac5f5bea715403c
-  Flipper-DoubleConversion: 2dc99b02f658daf147069aad9dbd29d8feb06d30
-  Flipper-Fmt: 60cbdd92fc254826e61d669a5d87ef7015396a9b
-  Flipper-Folly: 584845625005ff068a6ebf41f857f468decd26b3
-  Flipper-Glog: 70c50ce58ddaf67dc35180db05f191692570f446
-  Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
-  Flipper-RSocket: d9d9ade67cbecf6ac10730304bf5607266dd2541
-  FlipperKit: cbdee19bdd4e7f05472a66ce290f1b729ba3cb86
+  FirebaseMessaging: 732623518591384f61c287e3d8f65294beb7ffb3
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
-  GoogleAppMeasurement: 5d69e04287fc2c10cc43724bfa4bf31fc12c3dff
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
-  libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
-  OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
   RCTRequired: bd9d2ab0fda10171fcbcf9ba61a7df4dc15a28f4
@@ -947,20 +781,18 @@ SPEC CHECKSUMS:
   ReactCommon: 8f67bd7e0a6afade0f20718f859dc8c2275f2e83
   RNCAsyncStorage: 0c357f3156fcb16c8589ede67cc036330b6698ca
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
-  RNFBAnalytics: dae2f8d9eff3c51e982bb7af3b734e0cd7a8a7de
-  RNFBApp: 0db41be0ca09ec0828164f16cd36732c0df8dabb
-  RNFBMessaging: b75bbb60959cd67302b78e198b92b34a331843fb
-  RNGestureHandler: bad495418bcbd3ab47017a38d93d290ebd406f50
+  RNFBApp: a6fca2cd8f392b5efc1f2ab7bd4b3b64a6039abf
+  RNFBMessaging: eca46a70527dd469e684250b22d5c927bc4a5ed9
+  RNGestureHandler: 920eb17f5b1e15dae6e5ed1904045f8f90e0b11e
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNSVG: a53a5de0d90ec96a6502cc3a4534dfcc0c130622
-  SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   Yoga: ff994563b2fd98c982ca58e8cd9db2cdaf4dda74
-  YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 73411f6a4d665ae8eae697d7c6f8a8aa01798465
+PODFILE CHECKSUM: 150cb4db025cdcea693cb6e11e997e1e983afa60
 
 COCOAPODS: 1.11.3

@@ -1,38 +1,31 @@
-import React, { Component } from 'react'
+import { useFocusEffect } from '@react-navigation/native';
+import React, { Component } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  InteractionManager,
-  ActivityIndicator,
-  Keyboard,
-  KeyboardAvoidingView,
-  Vibration,
-  Animated,
-  StyleSheet,
-} from 'react-native'
-import { useFocusEffect } from '@react-navigation/native'
-import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context'
+  ActivityIndicator, Animated, InteractionManager, Keyboard,
+  KeyboardAvoidingView, StyleSheet, Text,
+  TextInput, Vibration, View
+} from 'react-native';
+import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
 
-import messaging from '@react-native-firebase/messaging'
+import firebase from '@react-native-firebase/app';
+import messaging from '@react-native-firebase/messaging';
+import * as LocalAuthentication from 'expo-local-authentication';
 
-import * as LocalAuthentication from 'expo-local-authentication'
+import * as Keychain from 'react-native-keychain';
 
-import * as Keychain from 'react-native-keychain'
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
 
-import StylishLabel from 'src/components/labels/StylishLabel'
-import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter'
-import PrimaryButton from 'src/components/buttons/PrimaryButton'
+import NoticePrompt from 'src/components/modals/NoticePrompt';
+import OverlayBlur from 'src/components/modals/OverlayBlur';
 
-import OverlayBlur from 'src/components/modals/OverlayBlur'
-import NoticePrompt from 'src/components/modals/NoticePrompt'
+import BiometricHelper from 'src/helpers/BiometricHelper';
+import CryptoHelper from 'src/helpers/CryptoHelper';
+import MetaStorage from 'src/singletons/MetaStorage';
 
-import CryptoHelper from 'src/helpers/CryptoHelper'
-import BiometricHelper from 'src/helpers/BiometricHelper'
-import MetaStorage from 'src/singletons/MetaStorage'
-
-import GLOBALS from 'src/Globals'
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
+import GLOBALS from 'src/Globals';
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
@@ -362,6 +355,7 @@ class BiometricScreen extends Component {
     // Goto Next Screen
     // Check if the push notification permission is waiting for first grant
     // If not, skip this step completely as user either gave permission or denied it
+    // FIREBASE
     const authorizationStatus = await messaging().hasPermission()
 
     if (authorizationStatus == messaging.AuthorizationStatus.NOT_DETERMINED) {

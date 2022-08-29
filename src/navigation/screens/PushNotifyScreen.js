@@ -1,26 +1,23 @@
-import React, { Component } from 'react'
+import { useFocusEffect } from '@react-navigation/native';
+import React, { Component } from 'react';
 import {
-  View,
-  Text,
-  InteractionManager,
-  Animated,
-  StyleSheet,
-} from 'react-native'
-import { useFocusEffect } from '@react-navigation/native'
-import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context'
+  Animated, InteractionManager, StyleSheet, Text, View
+} from 'react-native';
+import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
 
-import messaging from '@react-native-firebase/messaging'
+import firebase from '@react-native-firebase/app';
+import messaging from '@react-native-firebase/messaging';
 
-import StylishLabel from 'src/components/labels/StylishLabel'
-import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter'
-import PrimaryButton from 'src/components/buttons/PrimaryButton'
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
 
-import OverlayBlur from 'src/components/modals/OverlayBlur'
-import NoticePrompt from 'src/components/modals/NoticePrompt'
+import NoticePrompt from 'src/components/modals/NoticePrompt';
+import OverlayBlur from 'src/components/modals/OverlayBlur';
 
-import Notify from 'src/singletons/Notify'
+import Notify from 'src/singletons/Notify';
 
-import GLOBALS from 'src/Globals'
+import GLOBALS from 'src/Globals';
 
 function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
   useFocusEffect(
@@ -110,6 +107,7 @@ export default class PushNotifyScreen extends Component {
 
   // Load the Next Screen
   loadNextScreenAfterAdditionalSetup = async () => {
+    // FIREBASE
     const settings = await messaging().requestPermission()
     if (settings == messaging.AuthorizationStatus.DENIED) {
       // console.log('Permission settings:', settings);

@@ -1,7 +1,8 @@
-import messaging from '@react-native-firebase/messaging'
+import firebase from '@react-native-firebase/app';
+import messaging from '@react-native-firebase/messaging';
 
-import FeedDBHelper from 'src/helpers/FeedDBHelper'
-import MetaStorage from 'src/singletons/MetaStorage'
+import FeedDBHelper from 'src/helpers/FeedDBHelper';
+import MetaStorage from 'src/singletons/MetaStorage';
 
 // STATIC SINGLETON
 export default class Notify {
@@ -27,6 +28,7 @@ export default class Notify {
       }
     }
 
+    // FIREBASE
     const status = await messaging().hasPermission()
     if (status == messaging.AuthorizationStatus.AUTHORIZED) {
       messaging()
