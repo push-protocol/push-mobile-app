@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 
-import ProgressCircle from 'react-native-progress-circle';
+// TODO: fix this
+// import ProgressCircle from 'react-native-progress-circle';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 
 import DownloadHelper from 'src/helpers/DownloadHelper';
@@ -220,15 +221,16 @@ export default class ImageDownloadWithIndicator extends Component {
                           style={styles.activity}
                           size="small"
                         />
-                      : <ProgressCircle
-                          percent={this.state.downloadProgress}
-                          radius={20}
-                          borderWidth={20}
-                          color={GLOBALS.COLORS.GRADIENT_SECONDARY}
-                          shadowColor={GLOBALS.COLORS.LIGHT_GRAY}
-                          bgColor={GLOBALS.COLORS.WHITE}
-                        >
-                        </ProgressCircle>
+                      : <Text>Loading</Text>
+                      // : <ProgressCircle
+                      //     percent={this.state.downloadProgress}
+                      //     radius={20}
+                      //     borderWidth={20}
+                      //     color={GLOBALS.COLORS.GRADIENT_SECONDARY}
+                      //     shadowColor={GLOBALS.COLORS.LIGHT_GRAY}
+                      //     bgColor={GLOBALS.COLORS.WHITE}
+                      //   >
+                      //   </ProgressCircle>
                       }
                   </View>
                 : imgsrc != false || this.state.defaulted == true

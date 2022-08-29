@@ -8,7 +8,6 @@ import {
   Animated
 } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import GLOBALS from 'src/Globals';
 

@@ -323,7 +323,7 @@ export default class PKEntryPrompt extends Component {
 const ErrorMsg = styled.Text`
   color: ${props => props.color || GLOBALS.COLORS.BLACK},
   font-weight: ${props => props.weight || 400}
-`
+`;
 
 // Styling
 const styles = StyleSheet.create({

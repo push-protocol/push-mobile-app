@@ -9,10 +9,10 @@ import {
 } from "react-native";
 import * as FileSystem from "expo-file-system";
 
-import Video from "react-native-video";
-import YouTube from "react-native-youtube";
+// import Video from "react-native-video";
+// import YouTube from "react-native-youtube";
 
-import ProgressCircle from "react-native-progress-circle";
+// import ProgressCircle from "react-native-progress-circle";
 import EPNSActivity from "src/components/loaders/EPNSActivity";
 
 import DownloadHelper from "src/helpers/DownloadHelper";
@@ -22,6 +22,15 @@ import GLOBALS from "src/Globals";
 
 const MAX_ATTEMPTS = 3;
 
+const VideoDownloadWithIndicator = ()=>{
+  return (
+    <View>
+      <Text>TODO Implement this</Text>
+    </View>
+  )
+}
+
+/** 
 export default class VideoDownloadWithIndicator extends Component {
   // CONSTRUCTOR
   constructor(props) {
@@ -286,7 +295,7 @@ export default class VideoDownloadWithIndicator extends Component {
     );
   }
 }
-
+*/
 const styles = StyleSheet.create({
   container: {
     flex: 1,

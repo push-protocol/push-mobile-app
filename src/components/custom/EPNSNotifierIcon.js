@@ -144,7 +144,7 @@ export default class EPNSNotifierIcon extends Component {
           </Animated.View>
           <AnimatedEPNSIcon
             ref='bell'
-            style={styles.icon, {width: iconSize}}
+            style={[styles.icon, {width: iconSize}]}
             withoutRinger={true}
           />
         </TouchableOpacity>

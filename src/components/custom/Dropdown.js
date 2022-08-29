@@ -14,7 +14,7 @@ import { deleteUser } from 'src/redux/authSlice'
 
 import LinearGradient from 'react-native-linear-gradient'
 import MaskedView from '@react-native-community/masked-view'
-import MetaStorage from 'src/singletons/MetaStorage'
+// import MetaStorage from 'src/singletons/MetaStorage'
 
 const size = 30
 

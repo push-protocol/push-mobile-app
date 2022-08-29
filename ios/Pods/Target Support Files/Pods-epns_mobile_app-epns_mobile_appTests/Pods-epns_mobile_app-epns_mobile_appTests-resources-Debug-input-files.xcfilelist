@@ -1,0 +1,3 @@
+${PODS_ROOT}/Target Support Files/Pods-epns_mobile_app-epns_mobile_appTests/Pods-epns_mobile_app-epns_mobile_appTests-resources.sh
+${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle
+${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle

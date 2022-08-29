@@ -7,7 +7,6 @@ import {
   StyleSheet,
 } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import { LinearGradient } from "expo-linear-gradient";
 
 import StylishLabel from "src/components/labels/StylishLabel";
 import PrimaryButton from "src/components/buttons/PrimaryButton";

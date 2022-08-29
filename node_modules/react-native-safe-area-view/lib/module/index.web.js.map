@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.web.js"],"names":["React","View"],"mappings":"AAAA,MAAOA,CAAAA,KAAP,KAAkB,OAAlB,CACA,OAASC,IAAT,KAAqB,cAArB,CAEA,cAAeA,CAAAA,IAAf","sourcesContent":["import React from 'react';\nimport { View } from 'react-native';\n\nexport default View;\n"]}

@@ -1,5 +1,4 @@
 import React,{useEffect,useRef} from 'react'
-import {AppState} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native'
 
 import InitializingNavigator from './InitializingNavigator'
@@ -13,6 +12,8 @@ import GLOBALS from 'src/Globals'
 
 const Screens = () => {
   const authState = useSelector(selectAuthState)
+  console.log("auth state was",authState);
+
 
   return (
     <NavigationContainer>
@@ -25,7 +26,7 @@ const Screens = () => {
 
       {authState === GLOBALS.AUTH_STATE.AUTHENTICATED && (
         <AuthenticatedNavigator />
-      )}
+      )}  
     </NavigationContainer>
   )
 }

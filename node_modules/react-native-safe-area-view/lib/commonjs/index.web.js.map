@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.web.js"],"names":["View"],"mappings":"mKAAA,oDACA,yC,aAEeA,iB","sourcesContent":["import React from 'react';\nimport { View } from 'react-native';\n\nexport default View;\n"]}

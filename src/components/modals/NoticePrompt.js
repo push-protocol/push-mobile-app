@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
   Animated
 } from 'react-native';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import StylishLabel from '../labels/StylishLabel';
 

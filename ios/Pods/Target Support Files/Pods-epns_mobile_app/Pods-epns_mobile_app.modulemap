@@ -1,0 +1,6 @@
+module Pods_epns_mobile_app {
+  umbrella header "Pods-epns_mobile_app-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -259,6 +259,7 @@ const Web3Helper = {
         resolve(address);
       })
       .catch(err => {
+        console.log("got error");
         console.log(err);
         reject(err);
       });

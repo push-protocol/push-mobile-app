@@ -9,10 +9,12 @@ import NewWalletSignInScreen from './screens/NewWalletSignInScreen'
 import WelcomeScreen from './screens/WelcomeScreen'
 import PushNotifyScreen from './screens/PushNotifyScreen'
 import SetupCompleteScreen from './screens/SetupCompleteScreen'
+import { View,Text } from 'react-native'
 
 const Stack = createStackNavigator()
 
 const OnboardingNavigator = () => {
+  console.log("rendering now");
   return (
     <Stack.Navigator
       initialRouteName={GLOBALS.SCREENS.WELCOME}

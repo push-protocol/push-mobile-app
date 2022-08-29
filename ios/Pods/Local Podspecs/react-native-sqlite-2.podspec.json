@@ -1,0 +1,25 @@
+{
+  "name": "react-native-sqlite-2",
+  "version": "3.6.1",
+  "summary": "SQLite3 Native Plugin for React Native for iOS, Android, Windows and macOS",
+  "homepage": "https://github.com/craftzdog/react-native-sqlite-2#readme",
+  "license": "Apache-2.0",
+  "authors": "Takuya Matsuyama <hi@craftz.dog> (https://github.com/craftzdog)",
+  "platforms": {
+    "ios": "11.0",
+    "osx": "10.14",
+    "tvos": "11.0"
+  },
+  "source": {
+    "git": "https://github.com/craftzdog/react-native-sqlite-2.git",
+    "tag": "3.6.1"
+  },
+  "source_files": "ios/**/*.{h,m,mm}",
+  "requires_arc": true,
+  "libraries": "sqlite3",
+  "dependencies": {
+    "React-Core": [
+
+    ]
+  }
+}

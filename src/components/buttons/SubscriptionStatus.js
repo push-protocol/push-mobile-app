@@ -1,4 +1,3 @@
-import { id, serializeTransaction } from 'ethers/lib/utils'
 import React, { useEffect, useState, useRef } from 'react'
 import {
   View,

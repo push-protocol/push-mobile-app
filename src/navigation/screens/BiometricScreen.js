@@ -288,6 +288,7 @@ class BiometricScreen extends Component {
     // Check if biometric is present, if so present authentication
     // If authenticated, store the passcode on secure chain
     if (this.state.biometricSupported) {
+    console.log("click me");
       let biometricType = 'Null'
 
       if (
@@ -345,6 +346,7 @@ class BiometricScreen extends Component {
         )
       }
     } else {
+    console.log("no bimertric me");
       this.loadNextScreen()
     }
   }
@@ -354,6 +356,9 @@ class BiometricScreen extends Component {
   }
 
   loadNextScreen = async () => {
+    // TODO:fix
+    this.props.navigation.navigate(GLOBALS.SCREENS.SETUPCOMPLETE)
+
     // Goto Next Screen
     // Check if the push notification permission is waiting for first grant
     // If not, skip this step completely as user either gave permission or denied it
