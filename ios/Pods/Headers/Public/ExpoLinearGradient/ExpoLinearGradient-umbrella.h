@@ -1,1 +1,0 @@
-../../../Target Support Files/ExpoLinearGradient/ExpoLinearGradient-umbrella.h

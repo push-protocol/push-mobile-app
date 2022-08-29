@@ -1,6 +1,0 @@
-module Pods_epns_mobile_app_epns_mobile_appTests {
-  umbrella header "Pods-epns_mobile_app-epns_mobile_appTests-umbrella.h"
-
-  export *
-  module * { export * }
-}

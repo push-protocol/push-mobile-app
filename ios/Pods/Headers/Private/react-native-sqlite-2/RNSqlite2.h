@@ -1,1 +1,0 @@
-../../../../../node_modules/react-native-sqlite-2/ios/RNSqlite2.h
