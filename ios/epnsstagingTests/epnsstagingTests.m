@@ -7,11 +7,11 @@
 #define TIMEOUT_SECONDS 600
 #define TEXT_TO_LOOK_FOR @"Welcome to React"
 
-@interface epns_mobile_appTests : XCTestCase
+@interface epnsstagingTests : XCTestCase
 
 @end
 
-@implementation epns_mobile_appTests
+@implementation epnsstagingTests
 
 - (BOOL)findSubviewInView:(UIView *)view matching:(BOOL (^)(UIView *view))test
 {
