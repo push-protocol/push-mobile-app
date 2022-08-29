@@ -1,6 +1,20 @@
 {
   "name": "epnsstaging",
   "displayName": "EPNS Staging",
+  "expo": {
+    "name": "epnsstaging",
+    "slug": "epnsstaging",
+    "version": "0.6",
+    "scheme": "epnsstaging",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
   "plugins": [
     [
       "expo-build-properties",
