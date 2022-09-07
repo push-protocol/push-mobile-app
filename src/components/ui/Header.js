@@ -148,7 +148,7 @@ const Header = ({switchUser, setParams, fetchFeedData, style}) => {
                 }
 
                 return isActive ? (
-                  <TouchableOpacity style={styles.activeWalletInfo}>
+                  <TouchableOpacity style={styles.activeWalletInfo} key={wallet}>
                     <StylishLabel
                       style={styles.para}
                       fontSize={16}
