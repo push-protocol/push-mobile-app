@@ -1,0 +1,26 @@
+diff --git a/node_modules/react-native-youtube/YouTube.android.js b/node_modules/react-native-youtube/YouTube.android.js
+index 0430b71..c64b234 100644
+--- a/node_modules/react-native-youtube/YouTube.android.js
++++ b/node_modules/react-native-youtube/YouTube.android.js
+@@ -38,7 +38,7 @@ export default class YouTube extends React.Component {
+     onChangeState: PropTypes.func,
+     onChangeQuality: PropTypes.func,
+     onChangeFullscreen: PropTypes.func,
+-    style: ViewPropTypes.style,
++    // style: ViewPropTypes.style,
+   };
+ 
+   static defaultProps = {
+diff --git a/node_modules/react-native-youtube/YouTube.ios.js b/node_modules/react-native-youtube/YouTube.ios.js
+index 2e1bf41..2fb17a3 100644
+--- a/node_modules/react-native-youtube/YouTube.ios.js
++++ b/node_modules/react-native-youtube/YouTube.ios.js
+@@ -53,7 +53,7 @@ export default class YouTube extends React.Component {
+     onChangeQuality: PropTypes.func,
+     onChangeFullscreen: PropTypes.func,
+     onProgress: PropTypes.func,
+-    style: ViewPropTypes.style,
++    // style: ViewPropTypes.style,
+   };
+ 
+   constructor(props) {

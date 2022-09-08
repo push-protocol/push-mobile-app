@@ -16,6 +16,8 @@ import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import { Provider } from 'react-redux';
 import AppScreens from 'src/navigation';
 import store from 'src/redux';
+import Video from 'react-native-video';
+import YouTube from 'react-native-youtube';
 
 
 let persistor = persistStore(store)

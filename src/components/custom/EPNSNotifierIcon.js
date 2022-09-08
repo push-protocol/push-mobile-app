@@ -79,6 +79,7 @@ export default class EPNSNotifierIcon extends Component {
         this.state.fader, {
           toValue: 1,
           duration: 250,
+          useNativeDriver:true
         }
       ).start();
     }
@@ -87,6 +88,7 @@ export default class EPNSNotifierIcon extends Component {
         this.state.fader, {
           toValue: 0,
           duration: 250,
+          useNativeDriver:true
         }
       ).start(() => {
         this.setState({

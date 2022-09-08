@@ -62,7 +62,7 @@ export default class FeedItemWrapper extends Component {
           toValue: height,
           easing: Easing.easeInOut,
         	duration: 250,
-          // useNativeDriver: true, // No support for height
+          useNativeDriver: false, // No support for height: ;
         }).start();
       });
     }

@@ -154,6 +154,7 @@ class Toaster extends Component {
       toValue: 0,
       easing: Easing.easeInOut,
       duration: 300,
+      useNativeDriver:true
     }).start(() => {
       this.setState({
         render: false,
