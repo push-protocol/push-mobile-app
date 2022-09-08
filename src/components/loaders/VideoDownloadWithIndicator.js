@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import * as FileSystem from "expo-file-system";
 
-// import Video from "react-native-video";
-// import YouTube from "react-native-youtube";
+import Video from "react-native-video";
+import YouTube from "react-native-youtube";
 
 // import ProgressCircle from "react-native-progress-circle";
 import EPNSActivity from "src/components/loaders/EPNSActivity";
@@ -22,15 +22,6 @@ import GLOBALS from "src/Globals";
 
 const MAX_ATTEMPTS = 3;
 
-const VideoDownloadWithIndicator = ()=>{
-  return (
-    <View>
-      <Text>TODO Implement this</Text>
-    </View>
-  )
-}
-
-/** 
 export default class VideoDownloadWithIndicator extends Component {
   // CONSTRUCTOR
   constructor(props) {
@@ -243,14 +234,16 @@ export default class VideoDownloadWithIndicator extends Component {
                 {miniProgressLoader == true ? (
                   <EPNSActivity style={styles.activity} size="small" />
                 ) : (
-                  <ProgressCircle
-                    percent={this.state.downloadProgress}
-                    radius={20}
-                    borderWidth={20}
-                    color={GLOBALS.COLORS.GRADIENT_SECONDARY}
-                    shadowColor={GLOBALS.COLORS.LIGHT_GRAY}
-                    bgColor={GLOBALS.COLORS.WHITE}
-                  ></ProgressCircle>
+                  <></>
+                  // TODO fix this
+                  // <ProgressCircle
+                  //   percent={this.state.downloadProgress}
+                  //   radius={20}
+                  //   borderWidth={20}
+                  //   color={GLOBALS.COLORS.GRADIENT_SECONDARY}
+                  //   shadowColor={GLOBALS.COLORS.LIGHT_GRAY}
+                  //   bgColor={GLOBALS.COLORS.WHITE}
+                  // ></ProgressCircle>
                 )}
               </View>
             ) : this.state.defaulted == true ? (
@@ -295,7 +288,6 @@ export default class VideoDownloadWithIndicator extends Component {
     );
   }
 }
-*/
 const styles = StyleSheet.create({
   container: {
     flex: 1,
