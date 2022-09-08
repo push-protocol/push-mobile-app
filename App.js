@@ -19,6 +19,7 @@ import store from 'src/redux';
 import Video from 'react-native-video';
 import YouTube from 'react-native-youtube';
 
+import ProgressCircle from "react-native-progress-circle";
 
 let persistor = persistStore(store)
 
