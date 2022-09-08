@@ -49,8 +49,8 @@ const App = () => {
               asyncStorage: AsyncStorage,
             }}
           >
-            {/* <Text>I was called</Text> */}
-            <AppScreens />
+            <Text>I was called</Text>
+            {/* <AppScreens /> */}
           </WalletConnectProvider>
         </PersistGate>
       </Provider>
