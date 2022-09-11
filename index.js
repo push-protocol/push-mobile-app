@@ -1,7 +1,6 @@
 import React from 'react';
 import App from './App';
 
-import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import Notify from 'src/singletons/Notify';
 
