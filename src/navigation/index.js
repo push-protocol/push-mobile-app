@@ -15,7 +15,6 @@ import {setLogout} from 'src/redux/authSlice'
 
 const Screens = () => {
   const authState = useSelector(selectAuthState)
-  console.log("auth state was",authState);
   const dispatch = useDispatch()
 
   // reset user login
