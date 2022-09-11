@@ -10,12 +10,12 @@ import { name as appName } from './app.json';
 
 // FIREBASE
 // Register background handler
-// messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-//     return new Promise(async (resolve, reject) => {
-//         await Notify.instance.handleIncomingPushAppInBG(remoteMessage)
-//         resolve(true)
-//     })
-// })
+messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+    return new Promise(async (resolve, reject) => {
+        await Notify.instance.handleIncomingPushAppInBG(remoteMessage)
+        resolve(true)
+    })
+})
 
 function HeadlessCheck({ isHeadless }) {
     if (isHeadless) {
