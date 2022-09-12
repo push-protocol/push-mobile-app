@@ -239,10 +239,6 @@ RNTester/Pods/*
 /ReactCommon/fabric/components/rncore/
 /schema-rncore.json
 
-# Visual studio
-.vscode
-.vs
-
 # Sensitive Files
 .env
 google-services.json

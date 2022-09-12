@@ -5,17 +5,21 @@ import GLOBALS from 'src/Globals';
 // Download Helper Function
 const DownloadHelper = {
   // To get Temp Save Location
-  getTempSaveLocation: function(fileURL) {
-    return FileSystem.documentDirectory
-      + DownloadHelper.getSaveFileName(fileURL, true);
+  getTempSaveLocation: function (fileURL) {
+    return (
+      FileSystem.documentDirectory +
+      DownloadHelper.getSaveFileName(fileURL, true)
+    );
   },
   // To get Actual Save Location
-  getActualSaveLocation: function(fileURL) {
-    return FileSystem.documentDirectory
-      + DownloadHelper.getSaveFileName(fileURL, false);
+  getActualSaveLocation: function (fileURL) {
+    return (
+      FileSystem.documentDirectory +
+      DownloadHelper.getSaveFileName(fileURL, false)
+    );
   },
   // To get Save File Name
-  getSaveFileName: function(fileURL, useTempLocation) {
+  getSaveFileName: function (fileURL, useTempLocation) {
     // Remove all http, https protocols first
     fileURL = fileURL.replace(/(^\w+:|^)\/\//, '');
 
@@ -29,21 +33,19 @@ const DownloadHelper = {
     }
 
     if (useTempLocation) {
-      return fileURL+ '.temp';
-    }
-    else {
+      return fileURL + '.temp';
+    } else {
       return fileURL;
     }
   },
   // Determine if media is supported video
-  isMediaSupportedVideo: function(fileURL) {
+  isMediaSupportedVideo: function (fileURL) {
     // check if media external embed first
     if (DownloadHelper.isMediaExternalEmbed(fileURL)) {
       return true;
-    }
-    else {
+    } else {
       // check if mp4 extension
-      if (fileURL.split('.').pop() === "mp4") {
+      if (fileURL.split('.').pop() === 'mp4') {
         return true;
       }
     }
@@ -52,35 +54,40 @@ const DownloadHelper = {
     return false;
   },
   // check if media is external embed, like youtube, soundcloud, etc
-  isMediaExternalEmbed: function(fileURL) {
-    return (DownloadHelper.isMediaYoutube(fileURL));
+  isMediaExternalEmbed: function (fileURL) {
+    return DownloadHelper.isMediaYoutube(fileURL);
   },
   // Determine if youtube
-  isMediaYoutube: function(fileURL) {
+  isMediaYoutube: function (fileURL) {
     if (fileURL != undefined || fileURL != '') {
-        var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
-        var match = fileURL.match(regExp);
-        if (match && match[2].length == 11) {
-          // embed url
-          const embedURL = 'https://www.youtube.com/embed/' + match[2] + '?autoplay=1&enablejsapi=1';
-          return true;
-        }
+      var regExp =
+        /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+      var match = fileURL.match(regExp);
+      if (match && match[2].length == 11) {
+        // embed url
+        const embedURL =
+          'https://www.youtube.com/embed/' +
+          match[2] +
+          '?autoplay=1&enablejsapi=1';
+        return true;
+      }
     }
 
     return false;
   },
   // Get youtube id
-  getYoutubeID: function(fileURL) {
+  getYoutubeID: function (fileURL) {
     if (fileURL != undefined || fileURL != '') {
-        var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
-        var match = fileURL.match(regExp);
-        if (match && match[2].length == 11) {
-          return match[2];
-        }
+      var regExp =
+        /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+      var match = fileURL.match(regExp);
+      if (match && match[2].length == 11) {
+        return match[2];
+      }
     }
 
     return false;
-  }
-}
+  },
+};
 
 export default DownloadHelper;

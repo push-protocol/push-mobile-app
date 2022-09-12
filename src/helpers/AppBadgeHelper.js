@@ -1,5 +1,5 @@
 // To prevent name collision since we have Notifications instance and expo also has notifications
-import { Platform } from 'react-native'
+import {Platform} from 'react-native';
 
 // import PushNotificationIOS from '@react-native-community/push-notification-ios'
 
@@ -11,12 +11,12 @@ const AppBadgeHelper = {
     // return await PushNotificationIOS.getApplicationIconBadgeNumber()
   },
   // To Set App Badge Count
-  setAppBadgeCount: async (badgeNumber) => {
+  setAppBadgeCount: async badgeNumber => {
     if (Platform.OS === 'ios') {
       return 0;
       // await PushNotificationIOS.setApplicationIconBadgeNumber(badgeNumber)
     }
   },
-}
+};
 
-export default AppBadgeHelper
+export default AppBadgeHelper;

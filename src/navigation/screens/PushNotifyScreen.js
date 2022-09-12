@@ -1,9 +1,13 @@
-import { useFocusEffect } from '@react-navigation/native';
-import React, { Component } from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import React, {Component} from 'react';
 import {
-  Animated, InteractionManager, StyleSheet, Text, View
+  Animated,
+  InteractionManager,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
-import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
 
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
@@ -19,42 +23,42 @@ import Notify from 'src/singletons/Notify';
 
 import GLOBALS from 'src/Globals';
 
-function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
+function ScreenFinishedTransition({setScreenTransitionAsDone}) {
   useFocusEffect(
     React.useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         // After screen is loaded
-        setScreenTransitionAsDone()
-      })
+        setScreenTransitionAsDone();
+      });
 
-      return () => task.cancel()
+      return () => task.cancel();
     }, []),
-  )
+  );
 
-  return null
+  return null;
 }
 
 function GetScreenInsets() {
-  const insets = useSafeArea()
+  const insets = useSafeArea();
   if (insets.bottom > 0) {
     // Adjust inset by
-    return <View style={styles.insetAdjustment}></View>
+    return <View style={styles.insetAdjustment}></View>;
   } else {
-    return <View style={styles.noInsetAdjustment}></View>
+    return <View style={styles.noInsetAdjustment}></View>;
   }
 }
 
 export default class PushNotifyScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       transitionFinished: false,
       detailedInfoPresetned: false,
 
       fader: new Animated.Value(0),
-    }
+    };
   }
 
   // FUNCTIONS
@@ -69,10 +73,10 @@ export default class PushNotifyScreen extends Component {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }).start()
+        }).start();
       },
-    )
-  }
+    );
+  };
 
   // Open Notice Prompt With Overlay Blur
   toggleNoticePrompt = (
@@ -85,30 +89,30 @@ export default class PushNotifyScreen extends Component {
   ) => {
     // Set Notice First
     if (title) {
-      this.refs.NoticePrompt.changeTitle(title)
+      this.refs.NoticePrompt.changeTitle(title);
     }
 
     if (subtitle) {
-      this.refs.NoticePrompt.changeSubtitle(subtitle)
+      this.refs.NoticePrompt.changeSubtitle(subtitle);
     }
 
     if (notice) {
-      this.refs.NoticePrompt.changeNotice(notice)
+      this.refs.NoticePrompt.changeNotice(notice);
     }
 
     if (showIndicator) {
-      this.refs.NoticePrompt.changeIndicator(showIndicator)
+      this.refs.NoticePrompt.changeIndicator(showIndicator);
     }
 
     // Set render state of this and the animate the blur modal in
-    this.refs.OverlayBlur.changeRenderState(toggle, animate)
-    this.refs.NoticePrompt.changeRenderState(toggle, animate)
-  }
+    this.refs.OverlayBlur.changeRenderState(toggle, animate);
+    this.refs.NoticePrompt.changeRenderState(toggle, animate);
+  };
 
   // Load the Next Screen
   loadNextScreenAfterAdditionalSetup = async () => {
     // FIREBASE
-    const settings = await messaging().requestPermission()
+    const settings = await messaging().requestPermission();
     if (settings == messaging.AuthorizationStatus.DENIED) {
       // console.log('Permission settings:', settings);
       // Display enabling push notification message and move on
@@ -119,24 +123,24 @@ export default class PushNotifyScreen extends Component {
         'Having Push Notifications is recommended as EPNS uses this to deliver your messages to you.',
         `If you wish to enable Push Notifations in the future, you can do so from the [appsettings:App Settings]`,
         false,
-      )
+      );
     } else {
-      this.loadNextScreen()
+      this.loadNextScreen();
     }
-  }
+  };
 
   // Load real next screen
   loadNextScreenSequential = () => {
-    this.loadNextScreen()
-  }
+    this.loadNextScreen();
+  };
 
   loadNextScreen = async () => {
     // Save Device Token
-    Notify.instance.requestDeviceToken()
+    Notify.instance.requestDeviceToken();
 
     // Goto Next Screen
-    this.props.navigation.navigate(GLOBALS.SCREENS.SETUPCOMPLETE)
-  }
+    this.props.navigation.navigate(GLOBALS.SCREENS.SETUPCOMPLETE);
+  };
 
   // RETURN
   render() {
@@ -146,7 +150,7 @@ export default class PushNotifyScreen extends Component {
           setScreenTransitionAsDone={() => {
             this.setState({
               transitionFinished: true,
-            })
+            });
           }}
         />
         <Text style={styles.header}>Notifications</Text>
@@ -171,11 +175,11 @@ export default class PushNotifyScreen extends Component {
             animated={!this.state.detailedInfoPresetned}
             startAnimation={this.state.transitionFinished}
             animationCompleteCallback={() => {
-              this.animationFinished()
+              this.animationFinished();
             }}
           />
         </View>
-        <Animated.View style={[styles.footer, { opacity: this.state.fader }]}>
+        <Animated.View style={[styles.footer, {opacity: this.state.fader}]}>
           <PrimaryButton
             iconFactory="Ionicons"
             icon="ios-notifications-outline"
@@ -186,7 +190,7 @@ export default class PushNotifyScreen extends Component {
             bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
             disabled={false}
             onPress={() => {
-              this.loadNextScreenAfterAdditionalSetup()
+              this.loadNextScreenAfterAdditionalSetup();
             }}
           />
           <GetScreenInsets />
@@ -199,12 +203,12 @@ export default class PushNotifyScreen extends Component {
           ref="NoticePrompt"
           closeTitle="OK"
           closeFunc={() => {
-            this.toggleNoticePrompt(false, true)
-            this.loadNextScreenSequential()
+            this.toggleNoticePrompt(false, true);
+            this.loadNextScreenSequential();
           }}
         />
       </SafeAreaView>
-    )
+    );
   }
 }
 
@@ -254,4 +258,4 @@ const styles = StyleSheet.create({
   noInsetAdjustment: {
     paddingBottom: 20,
   },
-})
+});

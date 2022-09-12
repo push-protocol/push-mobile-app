@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -6,22 +6,22 @@ import {
   FlatList,
   RefreshControl,
   StyleSheet,
-} from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
-import { Asset } from "expo-asset";
+} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
+import {Asset} from 'expo-asset';
 
-import ImageView from "react-native-image-viewing";
-import ImagePreviewFooter from "src/components/ui/ImagePreviewFooter";
+import ImageView from 'react-native-image-viewing';
+import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
 
-import FeedItemWrapper from "src/components/ui/FeedItemWrapper";
-import EPNSActivity from "src/components/loaders/EPNSActivity";
-import { ToasterOptions } from "src/components/indicators/Toaster";
+import FeedItemWrapper from 'src/components/ui/FeedItemWrapper';
+import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import {ToasterOptions} from 'src/components/indicators/Toaster';
 
-import StylishLabel from "src/components/labels/StylishLabel";
-import FeedDBHelper from "src/helpers/FeedDBHelper";
-import MetaStorage from "src/singletons/MetaStorage";
+import StylishLabel from 'src/components/labels/StylishLabel';
+import FeedDBHelper from 'src/helpers/FeedDBHelper';
+import MetaStorage from 'src/singletons/MetaStorage';
 
-import GLOBALS from "src/Globals";
+import GLOBALS from 'src/Globals';
 
 export default class FeedsDisplayer extends Component {
   // CONSTRUCTOR
@@ -82,12 +82,12 @@ export default class FeedsDisplayer extends Component {
         this.itemRefs = [];
 
         this.triggerGetItemsFromDB();
-      }
+      },
     );
   };
 
   // trigger getting feed items
-  triggerGetItemsFromDB = async (isHistorical) => {
+  triggerGetItemsFromDB = async isHistorical => {
     await this.setState({
       feedIsRefreshing: true,
     });
@@ -97,7 +97,7 @@ export default class FeedsDisplayer extends Component {
   };
 
   // To pull more feeds and store them in the feed items
-  getItemsFromDB = async (isHistorical) => {
+  getItemsFromDB = async isHistorical => {
     // Wait for some time
     await this.performTimeConsumingTask();
 
@@ -121,7 +121,7 @@ export default class FeedsDisplayer extends Component {
       this._db,
       fromPointer,
       limit,
-      isHistorical
+      isHistorical,
     );
     let storedFeed = this.state.items;
 
@@ -140,13 +140,13 @@ export default class FeedsDisplayer extends Component {
       if (isHistorical) {
         // Find a way for backward nid to not start from 0, it loads, should work since
         // data is populated with forward nid first
-        if (bNid >= item["nid"] || bNid == -1) {
+        if (bNid >= item['nid'] || bNid == -1) {
           storedFeed = [item, ...storedFeed];
         } else {
           itemValid = false;
         }
       } else {
-        if (fNid < item["nid"] || fNid == -1) {
+        if (fNid < item['nid'] || fNid == -1) {
           storedFeed = feedQueried
             ? [item, ...storedFeed]
             : [...storedFeed, item];
@@ -156,11 +156,11 @@ export default class FeedsDisplayer extends Component {
       }
 
       if (totalCount == 0 && itemValid) {
-        forwardNid = item["nid"];
+        forwardNid = item['nid'];
       }
-      backwardNid = item["nid"];
+      backwardNid = item['nid'];
 
-      if (item["hidden"] != 1) {
+      if (item['hidden'] != 1) {
         visibleItemCount = visibleItemCount + 1;
       }
 
@@ -201,7 +201,7 @@ export default class FeedsDisplayer extends Component {
       await MetaStorage.instance.setCurrentAndPreviousBadgeCount(0, 0);
 
       // Check and move feed to top as well
-      this.refs.feedScroll.scrollToOffset({ animated: true, offset: 0 });
+      this.refs.feedScroll.scrollToOffset({animated: true, offset: 0});
     } else {
     }
 
@@ -209,15 +209,15 @@ export default class FeedsDisplayer extends Component {
     if (totalCount == 0) {
       // No New Items
       this.showToast(
-        "No New Notifications",
-        "",
-        ToasterOptions.TYPE.GRADIENT_PRIMARY
+        'No New Notifications',
+        '',
+        ToasterOptions.TYPE.GRADIENT_PRIMARY,
       );
     } else {
       this.showToast(
-        "New Notifications Loaded!",
-        "",
-        ToasterOptions.TYPE.GRADIENT_PRIMARY
+        'New Notifications Loaded!',
+        '',
+        ToasterOptions.TYPE.GRADIENT_PRIMARY,
       );
     }
 
@@ -245,15 +245,15 @@ export default class FeedsDisplayer extends Component {
 
   // Perform some task to wait
   performTimeConsumingTask = async () => {
-    return new Promise((resolve) =>
+    return new Promise(resolve =>
       setTimeout(() => {
-        resolve("result");
-      }, 500)
+        resolve('result');
+      }, 500),
     );
   };
 
   // Archive an item
-  archiveItem = (nid) => {
+  archiveItem = nid => {
     this.setState(
       {
         visibleItemCount: this.state.visibleItemCount - 1,
@@ -262,25 +262,25 @@ export default class FeedsDisplayer extends Component {
       },
       () => {
         this.showToast(
-          "Item Archived, Tap to Undo",
-          "",
+          'Item Archived, Tap to Undo',
+          '',
           ToasterOptions.TYPE.GRADIENT_PRIMARY,
           () => {
             this.unarchiveItemSequential(nid);
           },
-          ToasterOptions.DELAY.LONG
+          ToasterOptions.DELAY.LONG,
         );
-      }
+      },
     );
   };
 
   // Unarchive an item
-  unarchiveItemSequential = (nid) => {
+  unarchiveItemSequential = nid => {
     // To trick the tap callback of toast
     this.unarchiveItem(nid);
   };
 
-  unarchiveItem = async (nid) => {
+  unarchiveItem = async nid => {
     await FeedDBHelper.unhideFeedItem(this._db, nid);
 
     // No Need to adjust item as items are there but invisible, just adjust visible item count
@@ -294,8 +294,8 @@ export default class FeedsDisplayer extends Component {
   };
 
   // To get ref for feed items
-  getRefForFeedItem = (nid) => {
-    return "feed" + nid;
+  getRefForFeedItem = nid => {
+    return 'feed' + nid;
   };
 
   // For showing toast
@@ -306,7 +306,7 @@ export default class FeedsDisplayer extends Component {
   };
 
   // Show Image Preview
-  showImagePreview = async (fileURL) => {
+  showImagePreview = async fileURL => {
     let validPaths = [];
     let fileIndex = -1;
 
@@ -339,7 +339,7 @@ export default class FeedsDisplayer extends Component {
 
   // RENDER
   render() {
-    const { style, onFeedRefreshed, showToast, privateKey } = this.props;
+    const {style, onFeedRefreshed, showToast, privateKey} = this.props;
 
     return (
       <View style={styles.container}>
@@ -357,23 +357,23 @@ export default class FeedsDisplayer extends Component {
             }
             data={this.state.visibleItemCount > 0 ? this.state.items : []}
             extraData={this.state}
-            keyExtractor={(item) => item["nid"].toString()}
+            keyExtractor={item => item['nid'].toString()}
             contentContainerStyle={styles.feedScrollContent}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <FeedItemWrapper
-                ref={(ref) =>
+                ref={ref =>
                   (this.itemRefs = {
                     ...this.itemRefs,
-                    [this.getRefForFeedItem(item["nid"])]: ref,
+                    [this.getRefForFeedItem(item['nid'])]: ref,
                   })
                 }
                 item={item}
-                nid={item["nid"]}
+                nid={item['nid']}
                 showToast={showToast}
-                itemArchived={(nid) => {
+                itemArchived={nid => {
                   this.archiveItem(nid);
                 }}
-                onImagePreview={(fileURL) => this.showImagePreview(fileURL)}
+                onImagePreview={fileURL => this.showImagePreview(fileURL)}
                 privateKey={privateKey}
               />
             )}
@@ -386,7 +386,7 @@ export default class FeedsDisplayer extends Component {
                 <View style={[styles.infodisplay, styles.noPendingFeeds]}>
                   <Image
                     style={styles.infoIcon}
-                    source={require("assets/ui/feed.png")}
+                    source={require('assets/ui/feed.png')}
                   />
                   <StylishLabel
                     style={styles.infoText}
@@ -409,7 +409,7 @@ export default class FeedsDisplayer extends Component {
               renderGallery: false,
             });
           }}
-          FooterComponent={({ imageIndex }) => (
+          FooterComponent={({imageIndex}) => (
             <ImagePreviewFooter
               imageIndex={imageIndex}
               imagesCount={this.state.loadedImages.length}
@@ -426,12 +426,12 @@ export default class FeedsDisplayer extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   feedScrollContainer: {
-    width: "100%",
+    width: '100%',
     flex: 1,
     marginTop: 10,
   },
@@ -440,14 +440,14 @@ const styles = StyleSheet.create({
   },
   infodisplay: {
     flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 20,
   },
   infoIcon: {
     height: 48,
-    resizeMode: "contain",
+    resizeMode: 'contain',
     margin: 10,
   },
   infoText: {
@@ -456,6 +456,6 @@ const styles = StyleSheet.create({
   loading: {},
   noPendingFeeds: {},
   feed: {
-    width: "100%",
+    width: '100%',
   },
 });

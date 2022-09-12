@@ -1,19 +1,14 @@
-import React from 'react'
-import {
-  View,
-  TouchableOpacity,
-  Dimensions,
-  StyleSheet,
-} from 'react-native'
-import SafeAreaView from 'react-native-safe-area-view'
-import OverlayBlur from 'src/components/modals/OverlayBlur'
-import Blockies from 'src/components/web3/Blockies'
-import ENSButton from 'src/components/buttons/ENSButton'
-import GLOBALS from 'src/Globals'
+import React from 'react';
+import {View, TouchableOpacity, Dimensions, StyleSheet} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
+import OverlayBlur from 'src/components/modals/OverlayBlur';
+import Blockies from 'src/components/web3/Blockies';
+import ENSButton from 'src/components/buttons/ENSButton';
+import GLOBALS from 'src/Globals';
 
-const MARGIN_RIGHT = 120
-const  ProfileDisplayer = (props)=>{  
-  const { style} = props
+const MARGIN_RIGHT = 120;
+const ProfileDisplayer = props => {
+  const {style} = props;
   return (
     <View style={[styles.container, style]} pointerEvents="box-none">
       <SafeAreaView style={[styles.container, styles.safeContainer]}>
@@ -21,15 +16,12 @@ const  ProfileDisplayer = (props)=>{
           <TouchableOpacity
             style={[styles.header]}
             onPress={() => {
-              props.toggleShow()
+              props.toggleShow();
             }}
-            pointerEvents="auto"
-          >
+            pointerEvents="auto">
             <Blockies
               style={styles.blockies}
-              seed={
-                props.wallet ? props.wallet.toLowerCase() : null
-              } //string content to generate icon
+              seed={props.wallet ? props.wallet.toLowerCase() : null} //string content to generate icon
               dimension={40} // blocky icon size
             />
             <ENSButton
@@ -49,15 +41,15 @@ const  ProfileDisplayer = (props)=>{
 
       {/* Overlay Blur to show incase need to emphasize on something */}
       <OverlayBlur
-        style={{ backgroundColor: 'black' }}
+        style={{backgroundColor: 'black'}}
         onPress={() => {
-          props.toggleActive()
+          props.toggleActive();
         }}
         pointerEvents="box-only"
       />
     </View>
-    )
-  }
+  );
+};
 // Styling
 const styles = StyleSheet.create({
   container: {
@@ -150,6 +142,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     top: 50,
   },
-})
+});
 
-export default ProfileDisplayer 
+export default ProfileDisplayer;

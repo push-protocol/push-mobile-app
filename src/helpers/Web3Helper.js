@@ -1,11 +1,11 @@
 import ENS from 'ethereum-ens';
-import { ethers } from 'ethers';
+import {ethers} from 'ethers';
 import Web3 from 'web3';
-const { default: Resolution } = require('@unstoppabledomains/resolution');
+const {default: Resolution} = require('@unstoppabledomains/resolution');
 
-import MetaStorage from "src/singletons/MetaStorage";
+import MetaStorage from 'src/singletons/MetaStorage';
 
-import ENV_CONFIG from "src/env.config";
+import ENV_CONFIG from 'src/env.config';
 
 // Web3 Helper Function
 const Web3Helper = {
@@ -22,11 +22,11 @@ const Web3Helper = {
     return new Web3(provider);
   },
   // To Get Ethers Provider
-  getEthersProvider: function() {
+  getEthersProvider: function () {
     return new ethers.providers.Web3Provider(ENV_CONFIG.INFURA_API);
   },
   // To Get Ethers
-  getEthersSigner: function(address, provider) {
+  getEthersSigner: function (address, provider) {
     if (!provider) {
       provider = Web3Helper.getEthersProvider();
     }
@@ -117,10 +117,10 @@ const Web3Helper = {
       currentTime - storedWalletObject.ensRefreshTime > 1
     ) {
       const response = await Web3Helper.getENSReverseDomain(
-        storedWalletObject.wallet
+        storedWalletObject.wallet,
       );
 
-      let ens = "";
+      let ens = '';
       let timestamp = currentTime;
 
       if (response.success) {
@@ -145,35 +145,35 @@ const Web3Helper = {
     const endpoint = ENV_CONFIG.CNS_ENDPOINT;
 
     // prepare api url
-    const apiURL = endpoint + "?owner=" + wallet + "&extension=crypto";
+    const apiURL = endpoint + '?owner=' + wallet + '&extension=crypto';
 
     return await fetch(apiURL, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
     })
-      .then((response) => response.json())
-      .then((responseJson) => {
+      .then(response => response.json())
+      .then(responseJson => {
         let response = {
           success: false,
-          cns: "",
+          cns: '',
         };
 
-        if (responseJson["domains"]?.length > 0) {
+        if (responseJson['domains']?.length > 0) {
           response.success = true;
 
           let cns = '';
-          responseJson["domains"]?.map((item, i) => {
-            cns = cns + item["name"];
+          responseJson['domains']?.map((item, i) => {
+            cns = cns + item['name'];
 
-            if (i != responseJson["domains"]?.length - 1) {
-              cns = cns + " | ";
+            if (i != responseJson['domains']?.length - 1) {
+              cns = cns + ' | ';
             }
-          })
+          });
 
-          if (responseJson["domains"]?.length > 1) {
+          if (responseJson['domains']?.length > 1) {
             cns = `${cns}`;
           }
 
@@ -182,7 +182,7 @@ const Web3Helper = {
 
         return response;
       })
-      .catch((error) => {
+      .catch(error => {
         console.warn(error);
         return error;
       });
@@ -205,10 +205,10 @@ const Web3Helper = {
         !storedWalletObject.cnsRefreshTime)
     ) {
       const response = await Web3Helper.getCNSReverseDomain(
-        storedWalletObject.wallet
+        storedWalletObject.wallet,
       );
 
-      let cns = "";
+      let cns = '';
       let timestamp = currentTime;
 
       if (response.success) {
@@ -228,24 +228,20 @@ const Web3Helper = {
     return storedWalletObject;
   },
   // Check if the entry is non hex
-  isHex: (str) => {
-
+  isHex: str => {
     if (str.length == 0) {
       return true;
-    }
-    else if (str.length == 1 && str.substring(0, 1) === '0') {
+    } else if (str.length == 1 && str.substring(0, 1) === '0') {
       return true;
-    }
-    else if (str.length == 2 && str.substring(0, 2) === '0x') {
+    } else if (str.length == 2 && str.substring(0, 2) === '0x') {
       return true;
-    }
-    else {
+    } else {
       let modStr = str;
       if (str.substring(0, 2) === '0x') {
         modStr = str.substring(2);
       }
       modStr = modStr.toLowerCase();
-      return (/^[0-9a-f]+$/.test(modStr));
+      return /^[0-9a-f]+$/.test(modStr);
     }
   },
   // Resolve Domain name
@@ -253,18 +249,18 @@ const Web3Helper = {
     const resolution = new Resolution();
     return new Promise((resolve, reject) => {
       resolution
-      .addr(domain, currency)
-      .then((address) => {
-        console.log(address);
-        resolve(address);
-      })
-      .catch(err => {
-        console.log("got error");
-        console.log(err);
-        reject(err);
-      });
+        .addr(domain, currency)
+        .then(address => {
+          console.log(address);
+          resolve(address);
+        })
+        .catch(err => {
+          console.log('got error');
+          console.log(err);
+          reject(err);
+        });
     });
-  }
-}
+  },
+};
 
 export default Web3Helper;

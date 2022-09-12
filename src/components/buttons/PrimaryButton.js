@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react'
+import React, {Component, useState} from 'react';
 import {
   View,
   TouchableWithoutFeedback,
@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   Easing,
   StyleSheet,
-} from 'react-native'
+} from 'react-native';
 import {
   Ionicons,
   FontAwesome,
@@ -17,14 +17,14 @@ import {
   MaterialCommunityIcons,
   Feather,
   AntDesign,
-} from '@expo/vector-icons'
+} from '@expo/vector-icons';
 
-import GLOBALS from 'src/Globals'
+import GLOBALS from 'src/Globals';
 
 export default class PrimaryButton extends Component {
   // Constructor
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       bgColor: GLOBALS.COLORS.BLACK,
@@ -32,16 +32,16 @@ export default class PrimaryButton extends Component {
 
       fontColor: GLOBALS.COLORS.WHITE,
       toggleOverlay: false,
-    }
+    };
 
-    this.AnimatedColor = new Animated.Value(0)
+    this.AnimatedColor = new Animated.Value(0);
   }
 
   // COMPONENT MOUNTED
   componentDidMount() {
     // Update Colors
-    const { bgColor, fontColor } = this.props
-    this.updateColors(bgColor, fontColor)
+    const {bgColor, fontColor} = this.props;
+    this.updateColors(bgColor, fontColor);
   }
 
   // COMPONENT UPDATED
@@ -50,8 +50,8 @@ export default class PrimaryButton extends Component {
       this.props.bgColor !== prevProps.bgColor ||
       this.props.fontColor !== prevProps.fontColor
     ) {
-      const { bgColor, fontColor } = this.props
-      this.updateColors(bgColor, fontColor)
+      const {bgColor, fontColor} = this.props;
+      this.updateColors(bgColor, fontColor);
     }
   }
 
@@ -60,30 +60,30 @@ export default class PrimaryButton extends Component {
     this.setState({
       bgColor: bgColor,
       fontColor: fontColor,
-    })
-  }
+    });
+  };
 
   // Change Button Color
   setButtonColors = (newBgColor, newFontColor) => {
-    let bgColor = this.state.bgColor
-    let fontColor = this.state.fontColor
+    let bgColor = this.state.bgColor;
+    let fontColor = this.state.fontColor;
 
     if (newBgColor != null) {
-      bgColor = newBgColor
+      bgColor = newBgColor;
     }
 
     if (newFontColor != null) {
-      fontColor = newFontColor
+      fontColor = newFontColor;
     }
 
-    this.updateColors(bgColor, fontColor)
-  }
+    this.updateColors(bgColor, fontColor);
+  };
 
   // Change Button Color with Animation
   fadeFromToWithTime = (oldBGColor, newBgColor, time) => {
-    let animTime = 250
+    let animTime = 250;
     if (time) {
-      animTime = time
+      animTime = time;
     }
 
     this.setState(
@@ -104,69 +104,69 @@ export default class PrimaryButton extends Component {
               fadeColor: newBgColor,
             },
             () => {
-              this.AnimatedColor = new Animated.Value(0)
+              this.AnimatedColor = new Animated.Value(0);
             },
-          )
-        })
+          );
+        });
       },
-    )
-  }
+    );
+  };
 
   // Change State to refresh Color
-  toggleOverlay = (toggle) => {
+  toggleOverlay = toggle => {
     this.setState({
       toggleOverlay: toggle,
-    })
-  }
+    });
+  };
 
   // Render Icon
   renderIcon = (iconFactory, icon, color, size, iconAlignToLeft, title) => {
-    let Factory
+    let Factory;
 
     // Need to import to enable them
     switch (iconFactory) {
       case 'FontAwesome':
-        Factory = FontAwesome
-        break
+        Factory = FontAwesome;
+        break;
       case 'FontAwesome5':
-        Factory = FontAwesome5
-        break
+        Factory = FontAwesome5;
+        break;
       case 'EvilIcons':
-        Factory = EvilIcons
-        break
+        Factory = EvilIcons;
+        break;
       case 'MaterialIcons':
-        Factory = MaterialIcons
-        break
+        Factory = MaterialIcons;
+        break;
       case 'MaterialCommunityIcons':
-        Factory = MaterialCommunityIcons
-        break
+        Factory = MaterialCommunityIcons;
+        break;
       case 'Feather':
-        Factory = Feather
-        break
+        Factory = Feather;
+        break;
       default:
-        Factory = Ionicons
+        Factory = Ionicons;
     }
 
     if (iconFactory) {
-      let iconStyle = null
+      let iconStyle = null;
 
       if (iconFactory != 'Image') {
         return (
           <View style={[styles.iconContainer, iconStyle]}>
             <Factory name={icon} color={color} size={size} />
           </View>
-        )
+        );
       } else {
         return (
           <View style={[styles.iconContainer, iconStyle]}>
-            <Image style={[{ width: size }, styles.iconImage]} source={icon} />
+            <Image style={[{width: size}, styles.iconImage]} source={icon} />
           </View>
-        )
+        );
       }
     } else {
-      return null
+      return null;
     }
-  }
+  };
 
   // Set Render
   render() {
@@ -185,36 +185,36 @@ export default class PrimaryButton extends Component {
       loading,
       disabled,
       onPress,
-    } = this.props
+    } = this.props;
 
     // for updating style
-    let updatedButtonStyle = {}
+    let updatedButtonStyle = {};
 
     let fontStyle = {
       color: this.state.fontColor,
       fontSize: fontSize,
-    }
+    };
 
     // For constructing color
     let interpolateColor = this.AnimatedColor.interpolate({
       inputRange: [0, 100],
       outputRange: [this.state.bgColor, this.state.fadeColor],
-    })
+    });
 
     const animatedStyle = {
       backgroundColor: interpolateColor,
-    }
+    };
 
-    updatedButtonStyle.backgroundColor = this.state.bgColor
+    updatedButtonStyle.backgroundColor = this.state.bgColor;
 
-    let containerItemsPlacementStyle = {}
+    let containerItemsPlacementStyle = {};
     if (iconAlignToLeft) {
-      containerItemsPlacementStyle.flexDirection = 'row-reverse'
+      containerItemsPlacementStyle.flexDirection = 'row-reverse';
     }
 
-    let outerContainerStyle = {}
+    let outerContainerStyle = {};
     if (setHeight) {
-      updatedButtonStyle.height = setHeight
+      updatedButtonStyle.height = setHeight;
     }
 
     return (
@@ -223,16 +223,14 @@ export default class PrimaryButton extends Component {
           onPress={onPress}
           onPressIn={() => this.toggleOverlay(true)}
           onPressOut={() => this.toggleOverlay(false)}
-          disabled={disabled || loading}
-        >
+          disabled={disabled || loading}>
           <Animated.View
             style={[
               styles.innerContainer,
               setButtonStyle,
               updatedButtonStyle,
               animatedStyle,
-            ]}
-          >
+            ]}>
             {this.state.toggleOverlay == false ? null : (
               <View style={styles.overlayContainer}></View>
             )}
@@ -249,8 +247,7 @@ export default class PrimaryButton extends Component {
                   styles.container,
                   setButtonInnerStyle,
                   containerItemsPlacementStyle,
-                ]}
-              >
+                ]}>
                 {title && (
                   <Text style={[styles.title, fontStyle]}>{title}</Text>
                 )}
@@ -267,7 +264,7 @@ export default class PrimaryButton extends Component {
           </Animated.View>
         </TouchableWithoutFeedback>
       </View>
-    )
+    );
   }
 }
 
@@ -317,4 +314,4 @@ const styles = StyleSheet.create({
   iconAlignLeft: {
     paddingRight: 10,
   },
-})
+});

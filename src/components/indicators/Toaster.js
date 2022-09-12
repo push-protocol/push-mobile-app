@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react';
 import {
   StyleSheet,
   ActivityIndicator,
@@ -9,15 +9,15 @@ import {
   Easing,
   TouchableWithoutFeedback,
   Platform,
-} from 'react-native'
+} from 'react-native';
 
-import SafeAreaView from 'react-native-safe-area-view'
-import { Ionicons } from '@expo/vector-icons'
+import SafeAreaView from 'react-native-safe-area-view';
+import {Ionicons} from '@expo/vector-icons';
 
-import MaskedView from '@react-native-community/masked-view'
-import { LinearGradient } from 'expo-linear-gradient'
+import MaskedView from '@react-native-community/masked-view';
+import {LinearGradient} from 'expo-linear-gradient';
 
-import GLOBALS from 'src/Globals'
+import GLOBALS from 'src/Globals';
 
 const ToasterOptions = {
   TYPE: {
@@ -35,12 +35,12 @@ const ToasterOptions = {
   ICON_TYPE: {
     PROCESSING: 1,
   },
-}
+};
 
 class Toaster extends Component {
   // CONSTRUCTOR
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       msg: 'Hello World!',
@@ -50,21 +50,21 @@ class Toaster extends Component {
 
       translateY: new Animated.Value(0),
       render: true,
-    }
+    };
 
     // VARIABLES
-    this._isMounted = false
-    this._timer = null
+    this._isMounted = false;
+    this._timer = null;
   }
 
   // COMPONENT MOUNTED
   componentDidMount() {
-    this._isMounted = true
+    this._isMounted = true;
   }
 
   componentWillUnmount() {
-    this._isMounted = false
-    this.clearTimer()
+    this._isMounted = false;
+    this.clearTimer();
   }
 
   // FUNCTIONS
@@ -78,30 +78,30 @@ class Toaster extends Component {
         tapCB: tapCB,
       },
       () => {
-        this.clearTimer()
-        this.changeRenderState(true, hideAfterTime)
+        this.clearTimer();
+        this.changeRenderState(true, hideAfterTime);
       },
-    )
-  }
+    );
+  };
 
   // Change Render
   changeRenderState = (shouldOpen, hideAfterTime) => {
     if (shouldOpen == true) {
-      this.slideIn()
+      this.slideIn();
 
-      let delayTime = ToasterOptions.DELAY.LONG
+      let delayTime = ToasterOptions.DELAY.LONG;
 
       if (hideAfterTime) {
-        delayTime = Number(hideAfterTime)
+        delayTime = Number(hideAfterTime);
       }
 
       this._timer = setTimeout(() => {
-        this.changeRenderState(false)
-      }, delayTime)
+        this.changeRenderState(false);
+      }, delayTime);
     } else {
-      this.slideOut()
+      this.slideOut();
     }
-  }
+  };
 
   // Slide In / Out
   slideIn = () => {
@@ -112,14 +112,14 @@ class Toaster extends Component {
       () => {
         if (this.props.onWillshowToastCB) {
           try {
-            this.props.onWillshowToastCB()
+            this.props.onWillshowToastCB();
           } catch (err) {
-            console.warn('Error Calling onWillshowToastCB!')
-            console.warn(err)
+            console.warn('Error Calling onWillshowToastCB!');
+            console.warn(err);
           }
         }
       },
-    )
+    );
 
     Animated.timing(this.state.translateY, {
       toValue: 1,
@@ -129,24 +129,24 @@ class Toaster extends Component {
     }).start(() => {
       if (this.props.onDidshowToastCB) {
         try {
-          this.props.onDidshowToastCB()
+          this.props.onDidshowToastCB();
         } catch (err) {
-          console.warn('Error Calling onDidshowToastCB!')
-          console.warn(err)
+          console.warn('Error Calling onDidshowToastCB!');
+          console.warn(err);
         }
       }
-    })
-  }
+    });
+  };
 
   slideOut = () => {
-    this.clearTimer()
+    this.clearTimer();
 
     if (this.props.onWillHideToastCB) {
       try {
-        this.props.onWillHideToastCB()
+        this.props.onWillHideToastCB();
       } catch (err) {
-        console.warn('Error Calling onWillHideToastCB!')
-        console.warn(err)
+        console.warn('Error Calling onWillHideToastCB!');
+        console.warn(err);
       }
     }
 
@@ -154,27 +154,27 @@ class Toaster extends Component {
       toValue: 0,
       easing: Easing.easeInOut,
       duration: 300,
-      useNativeDriver:true
+      useNativeDriver: true,
     }).start(() => {
       this.setState({
         render: false,
-      })
+      });
 
       if (this.props.onDidHideToastCB) {
         try {
-          this.props.onDidHideToastCB()
+          this.props.onDidHideToastCB();
         } catch (err) {
-          console.warn('Error Calling onDidHideToastCB!')
-          console.warn(err)
+          console.warn('Error Calling onDidHideToastCB!');
+          console.warn(err);
         }
       }
-    })
-  }
+    });
+  };
 
   // Clear Timer
   clearTimer() {
     // Handle an undefined timer rather than null
-    this._timer !== undefined ? clearTimeout(this._timer) : null
+    this._timer !== undefined ? clearTimeout(this._timer) : null;
   }
 
   // To handle press in
@@ -182,20 +182,20 @@ class Toaster extends Component {
     // Call on Tap Callback if there
     if (this.state.tapCB) {
       try {
-        this.state.tapCB()
+        this.state.tapCB();
       } catch (err) {
-        console.warn('Error Calling tapCB!')
-        console.warn(err)
+        console.warn('Error Calling tapCB!');
+        console.warn(err);
       }
     }
     // Change Render State to false
-    this.changeRenderState(false)
-  }
+    this.changeRenderState(false);
+  };
 
   // To render icon
   renderInner = (msg, icon, type, iconStyle, iconFont) => {
     if (!icon || icon === '') {
-      return <Text style={styles.message}>{msg}</Text>
+      return <Text style={styles.message}>{msg}</Text>;
     } else if (icon === ToasterOptions.ICON_TYPE.PROCESSING) {
       return (
         <View style={styles.inner}>
@@ -204,7 +204,7 @@ class Toaster extends Component {
           </View>
           <Text style={styles.message}>{msg}</Text>
         </View>
-      )
+      );
     } else {
       return (
         <View style={styles.inner}>
@@ -218,45 +218,45 @@ class Toaster extends Component {
           </View>
           <Text style={styles.message}>{msg}</Text>
         </View>
-      )
+      );
     }
-  }
+  };
 
   // Return color for type
   returnColor = (type, forIcon) => {
-    let color
+    let color;
 
     switch (this.state.type) {
       case ToasterOptions.TYPE.GRADIENT_PRIMARY:
-        color = GLOBALS.COLORS.GRADIENT_PRIMARY
-        break
+        color = GLOBALS.COLORS.GRADIENT_PRIMARY;
+        break;
 
       case ToasterOptions.TYPE.PRIMARY_SECONDARY:
-        color = GLOBALS.COLORS.GRADIENT_SECONDARY
-        break
+        color = GLOBALS.COLORS.GRADIENT_SECONDARY;
+        break;
 
       case ToasterOptions.TYPE.THIRD_GRADIENT:
-        color = GLOBALS.COLORS.GRADIENT_THIRD
-        break
+        color = GLOBALS.COLORS.GRADIENT_THIRD;
+        break;
 
       case ToasterOptions.TYPE.GRADIENTTEXT:
-        color = GLOBALS.COLORS.WHITE
+        color = GLOBALS.COLORS.WHITE;
         if (forIcon) {
-          color = GLOBALS.COLORS.BLACK
+          color = GLOBALS.COLORS.BLACK;
         }
-        break
+        break;
 
       case ToasterOptions.TYPE.ERROR:
-        color = GLOBALS.COLORS.LIGHT_MAROON
-        break
+        color = GLOBALS.COLORS.LIGHT_MAROON;
+        break;
 
       default:
-        color = GLOBALS.COLORS.GRADIENT_PRIMARY
-        break
+        color = GLOBALS.COLORS.GRADIENT_PRIMARY;
+        break;
     }
 
-    return color
-  }
+    return color;
+  };
 
   // RENDER
   render() {
@@ -265,51 +265,52 @@ class Toaster extends Component {
       onDidshowToastCB,
       onWillHideToastCB,
       onDidHideToastCB,
-    } = this.props
+    } = this.props;
 
-    let addedBGContainerStyles = {}
-    let iconStyle = {}
-    let iconFont = 14
+    let addedBGContainerStyles = {};
+    let iconStyle = {};
+    let iconFont = 14;
 
     switch (this.state.type) {
       case ToasterOptions.TYPE.GRADIENT_PRIMARY:
-        addedBGContainerStyles.backgroundColor = GLOBALS.COLORS.GRADIENT_PRIMARY
-        break
+        addedBGContainerStyles.backgroundColor =
+          GLOBALS.COLORS.GRADIENT_PRIMARY;
+        break;
 
       case ToasterOptions.TYPE.GRADIENT_SECONDARY:
         addedBGContainerStyles.backgroundColor =
-          GLOBALS.COLORS.GRADIENT_SECONDARY
-        break
+          GLOBALS.COLORS.GRADIENT_SECONDARY;
+        break;
 
       case ToasterOptions.TYPE.GRADIENT_THIRD:
-        addedBGContainerStyles.backgroundColor = GLOBALS.COLORS.GRADIENT_THIRD
-        break
+        addedBGContainerStyles.backgroundColor = GLOBALS.COLORS.GRADIENT_THIRD;
+        break;
 
       case ToasterOptions.TYPE.GRADIENTTEXT:
-        addedBGContainerStyles.backgroundColor = GLOBALS.COLORS.WHITE
+        addedBGContainerStyles.backgroundColor = GLOBALS.COLORS.WHITE;
         iconStyle = {
           backgroundColor: GLOBALS.COLORS.TRANSPARENT,
           marginRight: 5,
           paddingHorizontal: 2,
-        }
-        iconFont = 22
-        break
+        };
+        iconFont = 22;
+        break;
 
       case ToasterOptions.TYPE.ERROR:
-        addedBGContainerStyles.backgroundColor = GLOBALS.COLORS.LIGHT_MAROON
-        break
+        addedBGContainerStyles.backgroundColor = GLOBALS.COLORS.LIGHT_MAROON;
+        break;
 
       default:
-        addedBGContainerStyles.backgroundColor = GLOBALS.COLORS.GRADIENT_PRIMARY
-        break
+        addedBGContainerStyles.backgroundColor =
+          GLOBALS.COLORS.GRADIENT_PRIMARY;
+        break;
     }
 
     return this.state.render == false ? null : (
       <TouchableWithoutFeedback
         onPress={() => {
-          this.handleOnPress()
-        }}
-      >
+          this.handleOnPress();
+        }}>
         <Animated.View
           style={[
             styles.container,
@@ -323,8 +324,7 @@ class Toaster extends Component {
                 },
               ],
             },
-          ]}
-        >
+          ]}>
           <View style={[styles.content, addedBGContainerStyles]}>
             {this.state.type == ToasterOptions.TYPE.GRADIENTTEXT ? (
               <MaskedView
@@ -335,8 +335,7 @@ class Toaster extends Component {
                   this.state.type,
                   iconStyle,
                   iconFont,
-                )}
-              >
+                )}>
                 {this.renderInner(
                   this.state.msg,
                   this.state.icon,
@@ -352,8 +351,7 @@ class Toaster extends Component {
                   ]}
                   style={[styles.fullgradient]}
                   start={[0.1, 0.3]}
-                  end={[1, 1]}
-                ></LinearGradient>
+                  end={[1, 1]}></LinearGradient>
               </MaskedView>
             ) : (
               this.renderInner(
@@ -367,7 +365,7 @@ class Toaster extends Component {
           </View>
         </Animated.View>
       </TouchableWithoutFeedback>
-    )
+    );
   }
 }
 
@@ -434,6 +432,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
   },
-})
+});
 
-export { ToasterOptions, Toaster }
+export {ToasterOptions, Toaster};

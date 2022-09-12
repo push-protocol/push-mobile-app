@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Image,
@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import AnimatedEPNSIcon from 'src/components/custom/AnimatedEPNSIcon';
-import AppBadgeHelper from "src/helpers/AppBadgeHelper";
+import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 import GLOBALS from 'src/Globals';
@@ -22,13 +22,11 @@ export default class EPNSNotifierIcon extends Component {
     this.state = {
       badge: 0,
       fader: new Animated.Value(0),
-    }
+    };
   }
 
   // COMPONENT MOUNTED
-  componentDidMount() {
-
-  }
+  componentDidMount() {}
 
   // FUNCTIONS
   // To get badge count
@@ -37,29 +35,29 @@ export default class EPNSNotifierIcon extends Component {
     const prevBadge = await MetaStorage.instance.getPreviousBadgeCount();
 
     if (newBadge != prevBadge) {
-      this.refs.bell.animateBell(
-        () => {
-          // Call on New Notification
-          if (this.props.onNewNotifications) {
-            this.props.onNewNotifications();
-          }
-
-          // Set the badge after animation
-          this.setAndAnimatedBadge(newBadge - prevBadge, prevBadge);
+      this.refs.bell.animateBell(() => {
+        // Call on New Notification
+        if (this.props.onNewNotifications) {
+          this.props.onNewNotifications();
         }
-      );
-    }
-    else {
+
+        // Set the badge after animation
+        this.setAndAnimatedBadge(newBadge - prevBadge, prevBadge);
+      });
+    } else {
       // Just set the badge
       this.setAndAnimatedBadge(newBadge - prevBadge, prevBadge);
     }
-  }
+  };
 
   // To Animate and show badge count
   // AnimateBadge
   setAndAnimatedBadge = async (badgeCount, prevBadgeCount) => {
     // Update on Meta Storage as well
-    await MetaStorage.instance.setCurrentAndPreviousBadgeCount(badgeCount, prevBadgeCount);
+    await MetaStorage.instance.setCurrentAndPreviousBadgeCount(
+      badgeCount,
+      prevBadgeCount,
+    );
 
     // Set app badge count as well
     AppBadgeHelper.setAppBadgeCount(badgeCount);
@@ -72,50 +70,40 @@ export default class EPNSNotifierIcon extends Component {
 
     if (shouldOpen == true) {
       this.setState({
-        badge: badgeCount
-      })
+        badge: badgeCount,
+      });
 
-      Animated.timing(
-        this.state.fader, {
-          toValue: 1,
-          duration: 250,
-          useNativeDriver:true
-        }
-      ).start();
-    }
-    else {
-      Animated.timing(
-        this.state.fader, {
-          toValue: 0,
-          duration: 250,
-          useNativeDriver:true
-        }
-      ).start(() => {
+      Animated.timing(this.state.fader, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(this.state.fader, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }).start(() => {
         this.setState({
-          badge: badgeCount
-        })
+          badge: badgeCount,
+        });
       });
     }
-  }
+  };
 
   // Handle Press
-  handleOnPress = async (onPressFunc) => {
+  handleOnPress = async onPressFunc => {
     if (onPressFunc) {
       onPressFunc();
     }
 
     // Reset Badge Count to 0 and Previous to 0
     this.setAndAnimatedBadge(0, 0);
-  }
+  };
 
   // RENDER
   render() {
-    const {
-      style,
-      iconSize,
-      onPress,
-      onNewNotifications
-    } = this.props;
+    const {style, iconSize, onPress, onNewNotifications} = this.props;
 
     let onPressFunc = onPress;
     let disabled = false;
@@ -125,27 +113,22 @@ export default class EPNSNotifierIcon extends Component {
     }
 
     return (
-      <View style={[ styles.container, style ]}>
+      <View style={[styles.container, style]}>
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
             // Handle on press
             this.handleOnPress(onPressFunc);
-          }}
-        >
+          }}>
           <Animated.View
-            style = {[ styles.badgeContainer, {opacity: this.state.fader} ]}
-            pointerEvents = "none"
-          >
-            <Text
-              style = {styles.badge}
-              numberOfLines={1}
-            >
+            style={[styles.badgeContainer, {opacity: this.state.fader}]}
+            pointerEvents="none">
+            <Text style={styles.badge} numberOfLines={1}>
               {this.state.badge}
             </Text>
           </Animated.View>
           <AnimatedEPNSIcon
-            ref='bell'
+            ref="bell"
             style={[styles.icon, {width: iconSize}]}
             withoutRinger={true}
           />
@@ -191,6 +174,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 12,
-    color: GLOBALS.COLORS.WHITE
-  }
+    color: GLOBALS.COLORS.WHITE,
+  },
 });

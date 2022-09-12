@@ -1,8 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit'
-import axios from 'axios'
-import ENV_CONFIG from 'src/env.config'
-import AppBadgeHelper from 'src/helpers/AppBadgeHelper'
-import { ToasterOptions, Toaster } from 'src/components/indicators/Toaster'
+import {createSlice} from '@reduxjs/toolkit';
+import axios from 'axios';
+import ENV_CONFIG from 'src/env.config';
+import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
+import {ToasterOptions, Toaster} from 'src/components/indicators/Toaster';
 
 const initialState = {
   feed: [],
@@ -10,37 +10,37 @@ const initialState = {
   refreshing: false,
   loading: false,
   endReached: false,
-}
+};
 
 const feedSlice = createSlice({
   name: 'feed',
   initialState,
   reducers: {
     setFeed: (state, action) => {
-      state.feed = [...action.payload]
+      state.feed = [...action.payload];
     },
     clearFeed: (state, action) => {
-      state.feed = []
+      state.feed = [];
     },
     addMoreFeed: (state, action) => {
-      state.feed = [...state.feed, ...action.payload]
+      state.feed = [...state.feed, ...action.payload];
     },
     setPage: (state, action) => {
-      state.page = action.payload
+      state.page = action.payload;
     },
     setRefreshing: (state, action) => {
-      state.refreshing = action.payload
+      state.refreshing = action.payload;
     },
     setLoading: (state, action) => {
-      state.loading = action.payload
+      state.loading = action.payload;
     },
     setEndReached: (state, action) => {
-      state.endReached = action.payload
+      state.endReached = action.payload;
     },
   },
-})
+});
 
-export const selectFeedState = (state) => state.feed
+export const selectFeedState = state => state.feed;
 
 export const {
   setFeed,
@@ -50,9 +50,9 @@ export const {
   setLoading,
   setEndReached,
   clearFeed,
-} = feedSlice.actions
+} = feedSlice.actions;
 
-export default feedSlice.reducer
+export default feedSlice.reducer;
 
 export const fetchFeedData = ({
   wallet,
@@ -62,17 +62,17 @@ export const fetchFeedData = ({
   loading = false,
   endReached = false,
 }) => {
-  return async (dispatch) => {
+  return async dispatch => {
     if (!endReached || rewrite == true) {
       if (!loading) {
         // Check if this is a rewrite
-        let paging = page
+        let paging = page;
         if (rewrite) {
-          paging = 1
+          paging = 1;
         }
 
-        dispatch(setLoading(true))
-        const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_GET_FEEDS
+        dispatch(setLoading(true));
+        const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_GET_FEEDS;
 
         await fetch(apiURL, {
           method: 'POST',
@@ -87,45 +87,45 @@ export const fetchFeedData = ({
             op: 'read',
           }),
         })
-          .then((response) => response.json())
-          .then((resJson) => {
+          .then(response => response.json())
+          .then(resJson => {
             if (resJson.count != 0 && resJson.results != []) {
               // clear the notifs if present
-              AppBadgeHelper.setAppBadgeCount(0)
+              AppBadgeHelper.setAppBadgeCount(0);
 
               // toast.current.show('New Notifications fetched')
               if (rewrite) {
-                dispatch(setFeed([...resJson.results]))
-                dispatch(setEndReached(false))
+                dispatch(setFeed([...resJson.results]));
+                dispatch(setEndReached(false));
               } else {
-                dispatch(addMoreFeed([...resJson.results]))
+                dispatch(addMoreFeed([...resJson.results]));
               }
 
-              dispatch(setPage(paging + 1))
+              dispatch(setPage(paging + 1));
 
               ToasterFunc &&
                 ToasterFunc(
                   'New Notifications Loaded!',
                   '',
                   ToasterOptions.TYPE.GRADIENT_PRIMARY,
-                )
+                );
             } else {
-              dispatch(setEndReached(true))
+              dispatch(setEndReached(true));
               ToasterFunc &&
                 ToasterFunc(
                   'No More Notifications',
                   '',
                   ToasterOptions.TYPE.ERROR,
-                )
+                );
             }
           })
-          .catch((error) => {
-            console.warn(error)
-          })
+          .catch(error => {
+            console.warn(error);
+          });
 
-        dispatch(setLoading(false))
-        dispatch(setRefreshing(false))
+        dispatch(setLoading(false));
+        dispatch(setRefreshing(false));
       }
     }
-  }
-}
+  };
+};

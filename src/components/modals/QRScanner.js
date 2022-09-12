@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,14 +6,14 @@ import {
   TouchableWithoutFeedback,
   StatusBar,
   Platform,
-  Animated
+  Animated,
 } from 'react-native';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 import SafeAreaView from 'react-native-safe-area-view';
 
-import { Camera } from 'expo-camera';
-import { Ionicons } from '@expo/vector-icons';
-import { Audio } from 'expo-av';
+import {Camera} from 'expo-camera';
+import {Ionicons} from '@expo/vector-icons';
+import {Audio} from 'expo-av';
 
 import StylishLabel from 'src/components/labels/StylishLabel';
 
@@ -32,93 +32,85 @@ export default class QRScanner extends Component {
       fader: new Animated.Value(0),
 
       isHeaderEnabled: false,
-    }
-
+    };
   }
 
   // COMPONENT MOUNTED
-  componentDidMount() {
-
-  }
+  componentDidMount() {}
 
   // COMPONENT UNMOUNTED
-  componentWillUnmount() {
-
-  }
+  componentWillUnmount() {}
 
   // FUNCTIONS
   // Set State
   changeRenderState = (shouldOpen, navigation) => {
     if (shouldOpen == true) {
       this.animateFadeIn(navigation);
-    }
-    else {
+    } else {
       this.animateFadeOut(navigation);
     }
-  }
+  };
 
   // Set Fade In and Fade Out Animation
-  animateFadeIn = (navigation) => {
+  animateFadeIn = navigation => {
     this.setState({
-      render: true
+      render: true,
     });
 
     if (navigation) {
       if (navigation.headerShown) {
         this.setState({
-          isHeaderEnabled: true
+          isHeaderEnabled: true,
         });
       }
 
       navigation.setOptions({
-        headerShown: false
-      })
+        headerShown: false,
+      });
     }
 
-    Animated.timing(
-      this.state.fader, {
-        toValue: 1,
-        duration: 250,
-        useNativeDriver: true,
-      }
-    ).start(() => {
+    Animated.timing(this.state.fader, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => {
       this.setState({
-        camrender: true
+        camrender: true,
       });
     });
-  }
+  };
 
-  animateFadeOut = (navigation) => {
-    this.setState({
-      camrender: false
-    }, () => {
-      Animated.timing(
-        this.state.fader, {
+  animateFadeOut = navigation => {
+    this.setState(
+      {
+        camrender: false,
+      },
+      () => {
+        Animated.timing(this.state.fader, {
           toValue: 0,
           duration: 250,
           useNativeDriver: true,
-        }
-      ).start(() => {
-        this.setState({
-          render: false
-        });
+        }).start(() => {
+          this.setState({
+            render: false,
+          });
 
-        if (navigation) {
-          if (this.state.isHeaderEnabled) {
-            navigation.setOptions({
-              headerShown: true
-            })
+          if (navigation) {
+            if (this.state.isHeaderEnabled) {
+              navigation.setOptions({
+                headerShown: true,
+              });
+            }
           }
-
-        }
-      });
-    });
-  }
+        });
+      },
+    );
+  };
 
   // Toggle QR Scanner
-  toggleQRScanner = (closeFunc) => {
+  toggleQRScanner = closeFunc => {
     closeFunc();
-  }
+  };
 
   // Handle barcode scanning
   handleBarCodeScanned = async (scanned, navigation, doneFunc) => {
@@ -138,92 +130,78 @@ export default class QRScanner extends Component {
 
     // Call done function
     doneFunc(code);
-  }
+  };
 
   // RENDER
   render() {
-    const {
-      style,
-      navigation,
-      title,
-      doneFunc,
-      closeFunc
-    } = this.props;
+    const {style, navigation, title, doneFunc, closeFunc} = this.props;
 
     let paddingTop = getStatusBarHeight();
     let backicon = 'ios-arrow-back';
     if (Platform.OS == 'android') {
-      backicon = "md-arrow-back";
+      backicon = 'md-arrow-back';
     }
 
-    return (
-      this.state.render == false
-        ? null
-        : <Animated.View style={[ styles.container, {opacity: this.state.fader} ]}>
-            <StatusBar
-              animated={true}
-              translucent={true}
-              barStyle="light-content"
-              backgroundColor="#000000"
-            />
+    return this.state.render == false ? null : (
+      <Animated.View style={[styles.container, {opacity: this.state.fader}]}>
+        <StatusBar
+          animated={true}
+          translucent={true}
+          barStyle="light-content"
+          backgroundColor="#000000"
+        />
 
-          {
-            this.state.camrender == false
-            ? null
-            :  <Camera
-                onBarCodeScanned={(scanned) => this.handleBarCodeScanned(scanned, navigation, doneFunc)}
-                style={styles.preview}
-              />
-          }
+        {this.state.camrender == false ? null : (
+          <Camera
+            onBarCodeScanned={scanned =>
+              this.handleBarCodeScanned(scanned, navigation, doneFunc)
+            }
+            style={styles.preview}
+          />
+        )}
 
-            <SafeAreaView
-              forceInset={{ top: 'never', bottom: 'always' }}
-            >
-
-              <View style={styles.focusContainer}>
-                <View style={styles.focusView}>
-                  <View style={[ styles.borderView, styles.leftTopBorder]}></View>
-                  <View style={[ styles.borderView, styles.rightTopBorder]}></View>
-                  <View style={[ styles.borderView, styles.leftBottomBorder]}></View>
-                  <View style={[ styles.borderView, styles.rightBottomBorder]}></View>
-                </View>
-                  <StylishLabel
-                    style={styles.scannerText}
-                    fontSize={16}
-                    title={title}
-                  />
-                </View>
-
-            </SafeAreaView>
-
-            <View style={[ styles.topBar, {paddingTop: paddingTop} ]}>
-              <TouchableWithoutFeedback
-                onPressIn={() => {
-                  this.setState({
-                    backButtonColor: GLOBALS.COLORS.LINKS
-                  });
-                }}
-                onPressOut={() => {
-                  this.setState({
-                    backButtonColor: GLOBALS.COLORS.WHITE
-                  });
-                }}
-                onPress={() => {
-                  this.toggleQRScanner(closeFunc)
-                }}
-              >
-                <View style={[ styles.button, styles.back ]}>
-                  <Ionicons
-                      name={backicon}
-                      color={this.state.backButtonColor}
-                      size={30}
-                  />
-                </View>
-              </TouchableWithoutFeedback>
+        <SafeAreaView forceInset={{top: 'never', bottom: 'always'}}>
+          <View style={styles.focusContainer}>
+            <View style={styles.focusView}>
+              <View style={[styles.borderView, styles.leftTopBorder]}></View>
+              <View style={[styles.borderView, styles.rightTopBorder]}></View>
+              <View style={[styles.borderView, styles.leftBottomBorder]}></View>
+              <View
+                style={[styles.borderView, styles.rightBottomBorder]}></View>
             </View>
+            <StylishLabel
+              style={styles.scannerText}
+              fontSize={16}
+              title={title}
+            />
+          </View>
+        </SafeAreaView>
 
-          </Animated.View>
-
+        <View style={[styles.topBar, {paddingTop: paddingTop}]}>
+          <TouchableWithoutFeedback
+            onPressIn={() => {
+              this.setState({
+                backButtonColor: GLOBALS.COLORS.LINKS,
+              });
+            }}
+            onPressOut={() => {
+              this.setState({
+                backButtonColor: GLOBALS.COLORS.WHITE,
+              });
+            }}
+            onPress={() => {
+              this.toggleQRScanner(closeFunc);
+            }}>
+            <View style={[styles.button, styles.back]}>
+              <Ionicons
+                name={backicon}
+                color={this.state.backButtonColor}
+                size={30}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </Animated.View>
     );
   }
 }
@@ -235,7 +213,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     ...StyleSheet.absoluteFill,
-    backgroundColor: GLOBALS.COLORS.BLACK
+    backgroundColor: GLOBALS.COLORS.BLACK,
   },
   preview: {
     position: 'absolute',
@@ -256,9 +234,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 10,
   },
-  back: {
-
-  },
+  back: {},
   focusContainer: {
     width: '100%',
     height: '100%',
@@ -309,5 +285,5 @@ const styles = StyleSheet.create({
     color: GLOBALS.COLORS.WHITE,
     fontWeight: 'bold',
     textAlign: 'center',
-  }
+  },
 });

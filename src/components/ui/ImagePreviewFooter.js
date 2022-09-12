@@ -1,53 +1,53 @@
-import React from "react";
-import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React from 'react';
+import {View, Image, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 
 import * as Sharing from 'expo-sharing';
 
 type Props = {
-  imageIndex: number;
-  imagesCount: number;
+  imageIndex: number,
+  imagesCount: number,
 };
 
-const ImagePreviewFooter = ({ imageIndex, imagesCount, fileURI }: Props) => {
-
-  const openSharing = async (fileURI) => {
+const ImagePreviewFooter = ({imageIndex, imagesCount, fileURI}: Props) => {
+  const openSharing = async fileURI => {
     if (!(await Sharing.isAvailableAsync())) {
       // Do Nothing just return
       return;
     }
 
     Sharing.shareAsync(fileURI);
-  }
+  };
 
   return (
     <SafeAreaView>
       <View style={styles.root}>
-        <View style = {styles.centerView}>
-          <Text style={styles.text}>{`${imageIndex + 1} / ${imagesCount}`}</Text>
+        <View style={styles.centerView}>
+          <Text style={styles.text}>{`${
+            imageIndex + 1
+          } / ${imagesCount}`}</Text>
         </View>
-        <View style = {styles.rightView}>
+        <View style={styles.rightView}>
           <TouchableOpacity
-            style = {styles.button}
-            onPress = {() => (openSharing(fileURI))}
-          >
+            style={styles.button}
+            onPress={() => openSharing(fileURI)}>
             <Text style={styles.buttontext}>Share</Text>
             <Image
-              style = {styles.image}
-              source = {require('assets/ui/share.png')}
+              style={styles.image}
+              source={require('assets/ui/share.png')}
             />
           </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#00000077",
-    alignItems: "center",
+    backgroundColor: '#00000077',
+    alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
   },
@@ -55,18 +55,18 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   rightView: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     alignSelf: 'flex-end',
     padding: 10,
   },
   text: {
     fontSize: 14,
-    color: "#FFF"
+    color: '#FFF',
   },
   button: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     flexDirection: 'row',
   },
   image: {
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   },
   buttontext: {
     fontSize: 14,
-    color: "#FFF",
+    color: '#FFF',
     paddingHorizontal: 10,
   },
 });

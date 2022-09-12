@@ -1,20 +1,20 @@
-import React from 'react'
-import { createStackNavigator } from '@react-navigation/stack'
+import React from 'react';
+import {createStackNavigator} from '@react-navigation/stack';
 
-import GLOBALS from 'src/Globals'
+import GLOBALS from 'src/Globals';
 
-import BiometricScreen from './screens/BiometricScreen'
-import SignInScreen from './screens/SignInScreen'
-import NewWalletSignInScreen from './screens/NewWalletSignInScreen'
-import WelcomeScreen from './screens/WelcomeScreen'
-import PushNotifyScreen from './screens/PushNotifyScreen'
-import SetupCompleteScreen from './screens/SetupCompleteScreen'
-import { View,Text } from 'react-native'
+import BiometricScreen from './screens/BiometricScreen';
+import SignInScreen from './screens/SignInScreen';
+import NewWalletSignInScreen from './screens/NewWalletSignInScreen';
+import WelcomeScreen from './screens/WelcomeScreen';
+import PushNotifyScreen from './screens/PushNotifyScreen';
+import SetupCompleteScreen from './screens/SetupCompleteScreen';
+import {View, Text} from 'react-native';
 
-const Stack = createStackNavigator()
+const Stack = createStackNavigator();
 
 const OnboardingNavigator = () => {
-  console.log("rendering now");
+  console.log('rendering now');
   return (
     <Stack.Navigator
       initialRouteName={GLOBALS.SCREENS.WELCOME}
@@ -38,8 +38,7 @@ const OnboardingNavigator = () => {
         headerTintColor: GLOBALS.COLORS.BLACK,
         headerTitleAlign: 'center',
         headerBackTitleVisible: false,
-      }}
-    >
+      }}>
       <Stack.Screen
         name={GLOBALS.SCREENS.WELCOME}
         component={WelcomeScreen}
@@ -83,7 +82,7 @@ const OnboardingNavigator = () => {
         }}
       />
     </Stack.Navigator>
-  )
-}
+  );
+};
 
-export default OnboardingNavigator
+export default OnboardingNavigator;

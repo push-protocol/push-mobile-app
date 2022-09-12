@@ -1,16 +1,16 @@
-import React, { Component } from 'react'
-import { View, Image, Animated, Easing, StyleSheet } from 'react-native'
+import React, {Component} from 'react';
+import {View, Image, Animated, Easing, StyleSheet} from 'react-native';
 
 export default class DetailedInfoPresenter extends Component {
   // CONSTRUCTOR
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       y: 0,
       ay: new Animated.Value(0),
       fader: new Animated.Value(0),
-    }
+    };
   }
 
   // COMPONENT UPDATED
@@ -19,14 +19,14 @@ export default class DetailedInfoPresenter extends Component {
       this.props.animated == true &&
       this.props.startAnimation !== prevProps.startAnimation
     ) {
-      this.showMessage(this.props.animationCompleteCallback)
+      this.showMessage(this.props.animationCompleteCallback);
     }
   }
 
   // VIEW RELATED
-  findDimensions = (layout) => {
-    const { height } = layout
-    const halfH = height / 2
+  findDimensions = layout => {
+    const {height} = layout;
+    const halfH = height / 2;
 
     this.setState(
       {
@@ -37,13 +37,13 @@ export default class DetailedInfoPresenter extends Component {
           toValue: halfH,
           duration: 0,
           useNativeDriver: true,
-        }).start()
+        }).start();
       },
-    )
-  }
+    );
+  };
 
   // FUNCTIONS
-  showMessage = (afterCallback) => {
+  showMessage = afterCallback => {
     Animated.parallel([
       Animated.timing(this.state.ay, {
         toValue: 0,
@@ -61,24 +61,24 @@ export default class DetailedInfoPresenter extends Component {
       ]),
     ]).start(() => {
       if (afterCallback) {
-        afterCallback()
+        afterCallback();
       }
-    })
-  }
+    });
+  };
 
   // RENDER
   render() {
-    const { style, icon, contentView, animated } = this.props
+    const {style, icon, contentView, animated} = this.props;
 
-    let logoStyle = {}
-    let contentStyle = {}
+    let logoStyle = {};
+    let contentStyle = {};
 
     if (animated) {
       logoStyle = {
-        transform: [{ translateY: this.state.ay }],
-      }
+        transform: [{translateY: this.state.ay}],
+      };
 
-      contentStyle = { opacity: this.state.fader }
+      contentStyle = {opacity: this.state.fader};
     }
 
     return (
@@ -89,14 +89,13 @@ export default class DetailedInfoPresenter extends Component {
 
         <Animated.View
           style={[styles.content, contentStyle]}
-          onLayout={(event) => {
-            this.findDimensions(event.nativeEvent.layout)
-          }}
-        >
+          onLayout={event => {
+            this.findDimensions(event.nativeEvent.layout);
+          }}>
           {contentView}
         </Animated.View>
       </View>
-    )
+    );
   }
 }
 
@@ -119,4 +118,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-})
+});

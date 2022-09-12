@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,26 +7,26 @@ import {
   Linking,
   Image,
   ToastAndroid,
-} from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
-import * as Device from "expo-device";
-import { LinearGradient } from "expo-linear-gradient";
-import moment from "moment";
+} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
+import * as Device from 'expo-device';
+import {LinearGradient} from 'expo-linear-gradient';
+import moment from 'moment';
 
-import StylishLabel from "src/components/labels/StylishLabel";
-import EPNSActivity from "src/components/loaders/EPNSActivity";
-import { ToasterOptions } from "src/components/indicators/Toaster";
+import StylishLabel from 'src/components/labels/StylishLabel';
+import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import {ToasterOptions} from 'src/components/indicators/Toaster';
 
-import DownloadHelper from "src/helpers/DownloadHelper";
-import ImageDownloadWithIndicator from "../../loaders/ImageDownloadWithIndicator";
-import VideoDownloadWithIndicator from "src/components/loaders/VideoDownloadWithIndicator";
+import DownloadHelper from 'src/helpers/DownloadHelper';
+import ImageDownloadWithIndicator from '../../loaders/ImageDownloadWithIndicator';
+import VideoDownloadWithIndicator from 'src/components/loaders/VideoDownloadWithIndicator';
 
-import CryptoHelper from "src/helpers/CryptoHelper";
-import Utilities from "src/singletons/Utilities";
+import CryptoHelper from 'src/helpers/CryptoHelper';
+import Utilities from 'src/singletons/Utilities';
 
-import GLOBALS from "src/Globals";
+import GLOBALS from 'src/Globals';
 
-const FeedItem = (props) => {
+const FeedItem = props => {
   // // CONSTRUCTOR
   // constructor(props) {
   //   super(props);
@@ -39,7 +39,7 @@ const FeedItem = (props) => {
     // console.log("PROPS", props);
   }, []);
 
-  const { style, onImagePreview } = props;
+  const {style, onImagePreview} = props;
 
   const item = props.item.payload.data;
 
@@ -51,7 +51,7 @@ const FeedItem = (props) => {
   const [cta, setCta] = useState(null);
   const [img, setImg] = useState(null);
   const [timestamp, setTimestamp] = useState(false);
-  const [type, setType] = useState("1");
+  const [type, setType] = useState('1');
 
   const [loadingFeed, setLoadingFeed] = useState(props.loading);
 
@@ -67,11 +67,11 @@ const FeedItem = (props) => {
 
   // }
 
-  const onPress = (url) => {
+  const onPress = url => {
     if (validURL(url) || 1) {
       // console.log("OPENING URL ", url);
       // Bypassing the check so that custom app domains can be opened
-      Linking.canOpenURL(url).then((supported) => {
+      Linking.canOpenURL(url).then(supported => {
         if (supported) {
           Linking.openURL(url);
         } else {
@@ -84,15 +84,15 @@ const FeedItem = (props) => {
   };
 
   // to check valid url
-  const validURL = (str) => {
+  const validURL = str => {
     var pattern = new RegExp(
-      "^(https?:\\/\\/)?" + // protocol
-        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-        "(\\#[-a-z\\d_]*)?$",
-      "i"
+      '^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$',
+      'i',
     ); // fragment locator
     return !!pattern.test(str);
   };
@@ -101,26 +101,26 @@ const FeedItem = (props) => {
   const compileMessage = async () => {
     // console.log("CALLED", props.item.payload.data.type);
     let _sub =
-      !props.item.payload.data.asub || props.item.payload.data.asub === ""
+      !props.item.payload.data.asub || props.item.payload.data.asub === ''
         ? null
         : props.item.payload.data.asub;
     let msg1 =
-      !props.item.payload.data.amsg || props.item.payload.data.amsg === ""
+      !props.item.payload.data.amsg || props.item.payload.data.amsg === ''
         ? null
         : props.item.payload.data.amsg;
     let _cta =
-      !props.item.payload.data.acta || props.item.payload.data.acta === ""
+      !props.item.payload.data.acta || props.item.payload.data.acta === ''
         ? null
         : props.item.payload.data.acta;
     let _img =
-      !props.item.payload.data.aimg || props.item.payload.data.aimg === ""
+      !props.item.payload.data.aimg || props.item.payload.data.aimg === ''
         ? null
         : props.item.payload.data.aimg;
 
     // console.log(typeOf props.item.type);
     if (
-      props.item.payload.data.type == "1" ||
-      props.item.payload.data.type == "3"
+      props.item.payload.data.type == '1' ||
+      props.item.payload.data.type == '3'
     ) {
       // all clear, plain message types
 
@@ -128,7 +128,7 @@ const FeedItem = (props) => {
       const matches = props.item.payload.data.amsg.match(/\[timestamp:(.*?)\]/);
       if (matches) {
         showTimestamp = matches[1];
-        msg1 = msg1.replace(/ *\[timestamp:[^)]*\] */g, "");
+        msg1 = msg1.replace(/ *\[timestamp:[^)]*\] */g, '');
       }
       setTimestamp(showTimestamp);
       setloading(false);
@@ -222,7 +222,7 @@ const FeedItem = (props) => {
 
   let iconURL = item.icon;
   if (internalBot == 1) {
-    iconURL = require("assets/ui/epnsbot.png");
+    iconURL = require('assets/ui/epnsbot.png');
   }
 
   // Also add secret icon if message type is 2
@@ -235,7 +235,7 @@ const FeedItem = (props) => {
   let ctaBorderEnabled = true;
   let _cta = item.acta;
 
-  if (!_cta || _cta === "") {
+  if (!_cta || _cta === '') {
     ctaBorderEnabled = false;
   }
 
@@ -252,17 +252,17 @@ const FeedItem = (props) => {
   let contentMsgVidStyle = {};
 
   let contentBodyStyle = {};
-  let containMode = "contain";
+  let containMode = 'contain';
   if (Utilities.instance.getDeviceType() == Device.DeviceType.TABLET) {
     // Change the style to better suit tablet
 
     contentInnerStyle = {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
     };
 
     contentImgStyle = {
-      width: "25%",
+      width: '25%',
       aspectRatio: 1,
     };
 
@@ -277,15 +277,14 @@ const FeedItem = (props) => {
       flex: 1,
     };
 
-    containMode = "cover";
+    containMode = 'cover';
   }
 
   return (
     <TouchableOpacity
       style={[styles.container, style]}
       onPress={() => onPress(cta)}
-      disabled={!ctaEnabled}
-    >
+      disabled={!ctaEnabled}>
       {ctaBorderEnabled ? (
         <LinearGradient
           colors={[
@@ -294,8 +293,7 @@ const FeedItem = (props) => {
           ]}
           style={[styles.cover]}
           start={[0.1, 0.3]}
-          end={[1, 1]}
-        ></LinearGradient>
+          end={[1, 1]}></LinearGradient>
       ) : (
         <View style={[styles.cover, styles.coverPlain]}></View>
       )}
@@ -305,15 +303,14 @@ const FeedItem = (props) => {
             <TouchableOpacity
               style={[styles.appLink]}
               onPress={() => onPress(item.url)}
-              disabled={!item.url || item.url === "" ? true : false}
-            >
+              disabled={!item.url || item.url === '' ? true : false}>
               {/* <Image
 								style={styles.appicon}
 								source={{ uri: internalBot ? iconURL : item.icon }}
 							/> */}
               <ImageDownloadWithIndicator
                 style={styles.appicon}
-                fileURL={internalBot ? "" : item.icon}
+                fileURL={internalBot ? '' : item.icon}
                 imgsrc={internalBot ? iconURL : false}
                 miniProgressLoader={true}
                 margin={2}
@@ -333,8 +330,7 @@ const FeedItem = (props) => {
                 ]}
                 style={[styles.cover]}
                 start={[0.1, 0.3]}
-                end={[1, 1]}
-              ></LinearGradient>
+                end={[1, 1]}></LinearGradient>
             </View>
           )}
         </View>
@@ -359,7 +355,7 @@ const FeedItem = (props) => {
                     fileURL={img}
                     imgsrc={false}
                     resizeMode={containMode}
-                    onPress={(fileURL) => {
+                    onPress={fileURL => {
                       onImagePreview(fileURL);
                     }}
                   />
@@ -377,7 +373,7 @@ const FeedItem = (props) => {
                       {moment
                         .utc(parseInt(timestamp) * 1000)
                         .local()
-                        .format("DD MMM YYYY | hh:mm A")}
+                        .format('DD MMM YYYY | hh:mm A')}
                     </Text>
                   </View>
                 )}
@@ -401,9 +397,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   cover: {
-    position: "absolute",
+    position: 'absolute',
     ...StyleSheet.absoluteFill,
-    justifyContent: "center",
+    justifyContent: 'center',
     flex: 1,
     borderRadius: GLOBALS.ADJUSTMENTS.FEED_ITEM_RADIUS,
   },
@@ -412,39 +408,39 @@ const styles = StyleSheet.create({
   },
   inner: {
     margin: 1,
-    overflow: "hidden",
+    overflow: 'hidden',
     borderRadius: GLOBALS.ADJUSTMENTS.FEED_ITEM_RADIUS,
   },
   header: {
-    width: "100%",
+    width: '100%',
     paddingVertical: 7,
     paddingHorizontal: 10,
     backgroundColor: GLOBALS.COLORS.SLIGHTER_GRAY,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderColor: GLOBALS.COLORS.SLIGHT_GRAY,
   },
   appInfo: {
     flex: 1,
-    alignItems: "center",
-    backgroundColor: "red",
+    alignItems: 'center',
+    backgroundColor: 'red',
   },
   appLink: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   appicon: {
     flex: 0,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 6,
     height: 24,
     aspectRatio: 1,
     marginRight: 5,
-    overflow: "hidden",
+    overflow: 'hidden',
     backgroundColor: GLOBALS.COLORS.SLIGHT_GRAY,
   },
   apptext: {
@@ -452,7 +448,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 12,
     color: GLOBALS.COLORS.MID_BLACK_TRANS,
-    fontWeight: "300",
+    fontWeight: '300',
   },
   appsecret: {
     width: 16,
@@ -466,7 +462,7 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   contentVid: {
-    width: "100%",
+    width: '100%',
   },
   msgVid: {
     borderColor: GLOBALS.COLORS.SLIGHT_GRAY,
@@ -474,21 +470,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   contentImg: {
-    width: "100%",
+    width: '100%',
     aspectRatio: 2,
   },
   msgImg: {
     borderColor: GLOBALS.COLORS.SLIGHT_GRAY,
     backgroundColor: GLOBALS.COLORS.SLIGHTER_GRAY,
     borderBottomWidth: 1,
-    resizeMode: "contain",
+    resizeMode: 'contain',
   },
   contentBody: {
     paddingHorizontal: 15,
   },
   msgSub: {
     fontSize: 16,
-    fontWeight: "300",
+    fontWeight: '300',
     color: GLOBALS.COLORS.MID_BLACK_TRANS,
     paddingVertical: 10,
   },
@@ -497,9 +493,9 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   timestampOuter: {
-    display: "flex",
-    justifyContent: "center",
-    alignSelf: "flex-end",
+    display: 'flex',
+    justifyContent: 'center',
+    alignSelf: 'flex-end',
     paddingVertical: 5,
     paddingHorizontal: 12,
     marginRight: -20,
@@ -507,12 +503,12 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderLeftWidth: 1,
     borderColor: GLOBALS.COLORS.SLIGHT_GRAY,
-    overflow: "hidden",
+    overflow: 'hidden',
 
     backgroundColor: GLOBALS.COLORS.SLIGHTER_GRAY,
   },
   timestamp: {
-    fontWeight: "300",
+    fontWeight: '300',
     fontSize: 12,
 
     color: GLOBALS.COLORS.MID_BLACK_TRANS,

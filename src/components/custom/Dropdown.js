@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, {useRef, useState} from 'react';
 import {
   FlatList,
   StyleSheet,
@@ -6,58 +6,57 @@ import {
   TouchableOpacity,
   Modal,
   View,
-} from 'react-native'
-import { Entypo, MaterialIcons } from '@expo/vector-icons'
-import GLOBALS from 'src/Globals'
-import { useDispatch } from 'react-redux'
-import { deleteUser } from 'src/redux/authSlice'
+} from 'react-native';
+import {Entypo, MaterialIcons} from '@expo/vector-icons';
+import GLOBALS from 'src/Globals';
+import {useDispatch} from 'react-redux';
+import {deleteUser} from 'src/redux/authSlice';
 
-import LinearGradient from 'react-native-linear-gradient'
-import MaskedView from '@react-native-community/masked-view'
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-community/masked-view';
 // import MetaStorage from 'src/singletons/MetaStorage'
 
-const size = 30
+const size = 30;
 
-const Dropdown = ({ label, data }) => {
-  const dispatch = useDispatch()
-  const DropdownButton = useRef()
-  const [visible, setVisible] = useState(false)
-  const [dropdownTop, setDropdownTop] = useState(0)
+const Dropdown = ({label, data}) => {
+  const dispatch = useDispatch();
+  const DropdownButton = useRef();
+  const [visible, setVisible] = useState(false);
+  const [dropdownTop, setDropdownTop] = useState(0);
 
   const toggleDropdown = () => {
-    visible ? setVisible(false) : openDropdown()
-  }
+    visible ? setVisible(false) : openDropdown();
+  };
 
   const openDropdown = () => {
     DropdownButton.current.measure((_fx, _fy, _w, h, _px, py) => {
-      setDropdownTop(py + h)
-    })
-    setVisible(true)
-  }
+      setDropdownTop(py + h);
+    });
+    setVisible(true);
+  };
 
-
-  const renderItem = ({ item }) => {
+  const renderItem = ({item}) => {
     return (
       <TouchableOpacity
         style={styles.item}
-        onPress={async() => {
+        onPress={async () => {
           dispatch(deleteUser(item.index));
           // await MetaStorage.instance.setStoredWallets(data)
-        }}
-      >
-        <Text style={styles.itemText}>{item.ens || item.cns || item.wallet}</Text>
+        }}>
+        <Text style={styles.itemText}>
+          {item.ens || item.cns || item.wallet}
+        </Text>
       </TouchableOpacity>
-    )
-  }
+    );
+  };
 
   const renderDropdown = () => {
     return (
       <Modal visible={visible} transparent animationType="none">
         <TouchableOpacity
           style={styles.overlay}
-          onPress={() => setVisible(false)}
-        >
-          <View style={[styles.dropdown, { top: dropdownTop }]}>
+          onPress={() => setVisible(false)}>
+          <View style={[styles.dropdown, {top: dropdownTop}]}>
             <FlatList
               data={data}
               renderItem={renderItem}
@@ -66,27 +65,25 @@ const Dropdown = ({ label, data }) => {
           </View>
         </TouchableOpacity>
       </Modal>
-    )
-  }
+    );
+  };
 
   return (
     <TouchableOpacity
       ref={DropdownButton}
       style={styles.button}
-      onPress={toggleDropdown}
-    >
+      onPress={toggleDropdown}>
       {renderDropdown()}
-      <View style={{ width: size }}>
+      <View style={{width: size}}>
         <MaskedView
-          style={{ flex: 1, flexDirection: 'row', height: size }}
+          style={{flex: 1, flexDirection: 'row', height: size}}
           maskElement={
             <View
               style={{
                 backgroundColor: 'transparent',
                 justifyContent: 'center',
                 alignItems: 'center',
-              }}
-            >
+              }}>
               <MaterialIcons
                 name="logout"
                 size={24}
@@ -94,31 +91,29 @@ const Dropdown = ({ label, data }) => {
                 style={styles.icon}
               />
             </View>
-          }
-        >
+          }>
           <LinearGradient
             colors={[
               GLOBALS.COLORS.GRADIENT_PRIMARY,
               GLOBALS.COLORS.GRADIENT_SECONDARY,
             ]}
-            style={{ flex: 1 }}
+            style={{flex: 1}}
           />
         </MaskedView>
       </View>
 
       <Text style={styles.buttonText}>{label}</Text>
 
-      <View style={{ width: size }}>
+      <View style={{width: size}}>
         <MaskedView
-          style={{ flex: 1, flexDirection: 'row', height: size }}
+          style={{flex: 1, flexDirection: 'row', height: size}}
           maskElement={
             <View
               style={{
                 backgroundColor: 'transparent',
                 justifyContent: 'center',
                 alignItems: 'center',
-              }}
-            >
+              }}>
               <Entypo
                 name="chevron-down"
                 size={24}
@@ -126,20 +121,19 @@ const Dropdown = ({ label, data }) => {
                 style={styles.icon}
               />
             </View>
-          }
-        >
+          }>
           <LinearGradient
             colors={[
               GLOBALS.COLORS.GRADIENT_PRIMARY,
               GLOBALS.COLORS.GRADIENT_SECONDARY,
             ]}
-            style={{ flex: 1 }}
+            style={{flex: 1}}
           />
         </MaskedView>
       </View>
     </TouchableOpacity>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   button: {
@@ -168,7 +162,7 @@ const styles = StyleSheet.create({
     width: '100%',
     shadowColor: '#000000',
     shadowRadius: 4,
-    shadowOffset: { height: 4, width: 0 },
+    shadowOffset: {height: 4, width: 0},
     shadowOpacity: 0.5,
   },
   overlay: {
@@ -196,6 +190,6 @@ const styles = StyleSheet.create({
       height: 1,
     },
   },
-})
+});
 
-export default Dropdown
+export default Dropdown;

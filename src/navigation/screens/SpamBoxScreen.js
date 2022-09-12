@@ -1,14 +1,14 @@
-import SpamFeed from 'src/components/ui/SpamFeed'
+import SpamFeed from 'src/components/ui/SpamFeed';
 
-import React from 'react'
-import { StatusBar, StyleSheet } from 'react-native'
-import SafeAreaView from 'react-native-safe-area-view'
+import React from 'react';
+import {StatusBar, StyleSheet} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
 
-import 'src/components/ui/SpamFeed'
+import 'src/components/ui/SpamFeed';
 
-import GLOBALS from 'src/Globals'
+import GLOBALS from 'src/Globals';
 
-const SpamBoxScreen = ({ style, route }) => {
+const SpamBoxScreen = ({style, route}) => {
   return (
     <SafeAreaView style={[styles.container, style]}>
       <StatusBar
@@ -19,8 +19,8 @@ const SpamBoxScreen = ({ style, route }) => {
 
       <SpamFeed wallet={route.params.wallet} />
     </SafeAreaView>
-  )
-}
+  );
+};
 
 // Styling
 const styles = StyleSheet.create({
@@ -34,6 +34,6 @@ const styles = StyleSheet.create({
   subHeaderStyle: {
     fontSize: 20,
   },
-})
+});
 
-export default SpamBoxScreen
+export default SpamBoxScreen;

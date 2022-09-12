@@ -1,10 +1,10 @@
-import React from 'react'
-import { createStackNavigator } from '@react-navigation/stack'
+import React from 'react';
+import {createStackNavigator} from '@react-navigation/stack';
 
-import GLOBALS from 'src/Globals'
-import SplashScreen from './screens/SplashScreen'
+import GLOBALS from 'src/Globals';
+import SplashScreen from './screens/SplashScreen';
 
-const Stack = createStackNavigator()
+const Stack = createStackNavigator();
 
 const OnboardedNavigator = () => {
   return (
@@ -18,7 +18,7 @@ const OnboardedNavigator = () => {
         }}
       />
     </Stack.Navigator>
-  )
-}
+  );
+};
 
-export default OnboardedNavigator
+export default OnboardedNavigator;

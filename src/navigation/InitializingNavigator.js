@@ -1,14 +1,14 @@
-import React from 'react'
-import { createStackNavigator } from '@react-navigation/stack'
+import React from 'react';
+import {createStackNavigator} from '@react-navigation/stack';
 
-import GLOBALS from 'src/Globals'
+import GLOBALS from 'src/Globals';
 
-import SplashScreen from './screens/SplashScreen'
+import SplashScreen from './screens/SplashScreen';
 
-const Stack = createStackNavigator()
+const Stack = createStackNavigator();
 
 const InitializingNavigator = () => {
-  console.log("I should not be called");
+  console.log('I should not be called');
   return (
     <Stack.Navigator initialRouteName={GLOBALS.SCREENS.SPLASH}>
       <Stack.Screen
@@ -20,7 +20,7 @@ const InitializingNavigator = () => {
         }}
       />
     </Stack.Navigator>
-  )
-}
+  );
+};
 
-export default InitializingNavigator
+export default InitializingNavigator;
