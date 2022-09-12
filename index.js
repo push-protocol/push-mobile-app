@@ -1,27 +1,27 @@
-import React from 'react'
-import { AppRegistry } from 'react-native'
+import messaging from '@react-native-firebase/messaging';
+import React from 'react';
+import {AppRegistry} from 'react-native';
+import Notify from 'src/singletons/Notify';
 
-import messaging from '@react-native-firebase/messaging'
-import Notify from 'src/singletons/Notify'
+import App from './App';
+import {name as appName} from './app.json';
 
-import App from './App'
-
+// FIREBASE
 // Register background handler
-messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+messaging().setBackgroundMessageHandler(async remoteMessage => {
   return new Promise(async (resolve, reject) => {
-    await Notify.instance.handleIncomingPushAppInBG(remoteMessage)
+    await Notify.instance.handleIncomingPushAppInBG(remoteMessage);
+    resolve(true);
+  });
+});
 
-    resolve(true)
-  })
-})
-
-function HeadlessCheck({ isHeadless }) {
+function HeadlessCheck({isHeadless}) {
   if (isHeadless) {
     // App has been launched in the background by iOS, ignore
-    return null
+    return null;
   }
 
-  return <App />
+  return <App />;
 }
 
-AppRegistry.registerComponent('main', () => HeadlessCheck)
+AppRegistry.registerComponent(appName, () => HeadlessCheck);

@@ -1,19 +1,16 @@
 import * as Keychain from 'react-native-keychain';
-
+import GLOBALS from 'src/Globals';
 import CryptoHelper from 'src/helpers/CryptoHelper';
-import Web3Helper from 'src/helpers/Web3Helper';
 import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import ServerHelper from 'src/helpers/ServerHelper';
-
-import Notify from 'src/singletons/Notify';
+import Web3Helper from 'src/helpers/Web3Helper';
 import MetaStorage from 'src/singletons/MetaStorage';
-
-import GLOBALS from 'src/Globals';
+import Notify from 'src/singletons/Notify';
 
 // Authentication Helper Function
 const AuthenticationHelper = {
   // To Return false or Decrypted Private Key from Encrypted Private Key, code and hashedcode
-  returnDecryptedPKey: async function(encryptedPKey, code, hashedCode) {
+  returnDecryptedPKey: async function (encryptedPKey, code, hashedCode) {
     let response = {};
     response.success = false;
 
@@ -29,7 +26,8 @@ const AuthenticationHelper = {
         const walletObject = await Web3Helper.getWalletAddress(pkey);
 
         if (walletObject.success) {
-          const storedWalletObject = await MetaStorage.instance.getStoredWallet();
+          const storedWalletObject =
+            await MetaStorage.instance.getStoredWallet();
           if (walletObject.wallet === storedWalletObject.wallet) {
             response.success = true;
             response.wallet = walletObject.wallet;
@@ -37,10 +35,9 @@ const AuthenticationHelper = {
           }
         }
       }
-    }
-    catch(e) {
+    } catch (e) {
       response.success = false;
-      response.info = e
+      response.info = e;
     }
 
     return response;
@@ -56,7 +53,7 @@ const AuthenticationHelper = {
 
       response.success = true;
       response.wallet = walletObject.wallet;
-      response.pkey = "";
+      response.pkey = '';
     }
 
     return response;
@@ -81,7 +78,9 @@ const AuthenticationHelper = {
     await AuthenticationHelper._removeDataOfUser();
 
     // Set Passcode Attempts to MAX
-    await MetaStorage.instance.setRemainingPasscodeAttempts(GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS);
+    await MetaStorage.instance.setRemainingPasscodeAttempts(
+      GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS,
+    );
   },
   // To remove data of the user
   _removeDataOfUser: async () => {
@@ -105,7 +104,7 @@ const AuthenticationHelper = {
     // Reset Feed DB, create table purges it as well
     const db = FeedDBHelper.getDB();
     FeedDBHelper.createTable(db);
-  }
-}
+  },
+};
 
 export default AuthenticationHelper;

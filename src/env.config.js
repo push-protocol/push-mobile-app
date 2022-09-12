@@ -1,14 +1,13 @@
 import {
-  TESTNET_INFURA_API,
-  MAINNET_INFURA_API,
-  YOUTUBE_API_KEY,
   APP_VERSION,
-} from 'react-native-dotenv'
+  MAINNET_INFURA_API,
+  TESTNET_INFURA_API,
+  YOUTUBE_API_KEY,
+} from '@env';
+import GLOBALS from 'src/Globals';
 
-import GLOBALS from "./Globals"
-
-const IS_PROD_ENV = 0 // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work
-const SHOW_CONSOLE = 1 // Show or disable console
+const IS_PROD_ENV = 0; // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work
+const SHOW_CONSOLE = 1; // Show or disable console
 
 const {
   DEV_EPNS_SERVER,
@@ -26,9 +25,7 @@ const {
   ENDPOINT_FETCH_SUBSCRIPTION,
   ENDPOINT_SUBSCRIBE_OFFCHAIN,
   ENDPOINT_UNSUBSCRIBE_OFFCHAIN,
-} = GLOBALS.LINKS
-
-
+} = GLOBALS.LINKS;
 
 export default {
   PROD_ENV: IS_PROD_ENV,
@@ -39,7 +36,7 @@ export default {
   // All Server related endpoints
   EPNS_SERVER: IS_PROD_ENV ? PROD_EPNS_SERVER : DEV_EPNS_SERVER,
   METAMASK_LINK: IS_PROD_ENV ? METAMASK_LINK_PROD : METAMASK_LINK_STAGING,
-  
+
   // all the server endponts
   ENDPOINT_AUTHTOKEN,
   ENDPOINT_REGISTER_NO_AUTH,
@@ -50,16 +47,14 @@ export default {
   ENDPOINT_FETCH_SUBSCRIPTION,
   ENDPOINT_SUBSCRIBE_OFFCHAIN,
   ENDPOINT_UNSUBSCRIBE_OFFCHAIN,
-  ENDPOINT_SUBSCRIBE_OFFCHAIN,
-  ENDPOINT_UNSUBSCRIBE_OFFCHAIN,
 
   DEEPLINK_URL: DEEPLINK_URL,
 
   YOUTUBE_API_KEY: YOUTUBE_API_KEY,
-  
+
   // Third-party services endpoints
   CNS_ENDPOINT: CNS_ENDPOINT,
 
   // App Version
   APP_VERSION: APP_VERSION,
-}
+};

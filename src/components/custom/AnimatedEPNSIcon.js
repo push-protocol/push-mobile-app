@@ -1,11 +1,5 @@
-import React, { Component } from 'react';
-import {
-  View,
-  Image,
-  Animated,
-  Easing,
-  StyleSheet,
-} from 'react-native';
+import React, {Component} from 'react';
+import {Animated, Easing, Image, StyleSheet, View} from 'react-native';
 
 export default class AnimatedEPNSIcon extends Component {
   // CONSTRUCTOR
@@ -15,46 +9,44 @@ export default class AnimatedEPNSIcon extends Component {
     // Set State
     this.state = {
       rotateAnimation: new Animated.Value(0),
-    }
+    };
   }
 
   // COMPONENT MOUNTED
-  componentDidMount() {
-
-  }
+  componentDidMount() {}
 
   // FUNCTIONS
-  animateBell = (afterCallback) => {
+  animateBell = afterCallback => {
     Animated.sequence([
       Animated.timing(this.state.rotateAnimation, {
-          toValue: 1,
-          duration: 40,
-          easing: Easing.spring,
-          useNativeDriver: true,
+        toValue: 1,
+        duration: 40,
+        easing: Easing.spring,
+        useNativeDriver: true,
       }),
       Animated.timing(this.state.rotateAnimation, {
-          toValue: -1,
-          duration: 80,
-          easing: Easing.spring,
-          useNativeDriver: true,
+        toValue: -1,
+        duration: 80,
+        easing: Easing.spring,
+        useNativeDriver: true,
       }),
       Animated.timing(this.state.rotateAnimation, {
-          toValue: 0.5,
-          duration: 60,
-          easing: Easing.spring,
-          useNativeDriver: true,
+        toValue: 0.5,
+        duration: 60,
+        easing: Easing.spring,
+        useNativeDriver: true,
       }),
       Animated.timing(this.state.rotateAnimation, {
-          toValue: -0.5,
-          duration: 80,
-          easing: Easing.spring,
-          useNativeDriver: true,
+        toValue: -0.5,
+        duration: 80,
+        easing: Easing.spring,
+        useNativeDriver: true,
       }),
       Animated.timing(this.state.rotateAnimation, {
-          toValue: 0,
-          duration: 40,
-          easing: Easing.spring,
-          useNativeDriver: true,
+        toValue: 0,
+        duration: 40,
+        easing: Easing.spring,
+        useNativeDriver: true,
       }),
       Animated.delay(100),
     ]).start(() => {
@@ -63,51 +55,44 @@ export default class AnimatedEPNSIcon extends Component {
         afterCallback();
       }
     });
-  }
+  };
 
   // RENDER
   render() {
-    const {
-      style,
-      withoutRinger
-    } = this.props;
+    const {style, withoutRinger} = this.props;
 
     var rotateProp = this.state.rotateAnimation.interpolate({
-                       inputRange: [0, 1],
-                       outputRange: ["0deg", "15deg"]
-                    });
+      inputRange: [0, 1],
+      outputRange: ['0deg', '15deg'],
+    });
 
     return (
-      <View style={[ styles.container, style ]}>
-        <Animated.View style={[
+      <View style={[styles.container, style]}>
+        <Animated.View
+          style={[
             styles.inner,
             {
               transform: [
-                        {
-                            rotate: rotateProp
-                        }
-                      ]
-            }
+                {
+                  rotate: rotateProp,
+                },
+              ],
+            },
           ]}>
-          <Image
-            style={[ styles.bell ]}
-            source={require('assets/ui/bell.png')}
-          />
+          <Image style={[styles.bell]} source={require('assets/ui/bell.png')} />
         </Animated.View>
 
-          {
-            withoutRinger == true
-              ? null
-              : <Image
-                  style={[ styles.ringer, styles.absimg ]}
-                  source={require('assets/ui/ring.png')}
-                />
-          }
-
+        {withoutRinger == true ? null : (
           <Image
-            style={[ styles.bellball, styles.absimg  ]}
-            source={require('assets/ui/bellball.png')}
+            style={[styles.ringer, styles.absimg]}
+            source={require('assets/ui/ring.png')}
           />
+        )}
+
+        <Image
+          style={[styles.bellball, styles.absimg]}
+          source={require('assets/ui/bellball.png')}
+        />
       </View>
     );
   }
@@ -127,5 +112,5 @@ const styles = StyleSheet.create({
     width: '100%',
     position: 'absolute',
     resizeMode: 'contain',
-  }
+  },
 });

@@ -1,114 +1,106 @@
-import { id, serializeTransaction } from 'ethers/lib/utils'
-import React, { useEffect, useState, useRef } from 'react'
+import {FontAwesome5, MaterialCommunityIcons} from '@expo/vector-icons';
+import {useWalletConnect} from '@walletconnect/react-native-dapp';
+import {ethers} from 'ethers';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  View,
-  Text,
   ActivityIndicator,
   Linking,
-  StyleSheet,
   Modal,
-  TouchableOpacity,
+  StyleSheet,
+  Text,
   TouchableHighlight,
-} from 'react-native'
-import { ethers } from 'ethers'
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import GLOBALS from 'src/Globals';
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import NoticePrompt from 'src/components/modals/NoticePrompt';
+import OverlayBlur from 'src/components/modals/OverlayBlur';
+import ENV_CONFIG from 'src/env.config';
+import MetaStorage from 'src/singletons/MetaStorage';
 
-import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons'
+const CHANNEL_OPT_IN = 1;
+const CHANNEL_OPT_OUT = 2;
 
-import { useWalletConnect } from '@walletconnect/react-native-dapp'
+const SubscriptionStatus = ({channel, user, style, pKey}) => {
+  const [subscribed, setSubscribed] = useState(null);
 
-import PrimaryButton from 'src/components/buttons/PrimaryButton'
+  const [modal, setModal] = useState(false);
+  const [action, setAction] = useState('');
 
-import OverlayBlur from 'src/components/modals/OverlayBlur'
-import NoticePrompt from 'src/components/modals/NoticePrompt'
+  const [processing, setProcessing] = useState(false);
 
-import MetaStorage from 'src/singletons/MetaStorage'
-
-import ENV_CONFIG from 'src/env.config'
-import GLOBALS from 'src/Globals'
-
-const CHANNEL_OPT_IN = 1
-const CHANNEL_OPT_OUT = 2
-
-const SubscriptionStatus = ({ channel, user, style, pKey }) => {
-  const [subscribed, setSubscribed] = useState(null)
-
-  const [modal, setModal] = useState(false)
-  const [action, setAction] = useState('')
-
-  const [processing, setProcessing] = useState(false)
-
-  const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_SUBSCRIPTION
+  const apiURL =
+    ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_SUBSCRIPTION;
 
   //EIP 712 USING Private Key
 
-  var url = 'https://kovan.infura.io/v3/ee27475cf9ec4421b6bdec5c428cc3c9'
-  var provider = new ethers.providers.JsonRpcProvider(url)
+  var url = 'https://kovan.infura.io/v3/ee27475cf9ec4421b6bdec5c428cc3c9';
+  var provider = new ethers.providers.JsonRpcProvider(url);
 
-  var wallet = ''
+  var wallet = '';
   if (pKey != '') {
-    wallet = new ethers.Wallet(pKey)
+    wallet = new ethers.Wallet(pKey);
   }
 
   const EPNS_DOMAIN = {
     name: 'EPNS COMM V1',
     chainId: 42,
     verifyingContract: '0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC',
-  }
+  };
 
   const subType = {
     Subscribe: [
-      { name: 'channel', type: 'address' },
-      { name: 'subscriber', type: 'address' },
-      { name: 'action', type: 'string' },
+      {name: 'channel', type: 'address'},
+      {name: 'subscriber', type: 'address'},
+      {name: 'action', type: 'string'},
     ],
-  }
+  };
   const unsubType = {
     Unsubscribe: [
-      { name: 'channel', type: 'address' },
-      { name: 'unsubscriber', type: 'address' },
-      { name: 'action', type: 'string' },
+      {name: 'channel', type: 'address'},
+      {name: 'unsubscriber', type: 'address'},
+      {name: 'action', type: 'string'},
     ],
-  }
+  };
 
   const subMessage = {
     channel: channel,
     subscriber: user,
     action: 'Subscribe',
-  }
+  };
 
   const unsubMessage = {
     channel: channel,
     unsubscriber: user,
     action: 'Unsubscribe',
-  }
+  };
 
   const handleSubscribe = async () => {
     if (pKey != '') {
-      wallet._signTypedData(EPNS_DOMAIN, subType, subMessage).then((res) => {
-        offChainSubscribe(res)
-      })
+      wallet._signTypedData(EPNS_DOMAIN, subType, subMessage).then(res => {
+        offChainSubscribe(res);
+      });
     } else {
-      showPopUp()
+      showPopUp();
     }
-  }
+  };
 
   const handleUnsubscribe = async () => {
     if (pKey != '') {
-      wallet
-        ._signTypedData(EPNS_DOMAIN, unsubType, unsubMessage)
-        .then((res) => {
-          offChainUnsubscribe(res)
-        })
+      wallet._signTypedData(EPNS_DOMAIN, unsubType, unsubMessage).then(res => {
+        offChainUnsubscribe(res);
+      });
     } else {
-      showPopUp()
+      showPopUp();
     }
-  }
+  };
 
-  const offChainSubscribe = async (signature) => {
+  const offChainSubscribe = async signature => {
     const apiUrl =
-      ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_SUBSCRIBE_OFFCHAIN
+      ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_SUBSCRIBE_OFFCHAIN;
 
-    console.log('subscribe', apiUrl)
+    console.log('subscribe', apiUrl);
 
     const body = {
       signature: signature,
@@ -116,7 +108,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
       contractAddress: '0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC',
       chainId: 42,
       op: 'write',
-    }
+    };
 
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -125,20 +117,20 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
-    })
+    });
 
-    console.log('calling subscribe with body ->', body)
+    console.log('calling subscribe with body ->', body);
 
-    const subscribeResponse = await response.json()
-    console.log('subscribeResponse', subscribeResponse)
+    const subscribeResponse = await response.json();
+    console.log('subscribeResponse', subscribeResponse);
 
-    fetchSubscriptionStatus(user, channel)
-  }
+    fetchSubscriptionStatus(user, channel);
+  };
 
-  const offChainUnsubscribe = async (signature) => {
+  const offChainUnsubscribe = async signature => {
     const apiUrl =
-      ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_UNSUBSCRIBE_OFFCHAIN
-    console.log('called', apiUrl)
+      ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_UNSUBSCRIBE_OFFCHAIN;
+    console.log('called', apiUrl);
 
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -153,65 +145,61 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
         chainId: 42,
         op: 'write',
       }),
-    })
+    });
 
-    console.log('signature', signature)
+    console.log('signature', signature);
 
-    const unsubscribeResponse = await response.json()
-    console.log('unsubscribeRespone', unsubscribeResponse)
+    const unsubscribeResponse = await response.json();
+    console.log('unsubscribeRespone', unsubscribeResponse);
 
-    fetchSubscriptionStatus(user, channel)
-  }
+    fetchSubscriptionStatus(user, channel);
+  };
 
   // Wallet Connect functionality
-  const {
-    createSession,
-    killSession,
-    session,
-    signTransaction,
-  } = useWalletConnect()
-  const connector = useWalletConnect()
+  const {createSession, killSession, session, signTransaction} =
+    useWalletConnect();
+  const connector = useWalletConnect();
 
   // Setup Refs
-  const OverlayBlurRef = useRef(null)
-  const NoticePromptRef = useRef(null)
+  const OverlayBlurRef = useRef(null);
+  const NoticePromptRef = useRef(null);
 
   useEffect(() => {
-    let isMounted = true
-    if (isMounted) fetchSubscriptionStatus(user, channel)
+    let isMounted = true;
+    if (isMounted) fetchSubscriptionStatus(user, channel);
 
     return () => {
-      isMounted = false
-    }
-  })
+      isMounted = false;
+    };
+  });
 
-  const handleOpts = async (action) => {
+  const handleOpts = async action => {
     // Check signin flow
-    setProcessing(true)
+    setProcessing(true);
 
-    const signedInType = await MetaStorage.instance.getSignedInType()
+    const signedInType = await MetaStorage.instance.getSignedInType();
     if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
       if (action == 1) {
-        handleSubscribe()
+        handleSubscribe();
       } else if (action == 2) {
-        handleUnsubscribe()
+        handleUnsubscribe();
       }
     } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
       // Give Options
-      showPopUp(action)
+      showPopUp(action);
     }
-  }
+  };
 
-  const showPopUp = async (action) => {
+  const showPopUp = async action => {
     // Check if Wallet Connect
-    setModal(true)
+    setModal(true);
 
     if (action == 1) {
-      setAction('Opt-In')
+      setAction('Opt-In');
     } else if (action == 2) {
-      setAction('Opt-Out')
+      setAction('Opt-Out');
     }
-  }
+  };
 
   const fetchSubscriptionStatus = async (user, channel) => {
     const response = await fetch(apiURL, {
@@ -225,20 +213,20 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
         channel: channel,
         op: 'read',
       }),
-    })
+    });
 
-    const subscriptionStatus = await response.json()
+    const subscriptionStatus = await response.json();
 
     // console.log(subscriptionStatus);
-    setProcessing(false)
-    setSubscribed(subscriptionStatus)
-  }
+    setProcessing(false);
+    setSubscribed(subscriptionStatus);
+  };
 
-  const openURL = async (url) => {
+  const openURL = async url => {
     // if (validURL(url) || 1) {
     // console.log("OPENING URL ", url);
     // Bypassing the check so that custom app domains can be opened
-    await Linking.openURL(url)
+    await Linking.openURL(url);
     // Linking.canOpenURL(url).then((supported) => {
     //   if (supported) {
     //     Linking.openURL(url);
@@ -249,7 +237,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
     // } else {
     // showToast("Link not valid", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
     // }
-  }
+  };
 
   // Open Notice Prompt With Overlay Blur
   const toggleNoticePrompt = (
@@ -261,15 +249,15 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
     showIndicator,
   ) => {
     // Set Notice First
-    NoticePromptRef.current.changeTitle(title)
-    NoticePromptRef.current.changeSubtitle(subtitle)
-    NoticePromptRef.current.changeNotice(notice)
-    NoticePromptRef.current.changeIndicator(showIndicator)
+    NoticePromptRef.current.changeTitle(title);
+    NoticePromptRef.current.changeSubtitle(subtitle);
+    NoticePromptRef.current.changeNotice(notice);
+    NoticePromptRef.current.changeIndicator(showIndicator);
 
     // Set render state of this and the animate the blur modal in
-    OverlayBlurRef.current.changeRenderState(toggle, animate)
-    NoticePromptRef.current.changeRenderState(toggle, animate)
-  }
+    OverlayBlurRef.current.changeRenderState(toggle, animate);
+    NoticePromptRef.current.changeRenderState(toggle, animate);
+  };
 
   return (
     <View style={styles.container}>
@@ -283,7 +271,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
       {subscribed != null && subscribed == true && (
         <PrimaryButton
           style={styles.controlPrimary}
-          setButtonStyle={{ borderRadius: 0, padding: 0 }}
+          setButtonStyle={{borderRadius: 0, padding: 0}}
           iconFactory="MaterialCommunityIcons"
           icon="checkbox-marked"
           iconSize={24}
@@ -294,7 +282,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
           disabled={processing}
           loading={processing}
           onPress={() => {
-            handleOpts(CHANNEL_OPT_OUT)
+            handleOpts(CHANNEL_OPT_OUT);
           }}
         />
       )}
@@ -302,8 +290,8 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
       {subscribed != null && subscribed == false && (
         <PrimaryButton
           style={styles.controlPrimary}
-          setButtonStyle={{ borderRadius: 0, padding: 0 }}
-          setButtonInnerStyle={{ flexDirection: 'column-reverse' }}
+          setButtonStyle={{borderRadius: 0, padding: 0}}
+          setButtonInnerStyle={{flexDirection: 'column-reverse'}}
           title="Opt In"
           iconFactory="MaterialCommunityIcons"
           icon="checkbox-blank-outline"
@@ -317,7 +305,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
           disabled={processing}
           loading={processing}
           onPress={() => {
-            handleOpts(CHANNEL_OPT_IN)
+            handleOpts(CHANNEL_OPT_IN);
           }}
         />
       )}
@@ -337,9 +325,8 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
         transparent={true}
         visible={modal}
         onRequestClose={() => {
-          setModal(!modal)
-        }}
-      >
+          setModal(!modal);
+        }}>
         <View style={styles.centeredView}>
           <View style={styles.modal}>
             <View style={[styles.optionsArea]}>
@@ -354,8 +341,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
               <TouchableHighlight
                 style={[styles.done]}
                 underlayColor={GLOBALS.COLORS.LIGHT_GRAY}
-                onPress={() => openURL(ENV_CONFIG.METAMASK_LINK)}
-              >
+                onPress={() => openURL(ENV_CONFIG.METAMASK_LINK)}>
                 <Text style={styles.doneText}>
                   Opt In with MetaMask {'  '}
                   <FontAwesome5 name="external-link-alt" size={20} />
@@ -366,8 +352,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
               <TouchableHighlight
                 style={[styles.cancel]}
                 underlayColor={GLOBALS.COLORS.LIGHT_GRAY}
-                onPress={() => setModal(!modal)}
-              >
+                onPress={() => setModal(!modal)}>
                 <Text style={[styles.cancelText]}>Cancel</Text>
               </TouchableHighlight>
             </View>
@@ -422,8 +407,8 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
         </View>
       </Modal> */}
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -632,6 +617,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
   },
-})
+});
 
-export default SubscriptionStatus
+export default SubscriptionStatus;

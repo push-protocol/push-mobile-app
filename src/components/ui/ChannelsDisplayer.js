@@ -1,96 +1,79 @@
-import '@ethersproject/shims'
-import React, { useState, useEffect } from 'react'
+import '@ethersproject/shims';
+import React, {useEffect, useState} from 'react';
 import {
-  View,
-  SafeAreaView,
   FlatList,
   Image,
+  SafeAreaView,
   StyleSheet,
   TextInput,
-} from 'react-native'
+  View,
+} from 'react-native';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import ChannelItem from 'src/components/ui/ChannelItem';
+import ENV_CONFIG from 'src/env.config';
 
-import StylishLabel from 'src/components/labels/StylishLabel'
-import EPNSActivity from 'src/components/loaders/EPNSActivity'
-import ChannelItem from 'src/components/ui/ChannelItem'
-import ENV_CONFIG from 'src/env.config'
+const ChannelsDisplayer = ({style, wallet, pKey}) => {
+  const [channels, setChannels] = useState([]);
+  const [page, setPage] = useState(1);
 
-const ChannelsDisplayer = ({ style, wallet, pKey }) => {
-  const [channels, setChannels] = useState([])
-  const [page, setPage] = useState(1)
+  const [refreshing, setRefreshing] = useState(false);
 
-  const [refreshing, setRefreshing] = useState(false)
+  const [contract, setContract] = useState(null);
+  const [endReached, setEndReached] = useState(false);
 
-  const [contract, setContract] = useState(null)
-  const [endReached, setEndReached] = useState(false)
+  const [searchTimer, setSearchTimer] = useState(null);
+  const [isSearchEnded, setIsSearchEnded] = useState(false);
 
-  const [searchTimer, setSearchTimer] = useState(null)
-  const [isSearchEnded, setIsSearchEnded] = useState(false)
-
-  const DEBOUNCE_TIMEOUT = 500 //time in millisecond which we want to wait for then to finish typing
-  const [search, setSearch] = React.useState('')
+  const DEBOUNCE_TIMEOUT = 500; //time in millisecond which we want to wait for then to finish typing
+  const [search, setSearch] = React.useState('');
 
   useEffect(() => {
-    setRefreshing(true)
-  }, [])
+    setRefreshing(true);
+  }, []);
 
   const fetchChannels = async () => {
-    const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_CHANNELS
-
-    const response = await fetch(apiURL, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        page: page,
-        pageSize: 10,
-        op: 'write',
-      }),
-    })
-    const resJson = await response.json()
-
-    console.log({ resJson })
-    if (resJson.count != 0 && resJson.results != []) {
-      const data = channels
-      setChannels([...data, ...resJson.results])
-      setPage(page + 1)
+    const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_CHANNELS;
+    const requestURL = `${apiURL}?limit=10&page=${page}`;
+    const resJson = await fetch(requestURL).then(response => response.json());
+    if (resJson.count != 0 && resJson.channels != []) {
+      setChannels(prev => [...prev, ...resJson.channels]);
+      setPage(prev => prev + 1);
     }
-
-    setRefreshing(false)
-  }
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     if (refreshing == true) {
-      fetchChannels()
+      fetchChannels();
     }
-  }, [refreshing])
+  }, [refreshing]);
 
   // to check valid url
-  const validURL = (str) => {
+  const validURL = str => {
     var pattern = new RegExp(
       '^(https?:\\/\\/)?' + // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
         '(\\#[-a-z\\d_]*)?$',
       'i',
-    ) // fragment locator
-    return !!pattern.test(str)
-  }
+    ); // fragment locator
+    return !!pattern.test(str);
+  };
 
-  const searchForChannel = async (channelName) => {
-    setChannels([])
+  const searchForChannel = async channelName => {
+    setChannels([]);
 
     // normal fetch for empty query
     if (channelName.trim() === '') {
-      await fetchChannels()
-      return
+      await fetchChannels();
+      return;
     }
 
-    setIsSearchEnded(false)
-    const apiURL = ENV_CONFIG.EPNS_SERVER + '/channels/search'
+    setIsSearchEnded(false);
+    const apiURL = ENV_CONFIG.EPNS_SERVER + '/channels/search';
     const searchRes = await fetch(apiURL, {
       method: 'POST',
       headers: {
@@ -104,32 +87,32 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
         op: 'read',
         query: channelName,
       }),
-    })
+    });
 
-    const resJson = await searchRes.json()
-    setChannels(resJson.channels)
-    setIsSearchEnded(true)
-  }
+    const resJson = await searchRes.json();
+    setChannels(resJson.channels);
+    setIsSearchEnded(true);
+  };
 
-  const handleChannelSearch = async (searchQuery) => {
+  const handleChannelSearch = async searchQuery => {
     if (searchTimer) {
-      clearTimeout(searchTimer)
+      clearTimeout(searchTimer);
     }
-    setSearch(searchQuery)
+    setSearch(searchQuery);
     setSearchTimer(
       setTimeout(() => {
-        searchForChannel(searchQuery)
+        searchForChannel(searchQuery);
       }, DEBOUNCE_TIMEOUT),
-    )
-  }
+    );
+  };
 
   return (
     <SafeAreaView style={[styles.container, style]}>
       <View style={styles.searchView}>
         <TextInput
           style={styles.searchBar}
-          onChangeText={(e) => {
-            handleChannelSearch(e)
+          onChangeText={e => {
+            handleChannelSearch(e);
           }}
           value={search}
           placeholder={'Search by name/address'}
@@ -167,14 +150,14 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
         <FlatList
           data={channels}
           style={styles.channels}
-          contentContainerStyle={{ paddingVertical: 10 }}
-          keyExtractor={(item) => item.channel.toString()}
+          contentContainerStyle={{paddingVertical: 10}}
+          keyExtractor={item => item.channel.toString()}
           initialNumToRender={20}
           showsVerticalScrollIndicator={false}
           onEndReached={async () =>
             !endReached && search === '' ? setRefreshing(true) : null
           }
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <ChannelItem
               item={item}
               wallet={wallet}
@@ -184,16 +167,16 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
           )}
           ListFooterComponent={() => {
             return endReached ? (
-              <View style={{ paddingBottom: 20, marginTop: 20 }}>
+              <View style={{paddingBottom: 20, marginTop: 20}}>
                 <EPNSActivity style={styles.activity} size="small" />
               </View>
-            ) : null
+            ) : null;
           }}
         />
       )}
     </SafeAreaView>
-  )
-}
+  );
+};
 
 // Styling
 const styles = StyleSheet.create({
@@ -246,6 +229,6 @@ const styles = StyleSheet.create({
     resizeMode: 'stretch',
     alignItems: 'center',
   },
-})
+});
 
-export default ChannelsDisplayer
+export default ChannelsDisplayer;

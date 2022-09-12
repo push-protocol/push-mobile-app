@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
-import { View, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React, {Component} from 'react';
+import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 
-export default ImageButton = ({ style, src, iconSize, onPress }) => {
+export default ImageButton = ({style, src, iconSize, onPress}) => {
   // Rendor
   return (
-    <View style={[ styles.container, style ]}>
-      <TouchableOpacity
-        style={[ styles.button ]}
-        onPress={onPress}
-      >
-        <Image style={[ styles.image, {width: iconSize, height: iconSize} ]} source={src} />
+    <View style={[styles.container, style]}>
+      <TouchableOpacity style={[styles.button]} onPress={onPress}>
+        <Image
+          style={[styles.image, {width: iconSize, height: iconSize}]}
+          source={src}
+        />
       </TouchableOpacity>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -31,5 +31,5 @@ const styles = StyleSheet.create({
   },
   image: {
     resizeMode: 'contain',
-  }
+  },
 });

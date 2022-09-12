@@ -1,25 +1,25 @@
 export default {
   LINKS: {
     APPBOT_NAME: 'App Bot',
-    APP_WEBSITE: 'https://epns.io',    
-    DEV_EPNS_SERVER:"https://backend-kovan.epns.io/apis",
-    PROD_EPNS_SERVER:"https://backend-kovan.epns.io/apis",
-    METAMASK_LINK_STAGING:"https://metamask.app.link/dapp/staging-app.epns.io",
-    METAMASK_LINK_PROD:"https://metamask.app.link/dapp/staging-app.epns.io",
-    DEEPLINK_URL:"https://metamask.app.link/dapp/staging-app.epns.io",
-    CNS_ENDPOINT:"https://unstoppabledomains.com/api/v1/resellers/udtesting/domains",
+    APP_WEBSITE: 'https://epns.io',
+    DEV_EPNS_SERVER: 'https://backend-kovan.epns.io/apis',
+    PROD_EPNS_SERVER: 'https://backend-kovan.epns.io/apis',
+    METAMASK_LINK_STAGING: 'https://metamask.app.link/dapp/staging-app.epns.io',
+    METAMASK_LINK_PROD: 'https://metamask.app.link/dapp/staging-app.epns.io',
+    DEEPLINK_URL: 'https://metamask.app.link/dapp/staging-app.epns.io',
+    CNS_ENDPOINT:
+      'https://unstoppabledomains.com/api/v1/resellers/udtesting/domains',
 
-    ENDPOINT_AUTHTOKEN:"/pushtokens/authtoken",
-    ENDPOINT_REGISTER_NO_AUTH:"/pushtokens/register_no_auth",
-    ENDPOINT_REGISTER:"/pushtokens/register",
-    ENDPOINT_GET_FEEDS:"/feeds/get_feeds",
-    ENDPOINT_GET_SPAM_FEEDS:"/feeds/get_spam_feeds",
-    ENDPOINT_FETCH_CHANNELS:"/channels/fetch_channels",
-    ENDPOINT_FETCH_SUBSCRIPTION:"/channels/is_user_subscribed",
-    ENDPOINT_SUBSCRIBE_OFFCHAIN:"/channels/subscribe_offchain",
-    ENDPOINT_UNSUBSCRIBE_OFFCHAIN:"/channels/unsubscribe_offchain",
+    ENDPOINT_AUTHTOKEN: '/pushtokens/authtoken',
+    ENDPOINT_REGISTER_NO_AUTH: '/pushtokens/register_no_auth',
+    ENDPOINT_REGISTER: '/pushtokens/register',
+    ENDPOINT_GET_FEEDS: '/feeds/get_feeds',
+    ENDPOINT_GET_SPAM_FEEDS: '/feeds/get_spam_feeds',
+    ENDPOINT_FETCH_CHANNELS: '/v1/channels',
+    ENDPOINT_FETCH_SUBSCRIPTION: '/channels/is_user_subscribed',
+    ENDPOINT_SUBSCRIBE_OFFCHAIN: '/channels/subscribe_offchain',
+    ENDPOINT_UNSUBSCRIBE_OFFCHAIN: '/channels/unsubscribe_offchain',
   },
-
 
   // For Async Storage --> Represents Key and some Constants
   STORAGE: {
@@ -39,7 +39,7 @@ export default {
     PUSH_TOKEN_SERVER_SYNCED: 'PushTokenServerSynced',
     PUSH_BADGE_COUNT: 'PushBadgeCount',
     PUSH_BADGE_COUNT_PREVIOUS: 'PreviousPushBadgeCount',
-  }, 
+  },
 
   CONSTANTS: {
     CRED_TYPE_WALLET: 'TypeWallet',
@@ -85,7 +85,7 @@ export default {
     SLIGHTER_GRAY: 'rgba(250.0, 250.0, 250.0, 1)',
     SLIGHT_GRAY: 'rgba(231.0, 231.0, 231.0, 1)',
     LIGHT_GRAY: 'rgba(225.0, 225.0, 225.0, 1)',
-    MID_GRAY: 'rgba(200.0, 200.0, 200.0, 1)',
+    MID_GRAY: '#C8C8C8',
     DARK_GRAY: 'rgba(160.0, 160.0, 160.0, 1)',
     DARKER_GRAY: 'rgba(100.0, 100.0, 100.0, 1)',
 
@@ -93,7 +93,7 @@ export default {
     SEMI_MID_BLACK_TRANS: 'rgba(0.0, 0.0, 0.0, 0.25)',
     MID_BLACK_TRANS: 'rgba(0.0, 0.0, 0.0, 0.5)',
     DARK_BLACK_TRANS: 'rgba(0.0, 0.0, 0.0, 0.75)',
-    BLACK: 'rgba(0.0, 0.0, 0.0, 1.0)',
+    BLACK: '#000000',
 
     CONFIRM_GREEN: 'rgba(50.0, 205.0, 50.0, 1.0)',
 
@@ -120,7 +120,7 @@ export default {
     CHANNELS: 'Channels',
     SPAM: 'Spam',
     SAMPLEFEED: 'SampleFeed',
-    NEWWALLETSIGNIN:'NewWalletSignIn'
+    NEWWALLETSIGNIN: 'NewWalletSignIn',
   },
   APP_AUTH_STATES: {
     INITIALIZING: 1,
@@ -131,7 +131,7 @@ export default {
   AUTH_STATE: {
     INITIALIZING: 'INITIALIZING',
     ONBOARDING: 'ONBOARDING',
-    ONBOARDED: "ONBOARDED",
+    ONBOARDED: 'ONBOARDED',
     AUTHENTICATED: 'AUTHENTICATED',
   },
-}
+};

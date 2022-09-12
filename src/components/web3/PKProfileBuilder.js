@@ -1,34 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
-} from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
-import { LinearGradient } from "expo-linear-gradient";
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
+import GLOBALS from 'src/Globals';
+import ENSButton from 'src/components/buttons/ENSButton';
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import Blockies from 'src/components/web3/Blockies';
+import Web3Helper from 'src/helpers/Web3Helper';
 
-import StylishLabel from "src/components/labels/StylishLabel";
-import PrimaryButton from "src/components/buttons/PrimaryButton";
-import ENSButton from "src/components/buttons/ENSButton";
-
-import Blockies from "src/components/web3/Blockies";
-import Web3Helper from "src/helpers/Web3Helper";
-
-import GLOBALS from "src/Globals";
-
-const PKProfileBuilder = ({ style, profileKey, profileType, resetFunc, profileInfoFetchedFunc }) => {
-
+const PKProfileBuilder = ({
+  style,
+  profileKey,
+  profileType,
+  resetFunc,
+  profileInfoFetchedFunc,
+}) => {
   // Setup state
   const [indicator, setIndicator] = useState(true);
   const [errored, setErrored] = useState(false);
 
-  const [wallet, setWallet] = useState("");
-  const [blockchainNamingServiceFetched, setBlockchainNamingServiceFetched] = useState(-1);
+  const [wallet, setWallet] = useState('');
+  const [blockchainNamingServiceFetched, setBlockchainNamingServiceFetched] =
+    useState(-1);
 
-  const [ens, setENS] = useState("");
-  const [cns, setCNS] = useState("");
+  const [ens, setENS] = useState('');
+  const [cns, setCNS] = useState('');
 
   // FUNCTIONAL COMPONENT MOUNTED
   useEffect(() => {
@@ -45,30 +47,30 @@ const PKProfileBuilder = ({ style, profileKey, profileType, resetFunc, profileIn
 
       const ensResponse = await Web3Helper.getENSReverseDomain(
         wallet,
-        provider
+        provider,
       );
-      let ens = "";
+      let ens = '';
 
       if (ensResponse.success) {
         ens = ensResponse.ens;
       }
 
       const cnsResponse = await Web3Helper.getCNSReverseDomain(wallet);
-      let cns = "";
+      let cns = '';
 
       if (cnsResponse.success) {
         cns = cnsResponse.cns;
       }
 
-      setCNS(cns)
-      setENS(ens)
-      setBlockchainNamingServiceFetched(1)
+      setCNS(cns);
+      setENS(ens);
+      setBlockchainNamingServiceFetched(1);
 
       if (profileInfoFetchedFunc) {
         profileInfoFetchedFunc(wallet, cns, ens);
       }
     }
-  }, [blockchainNamingServiceFetched, wallet])
+  }, [blockchainNamingServiceFetched, wallet]);
 
   // FUNCTIONS
   const prepareProfile = async (profileKey, profileType) => {
@@ -79,9 +81,9 @@ const PKProfileBuilder = ({ style, profileKey, profileType, resetFunc, profileIn
 
     if (profileType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
       // do some brushing up
-      if (profileKey.startsWith("ethereum:")) {
+      if (profileKey.startsWith('ethereum:')) {
         // Metamask does this
-        profileKey = profileKey.replace("ethereum:", "");
+        profileKey = profileKey.replace('ethereum:', '');
       }
 
       // Next verify wallet
@@ -98,12 +100,12 @@ const PKProfileBuilder = ({ style, profileKey, profileType, resetFunc, profileIn
       // Get Identicon And try to fetch ENS
       const wallet = response.wallet;
 
-      setIndicator(false)
-      setWallet(wallet)
-      setBlockchainNamingServiceFetched(0)
+      setIndicator(false);
+      setWallet(wallet);
+      setBlockchainNamingServiceFetched(0);
     } else {
-      setIndicator(false)
-      setErrored(true)
+      setIndicator(false);
+      setErrored(true);
     }
   };
 
@@ -167,38 +169,38 @@ const PKProfileBuilder = ({ style, profileKey, profileType, resetFunc, profileIn
         )}
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 // Styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   profile: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   blockies: {
     borderRadius: 128,
     borderWidth: 4,
     borderColor: GLOBALS.COLORS.LIGHT_GRAY,
-    overflow: "hidden",
+    overflow: 'hidden',
     margin: 20,
   },
   profileErr: {
-    justifyContent: "flex-end",
-    alignItems: "center",
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     flex: 1,
   },
   profileErrMsg: {
-    alignSelf: "flex-start",
-    justifyContent: "center",
+    alignSelf: 'flex-start',
+    justifyContent: 'center',
     flex: 1,
   },
   paratop: {

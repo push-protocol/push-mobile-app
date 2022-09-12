@@ -1,66 +1,59 @@
-import React, { useEffect, useRef,useState } from 'react'
-import { 
-  View, 
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Text,
-  Animated,
-  Platform 
-} from 'react-native'
-
-import { useNavigation } from '@react-navigation/native'
-import SafeAreaView from 'react-native-safe-area-view'
-import Constants from 'expo-constants'
-
-import ProfileDisplayer from 'src/components/ui/ProfileDisplayer'
-import EPNSNotifierIcon from 'src/components/custom/EPNSNotifierIcon'
-import ImageButton from 'src/components/buttons/ImageButton'
-import StylishLabel from 'src/components/labels/StylishLabel'
-import Notify from 'src/singletons/Notify'
-
-import GLOBALS from 'src/Globals'
-import PrimaryButton from 'src/components/buttons/PrimaryButton'
-import { useDispatch, useSelector } from 'react-redux'
+import {useNavigation} from '@react-navigation/native';
+import Constants from 'expo-constants';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  selectUsers,
-  selectCurrentUser,
-  setLogout,
-} from 'src/redux/authSlice'
+  Animated,
+  Dimensions,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
+import {useDispatch, useSelector} from 'react-redux';
+import {connect} from 'react-redux';
+import GLOBALS from 'src/Globals';
+import ImageButton from 'src/components/buttons/ImageButton';
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import EPNSNotifierIcon from 'src/components/custom/EPNSNotifierIcon';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import ProfileDisplayer from 'src/components/ui/ProfileDisplayer';
+import {selectCurrentUser, selectUsers, setLogout} from 'src/redux/authSlice';
+import {switchUser} from 'src/redux/authSlice';
+import {clearFeed, fetchFeedData} from 'src/redux/feedSlice';
+import Notify from 'src/singletons/Notify';
 
-import { switchUser } from 'src/redux/authSlice'
-import { fetchFeedData, clearFeed,  } from 'src/redux/feedSlice'
-import { connect } from 'react-redux'
-
-getProperAddressLabel = (wallet,ens,cns) => ens || cns || wallet;
-
+getProperAddressLabel = (wallet, ens, cns) => ens || cns || wallet;
 
 const Header = ({switchUser, setParams, fetchFeedData, style}) => {
-  const navigation = useNavigation()
-  const users = useSelector(selectUsers)
-  const currentUser = useSelector(selectCurrentUser)
-  const dispatch = useDispatch()
+  const navigation = useNavigation();
+  const users = useSelector(selectUsers);
+  const currentUser = useSelector(selectCurrentUser);
+  const dispatch = useDispatch();
 
   // To refresh the bell badge
   const onNotificationListenerUpdate = async () => {
     // Check Notifier
-    await EPNSNotifierIconRef.current.getBadgeCountAndRefresh()
-  }
+    await EPNSNotifierIconRef.current.getBadgeCountAndRefresh();
+  };
 
   useEffect(() => {
     // Set Notification Listener
     Notify.instance.setNotificationListenerCallback(() => {
-      onNotificationListenerUpdate()
-    })
-  }, [])
+      onNotificationListenerUpdate();
+    });
+  }, []);
 
-  const [show, setShow] = useState(false)
-  const [fader] = useState(new Animated.Value(0))
-  const [currentUserWallet, setCurrentUserWallet] = useState(users[currentUser])
+  const [show, setShow] = useState(false);
+  const [fader] = useState(new Animated.Value(0));
+  const [currentUserWallet, setCurrentUserWallet] = useState(
+    users[currentUser],
+  );
 
   const toggleShow = () => {
-    setShow((prev)=> !prev)
-    
+    setShow(prev => !prev);
+
     // Start animation
     if (!show) {
       // Fade In
@@ -68,23 +61,23 @@ const Header = ({switchUser, setParams, fetchFeedData, style}) => {
         toValue: 1,
         duration: 500,
         useNativeDriver: true,
-      }).start()
+      }).start();
     } else {
       // Fade Out
       Animated.timing(fader, {
         toValue: 0,
         duration: 500,
         useNativeDriver: true,
-      }).start()
+      }).start();
     }
-  }
+  };
 
   const lockApp = () => {
-    dispatch(setLogout(null))
-  }
+    dispatch(setLogout(null));
+  };
 
   return (
-    <SafeAreaView style={[ styles.container, style]}>
+    <SafeAreaView style={[styles.container, style]}>
       {/* Header Comes Here */}
       <View>
         <View style={styles.header}>
@@ -103,9 +96,9 @@ const Header = ({switchUser, setParams, fetchFeedData, style}) => {
               // Refresh the feeds
               navigation.navigate(GLOBALS.SCREENS.FEED, {
                 refreshNotifFeed: true,
-              })
+              });
 
-              navigation.setParams({ refreshNotifFeed: true })
+              navigation.setParams({refreshNotifFeed: true});
             }}
             onNewNotifications={() => {
               // Do nothing for now, bell is ringing in the module anyway
@@ -117,53 +110,59 @@ const Header = ({switchUser, setParams, fetchFeedData, style}) => {
             src={require('assets/ui/settings.png')}
             iconSize={24}
             onPress={() => {
-              navigation.navigate(GLOBALS.SCREENS.SETTINGS)
+              navigation.navigate(GLOBALS.SCREENS.SETTINGS);
             }}
           />
         </View>
 
-        {show &&
+        {show && (
           <Animated.View
-            style={[styles.activeProfile,platfromSpecificStyle,{opacity:fader}]}
-            pointerEvents="box-none"
-          >
+            style={[
+              styles.activeProfile,
+              platfromSpecificStyle,
+              {opacity: fader},
+            ]}
+            pointerEvents="box-none">
             <View style={styles.upArrow} />
             <View style={styles.content}>
-              {users.map(({ wallet, index, ens, cns }) => {
-                let isActive = currentUser === index
+              {users.map(({wallet, index, ens, cns}) => {
+                let isActive = currentUser === index;
 
                 const onPress = () => {
-                  switchUser(index)
+                  switchUser(index);
                   navigation.navigate(GLOBALS.SCREENS.FEED, {
                     refreshNotifFeed: true,
-                  })
-                  navigation.setParams({ refreshNotifFeed: true })
-                  clearFeed(null)
+                  });
+                  navigation.setParams({refreshNotifFeed: true});
+                  clearFeed(null);
                   fetchFeedData({
                     rewrite: true,
                     wallet,
-                  })
-                  setCurrentUserWallet(users[index])
-                  toggleShow()
-                }
+                  });
+                  setCurrentUserWallet(users[index]);
+                  toggleShow();
+                };
 
                 return isActive ? (
-                  <TouchableOpacity style={styles.activeWalletInfo}>
+                  <TouchableOpacity
+                    style={styles.activeWalletInfo}
+                    key={wallet}>
                     <StylishLabel
                       style={styles.para}
                       fontSize={16}
                       title="[t:Connected Wallet]"
                     />
-                    <Text style={styles.activeWalletText}>{getProperAddressLabel(wallet,ens,cns)}</Text>
+                    <Text style={styles.activeWalletText}>
+                      {getProperAddressLabel(wallet, ens, cns)}
+                    </Text>
                   </TouchableOpacity>
                 ) : (
-                  <TouchableOpacity
-                    style={styles.walletInfo}
-                    onPress={onPress}
-                  >
-                    <Text style={styles.walletText}>{getProperAddressLabel(wallet,ens,cns)}</Text>
+                  <TouchableOpacity style={styles.walletInfo} onPress={onPress}>
+                    <Text style={styles.walletText}>
+                      {getProperAddressLabel(wallet, ens, cns)}
+                    </Text>
                   </TouchableOpacity>
-                )
+                );
               })}
 
               <View style={{}}>
@@ -176,18 +175,18 @@ const Header = ({switchUser, setParams, fetchFeedData, style}) => {
                   fontColor={GLOBALS.COLORS.WHITE}
                   bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
                   onPress={() => {
-                    toggleShow()
-                    lockApp()
+                    toggleShow();
+                    lockApp();
                   }}
                 />
               </View>
             </View>
           </Animated.View>
-        }
+        )}
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 // Styling
 const styles = StyleSheet.create({
@@ -247,7 +246,7 @@ const styles = StyleSheet.create({
     borderRadius: GLOBALS.ADJUSTMENTS.DEFAULT_MID_RADIUS,
     marginBottom: 10,
   },
-  activeWalletIos:{
+  activeWalletIos: {
     position: 'absolute',
     top: 70,
     left: 20,
@@ -283,16 +282,17 @@ const styles = StyleSheet.create({
     borderRightColor: 'transparent',
     borderBottomColor: GLOBALS.COLORS.WHITE,
   },
-})
+});
 
-const platfromSpecificStyle = Platform.OS === "ios" ? styles.activeWalletIos : {}
+const platfromSpecificStyle =
+  Platform.OS === 'ios' ? styles.activeWalletIos : {};
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   auth: state.auth,
-})
+});
 
 export default connect(mapStateToProps, {
   switchUser,
   fetchFeedData,
   clearFeed,
-})(Header)
+})(Header);

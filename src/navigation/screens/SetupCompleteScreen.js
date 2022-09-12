@@ -1,56 +1,52 @@
-import React, { Component } from 'react'
+import {useFocusEffect} from '@react-navigation/native';
+import React, {Component} from 'react';
 import {
-  View,
-  Text,
-  InteractionManager,
   Animated,
+  InteractionManager,
   StyleSheet,
-} from 'react-native'
-import { useFocusEffect } from '@react-navigation/native'
-import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context'
+  Text,
+  View,
+} from 'react-native';
+import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
+import {connect} from 'react-redux';
+import GLOBALS from 'src/Globals';
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
+import CryptoHelper from 'src/helpers/CryptoHelper';
+import FeedDBHelper from 'src/helpers/FeedDBHelper';
+import {setAuthState} from 'src/redux/authSlice';
+import MetaStorage from 'src/singletons/MetaStorage';
 
-import StylishLabel from 'src/components/labels/StylishLabel'
-import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter'
-import PrimaryButton from 'src/components/buttons/PrimaryButton'
-
-import CryptoHelper from 'src/helpers/CryptoHelper'
-import FeedDBHelper from 'src/helpers/FeedDBHelper'
-import MetaStorage from 'src/singletons/MetaStorage'
-
-import GLOBALS from 'src/Globals'
-import { connect } from 'react-redux'
-
-import { setAuthState } from 'src/redux/authSlice'
-
-function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
+function ScreenFinishedTransition({setScreenTransitionAsDone}) {
   useFocusEffect(
     React.useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         // After screen is loaded
-        setScreenTransitionAsDone()
-      })
+        setScreenTransitionAsDone();
+      });
 
-      return () => task.cancel()
+      return () => task.cancel();
     }, []),
-  )
+  );
 
-  return null
+  return null;
 }
 
 function GetScreenInsets() {
-  const insets = useSafeArea()
+  const insets = useSafeArea();
   if (insets.bottom > 0) {
     // Adjust inset by
-    return <View style={styles.insetAdjustment}></View>
+    return <View style={styles.insetAdjustment}></View>;
   } else {
-    return <View style={styles.noInsetAdjustment}></View>
+    return <View style={styles.noInsetAdjustment}></View>;
   }
 }
 
 class SetupCompleteScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       transitionFinished: false,
@@ -58,7 +54,7 @@ class SetupCompleteScreen extends Component {
 
       singingUserIn: false,
       fader: new Animated.Value(0),
-    }
+    };
   }
 
   // FUNCTIONS
@@ -73,10 +69,10 @@ class SetupCompleteScreen extends Component {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }).start()
+        }).start();
       },
-    )
-  }
+    );
+  };
 
   // Load the Next Screen
   loadNextScreen = async () => {
@@ -84,25 +80,25 @@ class SetupCompleteScreen extends Component {
     // All done, set to true
     this.setState({
       singingUserIn: true,
-    })
+    });
 
     // Set SignedIn to true
-    await MetaStorage.instance.setIsSignedIn(true)
+    await MetaStorage.instance.setIsSignedIn(true);
 
     // Set First Sign in to true
-    await MetaStorage.instance.setFirstSignInByUser(true)
+    await MetaStorage.instance.setFirstSignInByUser(true);
 
     // Reset number of passcode attempts since it's a valid login
     await MetaStorage.instance.setRemainingPasscodeAttempts(
       GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS,
-    )
+    );
 
     // Set Push Notification Badge
-    await MetaStorage.instance.setCurrentAndPreviousBadgeCount(0, 0)
+    await MetaStorage.instance.setCurrentAndPreviousBadgeCount(0, 0);
     const {users} = this.props.auth;
     await MetaStorage.instance.setStoredWallets(users);
-    this.props.setAuthState(GLOBALS.AUTH_STATE.AUTHENTICATED)
-  }
+    this.props.setAuthState(GLOBALS.AUTH_STATE.AUTHENTICATED);
+  };
 
   // RETURN
   render() {
@@ -112,7 +108,7 @@ class SetupCompleteScreen extends Component {
           setScreenTransitionAsDone={() => {
             this.setState({
               transitionFinished: true,
-            })
+            });
           }}
         />
         <Text style={styles.header}>All Done!</Text>
@@ -144,11 +140,11 @@ class SetupCompleteScreen extends Component {
             animated={!this.state.detailedInfoPresetned}
             startAnimation={this.state.transitionFinished}
             animationCompleteCallback={() => {
-              this.animationFinished()
+              this.animationFinished();
             }}
           />
         </View>
-        <Animated.View style={[styles.footer, { opacity: this.state.fader }]}>
+        <Animated.View style={[styles.footer, {opacity: this.state.fader}]}>
           <PrimaryButton
             iconFactory="Ionicons"
             icon="ios-arrow-forward"
@@ -161,13 +157,13 @@ class SetupCompleteScreen extends Component {
             disabled={false}
             loading={this.state.singingUserIn}
             onPress={() => {
-              this.loadNextScreen()
+              this.loadNextScreen();
             }}
           />
           <GetScreenInsets />
         </Animated.View>
       </SafeAreaView>
-    )
+    );
   }
 }
 
@@ -217,12 +213,12 @@ const styles = StyleSheet.create({
   noInsetAdjustment: {
     paddingBottom: 20,
   },
-})
+});
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   auth: state.auth,
-})
+});
 
 export default connect(mapStateToProps, {
   setAuthState,
-})(SetupCompleteScreen)
+})(SetupCompleteScreen);

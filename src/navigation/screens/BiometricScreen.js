@@ -1,68 +1,63 @@
-import React, { Component } from 'react'
+import firebase from '@react-native-firebase/app';
+import messaging from '@react-native-firebase/messaging';
+import {useFocusEffect} from '@react-navigation/native';
+import * as LocalAuthentication from 'expo-local-authentication';
+import React, {Component} from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  InteractionManager,
   ActivityIndicator,
+  Animated,
+  InteractionManager,
   Keyboard,
   KeyboardAvoidingView,
-  Vibration,
-  Animated,
   StyleSheet,
-} from 'react-native'
-import { useFocusEffect } from '@react-navigation/native'
-import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context'
+  Text,
+  TextInput,
+  Vibration,
+  View,
+} from 'react-native';
+import * as Keychain from 'react-native-keychain';
+import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
+import {connect} from 'react-redux';
+import GLOBALS from 'src/Globals';
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
+import NoticePrompt from 'src/components/modals/NoticePrompt';
+import OverlayBlur from 'src/components/modals/OverlayBlur';
+import BiometricHelper from 'src/helpers/BiometricHelper';
+import CryptoHelper from 'src/helpers/CryptoHelper';
+import MetaStorage from 'src/singletons/MetaStorage';
 
-import messaging from '@react-native-firebase/messaging'
-
-import * as LocalAuthentication from 'expo-local-authentication'
-
-import * as Keychain from 'react-native-keychain'
-
-import StylishLabel from 'src/components/labels/StylishLabel'
-import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter'
-import PrimaryButton from 'src/components/buttons/PrimaryButton'
-
-import OverlayBlur from 'src/components/modals/OverlayBlur'
-import NoticePrompt from 'src/components/modals/NoticePrompt'
-
-import CryptoHelper from 'src/helpers/CryptoHelper'
-import BiometricHelper from 'src/helpers/BiometricHelper'
-import MetaStorage from 'src/singletons/MetaStorage'
-
-import GLOBALS from 'src/Globals'
-import { connect } from 'react-redux'
-
-function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
+function ScreenFinishedTransition({setScreenTransitionAsDone}) {
   useFocusEffect(
     React.useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         // After screen is loaded
-        setScreenTransitionAsDone()
-      })
+        setScreenTransitionAsDone();
+      });
 
-      return () => task.cancel()
+      return () => task.cancel();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
-  )
+  );
 
-  return null
+  return null;
 }
 
 function GetScreenInsets() {
-  const insets = useSafeArea()
+  const insets = useSafeArea();
   if (insets.bottom > 0) {
     // Adjust inset by
-    return <View style={styles.insetAdjustment}></View>
+    return <View style={styles.insetAdjustment}></View>;
   } else {
-    return <View style={styles.noInsetAdjustment}></View>
+    return <View style={styles.noInsetAdjustment}></View>;
   }
 }
 
 class BiometricScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       transitionFinished: false,
       detailedInfoPresetned: false,
@@ -81,15 +76,15 @@ class BiometricScreen extends Component {
 
       biometricSupported: false, // false or as per LocalAuthentication
       biometricEnabled: false,
-    }
+    };
   }
 
   // FUNCTIONS
   // Validate Pass Code
-  validatePassCode = async (value) => {
+  validatePassCode = async value => {
     if (value.length != 6) {
       // if the value isn't equal to 6, it's not complete yet
-      return
+      return;
     }
 
     if (this.state.passcodeVerifyStep == false) {
@@ -101,48 +96,49 @@ class BiometricScreen extends Component {
           },
           () => {
             if (this.refs.PasscodeInput) {
-              this.refs.PasscodeInput.focus()
+              this.refs.PasscodeInput.focus();
             }
           },
-        )
-      }
+        );
+      };
 
-      this.fadeInPasscode(callback)
+      this.fadeInPasscode(callback);
     } else {
       if (this.state.passcode !== this.state.passcodeMirror) {
         // Password mismatch, re-enter
-        Vibration.vibrate()
-        this.fadeInPasscode(this.resetPassCode())
+        Vibration.vibrate();
+        this.fadeInPasscode(this.resetPassCode());
       } else {
-        Keyboard.dismiss()
+        Keyboard.dismiss();
 
         // Encrypt Private Key and Do Hashing
-        const privateKey = this.props.auth.users[this.props.auth.currentUser]
-          .userPKey
+        const privateKey =
+          this.props.auth.users[this.props.auth.currentUser].userPKey;
 
-        let encryptedPkey
+        let encryptedPkey;
 
         if (!privateKey) {
           // encrypted private key is empty to support wallet sign in
-          encryptedPkey = ''
+          encryptedPkey = '';
         } else {
           encryptedPkey = CryptoHelper.encryptWithAES(
             privateKey,
             this.state.passcode,
-          )
+          );
         }
         const hashedCode = await CryptoHelper.hashWithSha256(
           this.state.passcode,
-        )
+        );
 
         // Store private key and hashed code and continue
         await MetaStorage.instance.setEncryptedPKeyAndHashedPasscode(
           encryptedPkey,
           hashedCode,
-        )
+        );
 
         // Check if biometric is available
-        const biometricSupported = await BiometricHelper.getSupportedBiometric()
+        const biometricSupported =
+          await BiometricHelper.getSupportedBiometric();
 
         this.setState({
           passcodeConfirmedStep: true,
@@ -150,23 +146,23 @@ class BiometricScreen extends Component {
           encryptedPKey: encryptedPkey,
 
           biometricSupported: biometricSupported,
-        })
+        });
       }
     }
-  }
+  };
 
-  resetPassCode = (value) => {
+  resetPassCode = value => {
     this.setState({
       passcode: '',
       passcodeMirror: '',
       passcodeMismatched: true,
       passcodeVerifyStep: false,
       passcodeConfirmedStep: false,
-    })
-  }
+    });
+  };
 
   // Set Pass Code
-  changePassCode = (value) => {
+  changePassCode = value => {
     // accept only digits
     if (/^\d+$/.test(value) || value === '') {
       if (this.state.passcodeVerifyStep == false) {
@@ -175,40 +171,40 @@ class BiometricScreen extends Component {
             passcode: value,
           },
           () => {
-            this.validatePassCode(value)
+            this.validatePassCode(value);
           },
-        )
+        );
       } else {
         this.setState(
           {
             passcodeMirror: value,
           },
           () => {
-            this.validatePassCode(value)
+            this.validatePassCode(value);
           },
-        )
+        );
       }
     }
-  }
+  };
 
-  fadeInPasscode = (callback) => {
+  fadeInPasscode = callback => {
     this.setState(
       {
         passcodeFader: new Animated.Value(0),
       },
       () => {
         if (callback) {
-          callback()
+          callback();
         }
 
         Animated.timing(this.state.passcodeFader, {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }).start()
+        }).start();
       },
-    )
-  }
+    );
+  };
 
   // Open Notice Prompt With Overlay Blur
   toggleNoticePrompt = (
@@ -221,32 +217,32 @@ class BiometricScreen extends Component {
   ) => {
     // Set Notice First
     if (title) {
-      this.refs.NoticePrompt.changeTitle(title)
+      this.refs.NoticePrompt.changeTitle(title);
     }
 
     if (subtitle) {
-      this.refs.NoticePrompt.changeSubtitle(subtitle)
+      this.refs.NoticePrompt.changeSubtitle(subtitle);
     }
 
     if (notice) {
-      this.refs.NoticePrompt.changeNotice(notice)
+      this.refs.NoticePrompt.changeNotice(notice);
     }
 
     if (showIndicator) {
-      this.refs.NoticePrompt.changeIndicator(showIndicator)
+      this.refs.NoticePrompt.changeIndicator(showIndicator);
     }
 
     // Set render state of this and the animate the blur modal in
-    this.refs.OverlayBlur.changeRenderState(toggle, animate)
-    this.refs.NoticePrompt.changeRenderState(toggle, animate)
-  }
+    this.refs.OverlayBlur.changeRenderState(toggle, animate);
+    this.refs.NoticePrompt.changeRenderState(toggle, animate);
+  };
 
   // Detect PK Code
-  onPKDetect = (code) => {
+  onPKDetect = code => {
     this.setState({
       pkey: code,
-    })
-  }
+    });
+  };
 
   // Reset PK Code
   resetPKey = () => {
@@ -262,10 +258,10 @@ class BiometricScreen extends Component {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }).start()
+        }).start();
       },
-    )
-  }
+    );
+  };
 
   // When Animation is Finished
   animationFinished = () => {
@@ -278,61 +274,62 @@ class BiometricScreen extends Component {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }).start()
+        }).start();
       },
-    )
-  }
+    );
+  };
 
   // Load the Next Screen
   loadNextScreenAfterAdditionalSetup = async () => {
     // Check if biometric is present, if so present authentication
     // If authenticated, store the passcode on secure chain
     if (this.state.biometricSupported) {
-      let biometricType = 'Null'
+      console.log('click me');
+      let biometricType = 'Null';
 
       if (
         this.state.biometricSupported ==
         LocalAuthentication.AuthenticationType.FINGERPRINT
       ) {
-        biometricType = 'TouchID'
+        biometricType = 'TouchID';
       } else if (
         this.state.biometricSupported ==
         LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
       ) {
-        biometricType = 'FaceID'
+        biometricType = 'FaceID';
       }
 
-      const options = {}
-      options.promptMessage = `Allow ${biometricType} to Authenticate you quickly and securely.`
-      options.cancelLabel = 'Skip for Now'
-      options.fallbackLabel = ''
-      options.disableDeviceFallback = true
+      const options = {};
+      options.promptMessage = `Allow ${biometricType} to Authenticate you quickly and securely.`;
+      options.cancelLabel = 'Skip for Now';
+      options.fallbackLabel = '';
+      options.disableDeviceFallback = true;
 
-      const response = await LocalAuthentication.authenticateAsync(options)
+      const response = await LocalAuthentication.authenticateAsync(options);
 
-      let biometricEnabled = false
+      let biometricEnabled = false;
       if (response.success) {
-        biometricEnabled = true
+        biometricEnabled = true;
       }
 
       if (biometricEnabled) {
         // Store passcode and encrypted private key in keychain
-        const username = String(this.state.passcode)
+        const username = String(this.state.passcode);
 
         // since private key can be absent and android doesn't support that...
-        let pass = this.state.encryptedPKey
+        let pass = this.state.encryptedPKey;
         if (!pass) {
-          pass = GLOBALS.CONSTANTS.NULL_EXCEPTION
+          pass = GLOBALS.CONSTANTS.NULL_EXCEPTION;
         }
-        const password = String(pass)
+        const password = String(pass);
         const AUTH_OPTIONS = {
           accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
           accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
-        }
+        };
 
-        await Keychain.setGenericPassword(username, password, AUTH_OPTIONS)
+        await Keychain.setGenericPassword(username, password, AUTH_OPTIONS);
 
-        this.loadNextScreen()
+        this.loadNextScreen();
       } else {
         // Display enabling push notification message and move on
         this.toggleNoticePrompt(
@@ -342,80 +339,85 @@ class BiometricScreen extends Component {
           `${biometricType} is recommended for added security and to quickly authenticate you`,
           `If you wish to enable ${biometricType} in the future, you can do so from the [appsettings:App Settings]`,
           false,
-        )
+        );
       }
     } else {
-      this.loadNextScreen()
+      console.log('no bimertric me');
+      this.loadNextScreen();
     }
-  }
+  };
 
   loadNextScreenSequential = () => {
-    this.loadNextScreen()
-  }
+    this.loadNextScreen();
+  };
 
   loadNextScreen = async () => {
+    // TODO:fix
+    this.props.navigation.navigate(GLOBALS.SCREENS.SETUPCOMPLETE);
+
     // Goto Next Screen
     // Check if the push notification permission is waiting for first grant
     // If not, skip this step completely as user either gave permission or denied it
-    const authorizationStatus = await messaging().hasPermission()
+    // FIREBASE
+    const authorizationStatus = await messaging().hasPermission();
 
     if (authorizationStatus == messaging.AuthorizationStatus.NOT_DETERMINED) {
-      this.props.navigation.navigate(GLOBALS.SCREENS.PUSHNOTIFY)
+      this.props.navigation.navigate(GLOBALS.SCREENS.PUSHNOTIFY);
     } else {
-      this.props.navigation.navigate(GLOBALS.SCREENS.SETUPCOMPLETE)
+      this.props.navigation.navigate(GLOBALS.SCREENS.SETUPCOMPLETE);
     }
-  }
+  };
 
   // RETURN
   render() {
     // Keyboard Behavior
-    let keyboardAvoidBehavior = 'padding'
+    let keyboardAvoidBehavior = 'padding';
     if (Platform.OS === 'android') {
-      keyboardAvoidBehavior = 'height'
+      keyboardAvoidBehavior = 'height';
     }
 
     // Pick Passcode
-    let passcodeSegment
+    let passcodeSegment;
 
     if (this.state.passcodeVerifyStep == false) {
-      passcodeSegment = this.state.passcode.split('')
+      passcodeSegment = this.state.passcode.split('');
     } else if (!this.state.passcodeConfirmedStep) {
-      passcodeSegment = this.state.passcodeMirror.split('')
+      passcodeSegment = this.state.passcodeMirror.split('');
     }
 
     // For Changing Text Prompt
-    let prompt = '[d:Pick a Passcode for your Vault]'
+    let prompt = '[d:Pick a Passcode for your Vault]';
     if (this.state.passcodeMismatched && !this.state.passcodeVerifyStep) {
-      prompt = '[e:Passcode Mismatch, Please Try Again]'
+      prompt = '[e:Passcode Mismatch, Please Try Again]';
     }
     if (this.state.passcodeVerifyStep == true) {
-      prompt = '[t:Re-enter your Passcode to verify]'
+      prompt = '[t:Re-enter your Passcode to verify]';
     }
 
     // For Biometric Optional Prompt
-    let continuePrompt = 'Continue'
-    let continueIcon = 'ios-arrow-forward'
+    let continuePrompt = 'Continue';
+    let continueIcon = 'ios-arrow-forward';
 
-    let biometricType = 'Null'
-    let biometricPrompt = ''
+    let biometricType = 'Null';
+    let biometricPrompt = '';
 
     if (this.state.biometricSupported) {
       if (
         this.state.biometricSupported ==
         LocalAuthentication.AuthenticationType.FINGERPRINT
       ) {
-        biometricType = 'TouchID'
+        biometricType = 'TouchID';
       } else if (
         this.state.biometricSupported ==
         LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
       ) {
-        biometricType = 'FaceID'
+        biometricType = 'FaceID';
       }
 
-      continueIcon = 'md-finger-print'
-      continuePrompt = `Enable ${biometricType} and Continue`
+      continueIcon = 'md-finger-print';
+      continuePrompt = `Enable ${biometricType} and Continue`;
 
-      biometricPrompt = `Enabling [b:${biometricType} is optional] but further improves your security. It also gives you [d:fast and secure access].`
+      biometricPrompt = `Enabling [b:${biometricType} is optional] but further improves your security. It also gives you [d:fast and secure access].`;
     }
 
     return (
@@ -425,10 +427,10 @@ class BiometricScreen extends Component {
             setScreenTransitionAsDone={() => {
               this.setState({
                 transitionFinished: true,
-              })
+              });
 
               if (this.refs.PasscodeInput) {
-                this.refs.PasscodeInput.focus()
+                this.refs.PasscodeInput.focus();
               }
             }}
           />
@@ -444,8 +446,7 @@ class BiometricScreen extends Component {
                     <KeyboardAvoidingView
                       style={styles.keyboardAvoid}
                       behavior={keyboardAvoidBehavior}
-                      enabled
-                    >
+                      enabled>
                       <StylishLabel
                         style={styles.para}
                         fontSize={16}
@@ -455,9 +456,8 @@ class BiometricScreen extends Component {
                       <Animated.View
                         style={[
                           styles.passcodeContainer,
-                          { opacity: this.state.passcodeFader },
-                        ]}
-                      >
+                          {opacity: this.state.passcodeFader},
+                        ]}>
                         <StylishLabel
                           style={[styles.paracenter, styles.paraExtraMargin]}
                           fontSize={16}
@@ -471,7 +471,7 @@ class BiometricScreen extends Component {
                           contextMenuHidden={true}
                           keyboardType={'numeric'}
                           autoCorrect={false}
-                          onChangeText={(value) => this.changePassCode(value)}
+                          onChangeText={value => this.changePassCode(value)}
                           value={
                             this.state.passcodeVerifyStep
                               ? this.state.passcodeMirror
@@ -481,20 +481,17 @@ class BiometricScreen extends Component {
 
                         <View
                           style={styles.fancyTextContainer}
-                          pointerEvents="none"
-                        >
+                          pointerEvents="none">
                           <View
                             style={[
                               styles.fancyTextView,
                               styles.fancyTextViewPrimary,
-                            ]}
-                          >
+                            ]}>
                             <Text
                               style={[
                                 styles.fancyText,
                                 styles.fancyTextPrimary,
-                              ]}
-                            >
+                              ]}>
                               {passcodeSegment[0]}
                             </Text>
                           </View>
@@ -502,14 +499,12 @@ class BiometricScreen extends Component {
                             style={[
                               styles.fancyTextView,
                               styles.fancyTextViewPrimary,
-                            ]}
-                          >
+                            ]}>
                             <Text
                               style={[
                                 styles.fancyText,
                                 styles.fancyTextPrimary,
-                              ]}
-                            >
+                              ]}>
                               {passcodeSegment[1]}
                             </Text>
                           </View>
@@ -517,11 +512,9 @@ class BiometricScreen extends Component {
                             style={[
                               styles.fancyTextView,
                               styles.fancyTextViewThird,
-                            ]}
-                          >
+                            ]}>
                             <Text
-                              style={[styles.fancyText, styles.fancyTextThird]}
-                            >
+                              style={[styles.fancyText, styles.fancyTextThird]}>
                               {passcodeSegment[2]}
                             </Text>
                           </View>
@@ -529,11 +522,9 @@ class BiometricScreen extends Component {
                             style={[
                               styles.fancyTextView,
                               styles.fancyTextViewThird,
-                            ]}
-                          >
+                            ]}>
                             <Text
-                              style={[styles.fancyText, styles.fancyTextThird]}
-                            >
+                              style={[styles.fancyText, styles.fancyTextThird]}>
                               {passcodeSegment[3]}
                             </Text>
                           </View>
@@ -541,14 +532,12 @@ class BiometricScreen extends Component {
                             style={[
                               styles.fancyTextView,
                               styles.fancyTextViewSecondary,
-                            ]}
-                          >
+                            ]}>
                             <Text
                               style={[
                                 styles.fancyText,
                                 styles.fancyTextSecondary,
-                              ]}
-                            >
+                              ]}>
                               {passcodeSegment[4]}
                             </Text>
                           </View>
@@ -556,14 +545,12 @@ class BiometricScreen extends Component {
                             style={[
                               styles.fancyTextView,
                               styles.fancyTextViewSecondary,
-                            ]}
-                          >
+                            ]}>
                             <Text
                               style={[
                                 styles.fancyText,
                                 styles.fancyTextSecondary,
-                              ]}
-                            >
+                              ]}>
                               {passcodeSegment[5]}
                             </Text>
                           </View>
@@ -602,12 +589,12 @@ class BiometricScreen extends Component {
               animated={!this.state.detailedInfoPresetned}
               startAnimation={this.state.transitionFinished}
               animationCompleteCallback={() => {
-                this.animationFinished()
+                this.animationFinished();
               }}
             />
           </View>
 
-          <Animated.View style={[styles.footer, { opacity: this.state.fader }]}>
+          <Animated.View style={[styles.footer, {opacity: this.state.fader}]}>
             {this.state.pkeyEncrypted == false ? null : (
               <View style={styles.verifyFooter}>
                 <React.Fragment>
@@ -621,7 +608,7 @@ class BiometricScreen extends Component {
                     bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
                     disabled={false}
                     onPress={() => {
-                      this.loadNextScreenAfterAdditionalSetup()
+                      this.loadNextScreenAfterAdditionalSetup();
                     }}
                   />
                 </React.Fragment>
@@ -639,12 +626,12 @@ class BiometricScreen extends Component {
           ref="NoticePrompt"
           closeTitle="OK"
           closeFunc={() => {
-            this.toggleNoticePrompt(false, true)
-            this.loadNextScreenSequential()
+            this.toggleNoticePrompt(false, true);
+            this.loadNextScreenSequential();
           }}
         />
       </React.Fragment>
-    )
+    );
   }
 }
 
@@ -752,10 +739,10 @@ const styles = StyleSheet.create({
   noInsetAdjustment: {
     paddingBottom: 20,
   },
-})
+});
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   auth: state.auth,
-})
+});
 
-export default connect(mapStateToProps, {})(BiometricScreen)
+export default connect(mapStateToProps, {})(BiometricScreen);

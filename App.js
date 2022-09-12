@@ -1,78 +1,61 @@
-import './web3globals.js'
-import './shim.js'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
+import WalletConnectProvider from '@walletconnect/react-native-dapp';
+import React, {useEffect} from 'react';
+import 'react-native-gesture-handler';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {Provider} from 'react-redux';
+import {persistStore} from 'redux-persist';
+import {PersistGate} from 'redux-persist/integration/react';
+import ENV_CONFIG from 'src/env.config';
+import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
+import AppScreens from 'src/navigation';
+import store from 'src/redux';
+import Notify from 'src/singletons/Notify';
 
-import 'react-native-gesture-handler'
+import './shim.js';
 
-import React, { useEffect } from 'react'
+let persistor = persistStore(store);
 
-import messaging from '@react-native-firebase/messaging'
-
-import WalletConnectProvider from '@walletconnect/react-native-dapp'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-
-import AppScreens from 'src/navigation'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
-
-import AppBadgeHelper from 'src/helpers/AppBadgeHelper'
-import Notify from 'src/singletons/Notify'
-
-import ENV_CONFIG from 'src/env.config'
-
-import { Provider } from 'react-redux'
-import store from 'src/redux'
-import { persistStore } from 'redux-persist'
-import { PersistGate } from 'redux-persist/integration/react'
-
-// Assign console.log to nothing
-if (!ENV_CONFIG.SHOW_CONSOLE) {
-  console.log('Production Environment... disabling console!')
-}
-
-let persistor = persistStore(store)
-
-export default function App() {
+const App = () => {
   const handleAppNotificationBadge = async () => {
-    await AppBadgeHelper.setAppBadgeCount(0)
-  }
+    await AppBadgeHelper.setAppBadgeCount(0);
+  };
 
-  // HANDLE ON APP START
   useEffect(() => {
     // PUSH NOTIFICATIONS HANDLING
     // Request Device Token and save it user is signed in
-    Notify.instance.requestDeviceToken(true)
+    Notify.instance.requestDeviceToken(true);
 
     // Listen to whether the token changes
-    const onTokenRefresh = messaging().onTokenRefresh((token) => {
-      Notify.instance.saveDeviceToken(token, true) // true means it's a refresh
-    })
+    const onTokenRefresh = messaging().onTokenRefresh(token => {
+      Notify.instance.saveDeviceToken(token, true); // true means it's a refresh
+    });
 
     // Listen for incoming messages
-    const handleForegroundPush = messaging().onMessage(
-      async (remoteMessage) => {
-        Notify.instance.handleIncomingPushAppOpened(remoteMessage)
-      },
-    )
+    const handleForegroundPush = messaging().onMessage(async remoteMessage => {
+      Notify.instance.handleIncomingPushAppOpened(remoteMessage);
+    });
 
-    messaging().onNotificationOpenedApp((remoteMessage) => {
-      Notify.instance.triggerNotificationListenerCallback()
-    })
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      Notify.instance.triggerNotificationListenerCallback();
+    });
 
     messaging()
       .getInitialNotification()
-      .then((remoteMessage) => {
+      .then(remoteMessage => {
         if (remoteMessage) {
-          Notify.instance.triggerNotificationListenerCallback()
+          Notify.instance.triggerNotificationListenerCallback();
         }
-      })
+      });
 
     return () => {
-      onTokenRefresh
-      handleForegroundPush
-      handleAppNotificationBadge()
-    }
-  }, [])
+      onTokenRefresh;
+      handleForegroundPush;
+      handleAppNotificationBadge();
+    };
+  }, []);
 
-  // RENDER
   return (
     <SafeAreaProvider>
       <Provider store={store}>
@@ -88,12 +71,14 @@ export default function App() {
             }}
             storageOptions={{
               asyncStorage: AsyncStorage,
-            }}
-          >
+            }}>
+            {/* <Text>I was called</Text> */}
             <AppScreens />
           </WalletConnectProvider>
         </PersistGate>
       </Provider>
     </SafeAreaProvider>
-  )
-}
+  );
+};
+
+export default App;

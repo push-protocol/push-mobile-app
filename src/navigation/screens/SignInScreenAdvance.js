@@ -1,60 +1,54 @@
-import React, { Component } from 'react'
+import {useFocusEffect} from '@react-navigation/native';
+import * as Permissions from 'expo-permissions';
+import React, {Component} from 'react';
 import {
-  View,
-  Text,
-  InteractionManager,
   Animated,
+  InteractionManager,
   StyleSheet,
-} from 'react-native'
-import { useFocusEffect } from '@react-navigation/native'
-import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context'
+  Text,
+  View,
+} from 'react-native';
+import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
+import GLOBALS from 'src/Globals';
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
+import NoticePrompt from 'src/components/modals/NoticePrompt';
+import OverlayBlur from 'src/components/modals/OverlayBlur';
+import PKEntryPrompt from 'src/components/modals/PKEntryPrompt';
+import QRScanner from 'src/components/modals/QRScanner';
+import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
+import MetaStorage from 'src/singletons/MetaStorage';
 
-import * as Permissions from 'expo-permissions'
-
-import StylishLabel from 'src/components/labels/StylishLabel'
-import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter'
-import PrimaryButton from 'src/components/buttons/PrimaryButton'
-
-import OverlayBlur from 'src/components/modals/OverlayBlur'
-import NoticePrompt from 'src/components/modals/NoticePrompt'
-import PKEntryPrompt from 'src/components/modals/PKEntryPrompt'
-import QRScanner from 'src/components/modals/QRScanner'
-
-import PKProfileBuilder from 'src/components/web3/PKProfileBuilder'
-
-import MetaStorage from 'src/singletons/MetaStorage'
-
-import GLOBALS from 'src/Globals'
-
-function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
+function ScreenFinishedTransition({setScreenTransitionAsDone}) {
   useFocusEffect(
     React.useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         // After screen is loaded
-        setScreenTransitionAsDone()
-      })
+        setScreenTransitionAsDone();
+      });
 
-      return () => task.cancel()
+      return () => task.cancel();
     }, []),
-  )
+  );
 
-  return null
+  return null;
 }
 
 function GetScreenInsets() {
-  const insets = useSafeArea()
+  const insets = useSafeArea();
   if (insets.bottom > 0) {
     // Adjust inset by
-    return <View style={styles.insetAdjustment}></View>
+    return <View style={styles.insetAdjustment}></View>;
   } else {
-    return <View style={styles.noInsetAdjustment}></View>
+    return <View style={styles.noInsetAdjustment}></View>;
   }
 }
 
 export default class SignInScreenAdvance extends Component {
   // CONSTRUCTOR
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       transitionFinished: false,
@@ -66,7 +60,7 @@ export default class SignInScreenAdvance extends Component {
       cns: '',
       ens: '',
       privateKeyVerified: false,
-    }
+    };
   }
 
   // FUNCTIONS
@@ -80,31 +74,31 @@ export default class SignInScreenAdvance extends Component {
     showIndicator,
   ) => {
     // Set Notice First
-    this.refs.NoticePrompt.changeTitle(title)
-    this.refs.NoticePrompt.changeSubtitle(subtitle)
-    this.refs.NoticePrompt.changeNotice(notice)
-    this.refs.NoticePrompt.changeIndicator(showIndicator)
+    this.refs.NoticePrompt.changeTitle(title);
+    this.refs.NoticePrompt.changeSubtitle(subtitle);
+    this.refs.NoticePrompt.changeNotice(notice);
+    this.refs.NoticePrompt.changeIndicator(showIndicator);
 
     // Set render state of this and the animate the blur modal in
-    this.refs.OverlayBlur.changeRenderState(toggle, animate)
-    this.refs.NoticePrompt.changeRenderState(toggle, animate)
-  }
+    this.refs.OverlayBlur.changeRenderState(toggle, animate);
+    this.refs.NoticePrompt.changeRenderState(toggle, animate);
+  };
 
   // Open Text Prompt With Overlay Blur
   toggleTextEntryPrompt = (toggle, animate) => {
     // Set render state of this and the animate the blur modal in
-    this.refs.OverlayBlur.changeRenderState(toggle, animate)
-    this.refs.TextEntryPrompt.changeRenderState(toggle, animate)
-  }
+    this.refs.OverlayBlur.changeRenderState(toggle, animate);
+    this.refs.TextEntryPrompt.changeRenderState(toggle, animate);
+  };
 
   // Open QR Scanner
   toggleQRScanner = (toggle, navigation) => {
-    this.refs.QRScanner.changeRenderState(toggle, navigation)
-  }
+    this.refs.QRScanner.changeRenderState(toggle, navigation);
+  };
 
   // Users Permissions
-  getCameraPermissionAsync = async (navigation) => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA)
+  getCameraPermissionAsync = async navigation => {
+    const {status} = await Permissions.askAsync(Permissions.CAMERA);
     if (status !== 'granted') {
       this.toggleNoticePrompt(
         true,
@@ -113,19 +107,19 @@ export default class SignInScreenAdvance extends Component {
         'Need Camera Permissions for scanning QR Code',
         'Please enable Camera Permissions from [appsettings:App Settings] to continue',
         false,
-      )
+      );
     } else {
       // All Clear, open QR Scanner
-      this.toggleQRScanner(true, navigation)
+      this.toggleQRScanner(true, navigation);
     }
-  }
+  };
 
   // Detect PK Code
-  onPrivateKeyDetect = (code) => {
+  onPrivateKeyDetect = code => {
     this.setState({
       privateKey: code,
-    })
-  }
+    });
+  };
 
   // Reset PK Code
   resetPrivateKey = () => {
@@ -141,10 +135,10 @@ export default class SignInScreenAdvance extends Component {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }).start()
+        }).start();
       },
-    )
-  }
+    );
+  };
 
   // Handle Profile Info
   profileInfoFetched = (wallet, cns, ens) => {
@@ -162,10 +156,10 @@ export default class SignInScreenAdvance extends Component {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }).start()
+        }).start();
       },
-    )
-  }
+    );
+  };
 
   // When Animation is Finished
   animationFinished = () => {
@@ -178,10 +172,10 @@ export default class SignInScreenAdvance extends Component {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }).start()
+        }).start();
       },
-    )
-  }
+    );
+  };
 
   // Load the Next Screen
   loadNextScreen = async () => {
@@ -192,26 +186,26 @@ export default class SignInScreenAdvance extends Component {
         cns: this.state.cns,
         ens: this.state.ens,
         wallet: this.state.wallet,
-      }
+      };
       // console.log(walletObj);
 
-      await MetaStorage.instance.setStoredWallet(walletObj)
+      await MetaStorage.instance.setStoredWallet(walletObj);
 
       // Goto Next Screen
       this.props.navigation.navigate('Biometric', {
         wallet: this.state.wallet,
         privateKey: this.state.privateKey,
         fromOnboarding: this.props.route.params.fromOnboarding,
-      })
+      });
     } else {
       // Coming from a user who was onboarded, no need to Biomertric, skip to setup complete
     }
-  }
+  };
 
   // RETURN
   render() {
-    const { navigation } = this.props
-    const { signInFlow } = this.props.route.params
+    const {navigation} = this.props;
+    const {signInFlow} = this.props.route.params;
 
     return (
       <React.Fragment>
@@ -220,7 +214,7 @@ export default class SignInScreenAdvance extends Component {
             setScreenTransitionAsDone={() => {
               this.setState({
                 transitionFinished: true,
-              })
+              });
             }}
           />
 
@@ -250,7 +244,7 @@ export default class SignInScreenAdvance extends Component {
                 animated={!this.state.detailedInfoPresetned}
                 startAnimation={this.state.transitionFinished}
                 animationCompleteCallback={() => {
-                  this.animationFinished()
+                  this.animationFinished();
                 }}
               />
             ) : (
@@ -259,15 +253,15 @@ export default class SignInScreenAdvance extends Component {
                 profileKey={this.state.privateKey}
                 profileType={GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY}
                 resetFunc={() => {
-                  this.resetPrivateKey()
+                  this.resetPrivateKey();
                 }}
                 profileInfoFetchedFunc={(wallet, cns, ens) => {
-                  this.profileInfoFetched(wallet, cns, ens)
+                  this.profileInfoFetched(wallet, cns, ens);
                 }}
               />
             )}
           </View>
-          <Animated.View style={[styles.footer, { opacity: this.state.fader }]}>
+          <Animated.View style={[styles.footer, {opacity: this.state.fader}]}>
             {this.state.privateKey === '' ? (
               <View style={styles.entryFooter}>
                 <PrimaryButton
@@ -280,7 +274,7 @@ export default class SignInScreenAdvance extends Component {
                   bgColor={GLOBALS.COLORS.GRADIENT_SECONDARY}
                   disabled={false}
                   onPress={() => {
-                    this.getCameraPermissionAsync(navigation)
+                    this.getCameraPermissionAsync(navigation);
                   }}
                 />
 
@@ -297,7 +291,7 @@ export default class SignInScreenAdvance extends Component {
                     bgColor={GLOBALS.COLORS.MID_GRAY}
                     disabled={false}
                     onPress={() => {
-                      this.props.navigation.goBack()
+                      this.props.navigation.goBack();
                     }}
                   />
 
@@ -313,7 +307,7 @@ export default class SignInScreenAdvance extends Component {
                     bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
                     disabled={false}
                     onPress={() => {
-                      this.toggleTextEntryPrompt(true, true)
+                      this.toggleTextEntryPrompt(true, true);
                     }}
                   />
                 </View>
@@ -332,7 +326,7 @@ export default class SignInScreenAdvance extends Component {
                       bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
                       disabled={false}
                       onPress={() => {
-                        this.resetPrivateKey()
+                        this.resetPrivateKey();
                       }}
                     />
                     <View style={styles.divider}></View>
@@ -347,7 +341,7 @@ export default class SignInScreenAdvance extends Component {
                       bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
                       disabled={false}
                       onPress={() => {
-                        this.loadNextScreen()
+                        this.loadNextScreen();
                       }}
                     />
                   </React.Fragment>
@@ -363,8 +357,8 @@ export default class SignInScreenAdvance extends Component {
           ref="QRScanner"
           navigation={navigation}
           title="[wb:Please scan your] [d:wallet's private Key] [wb:to connect it to EPNS.]"
-          doneFunc={(code) => {
-            this.onPrivateKeyDetect(code)
+          doneFunc={code => {
+            this.onPrivateKeyDetect(code);
           }}
           closeFunc={() => this.toggleQRScanner(false, navigation)}
         />
@@ -385,15 +379,15 @@ export default class SignInScreenAdvance extends Component {
           entryLimit={64}
           allowDomainDetection={false}
           doneTitle="Verify!"
-          doneFunc={(code) => {
-            code = '0x' + code
-            this.onPrivateKeyDetect(code)
+          doneFunc={code => {
+            code = '0x' + code;
+            this.onPrivateKeyDetect(code);
           }}
           closeTitle="Cancel"
           closeFunc={() => this.toggleTextEntryPrompt(false, true)}
         />
       </React.Fragment>
-    )
+    );
   }
 }
 
@@ -455,4 +449,4 @@ const styles = StyleSheet.create({
   noInsetAdjustment: {
     paddingBottom: 20,
   },
-})
+});

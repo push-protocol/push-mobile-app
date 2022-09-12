@@ -1,17 +1,15 @@
-import React from 'react'
-import { StatusBar, View, SafeAreaView, StyleSheet } from 'react-native'
-
-import ChannelsDisplayer from 'src/components/ui/ChannelsDisplayer'
-
-import GLOBALS from 'src/Globals'
-import { useSelector } from 'react-redux'
-import { selectUsers, selectCurrentUser } from 'src/redux/authSlice'
+import React from 'react';
+import {SafeAreaView, StatusBar, StyleSheet, View} from 'react-native';
+import {useSelector} from 'react-redux';
+import GLOBALS from 'src/Globals';
+import ChannelsDisplayer from 'src/components/ui/ChannelsDisplayer';
+import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 const ChannelsScreen = () => {
-  const users = useSelector(selectUsers)
-  const currentUser = useSelector(selectCurrentUser)
+  const users = useSelector(selectUsers);
+  const currentUser = useSelector(selectCurrentUser);
 
-  const { wallet, userPKey } = users[currentUser]
+  const {wallet, userPKey} = users[currentUser];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -25,8 +23,8 @@ const ChannelsScreen = () => {
         <ChannelsDisplayer wallet={wallet} pKey={userPKey} />
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 // Styling
 const styles = StyleSheet.create({
@@ -62,6 +60,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-})
+});
 
-export default ChannelsScreen
+export default ChannelsScreen;

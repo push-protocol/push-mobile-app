@@ -1,38 +1,35 @@
-import "@ethersproject/shims";
-import { ethers } from "ethers";
-import React, { useState, useEffect } from "react";
+import '@ethersproject/shims';
+import {useNavigation} from '@react-navigation/native';
+import {ethers} from 'ethers';
+import React, {useEffect, useState} from 'react';
 import {
-  View,
-  Text,
-  SafeAreaView,
   FlatList,
   Image,
-  StyleSheet,
-  TouchableOpacity,
   Linking,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import GLOBALS from 'src/Globals';
+import SubscriptionStatus from 'src/components/buttons/SubscriptionStatus';
+import ENV_CONFIG from 'src/env.config';
 
-import SubscriptionStatus from "src/components/buttons/SubscriptionStatus";
-
-import ENV_CONFIG from "src/env.config";
-import GLOBALS from "src/Globals";
-
-const openURL = async (url) => {
+const openURL = async url => {
   await Linking.openURL(url);
 };
 
-const ChannelItem = ({ style, item, wallet, contract, pKey }) => {
+const ChannelItem = ({style, item, wallet, contract, pKey}) => {
   return item.icon && item.name ? (
     <View style={styles.container}>
       <TouchableOpacity
         onPress={() => {
           openURL(item.url);
-        }}
-      >
+        }}>
         <View style={styles.inner}>
           <View style={styles.iconContainer}>
-            <Image source={{ uri: item.icon }} style={styles.icon} />
+            <Image source={{uri: item.icon}} style={styles.icon} />
           </View>
 
           <View style={styles.contentContainer}>
@@ -43,10 +40,9 @@ const ChannelItem = ({ style, item, wallet, contract, pKey }) => {
               <Text
                 style={{
                   flex: 1,
-                  flexWrap: "wrap",
+                  flexWrap: 'wrap',
                   fontSize: 10,
-                }}
-              >
+                }}>
                 {item.info}
               </Text>
             </View>
@@ -69,17 +65,17 @@ const ChannelItem = ({ style, item, wallet, contract, pKey }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
+    width: '100%',
   },
   inner: {
     backgroundColor: GLOBALS.COLORS.WHITE,
     marginHorizontal: 20,
     marginVertical: 15,
     borderRadius: 10,
-    borderColor: "#eee",
+    borderColor: '#eee',
     borderWidth: 1,
-    flexDirection: "row",
-    shadowColor: "#000",
+    flexDirection: 'row',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 4,
@@ -93,15 +89,15 @@ const styles = StyleSheet.create({
     margin: 10,
     minHeight: 50,
     aspectRatio: 1,
-    borderColor: "#eee",
+    borderColor: '#eee',
     borderWidth: 1,
     borderRadius: 10,
-    justifyContent: "center",
-    overflow: "hidden",
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
   icon: {
-    overflow: "hidden",
-    resizeMode: "contain",
+    overflow: 'hidden',
+    resizeMode: 'contain',
     flex: 1,
   },
   contentContainer: {
@@ -111,14 +107,14 @@ const styles = StyleSheet.create({
   },
   contentTop: {
     paddingVertical: 5,
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   contentTitle: {
-    fontWeight: "600",
-    textTransform: "uppercase",
+    fontWeight: '600',
+    textTransform: 'uppercase',
     letterSpacing: 0.1,
     fontSize: 14,
-    flexWrap: "wrap",
+    flexWrap: 'wrap',
     color: GLOBALS.COLORS.GRADIENT_PRIMARY,
   },
   contentBottom: {
@@ -127,12 +123,12 @@ const styles = StyleSheet.create({
   },
   contentMsg: {
     flex: 1,
-    flexWrap: "wrap",
+    flexWrap: 'wrap',
     fontSize: 10,
   },
   controlsContainer: {
     flex: 0.15,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
 });
 

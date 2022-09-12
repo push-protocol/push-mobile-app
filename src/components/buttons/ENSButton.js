@@ -1,24 +1,23 @@
-import React, { Component } from 'react'
+import {Entypo, Ionicons} from '@expo/vector-icons';
+import {LinearGradient} from 'expo-linear-gradient';
+import React, {Component} from 'react';
 import {
-  View,
-  TouchableOpacity,
-  Text,
   ActivityIndicator,
   StyleSheet,
-} from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
-import { Ionicons, Entypo } from '@expo/vector-icons'
-
-import GLOBALS from 'src/Globals'
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import GLOBALS from 'src/Globals';
 
 export default class ENSButton extends Component {
   // CONSTRUCTOR
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       active: false,
-    }
+    };
   }
 
   // FUNCTIONS
@@ -27,8 +26,8 @@ export default class ENSButton extends Component {
     // Change State to reflect expanded or contracted button
     this.setState({
       active: !this.state.active,
-    })
-  }
+    });
+  };
 
   // Set Render
   render() {
@@ -42,48 +41,48 @@ export default class ENSButton extends Component {
       wallet,
       fontSize,
       dropdownIcon,
-    } = this.props
+    } = this.props;
 
-    let showDomain = true
-    let title = cns
+    let showDomain = true;
+    let title = cns;
 
     if (cns === '') {
-      title = ens
+      title = ens;
     }
 
     if (ens === '' && cns === '') {
-      title = wallet
-      showDomain = false
+      title = wallet;
+      showDomain = false;
     }
 
-    let icon = 'ios-arrow-down'
+    let icon = 'ios-arrow-down';
     if (this.state.active) {
-      icon = 'ios-arrow-up'
+      icon = 'ios-arrow-up';
     }
 
     // Set number of lines and font size
-    let numberOfLines = 0
+    let numberOfLines = 0;
 
     // Set Gradient to show
     let gradient = [
       GLOBALS.COLORS.GRADIENT_PRIMARY,
       GLOBALS.COLORS.GRADIENT_SECONDARY,
-    ]
+    ];
 
     // To set header text style
     let headerTextStyle = {
       fontWeight: 'bold',
-    }
+    };
 
     // To override loading style if need be
-    let loadingContainerStyle = {}
+    let loadingContainerStyle = {};
 
     // If For Profile, then change few visuals
     // Focus on ENS Name, Make address as single line, etc
-    let headerStyle = {}
+    let headerStyle = {};
     if (forProfile) {
-      numberOfLines = 1
-      headerStyle.marginRight = 0
+      numberOfLines = 1;
+      headerStyle.marginRight = 0;
 
       if (!showDomain && !loading) {
         // Colored look better
@@ -100,14 +99,14 @@ export default class ENSButton extends Component {
         headerTextStyle = {
           color: GLOBALS.COLORS.WHITE,
           fontWeight: '400',
-        }
+        };
       }
 
       if (loading) {
         loadingContainerStyle = {
           paddingVertical: 8,
           borderRadius: 18,
-        }
+        };
       }
     }
 
@@ -115,14 +114,12 @@ export default class ENSButton extends Component {
       <View style={[styles.container, style]}>
         <TouchableOpacity
           onPress={this.onPress}
-          disabled={!showDomain || forProfile}
-        >
+          disabled={!showDomain || forProfile}>
           <LinearGradient
             colors={gradient}
             style={[styles.ensbox, innerStyle, loadingContainerStyle]}
             start={[0.1, 0.3]}
-            end={[1, 1]}
-          >
+            end={[1, 1]}>
             {loading == true ? (
               <ActivityIndicator
                 style={styles.activity}
@@ -131,17 +128,15 @@ export default class ENSButton extends Component {
               />
             ) : showDomain == false ? (
               <View
-                style={{ display: 'flex', width: '90%', position: 'relative' }}
-              >
+                style={{display: 'flex', width: '90%', position: 'relative'}}>
                 <Text
                   style={[
                     styles.ensName,
-                    { fontSize: fontSize },
+                    {fontSize: fontSize},
                     headerTextStyle,
                   ]}
                   numberOfLines={numberOfLines}
-                  ellipsizeMode="middle"
-                >
+                  ellipsizeMode="middle">
                   {title}
                 </Text>
                 <Text style={styles.caretStyle}>
@@ -154,9 +149,8 @@ export default class ENSButton extends Component {
               <View style={styles.ensContainer}>
                 <View style={[styles.ensHeader, headerStyle]}>
                   <Text
-                    style={[styles.ensName, { fontSize: fontSize }]}
-                    numberOfLines={numberOfLines}
-                  >
+                    style={[styles.ensName, {fontSize: fontSize}]}
+                    numberOfLines={numberOfLines}>
                     {title}
                   </Text>
                   {forProfile == true ? null : (
@@ -171,8 +165,7 @@ export default class ENSButton extends Component {
                 {this.state.active == false ? null : (
                   <View style={styles.ensContent}>
                     <Text
-                      style={[styles.ensContentInner, { fontSize: fontSize }]}
-                    >
+                      style={[styles.ensContentInner, {fontSize: fontSize}]}>
                       {wallet}
                     </Text>
                   </View>
@@ -182,7 +175,7 @@ export default class ENSButton extends Component {
           </LinearGradient>
         </TouchableOpacity>
       </View>
-    )
+    );
   }
 }
 
@@ -236,4 +229,4 @@ const styles = StyleSheet.create({
     top: 0,
     right: -20,
   },
-})
+});

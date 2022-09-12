@@ -1,57 +1,55 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  SafeAreaView,
-  StyleSheet,
+  Dimensions,
   FlatList,
   Image,
   RefreshControl,
-  Dimensions,
-  ToastAndroid,
+  SafeAreaView,
   ScrollView,
-} from 'react-native'
-import Toast from 'react-native-simple-toast'
-
-import FeedItemWrapper from 'src/components/ui/testFeed/FeedItemWrapperComponent.js'
-import FeedItemComponent from 'src/components/ui/testFeed/FeedItemComponents.js'
-import EPNSActivity from 'src/components/loaders/EPNSActivity'
-import StylishLabel from 'src/components/labels/StylishLabel'
-
-import ENV_CONFIG from 'src/env.config'
-import { ActivityIndicator } from 'react-native'
-import { useSelector } from 'react-redux'
-import { selectUsers, selectCurrentUser } from 'src/redux/authSlice'
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {ActivityIndicator} from 'react-native';
+import Toast from 'react-native-simple-toast';
+import {useSelector} from 'react-redux';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import FeedItemComponent from 'src/components/ui/testFeed/FeedItemComponents.js';
+import FeedItemWrapper from 'src/components/ui/testFeed/FeedItemWrapperComponent.js';
+import ENV_CONFIG from 'src/env.config';
+import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 export default function SpamFeed(props) {
-  const users = useSelector(selectUsers)
-  const currentUser = useSelector(selectCurrentUser)
+  const users = useSelector(selectUsers);
+  const currentUser = useSelector(selectCurrentUser);
 
-  const { wallet } = users[currentUser]
+  const {wallet} = users[currentUser];
 
   // const toast = useRef(null);
 
   useEffect(() => {
-    fetchFeed()
+    fetchFeed();
     // setRefresh(props.refresh);
-  }, [])
+  }, []);
 
-  const [feed, setFeed] = useState([])
-  const [page, setPage] = useState(1)
-  const [refreshing, setRefreshing] = useState(false)
-  const [loading, setloading] = useState(false)
-  const [callOnScrollEnd, setCallOnScrollEnd] = useState(false)
-  const [endReached, setEndReached] = useState(false)
-  const [refresh, setRefresh] = useState(false)
+  const [feed, setFeed] = useState([]);
+  const [page, setPage] = useState(1);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setloading] = useState(false);
+  const [callOnScrollEnd, setCallOnScrollEnd] = useState(false);
+  const [endReached, setEndReached] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
-    onRefreshFunction()
-  }, [])
+    onRefreshFunction();
+  }, []);
 
   const fetchFeed = async () => {
-    setloading(true)
-    const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_GET_SPAM_FEEDS
+    setloading(true);
+    const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_GET_SPAM_FEEDS;
 
     const response = await fetch(apiURL, {
       method: 'POST',
@@ -65,51 +63,51 @@ export default function SpamFeed(props) {
         pageSize: 10,
         op: 'read',
       }),
-    })
-    const resJson = await response.json()
+    });
+    const resJson = await response.json();
 
     if (resJson.count != 0 && resJson.results != []) {
-      const data = feed
+      const data = feed;
       // toast.current.show("New Notifications fetched");
-      await setFeed([...data, ...resJson.results])
-      await setPage(page + 1)
-      Toast.show('More Notifications Loaded.', 0.1)
+      await setFeed([...data, ...resJson.results]);
+      await setPage(page + 1);
+      Toast.show('More Notifications Loaded.', 0.1);
     } else {
-      setEndReached(true)
-      Toast.show('No More Notifications.', Toast.SHORT)
+      setEndReached(true);
+      Toast.show('No More Notifications.', Toast.SHORT);
     }
-    setloading(false)
-    setRefreshing(false)
-  }
+    setloading(false);
+    setRefreshing(false);
+  };
 
   const onRefreshFunction = async () => {
-    setRefreshing(true)
-    setFeed([])
-    setPage(1)
-    setEndReached(false)
-    fetchFeed()
-  }
+    setRefreshing(true);
+    setFeed([]);
+    setPage(1);
+    setEndReached(false);
+    fetchFeed();
+  };
 
   return (
     <>
       <SafeAreaView style={styles.container}>
         {/* {feed != [] && ( */}
-        <View style={{ flex: 1 }}>
+        <View style={{flex: 1}}>
           <FlatList
             data={feed}
-            keyExtractor={(item) => item.payload_id.toString()}
+            keyExtractor={item => item.payload_id.toString()}
             // onEndReached={() => {
             // 	console.log("END REACHED");
             // 	setloading(true);
             // }}
             initialNumToRender={10}
-            style={{ flex: 1 }}
+            style={{flex: 1}}
             showsVerticalScrollIndicator={false}
             // contentContainerStyle={{ marginBottom: 100 }}
             // onEndReachedThreshold={0.}
             // onMomentumScrollBegin={}
             // initialNumToRender={5}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <FeedItemComponent
                 spam={true}
                 loading={loading}
@@ -133,7 +131,7 @@ export default function SpamFeed(props) {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={() => {
-                  onRefreshFunction()
+                  onRefreshFunction();
                 }}
               />
             }
@@ -176,10 +174,10 @@ export default function SpamFeed(props) {
             }
             ListFooterComponent={() => {
               return loading ? (
-                <View style={{ paddingBottom: 20, marginTop: 20 }}>
+                <View style={{paddingBottom: 20, marginTop: 20}}>
                   <ActivityIndicator size="large" color="#000000" />
                 </View>
-              ) : null
+              ) : null;
             }}
           />
 
@@ -235,7 +233,7 @@ export default function SpamFeed(props) {
       </SafeAreaView>
       {/* <Toast ref={toast} duration={500} /> */}
     </>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -259,4 +257,4 @@ const styles = StyleSheet.create({
   infoText: {
     marginVertical: 10,
   },
-})
+});

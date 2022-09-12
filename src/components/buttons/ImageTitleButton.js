@@ -1,23 +1,21 @@
-import React, { Component } from 'react';
-import { View, TouchableHighlight, Text, Image, StyleSheet } from 'react-native';
-
+import React, {Component} from 'react';
+import {Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import GLOBALS from 'src/Globals';
 
-export default ImageTitleButton = ({ img, title, onPress }) => {
+export default ImageTitleButton = ({img, title, onPress}) => {
   // Rendor
   return (
-      <TouchableHighlight
-        style = {styles.container}
-        onPress = {onPress}
-        underlayColor = {GLOBALS.COLORS.SLIGHT_GRAY}
-      >
-        <View style = {styles.childContainer}>
-          <Image style = {styles.image} source = {img} />
-          <Text style = {styles.title}>{title}</Text>
-        </View>
-      </TouchableHighlight>
+    <TouchableHighlight
+      style={styles.container}
+      onPress={onPress}
+      underlayColor={GLOBALS.COLORS.SLIGHT_GRAY}>
+      <View style={styles.childContainer}>
+        <Image style={styles.image} source={img} />
+        <Text style={styles.title}>{title}</Text>
+      </View>
+    </TouchableHighlight>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -47,5 +45,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     fontWeight: '200',
-  }
+  },
 });

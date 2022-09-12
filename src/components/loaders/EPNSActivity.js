@@ -1,67 +1,55 @@
-import React from 'react';
-import {
-  View,
-  ActivityIndicator,
-  Platform,
-  StyleSheet,
-} from 'react-native';
-
 import MaskedView from '@react-native-community/masked-view';
-import { LinearGradient } from 'expo-linear-gradient';
-
+import {LinearGradient} from 'expo-linear-gradient';
+import React from 'react';
+import {ActivityIndicator, Platform, StyleSheet, View} from 'react-native';
 import GLOBALS from 'src/Globals';
 
-const EPNSActivity = ({ style, size, color }) => {
+const EPNSActivity = ({style, size, color}) => {
   return (
-
     <View
       style={[
         styles.container,
         style,
-        (size === "small") ? styles.small : styles.big
-      ]}
-    >
-      {
-        Platform.OS == 'android' || color
-          ? <ActivityIndicator
-              style={styles.activity}
-              size={size}
-              color={color ? color : GLOBALS.COLORS.GRADIENT_THIRD}
-            />
-          : <MaskedView
-              style={styles.maskedView}
-              maskElement={
-                <View style={styles.maskedElementView}>
-                  <ActivityIndicator
-                    style={styles.activity}
-                    size={size}
-                    color={GLOBALS.COLORS.BLACK}
-                  />
-                </View>
-              }
-            ><ActivityIndicator
-              style={styles.activity}
-              size={size}
-              color={GLOBALS.COLORS.WHITE}
-            />
-              <LinearGradient
-                colors={[
-                  GLOBALS.COLORS.GRADIENT_PRIMARY,
-                  GLOBALS.COLORS.GRADIENT_SECONDARY,
-                  GLOBALS.COLORS.GRADIENT_THIRD,
-                ]}
-                style={[
-                  styles.fullgradient,
-                  (size === "small") ? styles.small : styles.big
-                ]}
-                start={[0.1, 0.3]}
-                end={[1, 1]}
-              >
-              </LinearGradient>
-            </MaskedView>
-      }
+        size === 'small' ? styles.small : styles.big,
+      ]}>
+      {Platform.OS == 'android' || color ? (
+        <ActivityIndicator
+          style={styles.activity}
+          size={size}
+          color={color ? color : GLOBALS.COLORS.GRADIENT_THIRD}
+        />
+      ) : (
+        <MaskedView
+          style={styles.maskedView}
+          maskElement={
+            <View style={styles.maskedElementView}>
+              <ActivityIndicator
+                style={styles.activity}
+                size={size}
+                color={GLOBALS.COLORS.BLACK}
+              />
+            </View>
+          }>
+          <ActivityIndicator
+            style={styles.activity}
+            size={size}
+            color={GLOBALS.COLORS.WHITE}
+          />
+          <LinearGradient
+            colors={[
+              GLOBALS.COLORS.GRADIENT_PRIMARY,
+              GLOBALS.COLORS.GRADIENT_SECONDARY,
+              GLOBALS.COLORS.GRADIENT_THIRD,
+            ]}
+            style={[
+              styles.fullgradient,
+              size === 'small' ? styles.small : styles.big,
+            ]}
+            start={[0.1, 0.3]}
+            end={[1, 1]}></LinearGradient>
+        </MaskedView>
+      )}
     </View>
-
   );
 };
 
@@ -92,7 +80,7 @@ const styles = StyleSheet.create({
   },
   maskedTitle: {
     color: 'black',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   fullgradient: {
     alignItems: 'flex-end',

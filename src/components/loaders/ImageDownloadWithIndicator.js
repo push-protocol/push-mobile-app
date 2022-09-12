@@ -1,20 +1,18 @@
-import React, { Component } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-} from 'react-native';
 import * as FileSystem from 'expo-file-system';
-
+import React, {Component} from 'react';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
+// TODO: fix this
 import ProgressCircle from 'react-native-progress-circle';
-import EPNSActivity from 'src/components/loaders/EPNSActivity';
-
-import DownloadHelper from 'src/helpers/DownloadHelper';
-
 import GLOBALS from 'src/Globals';
+import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import DownloadHelper from 'src/helpers/DownloadHelper';
 
 const MAX_ATTEMPTS = 3;
 
@@ -31,7 +29,7 @@ export default class ImageDownloadWithIndicator extends Component {
 
       attemptNumber: 0,
       defaulted: false,
-    }
+    };
 
     // Set Mounted
     this._isMounted = false;
@@ -61,19 +59,19 @@ export default class ImageDownloadWithIndicator extends Component {
 
   // COMPONENT UNMOUNTED
   componentWillUnmount() {
-     this._isMounted = false;
+    this._isMounted = false;
   }
 
   // FUNCTIONS
   // Check
-  checkAndInitiateOperation = async (fileURL) => {
+  checkAndInitiateOperation = async fileURL => {
     if (this.props.imgsrc) {
       // Do Nothing, this is already loaded image
       this.setState({
         indicator: false,
         downloading: false,
         downloadProgress: '100%',
-        fileURI: this.props.imgsrc
+        fileURI: this.props.imgsrc,
       });
 
       return;
@@ -88,26 +86,24 @@ export default class ImageDownloadWithIndicator extends Component {
           indicator: false,
           downloading: false,
           downloadProgress: 100,
-          fileURI: localFileURI
+          fileURI: localFileURI,
         });
       }
 
       // console.log("File Exists on: |" + localFileURI + "|");
-    }
-    else {
+    } else {
       if (this.state.attemptNumber <= MAX_ATTEMPTS) {
         if (this._isMounted) {
-            this.setState({
-              indicator: false,
-              downloading: true,
-              downloadProgress: 0,
-              attemptNumber: this.state.attemptNumber + 1,
-            });
-          }
+          this.setState({
+            indicator: false,
+            downloading: true,
+            downloadProgress: 0,
+            attemptNumber: this.state.attemptNumber + 1,
+          });
+        }
 
         await this.startDownload(fileURL);
-      }
-      else {
+      } else {
         // Image can't be retrieved, Display bad image
         this.setState({
           indicator: false,
@@ -117,12 +113,11 @@ export default class ImageDownloadWithIndicator extends Component {
           defaulted: true,
         });
       }
-
     }
-  }
+  };
 
   // To Start Download
-  startDownload = async (fileURL) => {
+  startDownload = async fileURL => {
     const localFileTempURI = DownloadHelper.getTempSaveLocation(fileURL);
 
     // Create File Download
@@ -130,8 +125,9 @@ export default class ImageDownloadWithIndicator extends Component {
       fileURL,
       localFileTempURI,
       {},
-      (dwProg) => {
-        const progress = dwProg.totalBytesWritten / dwProg.totalBytesExpectedToWrite;
+      dwProg => {
+        const progress =
+          dwProg.totalBytesWritten / dwProg.totalBytesExpectedToWrite;
         const progressPerc = Number((progress * 100).toFixed(2));
         //console.log("Progress for " + fileURL + ": " + progressPerc);
 
@@ -145,7 +141,7 @@ export default class ImageDownloadWithIndicator extends Component {
 
     // Initiate
     try {
-      const { uri } = await downloadResumable.downloadAsync();
+      const {uri} = await downloadResumable.downloadAsync();
       // console.log("MOVING");
       // console.log(uri);
       // console.log(DownloadHelper.getActualSaveLocation(fileURL));
@@ -154,20 +150,18 @@ export default class ImageDownloadWithIndicator extends Component {
       try {
         await FileSystem.moveAsync({
           from: uri,
-          to: DownloadHelper.getActualSaveLocation(fileURL)
+          to: DownloadHelper.getActualSaveLocation(fileURL),
         });
-      }
-      catch (e) {
+      } catch (e) {
         console.warn(e);
       }
 
       // Go Back to check and initiate operation
       await this.checkAndInitiateOperation(fileURL);
-
     } catch (e) {
       console.warn(e);
     }
-  }
+  };
 
   // RENDER THUMBNAIL
 
@@ -184,65 +178,60 @@ export default class ImageDownloadWithIndicator extends Component {
       onPress,
     } = this.props;
 
-    let contentContainerStyle = {}
+    let contentContainerStyle = {};
     if (margin) {
       contentContainerStyle.margin = margin;
     }
 
     let modifiedResizeMode = resizeMode;
     if (this.state.defaulted) {
-      modifiedResizeMode = "center";
+      modifiedResizeMode = 'center';
     }
 
     return (
       <TouchableWithoutFeedback
-        style = {[ styles.container ]}
-        onPress = {() => {
+        style={[styles.container]}
+        onPress={() => {
           if (onPress) {
             onPress(this.state.fileURI);
           }
         }}
-        disabled={!onPress ? true : false}
-      >
-        <View style = {[ styles.innerContainer, style ]}>
-          <View style = {[ styles.contentContainer, contentContainerStyle]}>
-          {
-            this.state.indicator
-              ? <EPNSActivity
-                  style={styles.activity}
-                  size="small"
-                />
-              : this.state.downloading
-                ? <View style = {styles.downloading}>
-                    {
-                      miniProgressLoader == true
-                      ? <EPNSActivity
-                          style={styles.activity}
-                          size="small"
-                        />
-                      : <ProgressCircle
-                          percent={this.state.downloadProgress}
-                          radius={20}
-                          borderWidth={20}
-                          color={GLOBALS.COLORS.GRADIENT_SECONDARY}
-                          shadowColor={GLOBALS.COLORS.LIGHT_GRAY}
-                          bgColor={GLOBALS.COLORS.WHITE}
-                        >
-                        </ProgressCircle>
-                      }
-                  </View>
-                : imgsrc != false || this.state.defaulted == true
-                  ? <Image
-                      style = {styles.image}
-                      source = {this.state.defaulted ? require('assets/ui/frownface.png') : imgsrc}
-                      resizeMode = {modifiedResizeMode}
-                    />
-                  : <Image
-                      style = {styles.image}
-                      source = {{uri: `${this.state.fileURI}`}}
-                      resizeMode = {resizeMode}
-                    />
-          }
+        disabled={!onPress ? true : false}>
+        <View style={[styles.innerContainer, style]}>
+          <View style={[styles.contentContainer, contentContainerStyle]}>
+            {this.state.indicator ? (
+              <EPNSActivity style={styles.activity} size="small" />
+            ) : this.state.downloading ? (
+              <View style={styles.downloading}>
+                {miniProgressLoader == true ? (
+                  <EPNSActivity style={styles.activity} size="small" />
+                ) : (
+                  <ProgressCircle
+                    percent={this.state.downloadProgress}
+                    radius={20}
+                    borderWidth={20}
+                    color={GLOBALS.COLORS.GRADIENT_SECONDARY}
+                    shadowColor={GLOBALS.COLORS.LIGHT_GRAY}
+                    bgColor={GLOBALS.COLORS.WHITE}></ProgressCircle>
+                )}
+              </View>
+            ) : imgsrc != false || this.state.defaulted == true ? (
+              <Image
+                style={styles.image}
+                source={
+                  this.state.defaulted
+                    ? require('assets/ui/frownface.png')
+                    : imgsrc
+                }
+                resizeMode={modifiedResizeMode}
+              />
+            ) : (
+              <Image
+                style={styles.image}
+                source={{uri: `${this.state.fileURI}`}}
+                resizeMode={resizeMode}
+              />
+            )}
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -282,5 +271,4 @@ const styles = StyleSheet.create({
     height: '100%',
     overflow: 'hidden',
   },
-
 });

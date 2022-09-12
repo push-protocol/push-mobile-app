@@ -1,71 +1,67 @@
-import React, { useEffect, useState, useRef } from 'react'
+import {Asset} from 'expo-asset';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  View,
-  SafeAreaView,
-  StyleSheet,
   FlatList,
   Image,
   RefreshControl,
-} from 'react-native'
-
-import { Asset } from 'expo-asset'
-import ImageView from 'react-native-image-viewing'
-import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter'
-
-import FeedItemComponent from 'src/components/ui/testFeed/FeedItemComponents.js'
-import EPNSActivity from 'src/components/loaders/EPNSActivity'
-import StylishLabel from 'src/components/labels/StylishLabel'
-
-import { useSelector, useDispatch } from 'react-redux'
-import { selectUsers, selectCurrentUser } from 'src/redux/authSlice'
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from 'react-native';
+import ImageView from 'react-native-image-viewing';
+import {useDispatch, useSelector} from 'react-redux';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
+import FeedItemComponent from 'src/components/ui/testFeed/FeedItemComponents.js';
+import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 import {
+  fetchFeedData,
   selectFeedState,
   setRefreshing,
-  fetchFeedData,
-} from 'src/redux/feedSlice'
+} from 'src/redux/feedSlice';
 
 export default function TestFeed(props) {
-  const dispatch = useDispatch()
-  const users = useSelector(selectUsers)
-  const currentUser = useSelector(selectCurrentUser)
-  const { feed, refreshing, loading, endReached, page } = useSelector(
-    selectFeedState,
-  )
+  const dispatch = useDispatch();
+  const users = useSelector(selectUsers);
+  const currentUser = useSelector(selectCurrentUser);
+  const {feed, refreshing, loading, endReached, page} =
+    useSelector(selectFeedState);
 
-  console.log('Feed State: ', useSelector(selectFeedState))
+  console.log('Feed State: ', useSelector(selectFeedState));
 
-  const { userPKey, wallet } = users[currentUser]
+  const {userPKey, wallet} = users[currentUser];
 
   // SET STATES
-  const [initialized, setInitialized] = useState(false)
+  const [initialized, setInitialized] = useState(false);
 
-  const [loadedImages, setLoadedImages] = useState([])
-  const [renderGallery, setRenderGallery] = useState(false)
-  const [startFromIndex, setStartFromIndex] = useState(0)
+  const [loadedImages, setLoadedImages] = useState([]);
+  const [renderGallery, setRenderGallery] = useState(false);
+  const [startFromIndex, setStartFromIndex] = useState(0);
 
   // SET REFS
-  const FlatListFeedsRef = useRef(null)
+  const FlatListFeedsRef = useRef(null);
 
   // LOGIC
   useEffect(() => {
     if (!initialized) {
-      fetchInitializedFeeds()
+      fetchInitializedFeeds();
     }
-  }, [initialized, currentUser])
+  }, [initialized, currentUser]);
 
   useEffect(() => {
     if (props.refreshNotifFeeds) {
-      setInitialized(false)
+      setInitialized(false);
     }
-  }, [props.refreshNotifFeeds])
+  }, [props.refreshNotifFeeds]);
 
   // Refresh Feed
   const fetchInitializedFeeds = async () => {
-    setInitialized(true)
-    dispatch(setRefreshing(true))
-    await performTimeConsumingTask()
+    setInitialized(true);
+    dispatch(setRefreshing(true));
+    await performTimeConsumingTask();
 
-    FlatListFeedsRef.current.scrollToOffset({ animated: true, offset: 0 })
+    FlatListFeedsRef.current.scrollToOffset({animated: true, offset: 0});
     dispatch(
       fetchFeedData({
         rewrite: true,
@@ -75,54 +71,54 @@ export default function TestFeed(props) {
         wallet,
         ToasterFunc: props.ToasterFunc,
       }),
-    )
-  }
+    );
+  };
 
   // Perform some task to wait
   const performTimeConsumingTask = async () => {
-    return new Promise((resolve) =>
+    return new Promise(resolve =>
       setTimeout(() => {
-        resolve('result')
+        resolve('result');
       }, 500),
-    )
-  }
+    );
+  };
 
-  const showImagePreview = async (fileURL) => {
-    let validPaths = []
-    let fileIndex = -1
+  const showImagePreview = async fileURL => {
+    let validPaths = [];
+    let fileIndex = -1;
 
     // Add Image
     // Download the file if not done already
-    await Asset.loadAsync(fileURL)
+    await Asset.loadAsync(fileURL);
 
     // Push to valid path
     validPaths.push({
       uri: Asset.fromModule(fileURL).uri,
       id: fileURL,
-    })
+    });
 
-    fileIndex = validPaths.length - 1
+    fileIndex = validPaths.length - 1;
 
-    setLoadedImages(validPaths)
-    setRenderGallery(true)
-    setStartFromIndex(fileIndex)
-  }
+    setLoadedImages(validPaths);
+    setRenderGallery(true);
+    setStartFromIndex(fileIndex);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ flex: 1 }}>
+      <View style={{flex: 1}}>
         <FlatList
           ref={FlatListFeedsRef}
           data={feed}
-          keyExtractor={(item) => item.payload_id.toString()}
+          keyExtractor={item => item.payload_id.toString()}
           initialNumToRender={10}
-          style={{ flex: 1 }}
+          style={{flex: 1}}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <FeedItemComponent
               loading={loading}
               item={item}
-              onImagePreview={(fileURL) => showImagePreview(fileURL)}
+              onImagePreview={fileURL => showImagePreview(fileURL)}
               privateKey={userPKey}
             />
           )}
@@ -144,7 +140,7 @@ export default function TestFeed(props) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => {
-                setInitialized(false)
+                setInitialized(false);
               }}
             />
           }
@@ -173,10 +169,10 @@ export default function TestFeed(props) {
           }
           ListFooterComponent={() => {
             return loading ? (
-              <View style={{ paddingBottom: 30, marginTop: 20 }}>
+              <View style={{paddingBottom: 30, marginTop: 20}}>
                 <EPNSActivity style={styles.activity} size="small" />
               </View>
-            ) : null
+            ) : null;
           }}
         />
 
@@ -186,9 +182,9 @@ export default function TestFeed(props) {
           visible={renderGallery}
           swipeToCloseEnabled={true}
           onRequestClose={() => {
-            setRenderGallery(false)
+            setRenderGallery(false);
           }}
-          FooterComponent={({ imageIndex }) => (
+          FooterComponent={({imageIndex}) => (
             <ImagePreviewFooter
               imageIndex={imageIndex}
               imagesCount={loadedImages.length}
@@ -198,7 +194,7 @@ export default function TestFeed(props) {
         />
       </View>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -221,4 +217,4 @@ const styles = StyleSheet.create({
   infoText: {
     marginVertical: 10,
   },
-})
+});

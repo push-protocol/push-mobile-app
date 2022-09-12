@@ -1,17 +1,18 @@
-import { configureStore } from '@reduxjs/toolkit'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {configureStore} from '@reduxjs/toolkit';
+import {combineReducers} from 'redux';
 import {
-  persistReducer,
   FLUSH,
-  REHYDRATE,
   PAUSE,
   PERSIST,
   PURGE,
   REGISTER,
-} from 'redux-persist'
-import { combineReducers } from 'redux'
-import authSlice from './authSlice'
-import feedSlice from './feedSlice'
+  REHYDRATE,
+  persistReducer,
+} from 'redux-persist';
+
+import authSlice from './authSlice';
+import feedSlice from './feedSlice';
 
 const persistConfig = {
   key: 'root',
@@ -19,23 +20,23 @@ const persistConfig = {
   storage: AsyncStorage,
   whitelist: ['feed', 'auth'],
   // blacklist: ['feed', 'auth'],
-}
+};
 
 const rootReducer = combineReducers({
   auth: authSlice,
   feed: feedSlice,
-})
+});
 
-const persistedReducer = persistReducer(persistConfig, rootReducer)
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
   reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) =>
+  middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
-})
+});
 
-export default store
+export default store;

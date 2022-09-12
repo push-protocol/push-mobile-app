@@ -1,16 +1,13 @@
-import React from 'react'
+import {createStackNavigator} from '@react-navigation/stack';
+import Constants from 'expo-constants';
+import React from 'react';
+import GLOBALS from 'src/Globals';
+import Header from 'src/components/ui/Header';
+import Tabs from 'src/components/ui/Tabs';
 
-import { createStackNavigator } from '@react-navigation/stack'
+import SettingsScreen from './screens/SettingsScreen';
 
-import Header from 'src/components/ui/Header'
-import Tabs from 'src/components/ui/Tabs'
-
-import SettingsScreen from './screens/SettingsScreen'
-
-import GLOBALS from 'src/Globals'
-import Constants from 'expo-constants'
-
-const Stack = createStackNavigator()
+const Stack = createStackNavigator();
 
 export default function AuthenticatedNavigator() {
   return (
@@ -36,8 +33,7 @@ export default function AuthenticatedNavigator() {
         headerTintColor: GLOBALS.COLORS.BLACK,
         headerTitleAlign: 'center',
         headerBackTitleVisible: false,
-      }}
-    >
+      }}>
       <Stack.Screen
         name={GLOBALS.SCREENS.TABS}
         component={Tabs}
@@ -64,5 +60,5 @@ export default function AuthenticatedNavigator() {
         }}
       />
     </Stack.Navigator>
-  )
+  );
 }

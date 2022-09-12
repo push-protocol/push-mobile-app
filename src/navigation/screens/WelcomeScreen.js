@@ -1,58 +1,56 @@
-import React, { Component } from 'react'
+import {useFocusEffect} from '@react-navigation/native';
+import React, {Component} from 'react';
 import {
-  View,
-  Text,
-  InteractionManager,
   Animated,
+  InteractionManager,
   StyleSheet,
-} from 'react-native'
-import { useFocusEffect } from '@react-navigation/native'
-import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context'
+  Text,
+  View,
+} from 'react-native';
+import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
+import {connect} from 'react-redux';
+import GLOBALS from 'src/Globals';
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
+import {switchUser} from 'src/redux/authSlice';
 
-import StylishLabel from 'src/components/labels/StylishLabel'
-import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter'
-import PrimaryButton from 'src/components/buttons/PrimaryButton'
-
-import GLOBALS from 'src/Globals'
-import { switchUser } from 'src/redux/authSlice'
-import { connect } from 'react-redux'
-
-function ScreenFinishedTransition({ setScreenTransitionAsDone }) {
+function ScreenFinishedTransition({setScreenTransitionAsDone}) {
   useFocusEffect(
     React.useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         // After screen is loaded
-        setScreenTransitionAsDone()
-      })
+        setScreenTransitionAsDone();
+      });
 
-      return () => task.cancel()
+      return () => task.cancel();
     }, []),
-  )
+  );
 
-  return null
+  return null;
 }
 
 function GetScreenInsets() {
-  const insets = useSafeArea()
+  const insets = useSafeArea();
   if (insets.bottom > 0) {
     // Adjust inset by
-    return <View style={styles.insetAdjustment}></View>
+    return <View style={styles.insetAdjustment}></View>;
   } else {
-    return <View style={styles.noInsetAdjustment}></View>
+    return <View style={styles.noInsetAdjustment}></View>;
   }
 }
 
 class WelcomeScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       transitionFinished: false,
       detailedInfoPresetned: false,
 
       fader: new Animated.Value(0),
-    }
+    };
   }
 
   // FUNCTIONS
@@ -67,10 +65,10 @@ class WelcomeScreen extends Component {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }).start()
+        }).start();
       },
-    )
-  }
+    );
+  };
 
   // Load the Next Screen
   loadNextScreen = () => {
@@ -78,8 +76,8 @@ class WelcomeScreen extends Component {
       this.props.auth.newWallet
         ? GLOBALS.SCREENS.NEWWALLETSIGNIN
         : GLOBALS.SCREENS.SIGNIN,
-    )
-  }
+    );
+  };
 
   // RETURN
   render() {
@@ -89,7 +87,7 @@ class WelcomeScreen extends Component {
           setScreenTransitionAsDone={() => {
             this.setState({
               transitionFinished: true,
-            })
+            });
           }}
         />
         <Text style={styles.header}>Welcome!</Text>
@@ -119,11 +117,11 @@ class WelcomeScreen extends Component {
             animated={!this.state.detailedInfoPresetned}
             startAnimation={this.state.transitionFinished}
             animationCompleteCallback={() => {
-              this.animationFinished()
+              this.animationFinished();
             }}
           />
         </View>
-        <Animated.View style={[styles.footer, { opacity: this.state.fader }]}>
+        <Animated.View style={[styles.footer, {opacity: this.state.fader}]}>
           <PrimaryButton
             iconFactory="Ionicons"
             icon="ios-arrow-forward"
@@ -134,13 +132,13 @@ class WelcomeScreen extends Component {
             bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
             disabled={false}
             onPress={() => {
-              this.loadNextScreen()
+              this.loadNextScreen();
             }}
           />
           <GetScreenInsets />
         </Animated.View>
       </SafeAreaView>
-    )
+    );
   }
 }
 
@@ -190,10 +188,10 @@ const styles = StyleSheet.create({
   noInsetAdjustment: {
     paddingBottom: 20,
   },
-})
+});
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   auth: state.auth,
-})
+});
 
-export default connect(mapStateToProps, { switchUser })(WelcomeScreen)
+export default connect(mapStateToProps, {switchUser})(WelcomeScreen);
