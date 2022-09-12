@@ -66,19 +66,15 @@ export default function OnboardingChannelScreen(props) {
   const fetchChannels = async () => {
     const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_CHANNELS
 
-    // const apiURL =
-    // "https://backend-staging.epns.io/apis/channels/fetch_channels";
-
     const response = await fetch(apiURL, {
-      method: 'POST',
+      method: 'GET',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         page: page,
-        pageSize: 10,
-        op: 'read',
+        limit: 10,
       }),
     })
     const resJson = await response.json()

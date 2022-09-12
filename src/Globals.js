@@ -14,7 +14,7 @@ export default {
       ENDPOINT_REGISTER:"/pushtokens/register",
       ENDPOINT_GET_FEEDS:"/feeds/get_feeds",
       ENDPOINT_GET_SPAM_FEEDS:"/feeds/get_spam_feeds",
-      ENDPOINT_FETCH_CHANNELS:"/channels/fetch_channels",
+      ENDPOINT_FETCH_CHANNELS:"/v1/channels",
       ENDPOINT_FETCH_SUBSCRIPTION:"/channels/is_user_subscribed",
       ENDPOINT_SUBSCRIBE_OFFCHAIN:"/channels/subscribe_offchain",
       ENDPOINT_UNSUBSCRIBE_OFFCHAIN:"/channels/unsubscribe_offchain",

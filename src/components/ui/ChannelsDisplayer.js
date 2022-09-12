@@ -35,28 +35,12 @@ const ChannelsDisplayer = ({ style, wallet, pKey }) => {
 
   const fetchChannels = async () => {
     const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_CHANNELS
-
-    const response = await fetch(apiURL, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        page: page,
-        pageSize: 10,
-        op: 'write',
-      }),
-    })
-    const resJson = await response.json()
-
-    console.log({ resJson })
-    if (resJson.count != 0 && resJson.results != []) {
-      const data = channels
-      setChannels([...data, ...resJson.results])
-      setPage(page + 1)
+    const requestURL = `${apiURL}?limit=10&page=${page}` 
+    const resJson = await fetch(requestURL).then((response) => response.json())
+    if (resJson.count != 0 && resJson.channels != []) {
+      setChannels((prev) => [...prev, ...resJson.channels])
+      setPage((prev) => prev + 1 )
     }
-
     setRefreshing(false)
   }
 
