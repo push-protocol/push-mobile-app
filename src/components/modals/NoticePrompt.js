@@ -1,16 +1,15 @@
 import React, {Component} from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableHighlight,
   ActivityIndicator,
   Animated,
+  StyleSheet,
+  Text,
+  TouchableHighlight,
+  View,
 } from 'react-native';
+import GLOBALS from 'src/Globals';
 
 import StylishLabel from '../labels/StylishLabel';
-
-import GLOBALS from 'src/Globals';
 
 export default class NoticePrompt extends Component {
   // Constructor

@@ -1,22 +1,20 @@
 import '@ethersproject/shims';
+import {useNavigation} from '@react-navigation/native';
 import {ethers} from 'ethers';
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  View,
-  Text,
-  SafeAreaView,
   FlatList,
   Image,
-  StyleSheet,
-  TouchableOpacity,
   Linking,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-
-import SubscriptionStatus from 'src/components/buttons/SubscriptionStatus';
-
-import ENV_CONFIG from 'src/env.config';
 import GLOBALS from 'src/Globals';
+import SubscriptionStatus from 'src/components/buttons/SubscriptionStatus';
+import ENV_CONFIG from 'src/env.config';
 
 const openURL = async url => {
   await Linking.openURL(url);

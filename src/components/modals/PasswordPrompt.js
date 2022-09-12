@@ -1,16 +1,15 @@
 import React, {Component} from 'react';
 import {
-  StyleSheet,
   ActivityIndicator,
+  Animated,
+  Keyboard,
   KeyboardAvoidingView,
-  View,
+  StyleSheet,
   Text,
   TextInput,
   TouchableHighlight,
-  Keyboard,
-  Animated,
+  View,
 } from 'react-native';
-
 import GLOBALS from 'src/global/Globals';
 
 export default class PasswordPrompt extends Component {

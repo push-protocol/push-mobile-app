@@ -1,3 +1,5 @@
+import firebase from '@react-native-firebase/app';
+import messaging from '@react-native-firebase/messaging';
 import {useFocusEffect} from '@react-navigation/native';
 import React, {Component} from 'react';
 import {
@@ -8,20 +10,13 @@ import {
   View,
 } from 'react-native';
 import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
-
-import firebase from '@react-native-firebase/app';
-import messaging from '@react-native-firebase/messaging';
-
+import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
-
 import NoticePrompt from 'src/components/modals/NoticePrompt';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
-
 import Notify from 'src/singletons/Notify';
-
-import GLOBALS from 'src/Globals';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
   useFocusEffect(

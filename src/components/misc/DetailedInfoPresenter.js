@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Image, Animated, Easing, StyleSheet} from 'react-native';
+import {Animated, Easing, Image, StyleSheet, View} from 'react-native';
 
 export default class DetailedInfoPresenter extends Component {
   // CONSTRUCTOR

@@ -1,11 +1,10 @@
 import ENS from 'ethereum-ens';
 import {ethers} from 'ethers';
-import Web3 from 'web3';
-const {default: Resolution} = require('@unstoppabledomains/resolution');
-
-import MetaStorage from 'src/singletons/MetaStorage';
-
 import ENV_CONFIG from 'src/env.config';
+import MetaStorage from 'src/singletons/MetaStorage';
+import Web3 from 'web3';
+
+const {default: Resolution} = require('@unstoppabledomains/resolution');
 
 // Web3 Helper Function
 const Web3Helper = {

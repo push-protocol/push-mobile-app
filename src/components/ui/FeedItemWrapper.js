@@ -1,24 +1,20 @@
 import React, {Component} from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TouchableWithoutFeedback,
   ActivityIndicator,
-  Easing,
   Animated,
+  Easing,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
-
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import GLOBALS from 'src/Globals';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
-
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
-
 import FeedItem from 'src/components/ui/FeedItem';
 import FeedDBHelper from 'src/helpers/FeedDBHelper';
-
-import GLOBALS from 'src/Globals';
 
 export default class FeedItemWrapper extends Component {
   // CONSTRUCTOR

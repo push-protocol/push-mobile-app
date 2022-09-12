@@ -1,28 +1,26 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  SafeAreaView,
-  StyleSheet,
+  Dimensions,
   FlatList,
   Image,
   RefreshControl,
-  Dimensions,
-  ToastAndroid,
+  SafeAreaView,
   ScrollView,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import Toast from 'react-native-simple-toast';
-
-import FeedItemWrapper from 'src/components/ui/testFeed/FeedItemWrapperComponent.js';
-import FeedItemComponent from 'src/components/ui/testFeed/FeedItemComponents.js';
-import EPNSActivity from 'src/components/loaders/EPNSActivity';
-import StylishLabel from 'src/components/labels/StylishLabel';
-
-import ENV_CONFIG from 'src/env.config';
 import {ActivityIndicator} from 'react-native';
+import Toast from 'react-native-simple-toast';
 import {useSelector} from 'react-redux';
-import {selectUsers, selectCurrentUser} from 'src/redux/authSlice';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import FeedItemComponent from 'src/components/ui/testFeed/FeedItemComponents.js';
+import FeedItemWrapper from 'src/components/ui/testFeed/FeedItemWrapperComponent.js';
+import ENV_CONFIG from 'src/env.config';
+import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 export default function SpamFeed(props) {
   const users = useSelector(selectUsers);

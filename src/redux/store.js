@@ -1,15 +1,16 @@
-import {configureStore} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {configureStore} from '@reduxjs/toolkit';
+import {combineReducers} from 'redux';
 import {
-  persistReducer,
   FLUSH,
-  REHYDRATE,
   PAUSE,
   PERSIST,
   PURGE,
   REGISTER,
+  REHYDRATE,
+  persistReducer,
 } from 'redux-persist';
-import {combineReducers} from 'redux';
+
 import authSlice from './authSlice';
 import feedSlice from './feedSlice';
 

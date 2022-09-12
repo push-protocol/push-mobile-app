@@ -1,16 +1,15 @@
-import React, {useEffect, useRef} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-
-import InitializingNavigator from './InitializingNavigator';
-import AuthenticatedNavigator from './AuthenticatedNavigator';
-import OnboardingNavigator from './OnboardingNavigator';
-import OnboardedNavigator from './OnboardedNavigator';
-
-import {selectAuthState} from 'src/redux/authSlice';
+import React, {useEffect, useRef} from 'react';
 import {useSelector} from 'react-redux';
-import GLOBALS from 'src/Globals';
 import {useDispatch} from 'react-redux';
+import GLOBALS from 'src/Globals';
+import {selectAuthState} from 'src/redux/authSlice';
 import {setLogout} from 'src/redux/authSlice';
+
+import AuthenticatedNavigator from './AuthenticatedNavigator';
+import InitializingNavigator from './InitializingNavigator';
+import OnboardedNavigator from './OnboardedNavigator';
+import OnboardingNavigator from './OnboardingNavigator';
 
 const Screens = () => {
   const authState = useSelector(selectAuthState);

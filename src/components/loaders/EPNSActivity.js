@@ -1,9 +1,7 @@
-import React from 'react';
-import {View, ActivityIndicator, Platform, StyleSheet} from 'react-native';
-
 import MaskedView from '@react-native-community/masked-view';
 import {LinearGradient} from 'expo-linear-gradient';
-
+import React from 'react';
+import {ActivityIndicator, Platform, StyleSheet, View} from 'react-native';
 import GLOBALS from 'src/Globals';
 
 const EPNSActivity = ({style, size, color}) => {

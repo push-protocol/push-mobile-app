@@ -1,10 +1,9 @@
 import {
-  TESTNET_INFURA_API,
-  MAINNET_INFURA_API,
-  YOUTUBE_API_KEY,
   APP_VERSION,
+  MAINNET_INFURA_API,
+  TESTNET_INFURA_API,
+  YOUTUBE_API_KEY,
 } from '@env';
-
 import GLOBALS from 'src/Globals';
 
 const IS_PROD_ENV = 0; // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work

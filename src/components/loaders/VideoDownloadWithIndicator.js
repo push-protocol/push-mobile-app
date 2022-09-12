@@ -1,24 +1,20 @@
+import * as FileSystem from 'expo-file-system';
 import React, {Component} from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
   Image,
-  TouchableWithoutFeedback,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
-import * as FileSystem from 'expo-file-system';
-
+import ProgressCircle from 'react-native-progress-circle';
 import Video from 'react-native-video';
 import YouTube from 'react-native-youtube';
-
-import ProgressCircle from 'react-native-progress-circle';
-import EPNSActivity from 'src/components/loaders/EPNSActivity';
-
-import DownloadHelper from 'src/helpers/DownloadHelper';
-
-import ENV_CONFIG from 'src/env.config';
 import GLOBALS from 'src/Globals';
+import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import ENV_CONFIG from 'src/env.config';
+import DownloadHelper from 'src/helpers/DownloadHelper';
 
 const MAX_ATTEMPTS = 3;
 

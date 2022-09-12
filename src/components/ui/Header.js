@@ -1,32 +1,28 @@
+import {useNavigation} from '@react-navigation/native';
+import Constants from 'expo-constants';
 import React, {useEffect, useRef, useState} from 'react';
 import {
-  View,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Text,
   Animated,
+  Dimensions,
   Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-
-import {useNavigation} from '@react-navigation/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import Constants from 'expo-constants';
-
-import ProfileDisplayer from 'src/components/ui/ProfileDisplayer';
-import EPNSNotifierIcon from 'src/components/custom/EPNSNotifierIcon';
-import ImageButton from 'src/components/buttons/ImageButton';
-import StylishLabel from 'src/components/labels/StylishLabel';
-import Notify from 'src/singletons/Notify';
-
-import GLOBALS from 'src/Globals';
-import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import {useDispatch, useSelector} from 'react-redux';
-import {selectUsers, selectCurrentUser, setLogout} from 'src/redux/authSlice';
-
-import {switchUser} from 'src/redux/authSlice';
-import {fetchFeedData, clearFeed} from 'src/redux/feedSlice';
 import {connect} from 'react-redux';
+import GLOBALS from 'src/Globals';
+import ImageButton from 'src/components/buttons/ImageButton';
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import EPNSNotifierIcon from 'src/components/custom/EPNSNotifierIcon';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import ProfileDisplayer from 'src/components/ui/ProfileDisplayer';
+import {selectCurrentUser, selectUsers, setLogout} from 'src/redux/authSlice';
+import {switchUser} from 'src/redux/authSlice';
+import {clearFeed, fetchFeedData} from 'src/redux/feedSlice';
+import Notify from 'src/singletons/Notify';
 
 getProperAddressLabel = (wallet, ens, cns) => ens || cns || wallet;
 

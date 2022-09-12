@@ -1,7 +1,7 @@
-import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-
+import React from 'react';
 import GLOBALS from 'src/Globals';
+
 import SplashScreen from './screens/SplashScreen';
 
 const Stack = createStackNavigator();

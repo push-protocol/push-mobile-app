@@ -1,30 +1,25 @@
-import React, {useRef} from 'react';
-import {StatusBar, View, Text, Image, FlatList, StyleSheet} from 'react-native';
-import SafeAreaView from 'react-native-safe-area-view';
-
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
-
+import React, {useRef} from 'react';
+import {FlatList, Image, StatusBar, StyleSheet, Text, View} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
+import {useDispatch, useSelector} from 'react-redux';
+import GLOBALS from 'src/Globals';
 import ImageTitleButton from 'src/components/buttons/ImageTitleButton';
 import ImageTitleSwitchButton from 'src/components/buttons/ImageTitleSwitchButton';
-
+import Dropdown from 'src/components/custom/Dropdown';
+import {Toaster, ToasterOptions} from 'src/components/indicators/Toaster';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
-import {ToasterOptions, Toaster} from 'src/components/indicators/Toaster';
-
-import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
-import MetaStorage from 'src/singletons/MetaStorage';
 // import FeedDBHelper from 'src/helpers/FeedDBHelper'
 import ENV_CONFIG from 'src/env.config';
-import GLOBALS from 'src/Globals';
-import Dropdown from 'src/components/custom/Dropdown';
-
-import {useDispatch, useSelector} from 'react-redux';
+import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
 import {
-  setAuthState,
-  setLogout,
   createNewWallet,
   selectUsers,
+  setAuthState,
+  setLogout,
 } from 'src/redux/authSlice';
 import {clearFeed} from 'src/redux/feedSlice';
+import MetaStorage from 'src/singletons/MetaStorage';
 
 const SettingsScreen = ({}) => {
   const dispatch = useDispatch();

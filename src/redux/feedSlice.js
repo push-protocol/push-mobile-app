@@ -1,8 +1,8 @@
 import {createSlice} from '@reduxjs/toolkit';
 import axios from 'axios';
+import {Toaster, ToasterOptions} from 'src/components/indicators/Toaster';
 import ENV_CONFIG from 'src/env.config';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
-import {ToasterOptions, Toaster} from 'src/components/indicators/Toaster';
 
 const initialState = {
   feed: [],

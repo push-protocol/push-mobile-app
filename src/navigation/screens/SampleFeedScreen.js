@@ -1,13 +1,12 @@
-import React, {useState} from 'react';
-import {StatusBar, StyleSheet, FlatList} from 'react-native';
-import SafeAreaView from 'react-native-safe-area-view';
 import {Asset} from 'expo-asset';
+import React, {useState} from 'react';
+import {FlatList, StatusBar, StyleSheet} from 'react-native';
 import ImageView from 'react-native-image-viewing';
+import SafeAreaView from 'react-native-safe-area-view';
+import GLOBALS from 'src/Globals';
 import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
 import FeedItemComponent from 'src/components/ui/testFeed/FeedItemComponents.js';
-
 import sampleFeed from 'src/jsons/SampleFeed';
-import GLOBALS from 'src/Globals';
 
 const SampleFeedScreen = ({style}) => {
   const showImagePreview = async fileURL => {

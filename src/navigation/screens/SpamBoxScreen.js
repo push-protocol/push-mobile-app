@@ -1,12 +1,9 @@
-import SpamFeed from 'src/components/ui/SpamFeed';
-
 import React from 'react';
 import {StatusBar, StyleSheet} from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
-
-import 'src/components/ui/SpamFeed';
-
 import GLOBALS from 'src/Globals';
+import SpamFeed from 'src/components/ui/SpamFeed';
+import 'src/components/ui/SpamFeed';
 
 const SpamBoxScreen = ({style, route}) => {
   return (

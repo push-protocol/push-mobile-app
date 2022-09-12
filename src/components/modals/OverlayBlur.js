@@ -1,14 +1,13 @@
+import {BlurView} from 'expo-blur';
 import React, {Component} from 'react';
 import {
-  StyleSheet,
   ActivityIndicator,
-  View,
+  Animated,
+  StyleSheet,
   Text,
   TouchableWithoutFeedback,
-  Animated,
+  View,
 } from 'react-native';
-import {BlurView} from 'expo-blur';
-
 import GLOBALS from 'src/Globals';
 
 export default class OverlayBlur extends Component {

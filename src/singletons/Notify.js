@@ -1,6 +1,5 @@
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
-
 import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 

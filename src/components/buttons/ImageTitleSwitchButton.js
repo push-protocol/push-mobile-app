@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
 import {
-  View,
-  Switch,
-  TouchableHighlight,
-  Text,
   Image,
   Platform,
   StyleSheet,
+  Switch,
+  Text,
+  TouchableHighlight,
+  View,
 } from 'react-native';
-
 import GLOBALS from 'src/Globals';
 
 export default ImageTitleSwitchButton = ({

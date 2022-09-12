@@ -1,24 +1,23 @@
-import React, {Component, useState} from 'react';
 import {
-  View,
-  TouchableWithoutFeedback,
-  Text,
-  Animated,
-  Image,
-  ActivityIndicator,
-  Easing,
-  StyleSheet,
-} from 'react-native';
-import {
-  Ionicons,
+  AntDesign,
+  Feather,
   FontAwesome,
   FontAwesome5,
-  MaterialIcons,
+  Ionicons,
   MaterialCommunityIcons,
-  Feather,
-  AntDesign,
+  MaterialIcons,
 } from '@expo/vector-icons';
-
+import React, {Component, useState} from 'react';
+import {
+  ActivityIndicator,
+  Animated,
+  Easing,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import GLOBALS from 'src/Globals';
 
 export default class PrimaryButton extends Component {

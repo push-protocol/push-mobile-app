@@ -1,14 +1,13 @@
+import {Entypo, Ionicons} from '@expo/vector-icons';
+import {LinearGradient} from 'expo-linear-gradient';
 import React, {Component} from 'react';
 import {
-  View,
-  TouchableOpacity,
-  Text,
   ActivityIndicator,
   StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import {LinearGradient} from 'expo-linear-gradient';
-import {Ionicons, Entypo} from '@expo/vector-icons';
-
 import GLOBALS from 'src/Globals';
 
 export default class ENSButton extends Component {

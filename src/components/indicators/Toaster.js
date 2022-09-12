@@ -1,22 +1,19 @@
-import React, {Component} from 'react';
-import {
-  StyleSheet,
-  ActivityIndicator,
-  View,
-  Animated,
-  Dimensions,
-  Text,
-  Easing,
-  TouchableWithoutFeedback,
-  Platform,
-} from 'react-native';
-
-import SafeAreaView from 'react-native-safe-area-view';
 import {Ionicons} from '@expo/vector-icons';
-
 import MaskedView from '@react-native-community/masked-view';
 import {LinearGradient} from 'expo-linear-gradient';
-
+import React, {Component} from 'react';
+import {
+  ActivityIndicator,
+  Animated,
+  Dimensions,
+  Easing,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
 import GLOBALS from 'src/Globals';
 
 const ToasterOptions = {

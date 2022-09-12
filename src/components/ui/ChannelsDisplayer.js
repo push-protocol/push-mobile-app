@@ -1,14 +1,13 @@
 import '@ethersproject/shims';
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  View,
-  SafeAreaView,
   FlatList,
   Image,
+  SafeAreaView,
   StyleSheet,
   TextInput,
+  View,
 } from 'react-native';
-
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ChannelItem from 'src/components/ui/ChannelItem';

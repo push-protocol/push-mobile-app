@@ -1,10 +1,9 @@
-import React from 'react';
-import App from './App';
-
 import messaging from '@react-native-firebase/messaging';
+import React from 'react';
+import {AppRegistry} from 'react-native';
 import Notify from 'src/singletons/Notify';
 
-import {AppRegistry} from 'react-native';
+import App from './App';
 import {name as appName} from './app.json';
 
 // FIREBASE

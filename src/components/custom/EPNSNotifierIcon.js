@@ -1,18 +1,16 @@
 import React, {Component} from 'react';
 import {
-  View,
-  Image,
   Animated,
-  TouchableOpacity,
-  Text,
+  Image,
   StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-
+import GLOBALS from 'src/Globals';
 import AnimatedEPNSIcon from 'src/components/custom/AnimatedEPNSIcon';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
-
-import GLOBALS from 'src/Globals';
 
 export default class EPNSNotifierIcon extends Component {
   // CONSTRUCTOR

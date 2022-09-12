@@ -1,5 +1,4 @@
 import * as FileSystem from 'expo-file-system';
-
 import GLOBALS from 'src/Globals';
 
 // Download Helper Function

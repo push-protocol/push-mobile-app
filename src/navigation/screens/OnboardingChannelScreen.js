@@ -1,25 +1,26 @@
 import '@ethersproject/shims';
+import {useNavigation} from '@react-navigation/native';
 import {ethers} from 'ethers';
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  View,
-  Text,
-  SafeAreaView,
   FlatList,
   Image,
-  StyleSheet,
-  TouchableOpacity,
   Linking,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import ENV_CONFIG from 'src/env.config';
-import addresses from '../templates/addresses';
-import EPNSABI from '../abis/epnscore.json';
 import GLOBALS from 'src/Globals';
-import SubscriptionStatus from 'src/components/buttons/SubscriptionStatus';
-import {useNavigation} from '@react-navigation/native';
-import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
-import StylishLabel from 'src/components/labels/StylishLabel';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import SubscriptionStatus from 'src/components/buttons/SubscriptionStatus';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
+import ENV_CONFIG from 'src/env.config';
+
+import EPNSABI from '../abis/epnscore.json';
+import addresses from '../templates/addresses';
 
 export default function OnboardingChannelScreen(props) {
   const navigation = useNavigation();

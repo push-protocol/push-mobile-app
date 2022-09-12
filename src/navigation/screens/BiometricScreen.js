@@ -1,4 +1,7 @@
+import firebase from '@react-native-firebase/app';
+import messaging from '@react-native-firebase/messaging';
 import {useFocusEffect} from '@react-navigation/native';
+import * as LocalAuthentication from 'expo-local-authentication';
 import React, {Component} from 'react';
 import {
   ActivityIndicator,
@@ -12,27 +15,18 @@ import {
   Vibration,
   View,
 } from 'react-native';
-import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
-
-import firebase from '@react-native-firebase/app';
-import messaging from '@react-native-firebase/messaging';
-import * as LocalAuthentication from 'expo-local-authentication';
-
 import * as Keychain from 'react-native-keychain';
-
+import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
+import {connect} from 'react-redux';
+import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
-
 import NoticePrompt from 'src/components/modals/NoticePrompt';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
-
 import BiometricHelper from 'src/helpers/BiometricHelper';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
-
-import {connect} from 'react-redux';
-import GLOBALS from 'src/Globals';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
   useFocusEffect(

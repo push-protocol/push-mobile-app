@@ -1,24 +1,17 @@
-import React, {Component} from 'react';
-import {StatusBar, View, InteractionManager, StyleSheet} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {useFocusEffect} from '@react-navigation/native';
-
-import HomeFeed from 'src/components/ui/HomeFeed';
-
-import OverlayBlur from 'src/components/modals/OverlayBlur';
-
+import React, {Component} from 'react';
+import {InteractionManager, StatusBar, StyleSheet, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {connect} from 'react-redux';
+import GLOBALS from 'src/Globals';
 import {Toaster} from 'src/components/indicators/Toaster';
-
+import OverlayBlur from 'src/components/modals/OverlayBlur';
+import HomeFeed from 'src/components/ui/HomeFeed';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import ServerHelper from 'src/helpers/ServerHelper';
-
-import Notify from 'src/singletons/Notify';
 import MetaStorage from 'src/singletons/MetaStorage';
+import Notify from 'src/singletons/Notify';
 import Utilities from 'src/singletons/Utilities';
-
-import GLOBALS from 'src/Globals';
-
-import {connect} from 'react-redux';
 
 function ScreenFinishedTransition({runAfterScreenTransition}) {
   useFocusEffect(

@@ -1,22 +1,18 @@
-import React, {Component} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Linking} from 'react-native';
-import SafeAreaView from 'react-native-safe-area-view';
 import * as Device from 'expo-device';
 import {LinearGradient} from 'expo-linear-gradient';
 import moment from 'moment';
-
+import React, {Component} from 'react';
+import {Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
+import GLOBALS from 'src/Globals';
+import {ToasterOptions} from 'src/components/indicators/Toaster';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
-import {ToasterOptions} from 'src/components/indicators/Toaster';
-
-import DownloadHelper from 'src/helpers/DownloadHelper';
 import ImageDownloadWithIndicator from 'src/components/loaders/ImageDownloadWithIndicator';
 import VideoDownloadWithIndicator from 'src/components/loaders/VideoDownloadWithIndicator';
-
 import CryptoHelper from 'src/helpers/CryptoHelper';
+import DownloadHelper from 'src/helpers/DownloadHelper';
 import Utilities from 'src/singletons/Utilities';
-
-import GLOBALS from 'src/Globals';
 
 export default class FeedItem extends Component {
   // CONSTRUCTOR

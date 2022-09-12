@@ -1,21 +1,18 @@
+import * as FileSystem from 'expo-file-system';
 import React, {Component} from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
   Image,
-  TouchableWithoutFeedback,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
-import * as FileSystem from 'expo-file-system';
-
 // TODO: fix this
 import ProgressCircle from 'react-native-progress-circle';
-import EPNSActivity from 'src/components/loaders/EPNSActivity';
-
-import DownloadHelper from 'src/helpers/DownloadHelper';
-
 import GLOBALS from 'src/Globals';
+import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import DownloadHelper from 'src/helpers/DownloadHelper';
 
 const MAX_ATTEMPTS = 3;
 

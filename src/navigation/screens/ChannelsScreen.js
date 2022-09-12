@@ -1,11 +1,9 @@
 import React from 'react';
-import {StatusBar, View, SafeAreaView, StyleSheet} from 'react-native';
-
-import ChannelsDisplayer from 'src/components/ui/ChannelsDisplayer';
-
-import GLOBALS from 'src/Globals';
+import {SafeAreaView, StatusBar, StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
-import {selectUsers, selectCurrentUser} from 'src/redux/authSlice';
+import GLOBALS from 'src/Globals';
+import ChannelsDisplayer from 'src/components/ui/ChannelsDisplayer';
+import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 const ChannelsScreen = () => {
   const users = useSelector(selectUsers);

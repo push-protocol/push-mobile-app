@@ -1,29 +1,23 @@
-import React, {useEffect, useState, useRef} from 'react';
+import {FontAwesome5, MaterialCommunityIcons} from '@expo/vector-icons';
+import {useWalletConnect} from '@walletconnect/react-native-dapp';
+import {ethers} from 'ethers';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  View,
-  Text,
   ActivityIndicator,
   Linking,
-  StyleSheet,
   Modal,
-  TouchableOpacity,
+  StyleSheet,
+  Text,
   TouchableHighlight,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import {ethers} from 'ethers';
-
-import {MaterialCommunityIcons, FontAwesome5} from '@expo/vector-icons';
-
-import {useWalletConnect} from '@walletconnect/react-native-dapp';
-
-import PrimaryButton from 'src/components/buttons/PrimaryButton';
-
-import OverlayBlur from 'src/components/modals/OverlayBlur';
-import NoticePrompt from 'src/components/modals/NoticePrompt';
-
-import MetaStorage from 'src/singletons/MetaStorage';
-
-import ENV_CONFIG from 'src/env.config';
 import GLOBALS from 'src/Globals';
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import NoticePrompt from 'src/components/modals/NoticePrompt';
+import OverlayBlur from 'src/components/modals/OverlayBlur';
+import ENV_CONFIG from 'src/env.config';
+import MetaStorage from 'src/singletons/MetaStorage';
 
 const CHANNEL_OPT_IN = 1;
 const CHANNEL_OPT_OUT = 2;

@@ -1,27 +1,23 @@
+import {Asset} from 'expo-asset';
 import React from 'react';
 import {
-  View,
-  Text,
-  Image,
   FlatList,
+  Image,
   RefreshControl,
   StyleSheet,
+  Text,
+  View,
 } from 'react-native';
-import SafeAreaView from 'react-native-safe-area-view';
-import {Asset} from 'expo-asset';
-
 import ImageView from 'react-native-image-viewing';
-import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
-
-import FeedItemWrapper from 'src/components/ui/FeedItemWrapper';
-import EPNSActivity from 'src/components/loaders/EPNSActivity';
-import {ToasterOptions, Toaster} from 'src/components/indicators/Toaster';
-
+import SafeAreaView from 'react-native-safe-area-view';
+import GLOBALS from 'src/Globals';
+import {Toaster, ToasterOptions} from 'src/components/indicators/Toaster';
 import StylishLabel from 'src/components/labels/StylishLabel';
+import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import FeedItemWrapper from 'src/components/ui/FeedItemWrapper';
+import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
 import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
-
-import GLOBALS from 'src/Globals';
 
 const FeedsDisplayerComponent = props => {
   useEffect(() => {

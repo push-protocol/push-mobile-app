@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import {View, TouchableHighlight, Text, Image, StyleSheet} from 'react-native';
-
+import {Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import GLOBALS from 'src/Globals';
 
 export default ImageTitleButton = ({img, title, onPress}) => {

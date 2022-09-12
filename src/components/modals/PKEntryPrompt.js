@@ -1,20 +1,18 @@
 import React, {Component} from 'react';
 import {
-  StyleSheet,
   ActivityIndicator,
+  Animated,
+  Keyboard,
   KeyboardAvoidingView,
-  View,
+  StyleSheet,
   Text,
   TextInput,
   TouchableHighlight,
-  Keyboard,
-  Animated,
+  View,
 } from 'react-native';
-import styled from 'styled-components/native';
-
-import Web3Helper from 'src/helpers/Web3Helper';
-
 import GLOBALS from 'src/Globals';
+import Web3Helper from 'src/helpers/Web3Helper';
+import styled from 'styled-components/native';
 
 export default class PKEntryPrompt extends Component {
   // Constructor

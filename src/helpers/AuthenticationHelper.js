@@ -1,14 +1,11 @@
 import * as Keychain from 'react-native-keychain';
-
+import GLOBALS from 'src/Globals';
 import CryptoHelper from 'src/helpers/CryptoHelper';
-import Web3Helper from 'src/helpers/Web3Helper';
 import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import ServerHelper from 'src/helpers/ServerHelper';
-
-import Notify from 'src/singletons/Notify';
+import Web3Helper from 'src/helpers/Web3Helper';
 import MetaStorage from 'src/singletons/MetaStorage';
-
-import GLOBALS from 'src/Globals';
+import Notify from 'src/singletons/Notify';
 
 // Authentication Helper Function
 const AuthenticationHelper = {

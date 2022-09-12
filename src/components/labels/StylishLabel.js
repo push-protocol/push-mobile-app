@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Linking, Platform} from 'react-native';
-
+import {Linking, Platform, StyleSheet, Text, View} from 'react-native';
 import ParsedText from 'react-native-parsed-text';
-
 import GLOBALS from 'src/Globals';
 
 export default class CalendarEvents extends Component {

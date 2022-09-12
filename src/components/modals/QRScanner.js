@@ -1,23 +1,20 @@
-import React, {Component} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableWithoutFeedback,
-  StatusBar,
-  Platform,
-  Animated,
-} from 'react-native';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
-import SafeAreaView from 'react-native-safe-area-view';
-
-import {Camera} from 'expo-camera';
 import {Ionicons} from '@expo/vector-icons';
 import {Audio} from 'expo-av';
-
-import StylishLabel from 'src/components/labels/StylishLabel';
-
+import {Camera} from 'expo-camera';
+import React, {Component} from 'react';
+import {
+  Animated,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 import GLOBALS from 'src/Globals';
+import StylishLabel from 'src/components/labels/StylishLabel';
 
 export default class QRScanner extends Component {
   // CONSTRUCTOR

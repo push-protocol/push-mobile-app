@@ -1,33 +1,26 @@
-import React, {useEffect, useState, useRef} from 'react';
-import {
-  View,
-  Text,
-  InteractionManager,
-  Animated,
-  StyleSheet,
-} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
-import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
-
-import * as Permissions from 'expo-permissions';
-
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
-
+import * as Permissions from 'expo-permissions';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  Animated,
+  InteractionManager,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
+import {useDispatch} from 'react-redux';
+import GLOBALS from 'src/Globals';
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
-import PrimaryButton from 'src/components/buttons/PrimaryButton';
-
-import OverlayBlur from 'src/components/modals/OverlayBlur';
 import NoticePrompt from 'src/components/modals/NoticePrompt';
+import OverlayBlur from 'src/components/modals/OverlayBlur';
 import PKEntryPrompt from 'src/components/modals/PKEntryPrompt';
 import QRScanner from 'src/components/modals/QRScanner';
-
 import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
-
-import GLOBALS from 'src/Globals';
-
 import {setInitialSignin} from 'src/redux/authSlice';
-import {useDispatch} from 'react-redux';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
   useFocusEffect(

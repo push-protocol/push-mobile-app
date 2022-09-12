@@ -1,21 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
-
-import StylishLabel from 'src/components/labels/StylishLabel';
-import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import GLOBALS from 'src/Globals';
 import ENSButton from 'src/components/buttons/ENSButton';
-
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import StylishLabel from 'src/components/labels/StylishLabel';
 import Blockies from 'src/components/web3/Blockies';
 import Web3Helper from 'src/helpers/Web3Helper';
-
-import GLOBALS from 'src/Globals';
 
 const PKProfileBuilder = ({
   style,

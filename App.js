@@ -1,21 +1,19 @@
-import './shim.js';
-import 'react-native-gesture-handler';
-
-import React, {useEffect} from 'react';
-import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
 import WalletConnectProvider from '@walletconnect/react-native-dapp';
+import React, {useEffect} from 'react';
+import 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import ENV_CONFIG from 'src/env.config';
-
+import {Provider} from 'react-redux';
 import {persistStore} from 'redux-persist';
 import {PersistGate} from 'redux-persist/integration/react';
+import ENV_CONFIG from 'src/env.config';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
-import Notify from 'src/singletons/Notify';
-
-import {Provider} from 'react-redux';
 import AppScreens from 'src/navigation';
 import store from 'src/redux';
+import Notify from 'src/singletons/Notify';
+
+import './shim.js';
 
 let persistor = persistStore(store);
 

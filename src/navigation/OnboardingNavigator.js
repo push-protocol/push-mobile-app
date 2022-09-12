@@ -1,15 +1,14 @@
-import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-
+import React from 'react';
+import {Text, View} from 'react-native';
 import GLOBALS from 'src/Globals';
 
 import BiometricScreen from './screens/BiometricScreen';
-import SignInScreen from './screens/SignInScreen';
 import NewWalletSignInScreen from './screens/NewWalletSignInScreen';
-import WelcomeScreen from './screens/WelcomeScreen';
 import PushNotifyScreen from './screens/PushNotifyScreen';
 import SetupCompleteScreen from './screens/SetupCompleteScreen';
-import {View, Text} from 'react-native';
+import SignInScreen from './screens/SignInScreen';
+import WelcomeScreen from './screens/WelcomeScreen';
 
 const Stack = createStackNavigator();
 

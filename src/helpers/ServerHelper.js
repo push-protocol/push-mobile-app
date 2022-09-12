@@ -1,12 +1,11 @@
-import {Platform} from 'react-native';
-
-import ENV_CONFIG from 'src/env.config';
-
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
+import {Platform} from 'react-native';
+import ENV_CONFIG from 'src/env.config';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 import Notify from 'src/singletons/Notify';
+
 // Download Helper Function
 const ServerHelper = {
   // Associate a device token to server

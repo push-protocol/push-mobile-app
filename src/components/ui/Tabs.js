@@ -1,17 +1,13 @@
-import React from 'react';
-
+import {FontAwesome5, MaterialCommunityIcons} from '@expo/vector-icons';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-import {MaterialCommunityIcons, FontAwesome5} from '@expo/vector-icons';
-
-import HomeScreen from 'src/navigation/screens/HomeScreen';
+import React from 'react';
+import {useSelector} from 'react-redux';
+import GLOBALS from 'src/Globals';
 import ChannelsScreen from 'src/navigation/screens/ChannelsScreen';
+import HomeScreen from 'src/navigation/screens/HomeScreen';
 import SampleFeedScreen from 'src/navigation/screens/SampleFeedScreen';
 import SpamBoxScreen from 'src/navigation/screens/SpamBoxScreen';
-
-import {useSelector} from 'react-redux';
-import {selectUsers, selectCurrentUser} from 'src/redux/authSlice';
-
-import GLOBALS from 'src/Globals';
+import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 export default function Tabs() {
   const users = useSelector(selectUsers);

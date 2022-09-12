@@ -1,33 +1,28 @@
+import * as LocalAuthentication from 'expo-local-authentication';
 import React, {Component} from 'react';
 import {
-  View,
   Animated,
-  TextInput,
-  Text,
   Easing,
-  Platform,
   Keyboard,
   KeyboardAvoidingView,
-  Vibration,
+  Platform,
   StyleSheet,
+  Text,
+  TextInput,
+  Vibration,
+  View,
 } from 'react-native';
-
-import * as LocalAuthentication from 'expo-local-authentication';
 import * as Keychain from 'react-native-keychain';
-
+import {connect} from 'react-redux';
+import GLOBALS from 'src/Globals';
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import AnimatedEPNSIcon from 'src/components/custom/AnimatedEPNSIcon';
-
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
-import PrimaryButton from 'src/components/buttons/PrimaryButton';
-
 import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
 import BiometricHelper from 'src/helpers/BiometricHelper';
+import {setAllUsers, setAuthState, switchUser} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
-
-import GLOBALS from 'src/Globals';
-import {connect} from 'react-redux';
-import {setAuthState, setAllUsers, switchUser} from 'src/redux/authSlice';
 
 // FOR SLIDING UP ANIMATION
 const SLIDE_UP_THRESHOLD = 100;

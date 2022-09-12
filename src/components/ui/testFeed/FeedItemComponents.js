@@ -1,30 +1,27 @@
-import React, {useState, useEffect} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Linking,
-  Image,
-  ToastAndroid,
-} from 'react-native';
-import SafeAreaView from 'react-native-safe-area-view';
 import * as Device from 'expo-device';
 import {LinearGradient} from 'expo-linear-gradient';
 import moment from 'moment';
-
+import React, {useEffect, useState} from 'react';
+import {
+  Image,
+  Linking,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
+import GLOBALS from 'src/Globals';
+import {ToasterOptions} from 'src/components/indicators/Toaster';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
-import {ToasterOptions} from 'src/components/indicators/Toaster';
-
-import DownloadHelper from 'src/helpers/DownloadHelper';
-import ImageDownloadWithIndicator from '../../loaders/ImageDownloadWithIndicator';
 import VideoDownloadWithIndicator from 'src/components/loaders/VideoDownloadWithIndicator';
-
 import CryptoHelper from 'src/helpers/CryptoHelper';
+import DownloadHelper from 'src/helpers/DownloadHelper';
 import Utilities from 'src/singletons/Utilities';
 
-import GLOBALS from 'src/Globals';
+import ImageDownloadWithIndicator from '../../loaders/ImageDownloadWithIndicator';
 
 const FeedItem = props => {
   // // CONSTRUCTOR

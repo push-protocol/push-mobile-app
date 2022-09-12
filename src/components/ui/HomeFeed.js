@@ -1,27 +1,24 @@
-import React, {useEffect, useState, useRef} from 'react';
+import {Asset} from 'expo-asset';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  View,
-  SafeAreaView,
-  StyleSheet,
   FlatList,
   Image,
   RefreshControl,
+  SafeAreaView,
+  StyleSheet,
+  View,
 } from 'react-native';
-
-import {Asset} from 'expo-asset';
 import ImageView from 'react-native-image-viewing';
-import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
-
-import FeedItemComponent from 'src/components/ui/testFeed/FeedItemComponents.js';
-import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import {useDispatch, useSelector} from 'react-redux';
 import StylishLabel from 'src/components/labels/StylishLabel';
-
-import {useSelector, useDispatch} from 'react-redux';
-import {selectUsers, selectCurrentUser} from 'src/redux/authSlice';
+import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
+import FeedItemComponent from 'src/components/ui/testFeed/FeedItemComponents.js';
+import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 import {
+  fetchFeedData,
   selectFeedState,
   setRefreshing,
-  fetchFeedData,
 } from 'src/redux/feedSlice';
 
 export default function TestFeed(props) {

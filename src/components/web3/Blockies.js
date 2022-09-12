@@ -1,8 +1,7 @@
 //Based on the work of https://github.com/bpeters/react-native-blockies-svg
-
 import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
 import Svg, {Rect} from 'react-native-svg';
-import {View, StyleSheet} from 'react-native';
 
 const randseed = new Array(4);
 

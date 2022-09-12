@@ -1,5 +1,4 @@
 import SQLite from 'react-native-sqlite-2';
-
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 

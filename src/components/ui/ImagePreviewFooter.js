@@ -1,8 +1,7 @@
-import React from 'react';
-import {View, Image, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import SafeAreaView from 'react-native-safe-area-view';
-
 import * as Sharing from 'expo-sharing';
+import React from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
 
 type Props = {
   imageIndex: number,

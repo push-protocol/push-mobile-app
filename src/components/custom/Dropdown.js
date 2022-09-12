@@ -1,19 +1,19 @@
+import {Entypo, MaterialIcons} from '@expo/vector-icons';
+import MaskedView from '@react-native-community/masked-view';
 import React, {useRef, useState} from 'react';
 import {
   FlatList,
+  Modal,
   StyleSheet,
   Text,
   TouchableOpacity,
-  Modal,
   View,
 } from 'react-native';
-import {Entypo, MaterialIcons} from '@expo/vector-icons';
-import GLOBALS from 'src/Globals';
+import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch} from 'react-redux';
+import GLOBALS from 'src/Globals';
 import {deleteUser} from 'src/redux/authSlice';
 
-import LinearGradient from 'react-native-linear-gradient';
-import MaskedView from '@react-native-community/masked-view';
 // import MetaStorage from 'src/singletons/MetaStorage'
 
 const size = 30;
