@@ -122,7 +122,7 @@ class Toaster extends Component {
       toValue: 1,
       easing: Easing.easeInOut,
       duration: 300,
-      seNativeDriver: true,
+      useNativeDriver: true,
     }).start(() => {
       if (this.props.onDidshowToastCB) {
         try {

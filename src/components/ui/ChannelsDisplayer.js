@@ -33,7 +33,6 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
   }, []);
 
   const fetchChannels = async () => {
-    console.log('calling');
     const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_CHANNELS;
     const requestURL = `${apiURL}?limit=10&page=${page}`;
     const resJson = await fetch(requestURL).then(response => response.json());
