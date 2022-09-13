@@ -77,7 +77,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   };
 
   const handleSubscribe = async () => {
-    if (pKey != '') {
+    if (pKey !== '') {
       wallet._signTypedData(EPNS_DOMAIN, subType, subMessage).then(res => {
         offChainSubscribe(res);
       });
@@ -87,7 +87,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   };
 
   const handleUnsubscribe = async () => {
-    if (pKey != '') {
+    if (pKey !== '') {
       wallet._signTypedData(EPNS_DOMAIN, unsubType, unsubMessage).then(res => {
         offChainUnsubscribe(res);
       });
@@ -130,7 +130,6 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   const offChainUnsubscribe = async signature => {
     const apiUrl =
       ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_UNSUBSCRIBE_OFFCHAIN;
-    console.log('called', apiUrl);
 
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -202,6 +201,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   };
 
   const fetchSubscriptionStatus = async (user, channel) => {
+    // console.log('logging ', apiURL);
     const response = await fetch(apiURL, {
       method: 'POST',
       headers: {
@@ -214,6 +214,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
         op: 'read',
       }),
     });
+    // console.log('response was', response);
 
     const subscriptionStatus = await response.json();
 
@@ -268,7 +269,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
         />
       )}
 
-      {subscribed != null && subscribed == true && (
+      {subscribed != null && subscribed === true && (
         <PrimaryButton
           style={styles.controlPrimary}
           setButtonStyle={{borderRadius: 0, padding: 0}}
@@ -287,7 +288,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
         />
       )}
 
-      {subscribed != null && subscribed == false && (
+      {subscribed !== null && subscribed === false && (
         <PrimaryButton
           style={styles.controlPrimary}
           setButtonStyle={{borderRadius: 0, padding: 0}}
