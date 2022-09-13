@@ -1,4 +1,4 @@
-import {FontAwesome5, MaterialCommunityIcons} from '@expo/vector-icons';
+import {FontAwesome5} from '@expo/vector-icons';
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
 import {ethers} from 'ethers';
 import React, {useEffect, useRef, useState} from 'react';
@@ -9,7 +9,6 @@ import {
   StyleSheet,
   Text,
   TouchableHighlight,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import GLOBALS from 'src/Globals';
@@ -33,13 +32,8 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   const apiURL =
     ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_SUBSCRIPTION;
 
-  //EIP 712 USING Private Key
-
-  var url = 'https://kovan.infura.io/v3/ee27475cf9ec4421b6bdec5c428cc3c9';
-  var provider = new ethers.providers.JsonRpcProvider(url);
-
   var wallet = '';
-  if (pKey != '') {
+  if (pKey !== '') {
     wallet = new ethers.Wallet(pKey);
   }
 
@@ -201,26 +195,27 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   };
 
   const fetchSubscriptionStatus = async (user, channel) => {
+    // TODO: fix with new api end points
     // console.log('logging ', apiURL);
-    const response = await fetch(apiURL, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        subscriber: user,
-        channel: channel,
-        op: 'read',
-      }),
-    });
+    // const response = await fetch(apiURL, {
+    //   method: 'POST',
+    //   headers: {
+    //     Accept: 'application/json',
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     subscriber: user,
+    //     channel: channel,
+    //     op: 'read',
+    //   }),
+    // });
     // console.log('response was', response);
-
-    const subscriptionStatus = await response.json();
-
-    // console.log(subscriptionStatus);
+    // const subscriptionStatus = await response.json();
+    // // console.log(subscriptionStatus);
+    // setProcessing(false);
+    // setSubscribed(subscriptionStatus);
     setProcessing(false);
-    setSubscribed(subscriptionStatus);
+    setSubscribed(false);
   };
 
   const openURL = async url => {
