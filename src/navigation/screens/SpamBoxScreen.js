@@ -1,13 +1,12 @@
 import React from 'react';
-import {StatusBar, StyleSheet} from 'react-native';
-import SafeAreaView from 'react-native-safe-area-view';
+import {StatusBar, StyleSheet, View} from 'react-native';
 import GLOBALS from 'src/Globals';
 import SpamFeed from 'src/components/ui/SpamFeed';
 import 'src/components/ui/SpamFeed';
 
 const SpamBoxScreen = ({style, route}) => {
   return (
-    <SafeAreaView style={[styles.container, style]}>
+    <View style={[styles.container, style]}>
       <StatusBar
         barStyle={'dark-content'}
         translucent
@@ -15,7 +14,7 @@ const SpamBoxScreen = ({style, route}) => {
       />
 
       <SpamFeed wallet={route.params.wallet} />
-    </SafeAreaView>
+    </View>
   );
 };
 

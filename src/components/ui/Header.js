@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import Constants from 'expo-constants';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Animated,
   Dimensions,

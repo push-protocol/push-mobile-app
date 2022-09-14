@@ -1,7 +1,6 @@
 import {useFocusEffect} from '@react-navigation/native';
 import React, {Component} from 'react';
 import {InteractionManager, StatusBar, StyleSheet, View} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {connect} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {Toaster} from 'src/components/indicators/Toaster';
@@ -22,7 +21,6 @@ function ScreenFinishedTransition({runAfterScreenTransition}) {
       });
 
       return () => task.cancel();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
 
@@ -173,7 +171,7 @@ class HomeScreen extends Component {
           }}
         />
 
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
           <StatusBar
             barStyle={'dark-content'}
             translucent
@@ -188,7 +186,7 @@ class HomeScreen extends Component {
               }}
             />
           </View>
-        </SafeAreaView>
+        </View>
 
         {/* Overlay Blur to show incase need to emphasize on something */}
         <OverlayBlur
