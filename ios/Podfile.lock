@@ -34,13 +34,13 @@ PODS:
     - ExpoModulesCore
   - EXPermissions (13.2.0):
     - ExpoModulesCore
-  - Expo (46.0.9):
+  - Expo (46.0.10):
     - ExpoModulesCore
   - ExpoKeepAwake (10.2.0):
     - ExpoModulesCore
   - ExpoLinearGradient (11.4.0):
     - ExpoModulesCore
-  - ExpoModulesCore (0.11.4):
+  - ExpoModulesCore (0.11.5):
     - React-Core
     - ReactCommon/turbomodule/core
   - EXSharing (10.3.0):
@@ -345,7 +345,7 @@ PODS:
   - React-jsinspector (0.69.4)
   - React-logger (0.69.4):
     - glog
-  - react-native-hash (3.0.0):
+  - react-native-hash (3.0.1):
     - React
   - react-native-randombytes (3.6.1):
     - React-Core
@@ -363,10 +363,10 @@ PODS:
   - react-native-udp (4.1.5):
     - CocoaAsyncSocket
     - React-Core
-  - react-native-video (6.0.0-alpha.1):
+  - react-native-video (6.0.0-alpha.2):
     - React-Core
-    - react-native-video/Video (= 6.0.0-alpha.1)
-  - react-native-video/Video (6.0.0-alpha.1):
+    - react-native-video/Video (= 6.0.0-alpha.2)
+  - react-native-video/Video (6.0.0-alpha.2):
     - PromisesSwift
     - React-Core
   - React-perflogger (0.69.4)
@@ -482,6 +482,11 @@ PODS:
     - React-Core
   - RNKeychain (8.1.1):
     - React-Core
+  - RNNotifee (5.7.0):
+    - React-Core
+    - RNNotifee/NotifeeCore (= 5.7.0)
+  - RNNotifee/NotifeeCore (5.7.0):
+    - React-Core
   - RNOS (1.2.6):
     - React
   - RNScreens (3.17.0):
@@ -566,6 +571,7 @@ DEPENDENCIES:
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
+  - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNOS (from `../node_modules/react-native-os`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -719,6 +725,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
+  RNNotifee:
+    :path: "../node_modules/@notifee/react-native"
   RNOS:
     :path: "../node_modules/react-native-os"
   RNScreens:
@@ -747,10 +755,10 @@ SPEC CHECKSUMS:
   EXImageLoader: b88e053d760f85a82405b1db2de4abf11978fc9f
   EXLocalAuthentication: a714f4e7370c4efba4ed4345a55110f22ac3d85f
   EXPermissions: 3dbb869e7f96a5711314f73d48ddc2f28009a7f6
-  Expo: 73412414e62f5cbc6e713def821de70b92cd3ad6
+  Expo: fcdb32274e2ca9c7638d3b21b30fb665c6869219
   ExpoKeepAwake: 0e8f18142e71bbf2c7f6aa66ebed249ba1420320
   ExpoLinearGradient: 1a3af07c6dab3c612967a294836df9ae717431df
-  ExpoModulesCore: e281bb7b78ea47e227dd5af94d04b24d8b2e1255
+  ExpoModulesCore: 5a973701f4400d70254bc836305228731c829010
   EXSharing: 8530ef08cb899328a7c61de7f4836af6208b567b
   FBLazyVector: c71b8c429a8af2aff1013934a7152e9d9d0c937d
   FBReactNativeSpec: cb0df4f0084281b394f76bb9b4d1d9540f35963f
@@ -762,13 +770,13 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 41f811b530c41dd90973d0174381cdb3fcb5e839
   FirebaseMessaging: 732623518591384f61c287e3d8f65294beb7ffb3
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
+  glog: cfec46900e485b4b7613ff79308c30791825f32c
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   PromisesSwift: 99fddfe4a0ec88a56486644c0da106694c92a604
-  RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
+  RCT-Folly: 6c7dfdb649d9eac5f93fa0891b11725aa9b2f1ed
   RCTRequired: bd9d2ab0fda10171fcbcf9ba61a7df4dc15a28f4
   RCTTypeSafety: e44e139bf6ec8042db396201834fc2372f6a21cd
   RCTYouTube: a8bb45705622a6fc9decf64be04128d3658ed411
@@ -783,13 +791,13 @@ SPEC CHECKSUMS:
   React-jsiexecutor: a27badbbdbc0ff781813370736a2d1c7261181d4
   React-jsinspector: 8a3d3f5dcd23a91e8c80b1bf0e96902cd1dca999
   React-logger: 1088859f145b8f6dd0d3ed051a647ef0e3e80fad
-  react-native-hash: 4489726b1495385925f351349fcf7cb0dd5a2c73
+  react-native-hash: 17b3c3896711278eebb9e66e532c2d8e5f3b7c30
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: b456e1c40ec86f5593d58b275bd0e9603169daca
   react-native-simple-toast: 8ee5d23f0b92b935ab7434cdb65159ce12dfb4b7
   react-native-sqlite-2: bbcdc6ea1edd8643f6850ce95a511149fc5ee7d1
   react-native-udp: 8864b1211857e9d8224ae5cbaf8580970fb99de1
-  react-native-video: bb6f12a7198db53b261fefb5d609dc77417acc8b
+  react-native-video: 21f2e00e30071d6b2c6d404d295537015d522001
   React-perflogger: cb386fd44c97ec7f8199c04c12b22066b0f2e1e0
   React-RCTActionSheet: f803a85e46cf5b4066c2ac5e122447f918e9c6e5
   React-RCTAnimation: 19c80fa950ccce7f4db76a2a7f2cf79baae07fc7
@@ -808,6 +816,7 @@ SPEC CHECKSUMS:
   RNFBMessaging: eca46a70527dd469e684250b22d5c927bc4a5ed9
   RNGestureHandler: 920eb17f5b1e15dae6e5ed1904045f8f90e0b11e
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
+  RNNotifee: 5155e0a5e0a97d0c839030d8192783cd63053999
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNSVG: a53a5de0d90ec96a6502cc3a4534dfcc0c130622
