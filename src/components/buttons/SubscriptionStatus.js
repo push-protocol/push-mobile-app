@@ -195,27 +195,21 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   };
 
   const fetchSubscriptionStatus = async (user, channel) => {
-    // TODO: fix with new api end points
-    // console.log('logging ', apiURL);
-    // const response = await fetch(apiURL, {
-    //   method: 'POST',
-    //   headers: {
-    //     Accept: 'application/json',
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     subscriber: user,
-    //     channel: channel,
-    //     op: 'read',
-    //   }),
-    // });
-    // console.log('response was', response);
-    // const subscriptionStatus = await response.json();
-    // // console.log(subscriptionStatus);
-    // setProcessing(false);
-    // setSubscribed(subscriptionStatus);
+    const response = await fetch(apiURL, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        subscriber: user,
+        channel: channel,
+        op: 'read',
+      }),
+    });
+    const subscriptionStatus = await response.json();
     setProcessing(false);
-    setSubscribed(false);
+    setSubscribed(subscriptionStatus);
   };
 
   const openURL = async url => {

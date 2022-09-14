@@ -17,7 +17,7 @@ export default {
     ENDPOINT_GET_SPAM_FEEDS: '/feeds/get_spam_feeds',
     ENDPOINT_FETCH_CHANNELS: '/v1/channels',
     ENDPOINT_SEARCH_CHANNELS: '/v1/channels/search',
-    ENDPOINT_FETCH_SUBSCRIPTION: '/channels/is_user_subscribed',
+    ENDPOINT_FETCH_SUBSCRIPTION: '/channels/_is_user_subscribed',
     ENDPOINT_SUBSCRIBE_OFFCHAIN: '/channels/subscribe_offchain',
     ENDPOINT_UNSUBSCRIBE_OFFCHAIN: '/channels/unsubscribe_offchain',
   },
