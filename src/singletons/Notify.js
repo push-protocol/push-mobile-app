@@ -1,5 +1,6 @@
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
+import {NotifeeDisplayNotification} from 'src/components/notifee/NotificationScreen';
 import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 

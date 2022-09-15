@@ -7,6 +7,10 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {Provider} from 'react-redux';
 import {persistStore} from 'redux-persist';
 import {PersistGate} from 'redux-persist/integration/react';
+import {
+  NotifeeDisplayNotification,
+  NotificationComponent,
+} from 'src/components/notifee/NotificationScreen';
 import ENV_CONFIG from 'src/env.config';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import AppScreens from 'src/navigation';
@@ -34,19 +38,28 @@ const App = () => {
 
     // Listen for incoming messages
     const handleForegroundPush = messaging().onMessage(async remoteMessage => {
-      Notify.instance.handleIncomingPushAppOpened(remoteMessage);
+      console.log('This is for the foreground msg');
+      console.log('remote message was', remoteMessage);
+      await NotifeeDisplayNotification();
+      // Notify.instance.handleIncomingPushAppOpened(remoteMessage);
     });
 
     messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log('1 called');
       Notify.instance.triggerNotificationListenerCallback();
     });
 
     messaging()
       .getInitialNotification()
       .then(remoteMessage => {
-        if (remoteMessage) {
-          Notify.instance.triggerNotificationListenerCallback();
-        }
+        console.log('msg was', remoteMessage);
+        NotifeeDisplayNotification();
+        // console.log();
+        // console.log('2 called');
+        // if (remoteMessage) {
+        //   Notify.instance.triggerNotificationListenerCallback();
+        //   console.log('33 called');
+        // }
       });
 
     return () => {
@@ -72,8 +85,8 @@ const App = () => {
             storageOptions={{
               asyncStorage: AsyncStorage,
             }}>
-            {/* <Text>I was called</Text> */}
-            <AppScreens />
+            <NotificationComponent />
+            {/* <AppScreens /> */}
           </WalletConnectProvider>
         </PersistGate>
       </Provider>
