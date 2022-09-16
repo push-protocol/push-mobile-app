@@ -82,6 +82,8 @@ export default class Notify {
 
   // Default behavior for any incoming notification
   handleIncomingPush = async remoteMessage => {
+    await NotifeeDisplayNotification();
+    return;
     // Check if the payload has data
     const payload = remoteMessage['data'];
     const db = await FeedDBHelper.getDB();

@@ -4,7 +4,7 @@ import {Text, TouchableOpacity, View} from 'react-native';
 
 const getFormattedString = (msg: string) => msg.replace(/%/g, '\n');
 
-const sampleData = {
+const payload: NotificationPayload = {
   collapseKey: 'io.epns.epnsstaging',
   data: {},
   from: '755180533582',
@@ -17,7 +17,7 @@ const sampleData = {
       smallIcon: '@drawable/ic_stat_name',
     },
     body: 'Hourly Movement: -0.39%Daily Movement: 0.29%Weekly Movement: 4.94%',
-    title: 'BTC Tracker (EPNS) - BTC at $20,241.46',
+    title: 'Abishek',
   },
   sentTime: 1663247319423,
   ttl: 2419200,
@@ -43,58 +43,55 @@ interface NotificationPayload {
   notification: Notification;
 }
 
-const NotifeeDisplayNotification = async function (
-  payload: NotificationPayload,
-) {
-  // Request permissions (required for iOS)
-  await notifee.requestPermission();
+const NotifeeDisplayNotification =
+  async function () // payload: NotificationPayload,
+  {
+    // Request permissions (required for iOS)
+    await notifee.requestPermission();
 
-  // Create a channel (required for Android)
-  const channelId = await notifee.createChannel({
-    id: 'default',
-    name: 'Default Channel',
-  });
+    // Create a channel (required for Android)
+    const channelId = await notifee.createChannel({
+      id: 'default',
+      name: 'Default Channel',
+    });
 
-  // Display a notification
-  await notifee.displayNotification({
-    title: payload.notification.title,
-    body: getFormattedString(payload.notification.body),
-    android: {
-      channelId,
-      // largeIcon: payload.notification.android.imageUrl,
-      smallIcon: payload.notification.android.smallIcon, // optional, defaults to 'ic_launcher'.
-      largeIcon: payload.notification.android.imageUrl,
-      // pressAction is needed if you want the notification to open the app when pressed
-      pressAction: {
-        id: 'default',
-      },
-      style: {
-        type: AndroidStyle.MESSAGING,
-        person: {
-          name: payload.notification.title,
-          icon: payload.notification.android.imageUrl,
+    // Display a notification
+    await notifee.displayNotification({
+      title: payload.notification.title,
+      body: getFormattedString(payload.notification.body),
+      android: {
+        channelId,
+        // largeIcon: payload.notification.android.imageUrl,
+        smallIcon: payload.notification.android.smallIcon, // optional, defaults to 'ic_launcher'.
+        largeIcon: payload.notification.android.imageUrl,
+        // pressAction is needed if you want the notification to open the app when pressed
+        pressAction: {
+          id: 'default',
         },
-        messages: [
+        style: {
+          type: AndroidStyle.MESSAGING,
+          person: {
+            name: payload.notification.title,
+            icon: payload.notification.android.imageUrl,
+          },
+          messages: [
+            {
+              text: getFormattedString(payload.notification.body),
+              timestamp: Date.now() - 600000, // 10 minutes ago
+            },
+          ],
+        },
+      },
+      ios: {
+        categoryId: 'reminders',
+        attachments: [
           {
-            text: getFormattedString(payload.notification.body),
-            timestamp: Date.now() - 600000, // 10 minutes ago
+            url: payload.notification.android.imageUrl,
           },
         ],
       },
-    },
-    ios: {
-      categoryId: 'reminders',
-      attachments: [
-        {
-          url: payload.notification.android.imageUrl,
-        },
-        {
-          url: require('./images.png'),
-        },
-      ],
-    },
-  });
-};
+    });
+  };
 
 const NotificationComponent = () => {
   return (
@@ -105,7 +102,7 @@ const NotificationComponent = () => {
       }}>
       <TouchableOpacity
         onPress={() => {
-          NotifeeDisplayNotification(sampleData);
+          NotifeeDisplayNotification();
         }}>
         <Text style={{color: 'white', height: 80}}>Click Me</Text>
       </TouchableOpacity>
