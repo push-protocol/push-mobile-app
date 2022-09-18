@@ -1,17 +1,16 @@
-import {useFocusEffect} from '@react-navigation/native';
-import {useWalletConnect} from '@walletconnect/react-native-dapp';
+import { useFocusEffect } from '@react-navigation/native';
+import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import * as Permissions from 'expo-permissions';
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   InteractionManager,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
-import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
-import {useDispatch} from 'react-redux';
-import GLOBALS from 'src/Globals';
+import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
+import { useDispatch } from 'react-redux';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
@@ -20,7 +19,8 @@ import OverlayBlur from 'src/components/modals/OverlayBlur';
 import PKEntryPrompt from 'src/components/modals/PKEntryPrompt';
 import QRScanner from 'src/components/modals/QRScanner';
 import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
-import {setInitialSignin} from 'src/redux/authSlice';
+import GLOBALS from 'src/Globals';
+import { setInitialSignin } from 'src/redux/authSlice';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
   useFocusEffect(
@@ -196,10 +196,10 @@ const SignInScreen = ({route, navigation}) => {
 
   // Load Advvance Screen
   const loadAdvanceScreen = async () => {
+    console.log(route);
     // Goto Next Screen
     navigation.navigate(GLOBALS.SCREENS.SIGNINADVANCE, {
       wallet: walletAddress,
-      fromOnboarding: route.params.fromOnboarding,
     });
   };
 

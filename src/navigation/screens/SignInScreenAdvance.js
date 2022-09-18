@@ -1,15 +1,14 @@
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import * as Permissions from 'expo-permissions';
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Animated,
   InteractionManager,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
-import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
-import GLOBALS from 'src/Globals';
+import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
@@ -18,6 +17,7 @@ import OverlayBlur from 'src/components/modals/OverlayBlur';
 import PKEntryPrompt from 'src/components/modals/PKEntryPrompt';
 import QRScanner from 'src/components/modals/QRScanner';
 import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
+import GLOBALS from 'src/Globals';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
@@ -229,14 +229,15 @@ export default class SignInScreenAdvance extends Component {
                     <StylishLabel
                       style={styles.para}
                       fontSize={16}
-                      title="[b:EPNS] will use your [b:private key] to [b:decrypt] your [b:encrypted] notifications."
+                      alignSelf="center"
+                      title="[b:Import Existing Account] to sign in directly."
                     />
 
                     <StylishLabel
                       style={styles.paraend}
                       fontSize={16}
                       title={
-                        "[d:Note:] This is [b:not the recommeneded way] to sign in, you should only do it if you know what you are doing.\n\nIt's always recommended to [up:verify our repo||https://github.com/ethereum-push-notification-service/epns-mobile-app]."
+                        "This is [b:not the recommeneded way] to sign in, you should only do it if you know what you are doing.\n\n[d:Note:] Your private key can be used by malicious apps to compromise you. [up:Learn about risks||https://www.coinbase.com/learn/crypto-basics/what-is-a-private-key] | [up:Verify our repo||https://github.com/ethereum-push-notification-service/epns-mobile-app]\n\n⚠️ Please enter your private key to continue."
                       }
                     />
                   </View>
