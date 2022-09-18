@@ -409,8 +409,8 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     paddingTop: 40,
-    paddingHorizontal: 20,
     alignSelf: 'center',
+    paddingHorizontal: 20,
   },
   inner: {
     position: 'absolute',

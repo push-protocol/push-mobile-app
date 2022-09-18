@@ -47,11 +47,22 @@ const OnboardingNavigator = () => {
         }}
       />
 
-      <Stack.Screen name={GLOBALS.SCREENS.SIGNIN} component={SignInScreen} />
+      <Stack.Screen
+        name={GLOBALS.SCREENS.SIGNIN}
+        component={SignInScreen}
+        options={{
+          headerShown: false,
+          headerTintColor: GLOBALS.COLORS.MID_GRAY,
+        }}
+      />
 
       <Stack.Screen
         name={GLOBALS.SCREENS.NEWWALLETSIGNIN}
         component={NewWalletSignInScreen}
+        options={{
+          headerShown: false,
+          headerTintColor: GLOBALS.COLORS.MID_GRAY,
+        }}
       />
 
       <Stack.Screen

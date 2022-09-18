@@ -1,16 +1,17 @@
+import notifee from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import WalletConnectProvider from '@walletconnect/react-native-dapp';
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import 'react-native-gesture-handler';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {Provider} from 'react-redux';
-import {persistStore} from 'redux-persist';
-import {PersistGate} from 'redux-persist/integration/react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Provider } from 'react-redux';
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
 import ENV_CONFIG from 'src/env.config';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import AppScreens from 'src/navigation';
-import {NotifeeDisplayNotification} from 'src/notifee';
+import { NotifeeDisplayNotification } from 'src/notifee';
 import store from 'src/redux';
 import Notify from 'src/singletons/Notify';
 
@@ -27,6 +28,7 @@ const App = () => {
     // PUSH NOTIFICATIONS HANDLING
     // Request Device Token and save it user is signed in
     Notify.instance.requestDeviceToken(true);
+
     // Listen to whether the token changes
     const onTokenRefresh = messaging().onTokenRefresh(token => {
       Notify.instance.saveDeviceToken(token, true); // true means it's a refresh
