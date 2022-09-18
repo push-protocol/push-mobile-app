@@ -19,8 +19,8 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
 
   const [refreshing, setRefreshing] = useState(false);
 
-  const [contract, setContract] = useState(null);
-  const [endReached, setEndReached] = useState(false);
+  const [contract] = useState(null);
+  const [endReached] = useState(false);
 
   const [searchTimer, setSearchTimer] = useState(null);
   const [isSearchEnded, setIsSearchEnded] = useState(false);
@@ -36,7 +36,7 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
     const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_CHANNELS;
     const requestURL = `${apiURL}?limit=10&page=${page}`;
     const resJson = await fetch(requestURL).then(response => response.json());
-    if (resJson.count != 0 && resJson.channels != []) {
+    if (resJson.count !== 0 && resJson.channels !== []) {
       setChannels(prev => [...prev, ...resJson.channels]);
       setPage(prev => prev + 1);
     }
@@ -44,24 +44,10 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
   };
 
   useEffect(() => {
-    if (refreshing == true) {
+    if (refreshing) {
       fetchChannels();
     }
   }, [refreshing]);
-
-  // to check valid url
-  const validURL = str => {
-    var pattern = new RegExp(
-      '^(https?:\\/\\/)?' + // protocol
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-        '(\\#[-a-z\\d_]*)?$',
-      'i',
-    ); // fragment locator
-    return !!pattern.test(str);
-  };
 
   const searchForChannel = async channelName => {
     setChannels([]);
@@ -73,23 +59,8 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
     }
 
     setIsSearchEnded(false);
-    const apiURL = ENV_CONFIG.EPNS_SERVER + '/channels/search';
-    const searchRes = await fetch(apiURL, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        chainId: 42,
-        page: 1,
-        pageSize: 20,
-        op: 'read',
-        query: channelName,
-      }),
-    });
-
-    const resJson = await searchRes.json();
+    const apiURL = `${ENV_CONFIG.EPNS_SERVER}${ENV_CONFIG.ENDPOINT_SEARCH_CHANNELS}?page=1&limit=20&query=${channelName}`;
+    const resJson = await fetch(apiURL).then(response => response.json());
     setChannels(resJson.channels);
     setIsSearchEnded(true);
   };
@@ -123,7 +94,7 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
         />
       </View>
 
-      {channels.length == 0 && (
+      {channels.length === 0 && (
         <View style={[styles.infodisplay, styles.noPendingFeeds]}>
           {isSearchEnded ? (
             // Show channel not found label
@@ -146,7 +117,7 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
         </View>
       )}
 
-      {channels.length != 0 && (
+      {channels.length !== 0 && (
         <FlatList
           data={channels}
           style={styles.channels}
