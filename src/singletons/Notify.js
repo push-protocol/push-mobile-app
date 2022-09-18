@@ -1,7 +1,4 @@
-import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
-import {NotifeeDisplayNotification} from 'src/components/notifee/NotificationScreen';
-import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 // STATIC SINGLETON
@@ -30,7 +27,7 @@ export default class Notify {
 
     // FIREBASE
     const status = await messaging().hasPermission();
-    if (status == messaging.AuthorizationStatus.AUTHORIZED) {
+    if (status === messaging.AuthorizationStatus.AUTHORIZED) {
       messaging()
         .getToken()
         .then(token => {
@@ -78,41 +75,6 @@ export default class Notify {
   handleIncomingPushAppInBG = async remoteMessage => {
     //console.log("Notification Handled From Background!");
     await this.handleIncomingPush(remoteMessage);
-  };
-
-  // Default behavior for any incoming notification
-  handleIncomingPush = async remoteMessage => {
-    await NotifeeDisplayNotification();
-    return;
-    // Check if the payload has data
-    const payload = remoteMessage['data'];
-    const db = await FeedDBHelper.getDB();
-
-    if (payload['type']) {
-      // Assume message exists and proceed
-      await FeedDBHelper.addFeedFromPayload(
-        db,
-        payload['sid'],
-        payload['type'],
-        payload['app'],
-        payload['icon'],
-        payload['url'],
-        null,
-        payload['secret'],
-        payload['asub'],
-        payload['amsg'],
-        payload['acta'],
-        payload['aimg'],
-        '0',
-        payload['epoch'],
-      );
-    }
-
-    // console.log("Notification Handled!");
-    // console.log(remoteMessage);
-
-    // Trigger Notification Callback
-    this.triggerNotificationListenerCallback();
   };
 
   // To subscribe to notification recieved

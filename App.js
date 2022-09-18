@@ -7,13 +7,10 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {Provider} from 'react-redux';
 import {persistStore} from 'redux-persist';
 import {PersistGate} from 'redux-persist/integration/react';
-import {
-  NotifeeDisplayNotification,
-  NotificationComponent,
-} from 'src/components/notifee/NotificationScreen';
 import ENV_CONFIG from 'src/env.config';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import AppScreens from 'src/navigation';
+import {NotifeeDisplayNotification} from 'src/notifee';
 import store from 'src/redux';
 import Notify from 'src/singletons/Notify';
 
@@ -30,48 +27,17 @@ const App = () => {
     // PUSH NOTIFICATIONS HANDLING
     // Request Device Token and save it user is signed in
     Notify.instance.requestDeviceToken(true);
-
     // Listen to whether the token changes
     const onTokenRefresh = messaging().onTokenRefresh(token => {
       Notify.instance.saveDeviceToken(token, true); // true means it's a refresh
     });
 
-    // // Listen for incoming messages
-    // const handleForegroundPush = messaging().onMessage(async remoteMessage => {
-    //   console.log('This is for the foreground msg');
-    //   console.log('remote message was', remoteMessage);
-    //   await NotifeeDisplayNotification();
-    //   // Notify.instance.handleIncomingPushAppOpened(remoteMessage);
-    // });
-
-    // messaging().onNotificationOpenedApp(remoteMessage => {
-    //   console.log('1 called');
-    //   Notify.instance.triggerNotificationListenerCallback();
-    // });
-
-    // async function onMessageReceived(message) {
-    //   console.log('bg message called', message);
-    //   await NotifeeDisplayNotification();
-    //   // Do something
-    // }
-
-    messaging().onMessage(NotifeeDisplayNotification);
-    messaging().setBackgroundMessageHandler(NotifeeDisplayNotification);
-    // messaging()
-    //   .getInitialNotification()
-    //   .then(remoteMessage => {
-    //     console.log('msg was', remoteMessage);
-    //     NotifeeDisplayNotification();
-    //     // console.log();
-    //     // console.log('2 called');
-    //     // if (remoteMessage) {
-    //     //   Notify.instance.triggerNotificationListenerCallback();
-    //     //   console.log('33 called');
-    //     // }
-    //   });
+    const handleBackgroundMessageHandler =
+      messaging().setBackgroundMessageHandler(NotifeeDisplayNotification);
 
     return () => {
       onTokenRefresh;
+      handleBackgroundMessageHandler;
       handleAppNotificationBadge();
     };
   }, []);
@@ -92,7 +58,6 @@ const App = () => {
             storageOptions={{
               asyncStorage: AsyncStorage,
             }}>
-            {/* <NotificationComponent /> */}
             <AppScreens />
           </WalletConnectProvider>
         </PersistGate>
