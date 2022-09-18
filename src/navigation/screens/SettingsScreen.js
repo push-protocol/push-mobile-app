@@ -7,18 +7,11 @@ import GLOBALS from 'src/Globals';
 import ImageTitleButton from 'src/components/buttons/ImageTitleButton';
 import ImageTitleSwitchButton from 'src/components/buttons/ImageTitleSwitchButton';
 import Dropdown from 'src/components/custom/Dropdown';
-import {Toaster, ToasterOptions} from 'src/components/indicators/Toaster';
+import {Toaster} from 'src/components/indicators/Toaster';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
-// import FeedDBHelper from 'src/helpers/FeedDBHelper'
 import ENV_CONFIG from 'src/env.config';
 import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
-import {
-  createNewWallet,
-  selectUsers,
-  setAuthState,
-  setLogout,
-} from 'src/redux/authSlice';
-import {clearFeed} from 'src/redux/feedSlice';
+import {selectUsers, setLogout} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 const SettingsScreen = ({}) => {
@@ -94,11 +87,6 @@ const SettingsScreen = ({}) => {
     dispatch(setLogout(null));
   };
 
-  // TO SHOW TOASTER
-  const showToast = (msg, icon, type, tapCB, screenTime) => {
-    ToasterRef.current.showToast(msg, icon, type, tapCB, screenTime);
-  };
-
   // CONSTANTS
   let settingsOptions = [];
 
@@ -113,21 +101,22 @@ const SettingsScreen = ({}) => {
   // })
 
   // Sign in with another wallet
-  settingsOptions.push({
-    title: 'Sign in with another wallet',
-    img: require('assets/ui/brokenkey.png'),
-    func: () => {
-      if (users.length < 5) {
-        dispatch(clearFeed(null));
-        dispatch(createNewWallet({wallet: '', userPKey: ''}));
-        dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING));
-      }
-    },
-    type: 'button',
-  });
+  // Disable multiple wallet singin
+  // settingsOptions.push({
+  //   title: 'Sign in with another wallet',
+  //   img: require('assets/ui/brokenkey.png'),
+  //   func: () => {
+  //     if (users.length < 5) {
+  //       dispatch(clearFeed(null));
+  //       dispatch(createNewWallet({wallet: '', userPKey: ''}));
+  //       dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING));
+  //     }
+  //   },
+  //   type: 'button',
+  // });
 
   // Swipe Reset
-  users.length == 1 &&
+  users.length === 1 &&
     settingsOptions.push({
       title: 'Swipe / Reset Wallet',
       img: require('assets/ui/unlink.png'),
