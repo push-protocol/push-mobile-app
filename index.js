@@ -8,7 +8,10 @@ import {name as appName} from './app.json';
 
 // FIREBASE
 // Register background handler
-messaging().setBackgroundMessageHandler(NotifeeDisplayNotification);
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('i was called with', remoteMessage);
+  await NotifeeDisplayNotification(remoteMessage);
+});
 
 function HeadlessCheck({isHeadless}) {
   if (isHeadless) {

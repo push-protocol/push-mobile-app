@@ -11,6 +11,7 @@ import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 export default function Tabs() {
   const users = useSelector(selectUsers);
+  console.log('USERS', users);
   const currentUser = useSelector(selectCurrentUser);
 
   const Tab = createMaterialBottomTabNavigator();

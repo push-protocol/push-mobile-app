@@ -33,7 +33,10 @@ const App = () => {
     });
 
     const handleBackgroundMessageHandler =
-      messaging().setBackgroundMessageHandler(NotifeeDisplayNotification);
+      messaging().setBackgroundMessageHandler(async remoteMessage => {
+        console.log('i was called with', remoteMessage);
+        await NotifeeDisplayNotification(remoteMessage);
+      });
 
     return () => {
       onTokenRefresh;
