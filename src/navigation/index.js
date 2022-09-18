@@ -1,10 +1,8 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect} from 'react';
-import {useSelector} from 'react-redux';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
-import {selectAuthState} from 'src/redux/authSlice';
-import {setLogout} from 'src/redux/authSlice';
+import {selectAuthState, setLogout} from 'src/redux/authSlice';
 
 import AuthenticatedNavigator from './AuthenticatedNavigator';
 import InitializingNavigator from './InitializingNavigator';
@@ -13,6 +11,7 @@ import OnboardingNavigator from './OnboardingNavigator';
 
 const Screens = () => {
   const authState = useSelector(selectAuthState);
+  console.log('auth state was', authState);
   const dispatch = useDispatch();
 
   // reset user login

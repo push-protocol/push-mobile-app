@@ -17,6 +17,8 @@ const authSlice = createSlice({
     setInitialSignin: (state, action) => {
       state.users = [action.payload];
       state.currentUser = action.payload.index;
+
+      console.log('Users: %s', state.currentUser);
       state.isLoggedIn = true;
     },
 
