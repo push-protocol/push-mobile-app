@@ -27,6 +27,8 @@ import MetaStorage from 'src/singletons/MetaStorage';
 // FOR SLIDING UP ANIMATION
 const SLIDE_UP_THRESHOLD = 100;
 
+// FOR SLIDING UP ANIMATION
+
 class SplashScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
@@ -115,6 +117,8 @@ class SplashScreen extends Component {
 
     if (response.success) {
       // Do The Bell Once and then proceed
+
+      await this.setNewState();
       this.refs.bellicon.animateBell(() => {
         this.props.dispatch(setAuthState(GLOBALS.AUTH_STATE.AUTHENTICATED));
       });
@@ -204,8 +208,6 @@ class SplashScreen extends Component {
           response.info = 'Biometric failed';
         }
       } catch (error) {
-        // console.log("Keychain couldn't be accessed!", error);
-
         response.success = false;
         response.info = 'Biometric failed';
       }
