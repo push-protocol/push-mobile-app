@@ -1,4 +1,4 @@
-import {FontAwesome5, MaterialCommunityIcons} from '@expo/vector-icons';
+import {FontAwesome5} from '@expo/vector-icons';
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
 import {ethers} from 'ethers';
 import React, {useEffect, useRef, useState} from 'react';
@@ -9,7 +9,6 @@ import {
   StyleSheet,
   Text,
   TouchableHighlight,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import GLOBALS from 'src/Globals';
@@ -33,13 +32,8 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   const apiURL =
     ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_SUBSCRIPTION;
 
-  //EIP 712 USING Private Key
-
-  var url = 'https://kovan.infura.io/v3/ee27475cf9ec4421b6bdec5c428cc3c9';
-  var provider = new ethers.providers.JsonRpcProvider(url);
-
   var wallet = '';
-  if (pKey != '') {
+  if (pKey !== '') {
     wallet = new ethers.Wallet(pKey);
   }
 
@@ -77,7 +71,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   };
 
   const handleSubscribe = async () => {
-    if (pKey != '') {
+    if (pKey !== '') {
       wallet._signTypedData(EPNS_DOMAIN, subType, subMessage).then(res => {
         offChainSubscribe(res);
       });
@@ -87,7 +81,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   };
 
   const handleUnsubscribe = async () => {
-    if (pKey != '') {
+    if (pKey !== '') {
       wallet._signTypedData(EPNS_DOMAIN, unsubType, unsubMessage).then(res => {
         offChainUnsubscribe(res);
       });
@@ -130,7 +124,6 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   const offChainUnsubscribe = async signature => {
     const apiUrl =
       ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_UNSUBSCRIBE_OFFCHAIN;
-    console.log('called', apiUrl);
 
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -214,10 +207,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
         op: 'read',
       }),
     });
-
     const subscriptionStatus = await response.json();
-
-    // console.log(subscriptionStatus);
     setProcessing(false);
     setSubscribed(subscriptionStatus);
   };
@@ -268,7 +258,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
         />
       )}
 
-      {subscribed != null && subscribed == true && (
+      {subscribed != null && subscribed === true && (
         <PrimaryButton
           style={styles.controlPrimary}
           setButtonStyle={{borderRadius: 0, padding: 0}}
@@ -287,7 +277,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
         />
       )}
 
-      {subscribed != null && subscribed == false && (
+      {subscribed !== null && subscribed === false && (
         <PrimaryButton
           style={styles.controlPrimary}
           setButtonStyle={{borderRadius: 0, padding: 0}}

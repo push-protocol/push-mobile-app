@@ -1,6 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
-import axios from 'axios';
-import {Toaster, ToasterOptions} from 'src/components/indicators/Toaster';
+import {ToasterOptions} from 'src/components/indicators/Toaster';
 import ENV_CONFIG from 'src/env.config';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 
@@ -63,7 +62,7 @@ export const fetchFeedData = ({
   endReached = false,
 }) => {
   return async dispatch => {
-    if (!endReached || rewrite == true) {
+    if (!endReached || rewrite === true) {
       if (!loading) {
         // Check if this is a rewrite
         let paging = page;
@@ -89,7 +88,7 @@ export const fetchFeedData = ({
         })
           .then(response => response.json())
           .then(resJson => {
-            if (resJson.count != 0 && resJson.results != []) {
+            if (resJson.count !== 0 && resJson.results !== []) {
               // clear the notifs if present
               AppBadgeHelper.setAppBadgeCount(0);
 

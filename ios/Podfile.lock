@@ -363,10 +363,10 @@ PODS:
   - react-native-udp (4.1.5):
     - CocoaAsyncSocket
     - React-Core
-  - react-native-video (6.0.0-alpha.2):
+  - react-native-video (6.0.0-alpha.1):
     - React-Core
-    - react-native-video/Video (= 6.0.0-alpha.2)
-  - react-native-video/Video (6.0.0-alpha.2):
+    - react-native-video/Video (= 6.0.0-alpha.1)
+  - react-native-video/Video (6.0.0-alpha.1):
     - PromisesSwift
     - React-Core
   - React-perflogger (0.69.4)
@@ -482,10 +482,10 @@ PODS:
     - React-Core
   - RNKeychain (8.1.1):
     - React-Core
-  - RNNotifee (3.0.1):
+  - RNNotifee (5.7.0):
     - React-Core
-    - RNNotifee/NotifeeCore (= 3.0.1)
-  - RNNotifee/NotifeeCore (3.0.1):
+    - RNNotifee/NotifeeCore (= 5.7.0)
+  - RNNotifee/NotifeeCore (5.7.0):
     - React-Core
   - RNOS (1.2.6):
     - React
@@ -770,13 +770,13 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 41f811b530c41dd90973d0174381cdb3fcb5e839
   FirebaseMessaging: 732623518591384f61c287e3d8f65294beb7ffb3
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: cfec46900e485b4b7613ff79308c30791825f32c
+  glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   PromisesSwift: 99fddfe4a0ec88a56486644c0da106694c92a604
-  RCT-Folly: 6c7dfdb649d9eac5f93fa0891b11725aa9b2f1ed
+  RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
   RCTRequired: bd9d2ab0fda10171fcbcf9ba61a7df4dc15a28f4
   RCTTypeSafety: e44e139bf6ec8042db396201834fc2372f6a21cd
   RCTYouTube: a8bb45705622a6fc9decf64be04128d3658ed411
@@ -797,7 +797,7 @@ SPEC CHECKSUMS:
   react-native-simple-toast: 8ee5d23f0b92b935ab7434cdb65159ce12dfb4b7
   react-native-sqlite-2: bbcdc6ea1edd8643f6850ce95a511149fc5ee7d1
   react-native-udp: 8864b1211857e9d8224ae5cbaf8580970fb99de1
-  react-native-video: 21f2e00e30071d6b2c6d404d295537015d522001
+  react-native-video: bb6f12a7198db53b261fefb5d609dc77417acc8b
   React-perflogger: cb386fd44c97ec7f8199c04c12b22066b0f2e1e0
   React-RCTActionSheet: f803a85e46cf5b4066c2ac5e122447f918e9c6e5
   React-RCTAnimation: 19c80fa950ccce7f4db76a2a7f2cf79baae07fc7
@@ -816,7 +816,7 @@ SPEC CHECKSUMS:
   RNFBMessaging: eca46a70527dd469e684250b22d5c927bc4a5ed9
   RNGestureHandler: 920eb17f5b1e15dae6e5ed1904045f8f90e0b11e
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
-  RNNotifee: aeafe138adea11e0cf716188d2fe1b7dd850888d
+  RNNotifee: 5155e0a5e0a97d0c839030d8192783cd63053999
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNSVG: a53a5de0d90ec96a6502cc3a4534dfcc0c130622
