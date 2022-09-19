@@ -1,16 +1,17 @@
-import { useFocusEffect } from '@react-navigation/native';
-import { useWalletConnect } from '@walletconnect/react-native-dapp';
-import * as Permissions from 'expo-permissions';
-import React, { useEffect, useRef, useState } from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import {useWalletConnect} from '@walletconnect/react-native-dapp';
+import {Camera} from 'expo-camera';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Animated,
   InteractionManager,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
-import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
-import { useDispatch } from 'react-redux';
+import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
+import {useDispatch} from 'react-redux';
+import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
@@ -19,8 +20,7 @@ import OverlayBlur from 'src/components/modals/OverlayBlur';
 import PKEntryPrompt from 'src/components/modals/PKEntryPrompt';
 import QRScanner from 'src/components/modals/QRScanner';
 import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
-import GLOBALS from 'src/Globals';
-import { setInitialSignin } from 'src/redux/authSlice';
+import {setInitialSignin} from 'src/redux/authSlice';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
   useFocusEffect(
@@ -48,6 +48,8 @@ function GetScreenInsets() {
 }
 
 const SignInScreen = ({route, navigation}) => {
+  // Camera
+  const [permission, requestPermission] = Camera.useCameraPermissions();
   // Setup state
   const [transitionFinished, setTransitionFinished] = useState(false);
   const [detailedInfoPresetned, setDetailedInfoPresetned] = useState(false);
@@ -104,20 +106,23 @@ const SignInScreen = ({route, navigation}) => {
 
   // Users Permissions
   const getCameraPermissionAsync = async navigation => {
-    const {status} = await Permissions.askAsync(Permissions.CAMERA);
-    if (status !== 'granted') {
-      toggleNoticePrompt(
-        true,
-        true,
-        'Camera Access',
-        'Need Camera Permissions for scanning QR Code',
-        'Please enable Camera Permissions from [appsettings:App Settings] to continue',
-        false,
-      );
-    } else {
-      // All Clear, open QR Scanner
-      toggleQRScanner(true, navigation);
+    if (!permission.granted) {
+      let {granted} = await requestPermission();
+      if (granted) {
+        // show message
+        toggleNoticePrompt(
+          true,
+          true,
+          'Camera Access',
+          'Need Camera Permissions for scanning QR Code',
+          'Please enable Camera Permissions from [appsettings:App Settings] to continue',
+          false,
+        );
+        return;
+      }
     }
+
+    toggleQRScanner(true, navigation);
   };
 
   // Detect PK Code
@@ -363,7 +368,7 @@ const SignInScreen = ({route, navigation}) => {
         <QRScanner
           ref={QRScannerRef}
           navigation={navigation}
-          title="[wb:Please scan your] [d:wallet's address] [wb:to connect it to EPNS.]"
+          title="[wb:AAA scan your] [d:wallet's address] [wb:to connect it to EPNS.]"
           doneFunc={code => {
             onWalletDetect(code);
           }}

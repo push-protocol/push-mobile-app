@@ -109,18 +109,20 @@ export default class QRScanner extends Component {
     closeFunc();
   };
 
+  playScanSound = async () => {
+    try {
+      const {sound} = await Audio.Sound.createAsync(
+        require('assets/sounds/scanned.mp3'),
+      );
+      await sound.playAsync();
+    } catch (err) {
+      console.log('err on song', err);
+    }
+  };
+
   // Handle barcode scanning
   handleBarCodeScanned = async (scanned, navigation, doneFunc) => {
     let code = scanned.data;
-
-    const soundObject = new Audio.Sound();
-    try {
-      await soundObject.loadAsync(require('assets/sounds/scanned.mp3'));
-      await soundObject.playAsync();
-      // Your sound is playing!
-    } catch (error) {
-      // An error occurred!
-    }
 
     // Close this
     this.changeRenderState(false, navigation);

@@ -1,4 +1,5 @@
 import {useFocusEffect} from '@react-navigation/native';
+import {Camera} from 'expo-camera';
 import * as Permissions from 'expo-permissions';
 import React, {useEffect, useState} from 'react';
 import {
@@ -47,6 +48,8 @@ function GetScreenInsets() {
 }
 
 export default props => {
+  // Camera
+  const [permission, requestPermission] = Camera.useCameraPermissions();
   const [transitionFinished, setTransitionFinished] = useState(false);
   const [detailedInfoPresetned, setDetailedInfoPresetned] = useState(false);
 
@@ -100,20 +103,23 @@ export default props => {
 
   // Users Permissions
   const getCameraPermissionAsync = async navigation => {
-    const {status} = await Permissions.askAsync(Permissions.CAMERA);
-    if (status !== 'granted') {
-      toggleNoticePrompt(
-        true,
-        true,
-        'Camera Access',
-        'Need Camera Permissions for scanning QR Code',
-        'Please enable Camera Permissions from [appsettings:App Settings] to continue',
-        false,
-      );
-    } else {
-      // All Clear, open QR Scanner
-      toggleQRScanner(true, navigation);
+    if (!permission.granted) {
+      let {granted} = await requestPermission();
+      if (granted) {
+        // show message
+        toggleNoticePrompt(
+          true,
+          true,
+          'Camera Access',
+          'Need Camera Permissions for scanning QR Code',
+          'Please enable Camera Permissions from [appsettings:App Settings] to continue',
+          false,
+        );
+        return;
+      }
     }
+
+    toggleQRScanner(true, navigation);
   };
 
   // Detect PK Code

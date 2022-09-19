@@ -1,6 +1,6 @@
-import { createStackNavigator } from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
-import { Text, View } from 'react-native';
+import {Text, View} from 'react-native';
 import GLOBALS from 'src/Globals';
 
 import BiometricScreen from './screens/BiometricScreen';
@@ -14,7 +14,6 @@ import WelcomeScreen from './screens/WelcomeScreen';
 const Stack = createStackNavigator();
 
 const OnboardingNavigator = () => {
-  console.log('rendering now');
   return (
     <Stack.Navigator
       initialRouteName={GLOBALS.SCREENS.WELCOME}
