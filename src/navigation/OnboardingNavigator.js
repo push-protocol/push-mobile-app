@@ -1,6 +1,6 @@
-import {createStackNavigator} from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import {Text, View} from 'react-native';
+import { Text, View } from 'react-native';
 import GLOBALS from 'src/Globals';
 
 import BiometricScreen from './screens/BiometricScreen';
@@ -8,6 +8,7 @@ import NewWalletSignInScreen from './screens/NewWalletSignInScreen';
 import PushNotifyScreen from './screens/PushNotifyScreen';
 import SetupCompleteScreen from './screens/SetupCompleteScreen';
 import SignInScreen from './screens/SignInScreen';
+import SignInAdvanceScreen from './screens/SignInScreenAdvance';
 import WelcomeScreen from './screens/WelcomeScreen';
 
 const Stack = createStackNavigator();
@@ -47,11 +48,31 @@ const OnboardingNavigator = () => {
         }}
       />
 
-      <Stack.Screen name={GLOBALS.SCREENS.SIGNIN} component={SignInScreen} />
+      <Stack.Screen
+        name={GLOBALS.SCREENS.SIGNIN}
+        component={SignInScreen}
+        options={{
+          headerShown: false,
+          headerTintColor: GLOBALS.COLORS.MID_GRAY,
+        }}
+      />
+
+      <Stack.Screen
+        name={GLOBALS.SCREENS.SIGNINADVANCE}
+        component={SignInAdvanceScreen}
+        options={{
+          headerShown: false,
+          headerTintColor: GLOBALS.COLORS.MID_GRAY,
+        }}
+      />
 
       <Stack.Screen
         name={GLOBALS.SCREENS.NEWWALLETSIGNIN}
         component={NewWalletSignInScreen}
+        options={{
+          headerShown: false,
+          headerTintColor: GLOBALS.COLORS.MID_GRAY,
+        }}
       />
 
       <Stack.Screen

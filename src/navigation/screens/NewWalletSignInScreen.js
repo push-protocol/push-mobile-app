@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: GLOBALS.COLORS.WHITE,
-    alignItems: 'stretch',
+    alignItems: 'center',
     justifyContent: 'space-between',
   },
   header: {
@@ -426,7 +426,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingTop: 40,
     paddingHorizontal: 20,
-    alignSelf: 'center',
   },
   inner: {
     position: 'absolute',

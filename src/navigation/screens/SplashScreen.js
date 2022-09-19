@@ -57,8 +57,10 @@ class SplashScreen extends Component {
   async componentDidMount() {
     console.log('Splash screen comes');
     const signedIn = this.props.auth.isLoggedIn;
+    console.log('Signed in: ', signedIn);
     if (!signedIn) {
       const wallet = await MetaStorage.instance.getStoredWallets();
+      console.log('Wallet: ', wallet);
       if (wallet && wallet.length > 0) {
         this.setState(
           {
@@ -96,8 +98,10 @@ class SplashScreen extends Component {
   // FUNCTIONS
   // To Handle the logic flow
   handleAuthenticationFlow = async signedIn => {
+    console.log('handling authentication flow...');
     // Check for Account Lock First
     const userLocked = await MetaStorage.instance.getUserLocked();
+    console.log('user locked... ', userLocked);
     if (!userLocked) {
       // Present Secuity Details
       this.handleAuthentication(signedIn);

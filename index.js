@@ -1,7 +1,7 @@
 import messaging from '@react-native-firebase/messaging';
 import React from 'react';
 import {AppRegistry} from 'react-native';
-import Notify from 'src/singletons/Notify';
+import {NotifeeDisplayNotification} from 'src/notifee';
 
 import App from './App';
 import {name as appName} from './app.json';
@@ -9,10 +9,8 @@ import {name as appName} from './app.json';
 // FIREBASE
 // Register background handler
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  return new Promise(async (resolve, reject) => {
-    await Notify.instance.handleIncomingPushAppInBG(remoteMessage);
-    resolve(true);
-  });
+  console.log('i was called with', remoteMessage);
+  await NotifeeDisplayNotification(remoteMessage);
 });
 
 function HeadlessCheck({isHeadless}) {

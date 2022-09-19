@@ -7,7 +7,7 @@ import SplashScreen from './screens/SplashScreen';
 const Stack = createStackNavigator();
 
 const InitializingNavigator = () => {
-  console.log('I should not be called');
+  console.log('InitializingNavigator - I should not be called');
   return (
     <Stack.Navigator initialRouteName={GLOBALS.SCREENS.SPLASH}>
       <Stack.Screen

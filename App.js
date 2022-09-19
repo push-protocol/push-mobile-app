@@ -1,3 +1,4 @@
+import notifee from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import WalletConnectProvider from '@walletconnect/react-native-dapp';
@@ -10,6 +11,7 @@ import {PersistGate} from 'redux-persist/integration/react';
 import ENV_CONFIG from 'src/env.config';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import AppScreens from 'src/navigation';
+import {NotifeeDisplayNotification} from 'src/notifee';
 import store from 'src/redux';
 import Notify from 'src/singletons/Notify';
 
@@ -32,26 +34,15 @@ const App = () => {
       Notify.instance.saveDeviceToken(token, true); // true means it's a refresh
     });
 
-    // Listen for incoming messages
-    const handleForegroundPush = messaging().onMessage(async remoteMessage => {
-      Notify.instance.handleIncomingPushAppOpened(remoteMessage);
-    });
-
-    messaging().onNotificationOpenedApp(remoteMessage => {
-      Notify.instance.triggerNotificationListenerCallback();
-    });
-
-    messaging()
-      .getInitialNotification()
-      .then(remoteMessage => {
-        if (remoteMessage) {
-          Notify.instance.triggerNotificationListenerCallback();
-        }
+    const handleBackgroundMessageHandler =
+      messaging().setBackgroundMessageHandler(async remoteMessage => {
+        console.log('i was called with', remoteMessage);
+        await NotifeeDisplayNotification(remoteMessage);
       });
 
     return () => {
       onTokenRefresh;
-      handleForegroundPush;
+      handleBackgroundMessageHandler;
       handleAppNotificationBadge();
     };
   }, []);
@@ -72,7 +63,6 @@ const App = () => {
             storageOptions={{
               asyncStorage: AsyncStorage,
             }}>
-            {/* <Text>I was called</Text> */}
             <AppScreens />
           </WalletConnectProvider>
         </PersistGate>
