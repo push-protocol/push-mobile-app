@@ -13,7 +13,10 @@
     ],
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "ios": {
+      "bundleIdentifier": "io.epns.epnsstaging"
+    }
   },
   "plugins": [
     [
