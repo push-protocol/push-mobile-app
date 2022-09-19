@@ -41,9 +41,9 @@ function GetScreenInsets() {
   const insets = useSafeArea();
   if (insets.bottom > 0) {
     // Adjust inset by
-    return <View style={styles.insetAdjustment}></View>;
+    return <View style={styles.insetAdjustment} />;
   } else {
-    return <View style={styles.noInsetAdjustment}></View>;
+    return <View style={styles.noInsetAdjustment} />;
   }
 }
 
@@ -54,7 +54,7 @@ const SignInScreen = ({route, navigation}) => {
   const [transitionFinished, setTransitionFinished] = useState(false);
   const [detailedInfoPresetned, setDetailedInfoPresetned] = useState(false);
 
-  const [fader, setFader] = useState(new Animated.Value(0));
+  const [fader] = useState(new Animated.Value(0));
   const [walletAddress, setWalletAddress] = useState('');
 
   const [cns, setCNS] = useState('');
@@ -100,12 +100,12 @@ const SignInScreen = ({route, navigation}) => {
   };
 
   // Open QR Scanner
-  const toggleQRScanner = (toggle, navigation) => {
-    QRScannerRef.current.changeRenderState(toggle, navigation);
+  const toggleQRScanner = (_toggle, _navigation) => {
+    QRScannerRef.current.changeRenderState(_toggle, _navigation);
   };
 
   // Users Permissions
-  const getCameraPermissionAsync = async navigation => {
+  const getCameraPermissionAsync = async _navigation => {
     if (!permission.granted) {
       let {granted} = await requestPermission();
       if (granted) {
@@ -122,7 +122,7 @@ const SignInScreen = ({route, navigation}) => {
       }
     }
 
-    toggleQRScanner(true, navigation);
+    toggleQRScanner(true, _navigation);
   };
 
   // Detect PK Code
@@ -147,10 +147,10 @@ const SignInScreen = ({route, navigation}) => {
   };
 
   // Handle Profile Info
-  const profileInfoFetched = (wallet, cns, ens) => {
-    setWalletAddress(wallet);
-    setCNS(cns);
-    setENS(ens);
+  const profileInfoFetched = (_wallet, _cns, _ens) => {
+    setWalletAddress(_wallet);
+    setCNS(_cns);
+    setENS(_ens);
     setWalletAddressVerified(true);
   };
 
@@ -246,8 +246,8 @@ const SignInScreen = ({route, navigation}) => {
               resetFunc={() => {
                 resetWalletAddress();
               }}
-              profileInfoFetchedFunc={(wallet, cns, ens) => {
-                profileInfoFetched(wallet, cns, ens);
+              profileInfoFetchedFunc={(_wallet, _cns, _ens) => {
+                profileInfoFetched(_wallet, _cns, _ens);
               }}
             />
           )}
@@ -275,7 +275,7 @@ const SignInScreen = ({route, navigation}) => {
                 }}
               />
 
-              <View style={styles.divider}></View>
+              <View style={styles.divider} />
 
               <PrimaryButton
                 iconFactory="MaterialIcons"
@@ -291,7 +291,7 @@ const SignInScreen = ({route, navigation}) => {
                 }}
               />
 
-              <View style={styles.divider}></View>
+              <View style={styles.divider} />
 
               <View style={styles.columnizer}>
                 <PrimaryButton
@@ -308,7 +308,7 @@ const SignInScreen = ({route, navigation}) => {
                   }}
                 />
 
-                <View style={styles.colDivider}></View>
+                <View style={styles.colDivider} />
 
                 <PrimaryButton
                   iconFactory="Ionicons"
@@ -342,7 +342,7 @@ const SignInScreen = ({route, navigation}) => {
                       resetWalletAddress();
                     }}
                   />
-                  <View style={styles.divider}></View>
+                  <View style={styles.divider} />
 
                   <PrimaryButton
                     iconFactory="Ionicons"

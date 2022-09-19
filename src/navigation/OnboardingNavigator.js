@@ -1,6 +1,5 @@
 import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
-import {Text, View} from 'react-native';
 import GLOBALS from 'src/Globals';
 
 import BiometricScreen from './screens/BiometricScreen';
