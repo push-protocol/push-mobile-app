@@ -2,12 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/Prodigy/Desktop/Inhouse/EPNS/epns-mobile-app-staging/ios/epnsstaging.xcodeproj">
+      location = "group:/Users/Prodigy/Desktop/Inhouse/EPNS/epns-mobile-app/ios/epns.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:epnsstaging.xcodeproj">
+      location = "group:epns.xcodeproj">
    </FileRef>
 </Workspace>
