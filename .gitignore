@@ -85,7 +85,7 @@ captures/
 .cxx/
 
 # Google Services (e.g. APIs or Firebase)
-# google-services.json
+google-services.json
 
 # Freeline
 freeline.py
@@ -239,15 +239,10 @@ RNTester/Pods/*
 /ReactCommon/fabric/components/rncore/
 /schema-rncore.json
 
-# Visual studio
-.vscode
-.vs
-
 # Sensitive Files
 .env
 google-services.json
 GoogleService-Info.plist
 dump.rdb
 /android/app/build
-yarn.lock
 /android/app/release.keystore

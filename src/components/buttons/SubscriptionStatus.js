@@ -1,92 +1,78 @@
-import { id, serializeTransaction } from "ethers/lib/utils";
-import React, { useEffect, useState, useRef } from "react";
+import {FontAwesome5} from '@expo/vector-icons';
+import {useWalletConnect} from '@walletconnect/react-native-dapp';
+import {ethers} from 'ethers';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  View,
-  Text,
   ActivityIndicator,
   Linking,
-  StyleSheet,
   Modal,
-  TouchableOpacity,
+  StyleSheet,
+  Text,
   TouchableHighlight,
-} from "react-native";
-import { ethers } from "ethers";
-
-import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
-
-import { useWalletConnect } from "@walletconnect/react-native-dapp";
-
-import PrimaryButton from "src/components/buttons/PrimaryButton";
-
-import OverlayBlur from "src/components/modals/OverlayBlur";
-import NoticePrompt from "src/components/modals/NoticePrompt";
-
-import MetaStorage from "src/singletons/MetaStorage";
-
-import ENV_CONFIG from "src/env.config";
-import GLOBALS from "src/Globals";
+  View,
+} from 'react-native';
+import GLOBALS from 'src/Globals';
+import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import NoticePrompt from 'src/components/modals/NoticePrompt';
+import OverlayBlur from 'src/components/modals/OverlayBlur';
+import ENV_CONFIG from 'src/env.config';
+import MetaStorage from 'src/singletons/MetaStorage';
 
 const CHANNEL_OPT_IN = 1;
 const CHANNEL_OPT_OUT = 2;
 
-const SubscriptionStatus = ({ channel, user, style, pKey }) => {
+const SubscriptionStatus = ({channel, user, style, pKey}) => {
   const [subscribed, setSubscribed] = useState(null);
 
   const [modal, setModal] = useState(false);
-  const [action, setAction] = useState("");
+  const [action, setAction] = useState('');
 
   const [processing, setProcessing] = useState(false);
 
   const apiURL =
     ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_SUBSCRIPTION;
 
-  //EIP 712 USING Private Key
-
-  var url = "https://kovan.infura.io/v3/ee27475cf9ec4421b6bdec5c428cc3c9";
-  var provider = new ethers.providers.JsonRpcProvider(url);
-
-  var wallet = "";
-  if (pKey != "") {
+  var wallet = '';
+  if (pKey !== '') {
     wallet = new ethers.Wallet(pKey);
   }
 
   const EPNS_DOMAIN = {
-    name: "EPNS COMM V1",
+    name: 'EPNS COMM V1',
     chainId: 42,
-    verifyingContract: "0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC",
+    verifyingContract: '0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC',
   };
 
   const subType = {
     Subscribe: [
-      { name: "channel", type: "address" },
-      { name: "subscriber", type: "address" },
-      { name: "action", type: "string" },
+      {name: 'channel', type: 'address'},
+      {name: 'subscriber', type: 'address'},
+      {name: 'action', type: 'string'},
     ],
   };
   const unsubType = {
     Unsubscribe: [
-      { name: "channel", type: "address" },
-      { name: "unsubscriber", type: "address" },
-      { name: "action", type: "string" },
+      {name: 'channel', type: 'address'},
+      {name: 'unsubscriber', type: 'address'},
+      {name: 'action', type: 'string'},
     ],
   };
 
   const subMessage = {
     channel: channel,
     subscriber: user,
-    action: "Subscribe",
+    action: 'Subscribe',
   };
 
   const unsubMessage = {
     channel: channel,
     unsubscriber: user,
-    action: "Unsubscribe",
+    action: 'Unsubscribe',
   };
 
   const handleSubscribe = async () => {
-    if (pKey != "") {
-      console.log("HERE->Subscribe");
-      wallet._signTypedData(EPNS_DOMAIN, subType, subMessage).then((res) => {
+    if (pKey !== '') {
+      wallet._signTypedData(EPNS_DOMAIN, subType, subMessage).then(res => {
         offChainSubscribe(res);
       });
     } else {
@@ -95,79 +81,75 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
   };
 
   const handleUnsubscribe = async () => {
-    if (pKey != "") {
-      console.log("HERE->Unscubscribe");
-      wallet
-        ._signTypedData(EPNS_DOMAIN, unsubType, unsubMessage)
-        .then((res) => {
-          offChainUnsubscribe(res);
-        });
+    if (pKey !== '') {
+      wallet._signTypedData(EPNS_DOMAIN, unsubType, unsubMessage).then(res => {
+        offChainUnsubscribe(res);
+      });
     } else {
       showPopUp();
     }
   };
 
-  const offChainSubscribe = async (signature) => {
+  const offChainSubscribe = async signature => {
     const apiUrl =
       ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_SUBSCRIBE_OFFCHAIN;
 
-    console.log("subscribe", apiUrl);
+    console.log('subscribe', apiUrl);
 
     const body = {
       signature: signature,
       message: subMessage,
-      contractAddress: "0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC",
+      contractAddress: '0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC',
       chainId: 42,
-      op: "write",
+      op: 'write',
     };
 
     const response = await fetch(apiUrl, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
     });
 
-    console.log("calling subscribe with body ->", body);
+    console.log('calling subscribe with body ->', body);
 
     const subscribeResponse = await response.json();
-    console.log("subscribeResponse", subscribeResponse);
+    console.log('subscribeResponse', subscribeResponse);
 
     fetchSubscriptionStatus(user, channel);
   };
 
-  const offChainUnsubscribe = async (signature) => {
+  const offChainUnsubscribe = async signature => {
     const apiUrl =
       ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_UNSUBSCRIBE_OFFCHAIN;
-    console.log("called", apiUrl);
 
     const response = await fetch(apiUrl, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         signature: signature,
         message: unsubMessage,
-        contractAddress: "0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC",
+        contractAddress: '0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC',
         chainId: 42,
-        op: "write",
+        op: 'write',
       }),
     });
 
-    console.log("signature", signature);
+    console.log('signature', signature);
 
     const unsubscribeResponse = await response.json();
-    console.log("unsubscribeRespone", unsubscribeResponse);
+    console.log('unsubscribeRespone', unsubscribeResponse);
 
     fetchSubscriptionStatus(user, channel);
   };
 
   // Wallet Connect functionality
-  const { createSession, killSession, session, signTransaction } =
+  const {createSession, killSession, session, signTransaction} =
     useWalletConnect();
   const connector = useWalletConnect();
 
@@ -184,7 +166,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
     };
   });
 
-  const handleOpts = async (action) => {
+  const handleOpts = async action => {
     // Check signin flow
     setProcessing(true);
 
@@ -201,39 +183,36 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
     }
   };
 
-  const showPopUp = async (action) => {
+  const showPopUp = async action => {
     // Check if Wallet Connect
     setModal(true);
 
     if (action == 1) {
-      setAction("Opt-In");
+      setAction('Opt-In');
     } else if (action == 2) {
-      setAction("Opt-Out");
+      setAction('Opt-Out');
     }
   };
 
   const fetchSubscriptionStatus = async (user, channel) => {
     const response = await fetch(apiURL, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         subscriber: user,
         channel: channel,
-        op: "read",
+        op: 'read',
       }),
     });
-
     const subscriptionStatus = await response.json();
-
-    // console.log(subscriptionStatus);
     setProcessing(false);
     setSubscribed(subscriptionStatus);
   };
 
-  const openURL = async (url) => {
+  const openURL = async url => {
     // if (validURL(url) || 1) {
     // console.log("OPENING URL ", url);
     // Bypassing the check so that custom app domains can be opened
@@ -257,7 +236,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
     title,
     subtitle,
     notice,
-    showIndicator
+    showIndicator,
   ) => {
     // Set Notice First
     NoticePromptRef.current.changeTitle(title);
@@ -274,15 +253,15 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
     <View style={styles.container}>
       {subscribed == null && (
         <ActivityIndicator
-          size={"small"}
+          size={'small'}
           color={GLOBALS.COLORS.GRADIENT_PRIMARY}
         />
       )}
 
-      {subscribed != null && subscribed == true && (
+      {subscribed != null && subscribed === true && (
         <PrimaryButton
           style={styles.controlPrimary}
-          setButtonStyle={{ borderRadius: 0, padding: 0 }}
+          setButtonStyle={{borderRadius: 0, padding: 0}}
           iconFactory="MaterialCommunityIcons"
           icon="checkbox-marked"
           iconSize={24}
@@ -298,11 +277,11 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
         />
       )}
 
-      {subscribed != null && subscribed == false && (
+      {subscribed !== null && subscribed === false && (
         <PrimaryButton
           style={styles.controlPrimary}
-          setButtonStyle={{ borderRadius: 0, padding: 0 }}
-          setButtonInnerStyle={{ flexDirection: "column-reverse" }}
+          setButtonStyle={{borderRadius: 0, padding: 0}}
+          setButtonInnerStyle={{flexDirection: 'column-reverse'}}
           title="Opt In"
           iconFactory="MaterialCommunityIcons"
           icon="checkbox-blank-outline"
@@ -337,13 +316,14 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
         visible={modal}
         onRequestClose={() => {
           setModal(!modal);
-        }}
-      >
+        }}>
         <View style={styles.centeredView}>
           <View style={styles.modal}>
             <View style={[styles.optionsArea]}>
               <Text style={styles.textStyle}>
-                {action} is currently posible with MetaMask. You will be redirected to the MetaMask app where you can sign into our Dapp and {action} to the channels of your choice.
+                {action} is currently posible with MetaMask. You will be
+                redirected to the MetaMask app where you can sign into our Dapp
+                and {action} to the channels of your choice.
               </Text>
             </View>
 
@@ -351,10 +331,9 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
               <TouchableHighlight
                 style={[styles.done]}
                 underlayColor={GLOBALS.COLORS.LIGHT_GRAY}
-                onPress={() => openURL(ENV_CONFIG.METAMASK_LINK)}
-              >
+                onPress={() => openURL(ENV_CONFIG.METAMASK_LINK)}>
                 <Text style={styles.doneText}>
-                  Opt In with MetaMask {"  "}
+                  Opt In with MetaMask {'  '}
                   <FontAwesome5 name="external-link-alt" size={20} />
                 </Text>
               </TouchableHighlight>
@@ -363,8 +342,7 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
               <TouchableHighlight
                 style={[styles.cancel]}
                 underlayColor={GLOBALS.COLORS.LIGHT_GRAY}
-                onPress={() => setModal(!modal)}
-              >
+                onPress={() => setModal(!modal)}>
                 <Text style={[styles.cancelText]}>Cancel</Text>
               </TouchableHighlight>
             </View>
@@ -425,29 +403,29 @@ const SubscriptionStatus = ({ channel, user, style, pKey }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    overflow: "hidden",
+    overflow: 'hidden',
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   controlPrimary: {
     flex: 1,
-    maxHeight: "100%",
+    maxHeight: '100%',
   },
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 22,
-    backgroundColor: "rgba(255,255,255,0.75)",
+    backgroundColor: 'rgba(255,255,255,0.75)',
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -466,37 +444,37 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     elevation: 2,
-    backgroundColor: "#E20880",
+    backgroundColor: '#E20880',
   },
   buttonOpen: {
-    backgroundColor: "#228bc6",
+    backgroundColor: '#228bc6',
   },
   buttonClose: {
-    backgroundColor: "#228bc6",
+    backgroundColor: '#228bc6',
   },
   textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center",
+    textAlign: 'center',
   },
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     // marginTop: 22,
-    backgroundColor: "rgba(255,255,255,0.75)",
+    backgroundColor: 'rgba(255,255,255,0.75)',
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -515,38 +493,38 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     elevation: 2,
-    backgroundColor: "#E20880",
+    backgroundColor: '#E20880',
   },
   buttonOpen: {
-    backgroundColor: "#228bc6",
+    backgroundColor: '#228bc6',
   },
   buttonClose: {
-    backgroundColor: "#228bc6",
+    backgroundColor: '#228bc6',
   },
   textStyle: {
-    color: "black",
-    textAlign: "center",
+    color: 'black',
+    textAlign: 'center',
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center",
+    textAlign: 'center',
   },
 
   container: {
     ...StyleSheet.absoluteFill,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   keyboardAvoid: {
     ...StyleSheet.absoluteFill,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   modal: {
-    position: "absolute",
+    position: 'absolute',
     // display: "flex",
-    alignSelf: "center",
-    width: "75%",
+    alignSelf: 'center',
+    width: '75%',
     maxWidth: 300,
-    overflow: "hidden",
+    overflow: 'hidden',
     borderRadius: 10,
     borderWidth: 1,
     borderColor: GLOBALS.COLORS.LIGHT_GRAY,
@@ -559,9 +537,9 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 5,
     paddingHorizontal: 15,
-    justifyContent: "center",
-    textAlign: "center",
-    fontWeight: "bold",
+    justifyContent: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   subtitle: {
     paddingTop: 5,
@@ -569,7 +547,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: GLOBALS.COLORS.WHITE,
     color: GLOBALS.COLORS.BLACK,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 14,
   },
   optionsArea: {
@@ -593,14 +571,14 @@ const styles = StyleSheet.create({
   },
   lettercount: {
     flex: 1,
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     paddingTop: 2,
     color: GLOBALS.COLORS.MID_GRAY,
     fontSize: 12,
   },
   hintText: {
     color: GLOBALS.COLORS.GRADIENT_PRIMARY,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 14,
   },
   doneArea: {},
@@ -612,9 +590,9 @@ const styles = StyleSheet.create({
   },
   doneText: {
     color: GLOBALS.COLORS.GRADIENT_PRIMARY,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginRight: 10,
   },
   cancelArea: {},
@@ -626,7 +604,7 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     color: GLOBALS.COLORS.LINKS,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 16,
   },
 });

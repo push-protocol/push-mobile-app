@@ -1,79 +1,66 @@
-platform :ios, '10.3'
 
-require_relative '../node_modules/react-native-unimodules/cocoapods'
+  # RN FIREBASE addon
+  $RNFirebaseAsStaticFramework = true
+  # RN FIREBASE addon ends
+
+require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
+require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-target 'NotificationServiceExtension' do
-   pod 'Firebase/Messaging'
-end
+platform :ios, '12.4'
+install! 'cocoapods', :deterministic_uuids => false
 
-target 'epns' do
-  rnPrefix = "../node_modules/react-native"
+production = ENV["PRODUCTION"] == "1"
 
-  # React Native and its dependencies
-  pod 'FBLazyVector', :path => "#{rnPrefix}/Libraries/FBLazyVector"
-  pod 'FBReactNativeSpec', :path => "#{rnPrefix}/Libraries/FBReactNativeSpec"
-  pod 'RCTRequired', :path => "#{rnPrefix}/Libraries/RCTRequired"
-  pod 'RCTTypeSafety', :path => "#{rnPrefix}/Libraries/TypeSafety"
-  pod 'React', :path => "#{rnPrefix}/"
-  pod 'React-Core', :path => "#{rnPrefix}/"
-  pod 'React-CoreModules', :path => "#{rnPrefix}/React/CoreModules"
-  pod 'React-RCTActionSheet', :path => "#{rnPrefix}/Libraries/ActionSheetIOS"
-  pod 'React-RCTAnimation', :path => "#{rnPrefix}/Libraries/NativeAnimation"
-  pod 'React-RCTBlob', :path => "#{rnPrefix}/Libraries/Blob"
-  pod 'React-RCTImage', :path => "#{rnPrefix}/Libraries/Image"
-  pod 'React-RCTLinking', :path => "#{rnPrefix}/Libraries/LinkingIOS"
-  pod 'React-RCTNetwork', :path => "#{rnPrefix}/Libraries/Network"
-  pod 'React-RCTSettings', :path => "#{rnPrefix}/Libraries/Settings"
-  pod 'React-RCTText', :path => "#{rnPrefix}/Libraries/Text"
-  pod 'React-RCTVibration', :path => "#{rnPrefix}/Libraries/Vibration"
-  pod 'React-Core/RCTWebSocket', :path => "#{rnPrefix}/"
-  pod 'React-Core/DevSupport', :path => "#{rnPrefix}/"
-  pod 'React-cxxreact', :path => "#{rnPrefix}/ReactCommon/cxxreact"
-  pod 'React-jsi', :path => "#{rnPrefix}/ReactCommon/jsi"
-  pod 'React-jsiexecutor', :path => "#{rnPrefix}/ReactCommon/jsiexecutor"
-  pod 'React-jsinspector', :path => "#{rnPrefix}/ReactCommon/jsinspector"
-  pod 'ReactCommon/jscallinvoker', :path => "#{rnPrefix}/ReactCommon"
-  pod 'ReactCommon/turbomodule/core', :path => "#{rnPrefix}/ReactCommon"
-  pod 'Yoga', :path => "#{rnPrefix}/ReactCommon/yoga"
-  pod 'DoubleConversion', :podspec => "#{rnPrefix}/third-party-podspecs/DoubleConversion.podspec"
-  pod 'glog', :podspec => "#{rnPrefix}/third-party-podspecs/glog.podspec"
-  pod 'Folly', :podspec => "#{rnPrefix}/third-party-podspecs/Folly.podspec"
-
-  # Other native modules
-
-  # Automatically detect installed unimodules
-  use_unimodules!
-
-  # The community version of use_unimodules (used for react-native-firebase)
-  use_native_modules!
-
-  # react-native-cli autolinking
-  use_native_modules!
-
-
-  pod 'react-native-video', :path => '../node_modules/react-native-video'
-
-end
-
-post_install do |installer|
-  ## Fix for XCode 12.5
-  find_and_replace("../node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm",
-    "_initializeModules:(NSArray<id<RCTBridgeModule>> *)modules", "_initializeModules:(NSArray<Class> *)modules")
-  find_and_replace("../node_modules/react-native/ReactCommon/turbomodule/core/platform/ios/RCTTurboModuleManager.mm",
-     "RCTBridgeModuleNameForClass(module))", "RCTBridgeModuleNameForClass(Class(module)))")
-end
-
-
-def find_and_replace(dir, findstr, replacestr)
-  Dir[dir].each do |name|
-      text = File.read(name)
-      replace = text.gsub(findstr,replacestr)
-      if text != replace
-          puts "Fix: " + name
-          File.open(name, "w") { |file| file.puts replace }
-          STDOUT.flush
-      end
+target 'epnsstaging' do
+  # RN FIREBASE addon
+  use_frameworks! :linkage => :static
+  # RN FIREBASE addon ends
+  
+  use_expo_modules!
+  post_integrate do |installer|
+    begin
+      expo_patch_react_imports!(installer)
+    rescue => e
+      Pod::UI.warn e
+    end
   end
-  Dir[dir + '*/'].each(&method(:find_and_replace))
+  config = use_native_modules!
+
+  # Flags change depending on the env values.
+  flags = get_default_flags()
+  pod 'GoogleUtilities', :modular_headers => true
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # to enable hermes on iOS, change `false` to `true` and then install pods
+    :production => production,
+    :hermes_enabled => flags[:hermes_enabled],
+    :fabric_enabled => flags[:fabric_enabled],
+
+    # RN FIREBASE addon
+    :flipper_configuration => FlipperConfiguration.disabled,
+    # RN FIREBASE addon ends
+
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  target 'epnsstagingTests' do
+    inherit! :complete
+    # Pods for testing
+  end
+
+  post_install do |installer|
+    react_native_post_install(installer)
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  end
 end
+
+$NotifeeExtension = true
+
+target 'NotifeeNotificationService' do
+  use_frameworks!
+  pod 'RNNotifeeCore', :path => '../node_modules/@notifee/react-native/RNNotifeeCore.podspec'
+end
+

@@ -1,24 +1,23 @@
-import React, { Component } from 'react';
+import {Entypo, Ionicons} from '@expo/vector-icons';
+import {LinearGradient} from 'expo-linear-gradient';
+import React, {Component} from 'react';
 import {
-  View,
-  TouchableOpacity,
-  Text,
   ActivityIndicator,
-  StyleSheet
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-
 import GLOBALS from 'src/Globals';
 
-export default class ENSButton extends Component<Prop> {
+export default class ENSButton extends Component {
   // CONSTRUCTOR
   constructor(props) {
     super(props);
 
     this.state = {
-      active: false
-    }
+      active: false,
+    };
   }
 
   // FUNCTIONS
@@ -26,9 +25,9 @@ export default class ENSButton extends Component<Prop> {
   onPress = () => {
     // Change State to reflect expanded or contracted button
     this.setState({
-      active: !this.state.active
+      active: !this.state.active,
     });
-  }
+  };
 
   // Set Render
   render() {
@@ -40,7 +39,8 @@ export default class ENSButton extends Component<Prop> {
       cns,
       ens,
       wallet,
-      fontSize
+      fontSize,
+      dropdownIcon,
     } = this.props;
 
     let showDomain = true;
@@ -55,7 +55,6 @@ export default class ENSButton extends Component<Prop> {
       showDomain = false;
     }
 
-
     let icon = 'ios-arrow-down';
     if (this.state.active) {
       icon = 'ios-arrow-up';
@@ -68,12 +67,12 @@ export default class ENSButton extends Component<Prop> {
     let gradient = [
       GLOBALS.COLORS.GRADIENT_PRIMARY,
       GLOBALS.COLORS.GRADIENT_SECONDARY,
-    ]
+    ];
 
     // To set header text style
     let headerTextStyle = {
-      fontWeight: 'bold'
-    }
+      fontWeight: 'bold',
+    };
 
     // To override loading style if need be
     let loadingContainerStyle = {};
@@ -97,86 +96,87 @@ export default class ENSButton extends Component<Prop> {
         //   fontWeight: '300',
         // }
 
-        headerTextStyle={
+        headerTextStyle = {
           color: GLOBALS.COLORS.WHITE,
           fontWeight: '400',
-        }
+        };
       }
 
       if (loading) {
         loadingContainerStyle = {
           paddingVertical: 8,
           borderRadius: 18,
-        }
+        };
       }
     }
 
     return (
-      <View style={[ styles.container, style ]}>
+      <View style={[styles.container, style]}>
         <TouchableOpacity
-          onPress = {this.onPress}
-          disabled={!showDomain || forProfile}
-        >
+          onPress={this.onPress}
+          disabled={!showDomain || forProfile}>
           <LinearGradient
             colors={gradient}
-            style={[ styles.ensbox, innerStyle, loadingContainerStyle ]}
+            style={[styles.ensbox, innerStyle, loadingContainerStyle]}
             start={[0.1, 0.3]}
-            end={[1, 1]}
-          >
-            {
-              loading == true
-                ? <ActivityIndicator
-                    style = {styles.activity}
-                    size = "small"
-                    color = {GLOBALS.COLORS.WHITE}
-                  />
-                : showDomain == false
-                  ? <Text
-                      style={[ styles.ensName, { fontSize: fontSize}, headerTextStyle ]}
-                      numberOfLines={numberOfLines}
-                      ellipsizeMode="middle"
-                    >
-                      {title}
+            end={[1, 1]}>
+            {loading == true ? (
+              <ActivityIndicator
+                style={styles.activity}
+                size="small"
+                color={GLOBALS.COLORS.WHITE}
+              />
+            ) : showDomain == false ? (
+              <View
+                style={{display: 'flex', width: '90%', position: 'relative'}}>
+                <Text
+                  style={[
+                    styles.ensName,
+                    {fontSize: fontSize},
+                    headerTextStyle,
+                  ]}
+                  numberOfLines={numberOfLines}
+                  ellipsizeMode="middle">
+                  {title}
+                </Text>
+                <Text style={styles.caretStyle}>
+                  {dropdownIcon && (
+                    <Entypo name="chevron-down" size={16} color="white" />
+                  )}
+                </Text>
+              </View>
+            ) : (
+              <View style={styles.ensContainer}>
+                <View style={[styles.ensHeader, headerStyle]}>
+                  <Text
+                    style={[styles.ensName, {fontSize: fontSize}]}
+                    numberOfLines={numberOfLines}>
+                    {title}
+                  </Text>
+                  {forProfile == true ? null : (
+                    <Ionicons
+                      style={styles.ensIcon}
+                      name={icon}
+                      color={GLOBALS.COLORS.WHITE}
+                      size={fontSize * 1.2}
+                    />
+                  )}
+                </View>
+                {this.state.active == false ? null : (
+                  <View style={styles.ensContent}>
+                    <Text
+                      style={[styles.ensContentInner, {fontSize: fontSize}]}>
+                      {wallet}
                     </Text>
-                  : <View
-                      style={styles.ensContainer}
-                    >
-                      <View style={[ styles.ensHeader, headerStyle ]}>
-                        <Text
-                          style={[ styles.ensName, { fontSize: fontSize} ]}
-                          numberOfLines={numberOfLines}
-                        >
-                          {title}
-                        </Text>
-                        {
-                          forProfile == true
-                            ? null
-                            : <Ionicons
-                                style={styles.ensIcon}
-                                name={icon}
-                                color={GLOBALS.COLORS.WHITE}
-                                size={fontSize * 1.2}
-                              />
-                        }
-                      </View>
-                      {
-                        this.state.active == false
-                          ? null
-                          : <View style={styles.ensContent}>
-                              <Text
-                                style={[ styles.ensContentInner, { fontSize: fontSize} ]}
-                              >
-                                {wallet}
-                              </Text>
-                            </View>
-                      }
-                    </View>
-            }
+                  </View>
+                )}
+              </View>
+            )}
           </LinearGradient>
         </TouchableOpacity>
       </View>
     );
-  };
+  }
 }
 
 // Styling
@@ -197,9 +197,7 @@ const styles = StyleSheet.create({
     color: GLOBALS.COLORS.WHITE,
     fontWeight: 'bold',
   },
-  ensContainer: {
-
-  },
+  ensContainer: {},
   ensHeader: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -223,5 +221,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: GLOBALS.COLORS.BLACK,
     fontWeight: 'bold',
-  }
+  },
+  caretStyle: {
+    marginLeft: 10,
+    paddingLeft: 10,
+    position: 'absolute',
+    top: 0,
+    right: -20,
+  },
 });

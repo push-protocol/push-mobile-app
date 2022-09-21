@@ -1,8 +1,6 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Text, Linking, Platform } from 'react-native';
-
+import React, {Component} from 'react';
+import {Linking, Platform, StyleSheet, Text, View} from 'react-native';
 import ParsedText from 'react-native-parsed-text';
-
 import GLOBALS from 'src/Globals';
 
 export default class CalendarEvents extends Component {
@@ -12,9 +10,7 @@ export default class CalendarEvents extends Component {
   }
 
   // Component Mounted
-  componentDidMount() {
-
-  }
+  componentDidMount() {}
 
   // FUNCTIONS
   handleUrlPress(matchingString, matchIndex /*: number*/) {
@@ -65,136 +61,130 @@ export default class CalendarEvents extends Component {
 
   // RENDER
   render() {
-    const {
-      style,
-      title,
-      fontSize,
-      textStyle,
-    } = this.props;
+    const {style, title, fontSize, textStyle} = this.props;
 
     let TextUpdatedStyle = {
-      fontSize: fontSize
-    }
+      fontSize: fontSize,
+    };
 
     let parseSettings = [
       {
         type: 'email',
         style: [styles.link, styles.underline],
-        onPress: this.handleEmailPress
+        onPress: this.handleEmailPress,
       },
       {
         pattern: /\[(u):([^\]]+)\]/i, // url
         style: [styles.primary, styles.bold, styles.italics, styles.underline],
         onPress: this.handleUrlPress,
-        renderText: this.renderThreeStyles
+        renderText: this.renderThreeStyles,
       },
       {
         pattern: /\[(ub):([^\]]+)\]/i, // url
-        style: [styles.secondary, styles.bold, styles.italics, styles.underline],
+        style: [
+          styles.secondary,
+          styles.bold,
+          styles.italics,
+          styles.underline,
+        ],
         onPress: this.handleUrlPress,
-        renderText: this.renderThreeStyles
+        renderText: this.renderThreeStyles,
       },
       {
         pattern: /\[(ut):([^\]]+)\]/i, // url
         style: [styles.third, styles.bold, styles.italics, styles.underline],
         onPress: this.handleUrlPress,
-        renderText: this.renderThreeStyles
+        renderText: this.renderThreeStyles,
       },
       {
         pattern: /\[(up):([^\]]+)\]/i, // url
         style: [styles.primary, styles.italics, styles.underline],
         onPress: this.handleUrlPress,
-        renderText: this.renderThreeStyles
+        renderText: this.renderThreeStyles,
       },
       {
         pattern: /\[(d):([^\]]+)\]/i, // default or primary gradient color
         style: [styles.primary, styles.bold],
-        renderText: this.renderStyles
+        renderText: this.renderStyles,
       },
       {
         pattern: /\[(s):([^\]]+)\]/i, // secondary gradient color
         style: [styles.secondary, styles.bold],
-        renderText: this.renderStyles
+        renderText: this.renderStyles,
       },
       {
         pattern: /\[(t):([^\]]+)\]/i, // third gradient color
         style: [styles.third, styles.bold],
-        renderText: this.renderStyles
+        renderText: this.renderStyles,
       },
       {
         pattern: /\[(e):([^\]]+)\]/i, // error
         style: [styles.error, styles.bold],
-        renderText: this.renderStyles
+        renderText: this.renderStyles,
       },
       {
         pattern: /\[(b):([^\]]+)\]/i, // bold
         style: styles.bold,
-        renderText: this.renderStyles
+        renderText: this.renderStyles,
       },
       {
         pattern: /\[(i):([^\]]+)\]/i, // italics
         style: styles.italics,
-        renderText: this.renderStyles
+        renderText: this.renderStyles,
       },
       {
         pattern: /\[(bi):([^\]]+)\]/i, // bolditalics
         style: [styles.bold, styles.italics],
-        renderText: this.renderStyles
+        renderText: this.renderStyles,
       },
       {
         pattern: /\[(w):([^\]]+)\]/i, // white
         style: [styles.white],
-        renderText: this.renderStyles
+        renderText: this.renderStyles,
       },
       {
         pattern: /\[(wb):([^\]]+)\]/i, // whitebold
         style: [styles.white, styles.bold],
-        renderText: this.renderStyles
+        renderText: this.renderStyles,
       },
       {
         pattern: /\[(mg):([^\]]+)\]/i, // midgray
         style: [styles.midgray],
-        renderText: this.renderStyles
+        renderText: this.renderStyles,
       },
       {
         pattern: /\[(dg):([^\]]+)\]/i, // darkgray
         style: [styles.darkgray],
-        renderText: this.renderStyles
+        renderText: this.renderStyles,
       },
       {
         pattern: /\[(ddg):([^\]]+)\]/i, // darker gray
         style: [styles.darkergray],
-        renderText: this.renderStyles
+        renderText: this.renderStyles,
       },
     ];
 
     if (Platform.OS === 'ios') {
-      parseSettings.push(
-        {
-          pattern: /\[(appsettings):([^\]]+)\]/i,
-          style: [styles.link, styles.bold, styles.italics, styles.underline],
-          onPress: this.handleAppSettings,
-          renderText: this.renderStyles
-        }
-      );
-    }
-    else if (Platform.OS === 'android') {
-      parseSettings.push(
-        {
-          pattern: /\[(appsettings):([^\]]+)\]/i,
-          style: [styles.bold],
-          renderText: this.renderStyles
-        }
-      );
+      parseSettings.push({
+        pattern: /\[(appsettings):([^\]]+)\]/i,
+        style: [styles.link, styles.bold, styles.italics, styles.underline],
+        onPress: this.handleAppSettings,
+        renderText: this.renderStyles,
+      });
+    } else if (Platform.OS === 'android') {
+      parseSettings.push({
+        pattern: /\[(appsettings):([^\]]+)\]/i,
+        style: [styles.bold],
+        renderText: this.renderStyles,
+      });
     }
 
     return (
-      <View style = {[ styles.container, style ]}>
+      <View style={[styles.container, style]}>
         <ParsedText
-          style = {[ styles.text, TextUpdatedStyle, textStyle ]}
-          parse = {parseSettings}
-          childrenProps={{allowFontScaling: false}}
-        >
+          style={[styles.text, TextUpdatedStyle, textStyle]}
+          parse={parseSettings}
+          childrenProps={{allowFontScaling: false}}>
           {title}
         </ParsedText>
       </View>
@@ -204,16 +194,15 @@ export default class CalendarEvents extends Component {
 
 // Styling
 const styles = StyleSheet.create({
-  container: {
-  },
+  container: {},
   name: {
-    color: GLOBALS.COLORS.SUBLIME_RED
+    color: GLOBALS.COLORS.SUBLIME_RED,
   },
   username: {
-    color: GLOBALS.COLORS.GRADIENT_SECONDARY
+    color: GLOBALS.COLORS.GRADIENT_SECONDARY,
   },
   text: {
-    color: GLOBALS.COLORS.BLACK
+    color: GLOBALS.COLORS.BLACK,
   },
   primary: {
     color: GLOBALS.COLORS.GRADIENT_PRIMARY,
@@ -246,9 +235,9 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   bold: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   italics: {
-    fontStyle: 'italic'
-  }
+    fontStyle: 'italic',
+  },
 });

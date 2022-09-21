@@ -1,23 +1,19 @@
 //Based on the work of https://github.com/bpeters/react-native-blockies-svg
-
-import React, { Component } from 'react';
-import Svg, { Rect } from 'react-native-svg';
-import {
-  View,
-  StyleSheet,
-} from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
+import Svg, {Rect} from 'react-native-svg';
 
 const randseed = new Array(4);
 
 class Blockies extends Component {
-
   seedrand(seed) {
     for (let i = 0; i < randseed.length; i++) {
       randseed[i] = 0;
     }
 
     for (let i = 0; i < seed.length; i++) {
-      randseed[i%4] = ((randseed[i%4] << 5) - randseed[i%4]) + seed.charCodeAt(i);
+      randseed[i % 4] =
+        (randseed[i % 4] << 5) - randseed[i % 4] + seed.charCodeAt(i);
     }
   }
 
@@ -27,15 +23,16 @@ class Blockies extends Component {
     randseed[0] = randseed[1];
     randseed[1] = randseed[2];
     randseed[2] = randseed[3];
-    randseed[3] = (randseed[3] ^ (randseed[3] >> 19) ^ t ^ (t >> 8));
+    randseed[3] = randseed[3] ^ (randseed[3] >> 19) ^ t ^ (t >> 8);
 
-    return (randseed[3]>>>0) / ((1 << 31)>>>0);
+    return (randseed[3] >>> 0) / ((1 << 31) >>> 0);
   }
 
   createColor() {
     const h = Math.floor(this.rand() * 360);
-    const s = ((this.rand() * 60) + 40) + '%';
-    const l = ((this.rand() + this.rand() + this.rand() + this.rand()) * 25) + '%';
+    const s = this.rand() * 60 + 40 + '%';
+    const l =
+      (this.rand() + this.rand() + this.rand() + this.rand()) * 25 + '%';
 
     const color = 'hsl(' + h + ',' + s + ',' + l + ')';
 
@@ -55,7 +52,7 @@ class Blockies extends Component {
       let row = [];
 
       for (let x = 0; x < dataWidth; x++) {
-        row[x] = Math.floor(this.rand()*2.3);
+        row[x] = Math.floor(this.rand() * 2.3);
       }
 
       let r = row.slice(0, mirrorWidth);
@@ -73,7 +70,9 @@ class Blockies extends Component {
   }
 
   renderIcon(size, scale) {
-    const seed = this.props.seed || Math.floor((Math.random()*Math.pow(10,16))).toString(16);
+    const seed =
+      this.props.seed ||
+      Math.floor(Math.random() * Math.pow(10, 16)).toString(16);
 
     this.seedrand(seed);
 
@@ -112,10 +111,7 @@ class Blockies extends Component {
   }
 
   render() {
-    const {
-      style,
-      dimension
-    } = this.props;
+    const {style, dimension} = this.props;
 
     const size = 8;
     const scale = 8;
@@ -124,19 +120,20 @@ class Blockies extends Component {
     const transformScale = dimension / ogDimension;
 
     const addedStyle = {
-      transform: [
-        { rotate: '90deg' },
-        { scale: transformScale }
-      ]
-    }
+      transform: [{rotate: '90deg'}, {scale: transformScale}],
+    };
 
     return (
-      <View style={[ styles.container, style, {width: dimension, height: dimension} ]}>
+      <View
+        style={[
+          styles.container,
+          style,
+          {width: dimension, height: dimension},
+        ]}>
         <Svg
-          style={[ styles.svg, addedStyle ]}
+          style={[styles.svg, addedStyle]}
           height={size * scale}
-          width={size * scale}
-        >
+          width={size * scale}>
           {this.renderIcon(size, scale)}
         </Svg>
       </View>
@@ -149,7 +146,7 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
 });
 
 export default Blockies;

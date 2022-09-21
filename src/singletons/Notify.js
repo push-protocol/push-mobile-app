@@ -1,9 +1,5 @@
 import messaging from '@react-native-firebase/messaging';
-
-import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
-
-import GLOBALS from 'src/Globals';
 
 // STATIC SINGLETON
 export default class Notify {
@@ -11,17 +7,16 @@ export default class Notify {
 
   // VARIBALES
   state = {
-    notificationListenerCB: null
-  }
+    notificationListenerCB: null,
+  };
 
   // INITIALIZE
   initialize = async () => {
     // For Initialization of anything, not needed right now
-
-  }
+  };
 
   // Request Device Token
-  requestDeviceToken = async (onlySignedIn) => {
+  requestDeviceToken = async onlySignedIn => {
     if (onlySignedIn) {
       const signedin = await MetaStorage.instance.getIsSignedIn();
 
@@ -30,20 +25,23 @@ export default class Notify {
       }
     }
 
+    // FIREBASE
     const status = await messaging().hasPermission();
-    if (status == messaging.AuthorizationStatus.AUTHORIZED) {
+    if (status === messaging.AuthorizationStatus.AUTHORIZED) {
       messaging()
         .getToken()
         .then(token => {
           this.saveDeviceToken(token);
         });
     }
-  }
+  };
 
   // Save Device Token
   saveDeviceToken = async (token, isRefreshToken) => {
     // For Test sending
-    console.log("Token Recieved:" + token + "  |---| is Refresh Token: " + isRefreshToken);
+    console.log(
+      'Token Recieved:' + token + '  |---| is Refresh Token: ' + isRefreshToken,
+    );
 
     // Get previous token
     const previousToken = await MetaStorage.instance.getPushToken();
@@ -60,10 +58,10 @@ export default class Notify {
       // Also flag for server
       await MetaStorage.instance.setTokenServerSynced(false);
     }
-  }
+  };
 
   // Handle incoming notification Foreground
-  handleIncomingPushAppOpened = async (remoteMessage) => {
+  handleIncomingPushAppOpened = async remoteMessage => {
     //console.log("Notification Handled From Foreground!");
     await this.handleIncomingPush(remoteMessage);
 
@@ -71,51 +69,18 @@ export default class Notify {
     if (this.state.notificationListenerCB) {
       this.state.notificationListenerCB();
     }
-  }
+  };
 
   // Handle incoming notification Background
-  handleIncomingPushAppInBG = async (remoteMessage) => {
+  handleIncomingPushAppInBG = async remoteMessage => {
     //console.log("Notification Handled From Background!");
     await this.handleIncomingPush(remoteMessage);
-  }
-
-  // Default behavior for any incoming notification
-  handleIncomingPush = async (remoteMessage) => {
-    // Check if the payload has data
-    const payload = remoteMessage["data"];
-    const db = await FeedDBHelper.getDB();
-
-    if (payload["type"]) {
-      // Assume message exists and proceed
-      await FeedDBHelper.addFeedFromPayload(
-        db,
-        payload["sid"],
-        payload["type"],
-        payload["app"],
-        payload["icon"],
-        payload["url"],
-        null,
-        payload["secret"],
-        payload["asub"],
-        payload["amsg"],
-        payload["acta"],
-        payload["aimg"],
-        "0",
-        payload["epoch"],
-      );
-    }
-
-    // console.log("Notification Handled!");
-    // console.log(remoteMessage);
-
-    // Trigger Notification Callback
-    this.triggerNotificationListenerCallback();
-  }
+  };
 
   // To subscribe to notification recieved
-  setNotificationListenerCallback = (callback) => {
+  setNotificationListenerCallback = callback => {
     this.state.notificationListenerCB = callback;
-  }
+  };
 
   // Trigger Notication Listener Callback
   triggerNotificationListenerCallback = () => {
@@ -123,5 +88,5 @@ export default class Notify {
       // Callback
       this.state.notificationListenerCB();
     }
-  }
+  };
 }

@@ -1,14 +1,13 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
-  View,
-  Switch,
-  TouchableHighlight,
-  Text,
   Image,
   Platform,
-  StyleSheet
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableHighlight,
+  View,
 } from 'react-native';
-
 import GLOBALS from 'src/Globals';
 
 export default ImageTitleSwitchButton = ({
@@ -21,47 +20,43 @@ export default ImageTitleSwitchButton = ({
 }) => {
   // Rendor
   return (
-      <TouchableHighlight
-        style = {styles.container}
-        onPress = {onPress}
-        underlayColor = {GLOBALS.COLORS.DARK_GRAY}
-      >
-        <View style = {styles.childContainer}>
-          <Image style = {styles.image} source = {img} />
-          <Text style = {styles.title}>{title}</Text>
-          <Switch
-            style = {styles.switch}
-            ios_backgroundColor = {GLOBALS.COLORS.WHITE}
-            trackColor = {{
-              false: GLOBALS.COLORS.WHITE,
-              true:  GLOBALS.COLORS.GRADIENT_PRIMARY
-            }}
-            thumbColor = {
-              Platform.OS === 'ios' ? false : GLOBALS.COLORS.GRADIENT_PRIMARY
+    <TouchableHighlight
+      style={styles.container}
+      onPress={onPress}
+      underlayColor={GLOBALS.COLORS.DARK_GRAY}>
+      <View style={styles.childContainer}>
+        <Image style={styles.image} source={img} />
+        <Text style={styles.title}>{title}</Text>
+        <Switch
+          style={styles.switch}
+          ios_backgroundColor={GLOBALS.COLORS.WHITE}
+          trackColor={{
+            false: GLOBALS.COLORS.WHITE,
+            true: GLOBALS.COLORS.GRADIENT_PRIMARY,
+          }}
+          thumbColor={
+            Platform.OS === 'ios' ? false : GLOBALS.COLORS.GRADIENT_PRIMARY
+          }
+          value={isOn}
+          onValueChange={v => {
+            if (v) {
+              if (onSwitchOnFunc) {
+                onSwitchOnFunc();
+              }
+            } else {
+              if (onSwitchOffFunc) {
+                onSwitchOffFunc();
+              }
             }
-            value = {isOn}
-            onValueChange={v => {
-              if (v) {
-                if (onSwitchOnFunc) {
-                  onSwitchOnFunc();
-                }
-              }
-              else {
-                if (onSwitchOffFunc) {
-                  onSwitchOffFunc();
-                }
-              }
-            }}
-          />
-
-        </View>
-      </TouchableHighlight>
+          }}
+        />
+      </View>
+    </TouchableHighlight>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  container: {
-  },
+  container: {},
   childContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -80,6 +75,6 @@ const styles = StyleSheet.create({
   switch: {
     alignItems: 'flex-end',
     marginRight: 10,
-    transform: [{ scaleX: .8 }, { scaleY: .8 }]
+    transform: [{scaleX: 0.8}, {scaleY: 0.8}],
   },
 });

@@ -1,24 +1,20 @@
-import React, { Component } from "react";
+import * as FileSystem from 'expo-file-system';
+import React, {Component} from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
   Image,
-  TouchableWithoutFeedback,
+  StyleSheet,
+  Text,
   TouchableOpacity,
-} from "react-native";
-import * as FileSystem from "expo-file-system";
-
-import Video from "react-native-video";
-import YouTube from "react-native-youtube";
-
-import ProgressCircle from "react-native-progress-circle";
-import EPNSActivity from "src/components/loaders/EPNSActivity";
-
-import DownloadHelper from "src/helpers/DownloadHelper";
-
-import ENV_CONFIG from "src/env.config";
-import GLOBALS from "src/Globals";
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
+import ProgressCircle from 'react-native-progress-circle';
+import Video from 'react-native-video';
+import YouTube from 'react-native-youtube';
+import GLOBALS from 'src/Globals';
+import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import ENV_CONFIG from 'src/env.config';
+import DownloadHelper from 'src/helpers/DownloadHelper';
 
 const MAX_ATTEMPTS = 3;
 
@@ -70,13 +66,13 @@ export default class VideoDownloadWithIndicator extends Component {
 
   // FUNCTIONS
   // Check
-  checkAndInitiateOperation = async (fileURL) => {
+  checkAndInitiateOperation = async fileURL => {
     if (DownloadHelper.isMediaExternalEmbed(fileURL)) {
       // Do Nothing, this is already loaded media
       this.setState({
         indicator: false,
         downloading: false,
-        downloadProgress: "100%",
+        downloadProgress: '100%',
         fileURI: fileURL,
       });
 
@@ -123,7 +119,7 @@ export default class VideoDownloadWithIndicator extends Component {
   };
 
   // To Start Download
-  startDownload = async (fileURL) => {
+  startDownload = async fileURL => {
     const localFileTempURI = DownloadHelper.getTempSaveLocation(fileURL);
 
     // Create File Download
@@ -131,7 +127,7 @@ export default class VideoDownloadWithIndicator extends Component {
       fileURL,
       localFileTempURI,
       {},
-      (dwProg) => {
+      dwProg => {
         const progress =
           dwProg.totalBytesWritten / dwProg.totalBytesExpectedToWrite;
         const progressPerc = Number((progress * 100).toFixed(2));
@@ -147,7 +143,7 @@ export default class VideoDownloadWithIndicator extends Component {
 
     // Initiate
     try {
-      const { uri } = await downloadResumable.downloadAsync();
+      const {uri} = await downloadResumable.downloadAsync();
       // console.log("MOVING");
       // console.log(uri);
       // console.log(DownloadHelper.getActualSaveLocation(fileURL));
@@ -170,10 +166,10 @@ export default class VideoDownloadWithIndicator extends Component {
   };
 
   // on video bufferring
-  onBuffer = (response) => {};
+  onBuffer = response => {};
 
   // When Errored
-  videoError = (error) => {
+  videoError = error => {
     // console.log("Error on playback" + error);
 
     this.setState({
@@ -214,7 +210,7 @@ export default class VideoDownloadWithIndicator extends Component {
 
     let modifiedResizeMode = resizeMode;
     if (this.state.defaulted) {
-      modifiedResizeMode = "center";
+      modifiedResizeMode = 'center';
     }
 
     return (
@@ -223,8 +219,7 @@ export default class VideoDownloadWithIndicator extends Component {
         onPress={() => {
           this.onPress(this.state.fileURI);
         }}
-        disabled={true}
-      >
+        disabled={true}>
         <View style={[styles.innerContainer, style]}>
           <View style={[styles.contentContainer, contentContainerStyle]}>
             {this.state.indicator ? (
@@ -240,21 +235,20 @@ export default class VideoDownloadWithIndicator extends Component {
                     borderWidth={20}
                     color={GLOBALS.COLORS.GRADIENT_SECONDARY}
                     shadowColor={GLOBALS.COLORS.LIGHT_GRAY}
-                    bgColor={GLOBALS.COLORS.WHITE}
-                  ></ProgressCircle>
+                    bgColor={GLOBALS.COLORS.WHITE}></ProgressCircle>
                 )}
               </View>
             ) : this.state.defaulted == true ? (
               <Image
                 style={styles.image}
-                source={require("assets/ui/frownface.png")}
+                source={require('assets/ui/frownface.png')}
                 resizeMode={modifiedResizeMode}
               />
             ) : DownloadHelper.isMediaExternalEmbed(this.state.fileURI) ==
               false ? (
               <Video
-                source={{ uri: `${this.state.fileURI}` }}
-                ref={(ref) => {
+                source={{uri: `${this.state.fileURI}`}}
+                ref={ref => {
                   this.player = ref;
                 }}
                 onBuffer={this.onBuffer}
@@ -273,10 +267,10 @@ export default class VideoDownloadWithIndicator extends Component {
                 fullscreen={false}
                 loop={false}
                 controls={1}
-                onReady={(e) => this.setState({ isReady: true })}
-                onChangeState={(e) => this.setState({ status: e.state })}
-                onChangeQuality={(e) => this.setState({ quality: e.quality })}
-                onError={(e) => this.setState({ error: e.error })}
+                onReady={e => this.setState({isReady: true})}
+                onChangeState={e => this.setState({status: e.state})}
+                onChangeQuality={e => this.setState({quality: e.quality})}
+                onError={e => this.setState({error: e.error})}
                 style={styles.backgroundVideo}
               />
             )}
@@ -286,7 +280,6 @@ export default class VideoDownloadWithIndicator extends Component {
     );
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

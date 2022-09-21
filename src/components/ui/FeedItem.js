@@ -1,28 +1,18 @@
-import React, { Component } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Linking,
-} from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
-import * as Device from "expo-device";
-import { LinearGradient } from "expo-linear-gradient";
-import moment from "moment";
-
-import StylishLabel from "src/components/labels/StylishLabel";
-import EPNSActivity from "src/components/loaders/EPNSActivity";
-import { ToasterOptions } from "src/components/indicators/Toaster";
-
-import DownloadHelper from "src/helpers/DownloadHelper";
-import ImageDownloadWithIndicator from "src/components/loaders/ImageDownloadWithIndicator";
-import VideoDownloadWithIndicator from "src/components/loaders/VideoDownloadWithIndicator";
-
-import CryptoHelper from "src/helpers/CryptoHelper";
-import Utilities from "src/singletons/Utilities";
-
-import GLOBALS from "src/Globals";
+import * as Device from 'expo-device';
+import {LinearGradient} from 'expo-linear-gradient';
+import moment from 'moment';
+import React, {Component} from 'react';
+import {Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
+import GLOBALS from 'src/Globals';
+import {ToasterOptions} from 'src/components/indicators/Toaster';
+import StylishLabel from 'src/components/labels/StylishLabel';
+import EPNSActivity from 'src/components/loaders/EPNSActivity';
+import ImageDownloadWithIndicator from 'src/components/loaders/ImageDownloadWithIndicator';
+import VideoDownloadWithIndicator from 'src/components/loaders/VideoDownloadWithIndicator';
+import CryptoHelper from 'src/helpers/CryptoHelper';
+import DownloadHelper from 'src/helpers/DownloadHelper';
+import Utilities from 'src/singletons/Utilities';
 
 export default class FeedItem extends Component {
   // CONSTRUCTOR
@@ -51,18 +41,18 @@ export default class FeedItem extends Component {
   compileMessage = async () => {
     const item = this.props.item;
 
-    let sub = !item["asub"] || item["asub"] === "" ? null : item["asub"];
-    let msg = !item["amsg"] || item["amsg"] === "" ? null : item["amsg"];
-    let cta = !item["acta"] || item["acta"] === "" ? null : item["acta"];
-    let img = !item["aimg"] || item["aimg"] === "" ? null : item["aimg"];
+    let sub = !item['asub'] || item['asub'] === '' ? null : item['asub'];
+    let msg = !item['amsg'] || item['amsg'] === '' ? null : item['amsg'];
+    let cta = !item['acta'] || item['acta'] === '' ? null : item['acta'];
+    let img = !item['aimg'] || item['aimg'] === '' ? null : item['aimg'];
 
-    if (item["type"] == 1 || item["type"] == 3) {
+    if (item['type'] == 1 || item['type'] == 3) {
       // all clear, plain message types
       let showTimestamp = false;
       const matches = msg.match(/\[timestamp:(.*?)\]/);
       if (matches) {
         showTimestamp = matches[1];
-        msg = msg.replace(/ *\[timestamp:[^)]*\] */g, "");
+        msg = msg.replace(/ *\[timestamp:[^)]*\] */g, '');
       }
 
       this.setState({
@@ -72,21 +62,21 @@ export default class FeedItem extends Component {
         img: img,
         timestamp: showTimestamp,
 
-        type: item["type"],
+        type: item['type'],
 
         loading: false,
       });
     }
 
-    if (item["type"] == 2 || item["type"] == -2) {
+    if (item['type'] == 2 || item['type'] == -2) {
       const privateKey = this.props.privateKey;
 
       if (privateKey && privateKey !== GLOBALS.CONSTANTS.NULL_EXCEPTION) {
         // Private key present, else display action banner as it's a wallet sign in
         // decrypt the message
         const secret = await CryptoHelper.decryptWithECIES(
-          item["secret"],
-          privateKey
+          item['secret'],
+          privateKey,
         );
         // console.log("SECR:" + secret);
 
@@ -111,7 +101,7 @@ export default class FeedItem extends Component {
       const matches = msg.match(/\[timestamp:(.*?)\]/);
       if (matches) {
         showTimestamp = matches[1];
-        msg = msg.replace(/ *\[timestamp:[^)]*\] */g, "");
+        msg = msg.replace(/ *\[timestamp:[^)]*\] */g, '');
       }
 
       this.setState({
@@ -121,7 +111,7 @@ export default class FeedItem extends Component {
         img: img,
         timestamp: showTimestamp,
 
-        type: item["type"],
+        type: item['type'],
 
         loading: false,
       });
@@ -129,63 +119,71 @@ export default class FeedItem extends Component {
   };
 
   // For on Press
-  onPress = async (url, showToast) => {
-    // if (this.validURL(url) || 1) { // Bypassing the check so that custom app domains can be opened
-    //   Linking.canOpenURL(url).then(supported => {
-    //     if (supported) {
-    await Linking.openURL(url);
-    //     } else {
-    //       showToast("Device Not Supported", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
-    //     }
-    //   });
-    // }
-    // else {
-    //   showToast("Link not valid", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
-    // }
+  onPress = (url, showToast) => {
+    if (this.validURL(url) || 1) {
+      // Bypassing the check so that custom app domains can be opened
+      Linking.canOpenURL(url).then(supported => {
+        if (supported) {
+          Linking.openURL(url);
+        } else {
+          showToast(
+            'Device Not Supported',
+            'ios-link',
+            ToasterOptions.TYPE.GRADIENT_PRIMARY,
+          );
+        }
+      });
+    } else {
+      showToast(
+        'Link not valid',
+        'ios-link',
+        ToasterOptions.TYPE.GRADIENT_PRIMARY,
+      );
+    }
   };
 
   // to check valid url
-  validURL = (str) => {
+  validURL = str => {
     var pattern = new RegExp(
-      "^(https?:\\/\\/)?" + // protocol
-        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-        "(\\#[-a-z\\d_]*)?$",
-      "i"
+      '^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$',
+      'i',
     ); // fragment locator
     return !!pattern.test(str);
   };
 
   // RENDER
   render() {
-    const { style, item, showToast, onImagePreview, privateKey } = this.props;
+    const {style, item, showToast, onImagePreview, privateKey} = this.props;
 
     //console.log(item);
 
     // Do stuff with contants like internal bot, app meta info, etc
     let internalBot = false;
-    if (item["appbot"] == 1) {
+    if (item['appbot'] == 1) {
       internalBot = true;
     }
 
-    let iconURL = item["icon"];
+    let iconURL = item['icon'];
     if (internalBot) {
-      iconURL = require("assets/ui/epnsbot.png");
+      iconURL = require('assets/ui/epnsbot.png');
     }
 
     // Also add secret icon if message type is 2
     let addSecretIcon = false;
-    if (item["type"] == 2 || item["type"] == -2) {
+    if (item['type'] == 2 || item['type'] == -2) {
       addSecretIcon = true;
     }
 
     // CTA can be determined for the view since even encrypted, it will have some string
     let ctaBorderEnabled = true;
-    let cta = item["acta"];
+    let cta = item['acta'];
 
-    if (!cta || cta === "") {
+    if (!cta || cta === '') {
       ctaBorderEnabled = false;
     }
 
@@ -234,8 +232,7 @@ export default class FeedItem extends Component {
       <TouchableOpacity
         style={[styles.container, style]}
         onPress={() => this.onPress(this.state.cta, showToast)}
-        disabled={!ctaEnabled}
-      >
+        disabled={!ctaEnabled}>
         {ctaBorderEnabled ? (
           <LinearGradient
             colors={[
@@ -244,8 +241,7 @@ export default class FeedItem extends Component {
             ]}
             style={[styles.cover]}
             start={[0.1, 0.3]}
-            end={[1, 1]}
-          ></LinearGradient>
+            end={[1, 1]}></LinearGradient>
         ) : (
           <View style={[styles.cover, styles.coverPlain]}></View>
         )}
@@ -254,9 +250,8 @@ export default class FeedItem extends Component {
             <View style={styles.appinfo}>
               <TouchableOpacity
                 style={[styles.appLink]}
-                onPress={() => this.onPress(item["url"], showToast)}
-                disabled={!item["url"] || item["url"] === "" ? true : false}
-              >
+                onPress={() => this.onPress(item['url'], showToast)}
+                disabled={!item['url'] || item['url'] === '' ? true : false}>
                 <ImageDownloadWithIndicator
                   style={styles.appicon}
                   fileURL={internalBot ? "" : iconURL}
@@ -266,7 +261,7 @@ export default class FeedItem extends Component {
                   resizeMode="contain"
                 />
                 <Text style={styles.apptext} numberOfLines={1}>
-                  {item["app"]}
+                  {item['app']}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -279,8 +274,7 @@ export default class FeedItem extends Component {
                   ]}
                   style={[styles.cover]}
                   start={[0.1, 0.3]}
-                  end={[1, 1]}
-                ></LinearGradient>
+                  end={[1, 1]}></LinearGradient>
               </View>
             )}
           </View>
@@ -291,7 +285,7 @@ export default class FeedItem extends Component {
             ) : (
               <View style={[styles.contentInner, contentInnerStyle]}>
                 {!this.state.img ? null : DownloadHelper.isMediaSupportedVideo(
-                    this.state.img
+                    this.state.img,
                   ) ? (
                   <View style={[styles.contentVid, contentVidStyle]}>
                     <VideoDownloadWithIndicator
@@ -307,7 +301,7 @@ export default class FeedItem extends Component {
                       fileURL={this.state.img}
                       imgsrc={false}
                       resizeMode={containMode}
-                      onPress={(fileURL) => {
+                      onPress={fileURL => {
                         onImagePreview(fileURL);
                       }}
                     />
@@ -331,7 +325,7 @@ export default class FeedItem extends Component {
                         {moment
                           .utc(parseInt(this.state.timestamp) * 1000)
                           .local()
-                          .format("DD MMM YYYY | hh:mm A")}
+                          .format('DD MMM YYYY | hh:mm A')}
                       </Text>
                     </View>
                   )}

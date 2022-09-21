@@ -1,34 +1,25 @@
-import { registerRootComponent } from "expo";
-import React from "react";
-import { AppRegistry } from "react-native";
+import messaging from '@react-native-firebase/messaging';
+import React from 'react';
+import {AppRegistry} from 'react-native';
+import {NotifeeDisplayNotification} from 'src/notifee';
 
-import messaging from "@react-native-firebase/messaging";
-import Notify from "src/singletons/Notify";
+import App from './App';
+import {name as appName} from './app.json';
 
-import App from "./App";
-
+// FIREBASE
 // Register background handler
-messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-	return new Promise(async (resolve, reject) => {
-		//console.log('Message handled in the background!', remoteMessage);
-		await Notify.instance.handleIncomingPushAppInBG(remoteMessage);
-
-		resolve(true);
-	});
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('i was called with', remoteMessage);
+  await NotifeeDisplayNotification(remoteMessage);
 });
 
-function HeadlessCheck({ isHeadless }) {
-	if (isHeadless) {
-		// App has been launched in the background by iOS, ignore
-		return null;
-	}
+function HeadlessCheck({isHeadless}) {
+  if (isHeadless) {
+    // App has been launched in the background by iOS, ignore
+    return null;
+  }
 
 	return <App />;
 }
 
-AppRegistry.registerComponent("main", () => HeadlessCheck);
-
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in the Expo client or in a native build,
-// the environment is set up appropriately
-// registerRootComponent(App);
+AppRegistry.registerComponent(appName, () => HeadlessCheck);
