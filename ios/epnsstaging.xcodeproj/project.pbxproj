@@ -572,7 +572,7 @@
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 82;
+				CURRENT_PROJECT_VERSION = 85;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = epnsstaging/Info.plist;
@@ -594,6 +594,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "epnsstaging-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -607,7 +608,7 @@
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 82;
+				CURRENT_PROJECT_VERSION = 85;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				INFOPLIST_FILE = epnsstaging/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "EPNS Staging";
@@ -627,6 +628,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "epnsstaging-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
