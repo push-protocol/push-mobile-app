@@ -1,4 +1,4 @@
-package io.epns.epnsstaging.newarchitecture.components;
+package io.epns.epns.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;
@@ -15,11 +15,13 @@ import com.facebook.soloader.SoLoader;
  */
 @DoNotStrip
 public class MainComponentsRegistry {
+
   static {
     SoLoader.loadLibrary("fabricjni");
   }
 
-  @DoNotStrip private final HybridData mHybridData;
+  @DoNotStrip
+  private final HybridData mHybridData;
 
   @DoNotStrip
   private native HybridData initHybrid(ComponentFactory componentFactory);
@@ -30,7 +32,9 @@ public class MainComponentsRegistry {
   }
 
   @DoNotStrip
-  public static MainComponentsRegistry register(ComponentFactory componentFactory) {
+  public static MainComponentsRegistry register(
+    ComponentFactory componentFactory
+  ) {
     return new MainComponentsRegistry(componentFactory);
   }
 }

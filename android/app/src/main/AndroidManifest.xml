@@ -1,6 +1,6 @@
 <manifest
   xmlns:android="http://schemas.android.com/apk/res/android"
-  package="io.epns.epnsstaging"
+  package="io.epns.epns"
 >
 
     <uses-permission android:name="android.permission.INTERNET" />

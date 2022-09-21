@@ -1,9 +1,9 @@
-package io.epns.epnsstaging;
-import expo.modules.ReactActivityDelegateWrapper;
+package io.epns.epns;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
+import expo.modules.ReactActivityDelegateWrapper;
 
 public class MainActivity extends ReactActivity {
 
@@ -13,7 +13,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "epnsstaging";
+    return "epns";
   }
 
   /**
@@ -23,11 +23,19 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected ReactActivityDelegate createReactActivityDelegate() {
-    return new ReactActivityDelegateWrapper(this, BuildConfig.IS_NEW_ARCHITECTURE_ENABLED, new MainActivityDelegate(this, getMainComponentName()));
+    return new ReactActivityDelegateWrapper(
+      this,
+      BuildConfig.IS_NEW_ARCHITECTURE_ENABLED,
+      new MainActivityDelegate(this, getMainComponentName())
+    );
   }
 
   public static class MainActivityDelegate extends ReactActivityDelegate {
-    public MainActivityDelegate(ReactActivity activity, String mainComponentName) {
+
+    public MainActivityDelegate(
+      ReactActivity activity,
+      String mainComponentName
+    ) {
       super(activity, mainComponentName);
     }
 
