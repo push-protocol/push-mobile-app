@@ -1,12 +1,12 @@
 export default {
   LINKS: {
     APPBOT_NAME: 'App Bot',
-    APP_WEBSITE: 'https://epns.io',
-    DEV_EPNS_SERVER: 'https://backend-kovan.epns.io/apis',
-    PROD_EPNS_SERVER: 'https://backend-kovan.epns.io/apis',
-    METAMASK_LINK_STAGING: 'https://metamask.app.link/dapp/staging-app.epns.io',
-    METAMASK_LINK_PROD: 'https://metamask.app.link/dapp/staging-app.epns.io',
-    DEEPLINK_URL: 'https://metamask.app.link/dapp/staging-app.epns.io',
+    APP_WEBSITE: 'https://push.org',
+    DEV_EPNS_SERVER: 'https://backend-staging.epns.io/apis',
+    PROD_EPNS_SERVER: 'https://backend.epns.io/apis',
+    METAMASK_LINK_STAGING: 'https://metamask.app.link/dapp/staging.epns.io',
+    METAMASK_LINK_PROD: 'https://metamask.app.link/dapp/epns.io',
+    DEEPLINK_URL: 'https://metamask.app.link/dapp/staging.epns.io',
     CNS_ENDPOINT:
       'https://unstoppabledomains.com/api/v1/resellers/udtesting/domains',
 

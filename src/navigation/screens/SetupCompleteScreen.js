@@ -127,13 +127,13 @@ class SetupCompleteScreen extends Component {
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title="[b:EPNS] is all setup and ready to rock!"
+                  title="[b:Push (EPNS)] is all setup and ready to rock!"
                 />
 
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title="Visit [u:app.epns.io||https://app.epns.io] from a [b:Web3 Enabled Browser] to subscribe to your favorite [d:dApp channels] and start recieving [b:messages!]"
+                  title="Visit [u:app.push.org||https://app.push.org] from a [b:Web3 Enabled Browser] to subscribe to your favorite [d:dApp channels] and start recieving [b:messages!]"
                 />
               </View>
             }

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   ActivityIndicator,
   Animated,
@@ -8,7 +8,7 @@ import {
   Text,
   TextInput,
   TouchableHighlight,
-  View,
+  View
 } from 'react-native';
 import GLOBALS from 'src/Globals';
 import Web3Helper from 'src/helpers/Web3Helper';
@@ -106,7 +106,7 @@ export default class PKEntryPrompt extends Component {
       Web3Helper.resolveBlockchainDomain(domain, 'ETH')
         .then(address => {
           this.setState({
-            domainAddr: address,
+            domainAddr: Web3Helper.getAddressChecksum(address.toLowerCase()),
             domainErr: null,
           });
         })

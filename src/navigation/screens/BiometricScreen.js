@@ -566,7 +566,7 @@ class BiometricScreen extends Component {
                       <StylishLabel
                         style={styles.para}
                         fontSize={16}
-                        title="[d:Note:] Your passcode encrypts your data and even we can't recover it, Losing this means re-importing your wallet to access EPNS."
+                        title="[d:Note:] Your passcode encrypts your data and even we can't recover it, Losing this means re-importing your wallet to access Push (EPNS)."
                       />
                       {this.state.biometric == false ? null : (
                         <StylishLabel

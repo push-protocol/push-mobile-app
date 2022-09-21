@@ -228,7 +228,7 @@ const SignInScreen = ({route, navigation}) => {
                   <StylishLabel
                     style={styles.para}
                     fontSize={16}
-                    title="[b:EPNS] requires your wallet address to deliver [d:notifications] meant for you!"
+                    title="[b:Push (EPNS)] requires your wallet address to deliver [d:notifications] meant for you!"
                   />
                 </View>
               }
@@ -368,7 +368,7 @@ const SignInScreen = ({route, navigation}) => {
         <QRScanner
           ref={QRScannerRef}
           navigation={navigation}
-          title="[wb:AAA scan your] [d:wallet's address] [wb:to connect it to EPNS.]"
+          title="[wb:AAA scan your] [d:wallet's address] [wb:to connect it to Push (EPNS).]"
           doneFunc={code => {
             onWalletDetect(code);
           }}

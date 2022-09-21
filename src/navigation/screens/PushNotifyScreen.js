@@ -115,7 +115,7 @@ export default class PushNotifyScreen extends Component {
         true,
         true,
         'Push Notifications are Disabled',
-        'Having Push Notifications is recommended as EPNS uses this to deliver your messages to you.',
+        'Having Push Notifications is recommended as Push (EPNS) uses this to deliver your messages to you.',
         `If you wish to enable Push Notifations in the future, you can do so from the [appsettings:App Settings]`,
         false,
       );
@@ -158,7 +158,7 @@ export default class PushNotifyScreen extends Component {
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title="EPNS uses push notifications to deliver messages from [d:different channels] which can be a [b:dApps] or [b:Smart Contracts] which you have subscribed to."
+                  title="Push (EPNS) uses push notifications to deliver messages from [d:different channels] which can be a [b:dApps] or [b:Smart Contracts] which you have subscribed to."
                 />
                 <StylishLabel
                   style={styles.paraend}

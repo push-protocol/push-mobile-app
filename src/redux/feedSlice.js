@@ -1,5 +1,5 @@
-import {createSlice} from '@reduxjs/toolkit';
-import {ToasterOptions} from 'src/components/indicators/Toaster';
+import { createSlice } from '@reduxjs/toolkit';
+import { ToasterOptions } from 'src/components/indicators/Toaster';
 import ENV_CONFIG from 'src/env.config';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 
@@ -80,7 +80,7 @@ export const fetchFeedData = ({
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            user: wallet.toLowerCase(),
+            user: wallet,
             page: paging,
             pageSize: 20,
             op: 'read',
