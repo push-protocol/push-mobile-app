@@ -216,11 +216,6 @@ export default class PrimaryButton extends Component {
       updatedButtonStyle.height = setHeight;
     }
 
-    let outerContainerStyle = {};
-    if (setHeight) {
-      updatedButtonStyle.height=setHeight;
-    }
-
     return (
       <View style={[style, styles.outerContainer]}>
         <TouchableWithoutFeedback
