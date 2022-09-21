@@ -114,8 +114,8 @@ export default class PushNotifyScreen extends Component {
       this.toggleNoticePrompt(
         true,
         true,
-        "Push Notifications are Disabled",
-        "Having Push Notifications is recommended as EPNS uses this to deliver your messages to you.",
+        'Push Notifications are Disabled',
+        'Having Push Notifications is recommended as EPNS uses this to deliver your messages to you.',
         `If you wish to enable Push Notifations in the future, you can do so from the [appsettings:App Settings]`,
         false,
       );
@@ -152,7 +152,7 @@ export default class PushNotifyScreen extends Component {
         <View style={styles.inner}>
           <DetailedInfoPresenter
             style={styles.intro}
-            icon={require("assets/ui/push.png")}
+            icon={require('assets/ui/push.png')}
             contentView={
               <View style={styles.introContent}>
                 <StylishLabel
@@ -212,19 +212,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: GLOBALS.COLORS.WHITE,
-    alignItems: "center",
-    justifyContent: "space-between",
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   header: {
     fontSize: 32,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     paddingTop: 40,
     paddingHorizontal: 20,
   },
   inner: {
-    position: "absolute",
-    alignItems: "center",
-    justifyContent: "center",
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
     top: 0,
     bottom: 0,
     left: 0,
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   footer: {
-    width: "100%",
+    width: '100%',
     paddingHorizontal: 20,
   },
   insetAdjustment: {

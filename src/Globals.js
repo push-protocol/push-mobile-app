@@ -98,8 +98,6 @@ export default {
 
     CONFIRM_GREEN: 'rgba(50.0, 205.0, 50.0, 1.0)',
 
-    CONFIRM_GREEN: 'rgba(50.0, 205.0, 50.0, 1.0)',
-
     CONFIRM: 'rgba(34.0, 139.0, 34.0, 1.0)',
     WARNING: 'rgba(255.0, 153.0, 0.0, 1.0)',
 

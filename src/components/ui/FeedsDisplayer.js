@@ -422,12 +422,12 @@ export default class FeedsDisplayer extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   feedScrollContainer: {
-    width: "100%",
+    width: '100%',
     flex: 1,
     marginTop: 10,
   },
@@ -436,14 +436,14 @@ const styles = StyleSheet.create({
   },
   infodisplay: {
     flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 20,
   },
   infoIcon: {
     height: 48,
-    resizeMode: "contain",
+    resizeMode: 'contain',
     margin: 10,
   },
   infoText: {

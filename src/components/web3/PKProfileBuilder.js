@@ -176,31 +176,31 @@ const PKProfileBuilder = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   profile: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   blockies: {
     borderRadius: 128,
     borderWidth: 4,
     borderColor: GLOBALS.COLORS.LIGHT_GRAY,
-    overflow: "hidden",
+    overflow: 'hidden',
     margin: 20,
   },
   profileErr: {
-    justifyContent: "flex-end",
-    alignItems: "center",
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     flex: 1,
   },
   profileErrMsg: {
-    alignSelf: "flex-start",
-    justifyContent: "center",
+    alignSelf: 'flex-start',
+    justifyContent: 'center',
     flex: 1,
   },
   paratop: {

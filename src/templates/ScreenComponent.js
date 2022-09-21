@@ -1,19 +1,13 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
-
 import GLOBALS from 'src/Globals';
 
-const ComponentsScreen = ({ style }) => {
+const ComponentsScreen = ({style}) => {
   const name = 'Harsh';
 
   return (
-    <SafeAreaView style={[ styles.container, style ]}>
+    <SafeAreaView style={[styles.container, style]}>
       <Text style={styles.textStyle}>Greetings! Started with ReactNative</Text>
       <Text style={styles.subHeaderStyle}>My name is {name}</Text>
     </SafeAreaView>
@@ -27,11 +21,11 @@ const styles = StyleSheet.create({
     backgroundColor: GLOBALS.COLORS.WHITE,
   },
   textStyle: {
-    fontSize: 45
+    fontSize: 45,
   },
   subHeaderStyle: {
-    fontSize: 20
-  }
+    fontSize: 20,
+  },
 });
 
 export default ComponentsScreen;

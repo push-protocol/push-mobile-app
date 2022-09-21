@@ -132,7 +132,6 @@ export default function InboxFeed(props) {
         setRefreshing(false);
       }
     }
-    // console.log(feed);
   };
 
   return (

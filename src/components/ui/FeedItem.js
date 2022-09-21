@@ -200,17 +200,17 @@ export default class FeedItem extends Component {
     let contentMsgVidStyle = {};
 
     let contentBodyStyle = {};
-    let containMode = "contain";
+    let containMode = 'contain';
     if (Utilities.instance.getDeviceType() == Device.DeviceType.TABLET) {
       // Change the style to better suit tablet
 
       contentInnerStyle = {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
       };
 
       contentImgStyle = {
-        width: "25%",
+        width: '25%',
         aspectRatio: 1,
       };
 
@@ -225,7 +225,7 @@ export default class FeedItem extends Component {
         flex: 1,
       };
 
-      containMode = "cover";
+      containMode = 'cover';
     }
 
     return (
@@ -254,7 +254,7 @@ export default class FeedItem extends Component {
                 disabled={!item['url'] || item['url'] === '' ? true : false}>
                 <ImageDownloadWithIndicator
                   style={styles.appicon}
-                  fileURL={internalBot ? "" : iconURL}
+                  fileURL={internalBot ? '' : iconURL}
                   imgsrc={internalBot ? iconURL : false}
                   miniProgressLoader={true}
                   margin={2}
@@ -342,13 +342,13 @@ export default class FeedItem extends Component {
 // Styling
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: '100%',
     marginVertical: 15,
   },
   cover: {
-    position: "absolute",
+    position: 'absolute',
     ...StyleSheet.absoluteFill,
-    justifyContent: "center",
+    justifyContent: 'center',
     flex: 1,
     borderRadius: GLOBALS.ADJUSTMENTS.FEED_ITEM_RADIUS,
   },
@@ -357,39 +357,39 @@ const styles = StyleSheet.create({
   },
   inner: {
     margin: 1,
-    overflow: "hidden",
+    overflow: 'hidden',
     borderRadius: GLOBALS.ADJUSTMENTS.FEED_ITEM_RADIUS,
   },
   header: {
-    width: "100%",
+    width: '100%',
     paddingVertical: 7,
     paddingHorizontal: 10,
     backgroundColor: GLOBALS.COLORS.SLIGHTER_GRAY,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderColor: GLOBALS.COLORS.SLIGHT_GRAY,
   },
   appInfo: {
     flex: 1,
-    alignItems: "center",
-    backgroundColor: "red",
+    alignItems: 'center',
+    backgroundColor: 'red',
   },
   appLink: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   appicon: {
     flex: 0,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 6,
     height: 24,
     aspectRatio: 1,
     marginRight: 5,
-    overflow: "hidden",
+    overflow: 'hidden',
     backgroundColor: GLOBALS.COLORS.SLIGHT_GRAY,
   },
   apptext: {
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 12,
     color: GLOBALS.COLORS.MID_BLACK_TRANS,
-    fontWeight: "300",
+    fontWeight: '300',
   },
   appsecret: {
     width: 16,
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   contentVid: {
-    width: "100%",
+    width: '100%',
   },
   msgVid: {
     borderColor: GLOBALS.COLORS.SLIGHT_GRAY,
@@ -419,21 +419,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   contentImg: {
-    width: "100%",
+    width: '100%',
     aspectRatio: 2,
   },
   msgImg: {
     borderColor: GLOBALS.COLORS.SLIGHT_GRAY,
     backgroundColor: GLOBALS.COLORS.SLIGHTER_GRAY,
     borderBottomWidth: 1,
-    resizeMode: "contain",
+    resizeMode: 'contain',
   },
   contentBody: {
     paddingHorizontal: 15,
   },
   msgSub: {
     fontSize: 16,
-    fontWeight: "300",
+    fontWeight: '300',
     color: GLOBALS.COLORS.MID_BLACK_TRANS,
     paddingVertical: 10,
   },
@@ -442,9 +442,9 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   timestampOuter: {
-    display: "flex",
-    justifyContent: "center",
-    alignSelf: "flex-end",
+    display: 'flex',
+    justifyContent: 'center',
+    alignSelf: 'flex-end',
     paddingVertical: 5,
     paddingHorizontal: 12,
     marginRight: -20,
@@ -452,12 +452,12 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderLeftWidth: 1,
     borderColor: GLOBALS.COLORS.SLIGHT_GRAY,
-    overflow: "hidden",
+    overflow: 'hidden',
 
     backgroundColor: GLOBALS.COLORS.SLIGHTER_GRAY,
   },
   timestamp: {
-    fontWeight: "300",
+    fontWeight: '300',
     fontSize: 12,
 
     color: GLOBALS.COLORS.MID_BLACK_TRANS,

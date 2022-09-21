@@ -27,7 +27,7 @@ export default class VideoDownloadWithIndicator extends Component {
       indicator: false,
       downloading: true,
       downloadProgress: 0,
-      fileURI: "",
+      fileURI: '',
 
       attemptNumber: 0,
       defaulted: false,
@@ -52,7 +52,7 @@ export default class VideoDownloadWithIndicator extends Component {
         indicator: true,
         downloading: true,
         downloadProgress: 0,
-        fileURI: "",
+        fileURI: '',
       });
 
       this.checkAndInitiateOperation(this.props.fileURL);
@@ -110,8 +110,8 @@ export default class VideoDownloadWithIndicator extends Component {
         this.setState({
           indicator: false,
           downloading: false,
-          downloadProgress: "100%",
-          fileURI: require("assets/ui/frownface.png"),
+          downloadProgress: '100%',
+          fileURI: require('assets/ui/frownface.png'),
           defaulted: true,
         });
       }
@@ -138,7 +138,7 @@ export default class VideoDownloadWithIndicator extends Component {
             downloadProgress: progressPerc,
           });
         }
-      }
+      },
     );
 
     // Initiate
@@ -175,8 +175,8 @@ export default class VideoDownloadWithIndicator extends Component {
     this.setState({
       indicator: false,
       downloading: false,
-      downloadProgress: "100%",
-      fileURI: require("assets/ui/frownface.png"),
+      downloadProgress: '100%',
+      fileURI: require('assets/ui/frownface.png'),
       defaulted: true,
     });
   };
@@ -283,29 +283,29 @@ export default class VideoDownloadWithIndicator extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   innerContainer: {
     flex: 1,
-    height: "100%",
-    overflow: "hidden",
+    height: '100%',
+    overflow: 'hidden',
   },
   contentContainer: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     aspectRatio: 1,
-    width: "100%",
-    overflow: "hidden",
+    width: '100%',
+    overflow: 'hidden',
   },
   downloading: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
     padding: 40,
   },
   backgroundVideo: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     bottom: 0,
