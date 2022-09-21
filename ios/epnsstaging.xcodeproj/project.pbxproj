@@ -13,11 +13,10 @@
 		1E90BBEA28BD672C007E6105 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E90BBE328BD672C007E6105 /* main.m */; };
 		1E90BBEC28BD672C007E6105 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE628BD672C007E6105 /* LaunchScreen.storyboard */; };
 		1E90BBED28BD672C007E6105 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE728BD672C007E6105 /* Images.xcassets */; };
-		7F6C3512DE92B5C1AFCDF6F6 /* Pods_epnsstaging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 134E9FC335AFEB9B1495E38C /* Pods_epnsstaging.framework */; };
+		2CC327419FE0DF9A31F6A1BA /* Pods_epnsstaging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 134E9FC335AFEB9B1495E38C /* Pods_epnsstaging.framework */; };
 		8C2550A162936B38AA72265D /* Pods_epnsstaging_epnsstagingTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73991636BAF496B5E4665B8D /* Pods_epnsstaging_epnsstagingTests.framework */; };
 		A3A0C1ECD11C5FDC74A47D44 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08F30884F32AE9C6B2D48301 /* ExpoModulesProvider.swift */; };
-		BF501912A2B56AE50D456DFA /* Pods_NotifeeNotificationService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D8A0CFBCDA93749898FD9BB /* Pods_NotifeeNotificationService.framework */; };
-		FDEEEF429FD2E818BA7510BA /* Pods_epnsstaging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E9AC74C1D80D7E266E7B92B /* Pods_epnsstaging.framework */; };
+		FDEEEF429FD2E818BA7510BA /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		FEBC56FEE969DEAAFD83C60F /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F1FDA9A5548BAE3639353C /* ExpoModulesProvider.swift */; };
 /* End PBXBuildFile section */
 
@@ -82,15 +81,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDEEEF429FD2E818BA7510BA /* Pods_epnsstaging.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1E46D46928D7D38100FC6041 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BF501912A2B56AE50D456DFA /* Pods_NotifeeNotificationService.framework in Frameworks */,
+				FDEEEF429FD2E818BA7510BA /* (null) in Frameworks */,
+				2CC327419FE0DF9A31F6A1BA /* Pods_epnsstaging.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,8 +234,8 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				1EA8E1C428D77AA600268DAD /* Embed App Extensions */,
-				0FCE389D2FF9300DC94D871E /* [CP] Copy Pods Resources */,
 				75DF69BDC864E6915A0E94DF /* [CP-User] [RNFB] Core Configuration */,
+				ABE787C0E6E219E1B55084DB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -253,24 +245,6 @@
 			productName = epns_mobile_app;
 			productReference = 13B07F961A680F5B00A75B9A /* EPNS Staging.app */;
 			productType = "com.apple.product-type.application";
-		};
-		1E46D46B28D7D38100FC6041 /* NotifeeNotificationService */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1E46D47528D7D38100FC6041 /* Build configuration list for PBXNativeTarget "NotifeeNotificationService" */;
-			buildPhases = (
-				7924A430C1DF09ACAD9970AD /* [CP] Check Pods Manifest.lock */,
-				1E46D46828D7D38100FC6041 /* Sources */,
-				1E46D46928D7D38100FC6041 /* Frameworks */,
-				1E46D46A28D7D38100FC6041 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = NotifeeNotificationService;
-			productName = NotifeeNotificationService;
-			productReference = 1E46D46C28D7D38100FC6041 /* NotifeeNotificationService.appex */;
-			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -345,45 +319,6 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		7924A430C1DF09ACAD9970AD /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-NotifeeNotificationService-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		85745EE774889F41DB12F4A8 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-epnsstaging/Pods-epnsstaging-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-epnsstaging/Pods-epnsstaging-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-epnsstaging/Pods-epnsstaging-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		3766F7DD4DDC225654BF3AC0 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -434,6 +369,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		ABE787C0E6E219E1B55084DB /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-epnsstaging/Pods-epnsstaging-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-epnsstaging/Pods-epnsstaging-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-epnsstaging/Pods-epnsstaging-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		BD253A2A8C334D44B09CC9D0 /* [CP] Check Pods Manifest.lock */ = {
@@ -572,7 +524,7 @@
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 85;
+				CURRENT_PROJECT_VERSION = 89;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = epnsstaging/Info.plist;
@@ -608,7 +560,7 @@
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 85;
+				CURRENT_PROJECT_VERSION = 89;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				INFOPLIST_FILE = epnsstaging/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "EPNS Staging";
@@ -630,82 +582,6 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Release;
-		};
-		1E46D47628D7D38100FC6041 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 86ED9565AF097A3679559391 /* Pods-NotifeeNotificationService.debug.xcconfig */;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 62B7287GF5;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = NotifeeNotificationService/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = NotifeeNotificationService;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging.NotifeeNotificationService;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		1E46D47728D7D38100FC6041 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6AEB1B79B1077D05891E8367 /* Pods-NotifeeNotificationService.release.xcconfig */;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 62B7287GF5;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = NotifeeNotificationService/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = NotifeeNotificationService;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging.NotifeeNotificationService;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

@@ -1,9 +1,9 @@
 {
   // Set the default
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   // Enable per-language
   "[javascript]": {
-    "editor.formatOnSave": true
+    "editor.formatOnSave": false
   },
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"

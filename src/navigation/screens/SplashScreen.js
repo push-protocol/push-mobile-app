@@ -661,7 +661,7 @@ class SplashScreen extends Component {
                     <StylishLabel
                       style={styles.para}
                       fontSize={16}
-                      title="EPNS has [d:completely wiped] your credentials in order to preserve the integrity of your wallet."
+                      title="Push (EPNS) has [d:completely wiped] your credentials in order to preserve the integrity of your wallet."
                     />
                     <StylishLabel
                       style={styles.paraend}

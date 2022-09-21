@@ -1,19 +1,13 @@
 {
   "name": "epnsstaging",
-  "displayName": "EPNS Staging",
+  "displayName": "Push (EPNS)",
   "expo": {
     "name": "epnsstaging",
     "slug": "epnsstaging",
     "version": "0.6",
     "scheme": "epnsstaging",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "platforms": ["ios", "android", "web"],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "io.epns.epnsstaging"
     }
