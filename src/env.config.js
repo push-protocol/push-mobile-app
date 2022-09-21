@@ -6,7 +6,7 @@ import {
 } from '@env';
 import GLOBALS from 'src/Globals';
 
-const IS_PROD_ENV = 0; // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work
+const IS_PROD_ENV = 1; // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work
 const SHOW_CONSOLE = 1; // Show or disable console
 
 const {

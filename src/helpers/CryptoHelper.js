@@ -116,7 +116,7 @@ const CryptoHelper = {
     const convertedPublicKeyHex = new Buffer(convertedKeyAsUint8Array);
     //console.log("[ENCRYPTION] Converted Public Key Buffer: " + convertedPublicKeyHex);
 
-    const pubKey = new Buffer(convertedPublicKeyHex, "hex");
+    const pubKey = new Buffer(convertedPublicKeyHex, 'hex');
     //console.log("[ENCRYPTION] pubkey getting sentout for encrypt: " + pubKey);
 
     return encrypt(pubKey, Buffer(message)).then(encryptedBuffers => {
@@ -154,7 +154,7 @@ const CryptoHelper = {
   // Decryption with public key
   decryptWithPrivateKey: async (message, privateKey) => {
     let encrypted = message;
-    const buf = new Buffer(encrypted, "hex");
+    const buf = new Buffer(encrypted, 'hex');
     // console.log("[DECRYPTION] Buffer Passed: " + buf);
 
     encrypted = {
