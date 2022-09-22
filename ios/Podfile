@@ -57,10 +57,10 @@ target 'epns' do
   end
 end
 
-$NotifeeExtension = true
+# $NotifeeExtension = true
 
-target 'NotifeeNotificationService' do
-  use_frameworks!
-  pod 'RNNotifeeCore', :path => '../node_modules/@notifee/react-native/RNNotifeeCore.podspec'
-end
+# target 'NotifeeNotificationService' do
+#   use_frameworks!
+#   pod 'RNNotifeeCore', :path => '../node_modules/@notifee/react-native/RNNotifeeCore.podspec'
+# end
 

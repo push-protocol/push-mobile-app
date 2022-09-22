@@ -19,7 +19,9 @@ if (typeof Buffer === 'undefined') global.Buffer = require('buffer').Buffer;
 if (typeof location === 'undefined')
   global.location = {port: 80, protocol: 'https:'};
 const isDev = typeof __DEV__ === 'boolean' && __DEV__;
-process.env['NODE_ENV'] = isDev ? 'development' : 'production';
+let env = process.env ?? {};
+env['NODE_ENV'] = isDev ? 'development' : 'production';
+process.env = env;
 if (typeof localStorage !== 'undefined') {
   localStorage.debug = isDev ? '*' : '';
 }

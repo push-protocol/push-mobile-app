@@ -484,10 +484,9 @@ PODS:
     - React-Core
   - RNNotifee (5.7.0):
     - React-Core
-    - RNNotifeeCore
-  - RNNotifeeCore (5.7.0):
-    - RNNotifeeCore/NotifeeCore (= 5.7.0)
-  - RNNotifeeCore/NotifeeCore (5.7.0)
+    - RNNotifee/NotifeeCore (= 5.7.0)
+  - RNNotifee/NotifeeCore (5.7.0):
+    - React-Core
   - RNOS (1.2.6):
     - React
   - RNScreens (3.17.0):
@@ -573,7 +572,6 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
-  - "RNNotifeeCore (from `../node_modules/@notifee/react-native/RNNotifeeCore.podspec`)"
   - RNOS (from `../node_modules/react-native-os`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -729,8 +727,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keychain"
   RNNotifee:
     :path: "../node_modules/@notifee/react-native"
-  RNNotifeeCore:
-    :path: "../node_modules/@notifee/react-native/RNNotifeeCore.podspec"
   RNOS:
     :path: "../node_modules/react-native-os"
   RNScreens:
@@ -820,8 +816,7 @@ SPEC CHECKSUMS:
   RNFBMessaging: eca46a70527dd469e684250b22d5c927bc4a5ed9
   RNGestureHandler: 28ad20bf02257791f7f137b31beef34b9549f54b
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
-  RNNotifee: 40cc97ddc290e102894ea5381e90905f50598cfe
-  RNNotifeeCore: 2d6233c6e9cf7755b8f460061c7811113043d2d3
+  RNNotifee: 5155e0a5e0a97d0c839030d8192783cd63053999
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNSVG: a53a5de0d90ec96a6502cc3a4534dfcc0c130622
@@ -831,6 +826,6 @@ SPEC CHECKSUMS:
   YoutubePlayer-in-WKWebView: 4fca3b4f6f09940077bfbae7bddb771f2b43aacd
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 45b1cb124a8371a873bbc82a4de467c84efd8590
+PODFILE CHECKSUM: 2d2857db4a337e31712d155ce3fb6e03c2e1b632
 
 COCOAPODS: 1.11.3
