@@ -47,7 +47,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* epnsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = epnsTests.m; sourceTree = "<group>"; };
 		08F30884F32AE9C6B2D48301 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-epns/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* EPNS .app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "EPNS .app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07F961A680F5B00A75B9A /* EPNS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EPNS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E4AA6AD28BD4E4000E27A82 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1E90BBE128BD672B007E6105 /* epns-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "epns-Bridging-Header.h"; sourceTree = "<group>"; };
 		1E90BBE228BD672C007E6105 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = epns/AppDelegate.mm; sourceTree = "<group>"; };
@@ -173,7 +173,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* EPNS .app */,
+				13B07F961A680F5B00A75B9A /* EPNS.app */,
 				00E356EE1AD99517003FC87E /* epnsTests.xctest */,
 			);
 			name = Products;
@@ -241,7 +241,7 @@
 			);
 			name = epns;
 			productName = epns_mobile_app;
-			productReference = 13B07F961A680F5B00A75B9A /* EPNS .app */;
+			productReference = 13B07F961A680F5B00A75B9A /* EPNS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -526,20 +526,20 @@
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = epns/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "EPNS ";
+				INFOPLIST_KEY_CFBundleDisplayName = EPNS;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.8.2;
+				MARKETING_VERSION = 0.7;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epns;
-				PRODUCT_NAME = "EPNS ";
+				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject;
+				PRODUCT_NAME = EPNS;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "epns-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -561,20 +561,20 @@
 				CURRENT_PROJECT_VERSION = 82;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				INFOPLIST_FILE = epns/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "EPNS ";
+				INFOPLIST_KEY_CFBundleDisplayName = EPNS;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.8.2;
+				MARKETING_VERSION = 0.7;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epns;
-				PRODUCT_NAME = "EPNS ";
+				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject;
+				PRODUCT_NAME = EPNS;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "epns-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
