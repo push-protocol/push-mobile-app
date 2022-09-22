@@ -8,6 +8,10 @@ const {default: Resolution} = require('@unstoppabledomains/resolution');
 
 // Web3 Helper Function
 const Web3Helper = {
+  // To get checksum
+  getAddressChecksum: function (address) {
+    return ethers.utils.getAddress(address);
+  },
   // To Get the Provider
   getWeb3Provider: function () {
     return new Web3.providers.HttpProvider(ENV_CONFIG.INFURA_API);

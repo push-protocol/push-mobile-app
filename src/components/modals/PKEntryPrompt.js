@@ -106,7 +106,7 @@ export default class PKEntryPrompt extends Component {
       Web3Helper.resolveBlockchainDomain(domain, 'ETH')
         .then(address => {
           this.setState({
-            domainAddr: address,
+            domainAddr: Web3Helper.getAddressChecksum(address.toLowerCase()),
             domainErr: null,
           });
         })
@@ -316,8 +316,8 @@ export default class PKEntryPrompt extends Component {
 
 // Styled Components
 const ErrorMsg = styled.Text`
-  color: ${props => props.color || GLOBALS.COLORS.BLACK},
-  font-weight: ${props => props.weight || 400}
+  color: ${props => props.color || GLOBALS.COLORS.BLACK};
+  font-weight: ${props => props.weight || 400};
 `;
 
 // Styling

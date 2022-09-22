@@ -80,7 +80,7 @@ export const fetchFeedData = ({
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            user: wallet.toLowerCase(),
+            user: wallet,
             page: paging,
             pageSize: 20,
             op: 'read',
