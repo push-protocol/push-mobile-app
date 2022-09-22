@@ -4,8 +4,7 @@ Welcome to the Push (EPNS) app for Android!
 
 This is an open source Android app developed by core team of Push protcol (previously EPNS). The source code is available on GitHub under the MIT license; the app is also available on Google Play.
 
-As an avid Android user ourselves, We take privacy very seriously.
-I know how irritating it is when apps collect your data without your knowledge.
+As an avid Android user ourselves, We take privacy very seriously. We know how irritating it is when apps collect your data without your knowledge.
 
 We have not programmed this app to collect any personally identifiable information. All data created by the you is stored on your device only with the only exception of notification token id that is sent out to deliver those web3 notifications to you. These can be simply erased by clearing the app's data or uninstalling it.
 
