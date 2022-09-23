@@ -6,6 +6,7 @@ import Header from 'src/components/ui/Header';
 import Tabs from 'src/components/ui/Tabs';
 
 import SettingsScreen from './screens/SettingsScreen';
+import {SingleChatScreen} from './screens/chats';
 
 const Stack = createStackNavigator();
 
@@ -51,6 +52,20 @@ export default function AuthenticatedNavigator() {
         component={SettingsScreen}
         options={{
           title: 'Settings',
+          headerStyle: {
+            backgroundColor: GLOBALS.COLORS.WHITE,
+            height:
+              Constants.statusBarHeight + GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
+          },
+          headerTintColor: GLOBALS.COLORS.MID_GRAY,
+        }}
+      />
+
+      <Stack.Screen
+        name={GLOBALS.SCREENS.SINGLE_CHAT}
+        component={SingleChatScreen}
+        options={{
+          title: 'Chat',
           headerStyle: {
             backgroundColor: GLOBALS.COLORS.WHITE,
             height:
