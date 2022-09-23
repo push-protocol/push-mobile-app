@@ -16,7 +16,7 @@
 		2CC327419FE0DF9A31F6A1BA /* Pods_epnsstaging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 134E9FC335AFEB9B1495E38C /* Pods_epnsstaging.framework */; };
 		8C2550A162936B38AA72265D /* Pods_epnsstaging_epnsstagingTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73991636BAF496B5E4665B8D /* Pods_epnsstaging_epnsstagingTests.framework */; };
 		A3A0C1ECD11C5FDC74A47D44 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08F30884F32AE9C6B2D48301 /* ExpoModulesProvider.swift */; };
-		FDEEEF429FD2E818BA7510BA /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		FDEEEF429FD2E818BA7510BA /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		FEBC56FEE969DEAAFD83C60F /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F1FDA9A5548BAE3639353C /* ExpoModulesProvider.swift */; };
 /* End PBXBuildFile section */
 
@@ -81,7 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDEEEF429FD2E818BA7510BA /* (null) in Frameworks */,
+				FDEEEF429FD2E818BA7510BA /* BuildFile in Frameworks */,
 				2CC327419FE0DF9A31F6A1BA /* Pods_epnsstaging.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
