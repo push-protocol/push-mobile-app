@@ -1,4 +1,5 @@
 import {FontAwesome5, MaterialCommunityIcons} from '@expo/vector-icons';
+import {Entypo} from '@expo/vector-icons';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import React from 'react';
 import {useSelector} from 'react-redux';
@@ -7,6 +8,7 @@ import ChannelsScreen from 'src/navigation/screens/ChannelsScreen';
 import HomeScreen from 'src/navigation/screens/HomeScreen';
 import SampleFeedScreen from 'src/navigation/screens/SampleFeedScreen';
 import SpamBoxScreen from 'src/navigation/screens/SpamBoxScreen';
+import {ChatScreen} from 'src/navigation/screens/chats';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 export default function Tabs() {
@@ -85,6 +87,21 @@ export default function Tabs() {
           tabBarLabel: 'Sample Feed',
           tabBarIcon: ({color}) => (
             <MaterialCommunityIcons name="help-box" color={color} size={24} />
+          ),
+        }}
+        initialParams={{
+          wallet,
+          pkey,
+        }}
+      />
+
+      <Tab.Screen
+        name={GLOBALS.SCREENS.CHATS}
+        component={ChatScreen}
+        options={{
+          tabBarLabel: 'Chats',
+          tabBarIcon: ({color}) => (
+            <Entypo name="chat" color={color} size={24} />
           ),
         }}
         initialParams={{
