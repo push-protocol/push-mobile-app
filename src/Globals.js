@@ -121,6 +121,8 @@ export default {
     SPAM: 'Spam',
     SAMPLEFEED: 'SampleFeed',
     NEWWALLETSIGNIN: 'NewWalletSignIn',
+    CHATS: 'Chats',
+    SINGLE_CHAT: 'SingleChat',
   },
   APP_AUTH_STATES: {
     INITIALIZING: 1,
