@@ -169,7 +169,7 @@ export default props => {
     dispatch(
       setInitialSignin({
         wallet: walletAddress,
-        userPKey: '',
+        userPKey: privateKey,
         ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
         cns: cns,
         ens: ens,
