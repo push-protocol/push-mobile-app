@@ -3,7 +3,10 @@ import {useEffect, useState} from 'react';
 import * as PushNodeClient from 'src/apis';
 import * as CaipHelper from 'src/helpers/CAIPHelper';
 import CryptoHelper from 'src/helpers/CryptoHelper';
-import {encryptWithRPCEncryptionPublicKeyReturnRawData} from 'src/helpers/w2w/metamaskSigUtil';
+import {
+  decryptWithWalletRPCMethod,
+  encryptWithRPCEncryptionPublicKeyReturnRawData,
+} from 'src/helpers/w2w/metamaskSigUtil';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
 
 // import MetaStorage from 'src/singletons/MetaStorage';
@@ -43,15 +46,30 @@ const useChatLoader = () => {
   const checkUserProfile = async (
     caipAddress: string,
     encryptionPublicKey: string,
+    privateKey: string,
   ) => {
     console.log('checking for user', caipAddress);
-    const res = await PushNodeClient.getUser(caipAddress);
-    if (!res) {
+    const user = await PushNodeClient.getUser(caipAddress);
+
+    // register if not reigistered
+    if (!user) {
       console.log('Creating new user profile..........');
       await createNewPgpPair(caipAddress, encryptionPublicKey);
     }
 
-    console.log('found user');
+    // load keys
+    if (!user) {
+      throw new Error('Key missing');
+    }
+
+    // decrypt was success
+    const decryptedCipher = decryptWithWalletRPCMethod(
+      JSON.parse(user.encryptedPrivateKey),
+      privateKey,
+    );
+    console.log('decrypt was success');
+
+    user.encryptedPrivateKey = JSON.parse(decryptedCipher)._result;
   };
 
   useEffect(() => {
@@ -61,19 +79,18 @@ const useChatLoader = () => {
         'c39d17b1575c8d5e6e615767e19dc285d1f803d21882fb0c60f7f5b7edb759b2';
 
       const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
-      console.log('public key', ethPublicKey);
 
       const derivedAddress = CryptoHelper.getAddressFromPublicKey(ethPublicKey);
       console.log('derived address', derivedAddress);
 
       const caipAddress = CaipHelper.walletToCAIP10({
-        account: '0x31e7440f70bcAA82eBD401D1948916EDCb1e6735',
+        account: derivedAddress,
         chainId: CHAIN_ID,
       });
 
       const encryptionPublicKey = getEncryptionPublicKey(userPk);
 
-      await checkUserProfile(caipAddress, encryptionPublicKey);
+      await checkUserProfile(caipAddress, encryptionPublicKey, userPk);
 
       setIsLoading(false);
     })();

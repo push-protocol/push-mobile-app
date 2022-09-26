@@ -13,4 +13,14 @@ const encryptWithRPCEncryptionPublicKeyReturnRawData = (
   return encryptedSecret;
 };
 
-export {encryptWithRPCEncryptionPublicKeyReturnRawData};
+const decryptWithWalletRPCMethod = (
+  encryptedData: metamaskSigUtil.EthEncryptedData,
+  privateKey: string,
+) => {
+  return metamaskSigUtil.decrypt({encryptedData, privateKey});
+};
+
+export {
+  encryptWithRPCEncryptionPublicKeyReturnRawData,
+  decryptWithWalletRPCMethod,
+};
