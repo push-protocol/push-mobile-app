@@ -3,13 +3,22 @@ import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
 import Globals from 'src/Globals';
+import * as PushNodeClient from 'src/apis';
+import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
 import {DUMMY_CHATS} from '../constants';
 import SingleChatItem from './SingleChatItem';
 
-const Chats = () => {
+type ChatsProps = {
+  feeds: PushNodeClient.Feeds[];
+};
+
+const Chats = ({feeds}: ChatsProps) => {
   const [value, setValue] = useState('');
   const navigation = useNavigation();
+
+  console.log(Object.keys(feeds[0]));
+
   return (
     <View style={styles.container}>
       <View style={styles.searchView}>
@@ -28,18 +37,17 @@ const Chats = () => {
       </View>
 
       <View style={styles.content}>
-        {DUMMY_CHATS.map((item, index) => (
+        {feeds.map((item, index) => (
           <SingleChatItem
             key={index}
-            image={item.image}
-            wallet={item.wallet}
-            text={item.text}
-            time={item.time}
-            count={item.count}
+            image={item.profilePicture}
+            wallet={caip10ToWallet(item.wallets)}
+            text={'Call me back'}
+            time={'6:18 PM'}
             onPress={() =>
               //@ts-ignore
               navigation.navigate(Globals.SCREENS.SINGLE_CHAT, {
-                wallet: item.wallet,
+                wallet: item.wallets,
               })
             }
           />

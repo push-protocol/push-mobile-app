@@ -345,6 +345,8 @@ PODS:
   - React-jsinspector (0.69.4)
   - React-logger (0.69.4):
     - glog
+  - react-native-fast-openpgp (2.4.2):
+    - React-Core
   - react-native-hash (3.0.1):
     - React
   - react-native-randombytes (3.6.1):
@@ -546,6 +548,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - react-native-fast-openpgp (from `../node_modules/react-native-fast-openpgp`)
   - react-native-hash (from `../node_modules/react-native-hash`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -675,6 +678,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-fast-openpgp:
+    :path: "../node_modules/react-native-fast-openpgp"
   react-native-hash:
     :path: "../node_modules/react-native-hash"
   react-native-randombytes:
@@ -770,13 +775,13 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 41f811b530c41dd90973d0174381cdb3fcb5e839
   FirebaseMessaging: 732623518591384f61c287e3d8f65294beb7ffb3
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: cfec46900e485b4b7613ff79308c30791825f32c
+  glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   PromisesSwift: 99fddfe4a0ec88a56486644c0da106694c92a604
-  RCT-Folly: 6c7dfdb649d9eac5f93fa0891b11725aa9b2f1ed
+  RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
   RCTRequired: bd9d2ab0fda10171fcbcf9ba61a7df4dc15a28f4
   RCTTypeSafety: e44e139bf6ec8042db396201834fc2372f6a21cd
   RCTYouTube: a8bb45705622a6fc9decf64be04128d3658ed411
@@ -791,6 +796,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: a27badbbdbc0ff781813370736a2d1c7261181d4
   React-jsinspector: 8a3d3f5dcd23a91e8c80b1bf0e96902cd1dca999
   React-logger: 1088859f145b8f6dd0d3ed051a647ef0e3e80fad
+  react-native-fast-openpgp: aff034a46dbf3a1286bf1c59aab9c97d977100de
   react-native-hash: 17b3c3896711278eebb9e66e532c2d8e5f3b7c30
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: b456e1c40ec86f5593d58b275bd0e9603169daca

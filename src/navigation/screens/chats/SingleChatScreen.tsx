@@ -45,11 +45,11 @@ const SingleChatScreen = () => {
       <ScrollView style={styles.section} showsHorizontalScrollIndicator={false}>
         <Time text="July 26, 2022" />
 
-        {FULL_CHAT.map(({text, time, type}) =>
+        {FULL_CHAT.map(({text, time, type}, index) =>
           type === CHAT_TYPES.RECIPIENT ? (
-            <Recipient text={text} time={time} />
+            <Recipient text={text} time={time} key={index} />
           ) : (
-            <Sender text={text} time={time} />
+            <Sender text={text} time={time} key={index} />
           ),
         )}
       </ScrollView>

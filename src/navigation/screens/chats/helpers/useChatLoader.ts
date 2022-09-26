@@ -12,10 +12,18 @@ import {generateKeyPair} from 'src/helpers/w2w/pgp';
 // import MetaStorage from 'src/singletons/MetaStorage';
 
 // TODO: migrate this to global
-const CHAIN_ID = 42;
 
-const useChatLoader = () => {
+export interface ChatData {
+  connectedUserData: PushNodeClient.ConnectedUser | {};
+  feeds: PushNodeClient.Feeds[];
+}
+
+const useChatLoader = (): [boolean, ChatData] => {
   const [isLoading, setIsLoading] = useState(true);
+  const [chatData, setChatData] = useState<ChatData>({
+    connectedUserData: {},
+    feeds: [],
+  });
   // const [isError, setIsError] = useState(false);
 
   const createNewPgpPair = async (
@@ -49,7 +57,7 @@ const useChatLoader = () => {
     privateKey: string,
   ) => {
     console.log('checking for user', caipAddress);
-    const user = await PushNodeClient.getUser(caipAddress);
+    let user = await PushNodeClient.getUser(caipAddress);
 
     // register if not reigistered
     if (!user) {
@@ -62,40 +70,54 @@ const useChatLoader = () => {
       throw new Error('Key missing');
     }
 
-    // decrypt was success
-    const decryptedCipher = decryptWithWalletRPCMethod(
+    // decript pgp from server
+    const decryptedPrivateKey = decryptWithWalletRPCMethod(
       JSON.parse(user.encryptedPrivateKey),
       privateKey,
     );
-    console.log('decrypt was success');
+    console.log('Decrypt was success');
 
-    user.encryptedPrivateKey = JSON.parse(decryptedCipher)._result;
+    const connectedUserData: PushNodeClient.ConnectedUser = {
+      ...user,
+      privateKey: decryptedPrivateKey,
+    };
+
+    setChatData(prev => ({...prev, connectedUserData}));
+  };
+
+  const loadInbox = async (ethAddress: string) => {
+    const feeds = await PushNodeClient.getInbox(ethAddress);
+    if (!feeds) {
+      return;
+    }
+
+    setChatData(prev => ({...prev, feeds}));
   };
 
   useEffect(() => {
     (async () => {
       // const {wallet} = await MetaStorage.instance.getStoredWallets()[0];
       const userPk =
-        'c39d17b1575c8d5e6e615767e19dc285d1f803d21882fb0c60f7f5b7edb759b2';
+        // 'ca0976b89057e08afa01285d8ce126045e7ba61f09fd44858d2e7fe2c380b4cf'; // my chrome
+        'c39d17b1575c8d5e6e615767e19dc285d1f803d21882fb0c60f7f5b7edb759b2'; // my brave
 
       const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
 
       const derivedAddress = CryptoHelper.getAddressFromPublicKey(ethPublicKey);
       console.log('derived address', derivedAddress);
 
-      const caipAddress = CaipHelper.walletToCAIP10({
-        account: derivedAddress,
-        chainId: CHAIN_ID,
-      });
+      const caipAddress = CaipHelper.walletToCAIP10(derivedAddress);
 
       const encryptionPublicKey = getEncryptionPublicKey(userPk);
 
       await checkUserProfile(caipAddress, encryptionPublicKey, userPk);
 
+      await loadInbox(derivedAddress);
+
       setIsLoading(false);
     })();
   }, []);
 
-  return [isLoading];
+  return [isLoading, chatData];
 };
 export {useChatLoader};

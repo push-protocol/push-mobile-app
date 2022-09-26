@@ -18,11 +18,15 @@ import {useChatLoader} from './helpers/useChatLoader';
 const ChatScreen = () => {
   const [tab, setTab] = useState(TABS.CHATS);
 
-  const [isLoading] = useChatLoader();
+  const [isLoading, chatData] = useChatLoader();
 
   const onPress = (value: string) => {
     setTab(value);
   };
+
+  if (!isLoading) {
+    console.log('Chat data loaded', 'num threads', chatData.feeds.length);
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -70,7 +74,11 @@ const ChatScreen = () => {
           <ScrollView
             style={styles.content}
             showsHorizontalScrollIndicator={false}>
-            {tab === TABS.CHATS ? <Chat /> : <Requests />}
+            {tab === TABS.CHATS ? (
+              <Chat feeds={chatData.feeds} />
+            ) : (
+              <Requests />
+            )}
           </ScrollView>
         </View>
       )}

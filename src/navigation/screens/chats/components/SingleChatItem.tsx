@@ -10,15 +10,34 @@ import Globals from 'src/Globals';
 
 import {SingleChatItemProps} from '../types';
 
+const MAX_ADDRESS_LEN = 21;
+const getFormattedAddress = (originalAddress: string) => {
+  const addrsLen = originalAddress.length;
+  if (addrsLen >= MAX_ADDRESS_LEN) {
+    return `${originalAddress.substring(0, 8)}...${originalAddress.substring(
+      addrsLen - 7,
+    )}`;
+  }
+  return originalAddress;
+};
+
 const ChatItem = (props: SingleChatItemProps) => {
+  console.log('got cid', props.text);
+
   return (
     <TouchableWithoutFeedback onPress={props.onPress}>
       <View style={styles.container}>
-        <Image style={styles.image} source={props.image} />
+        <Image
+          source={{uri: props.image}}
+          style={styles.image}
+          resizeMode={'cover'}
+        />
 
         <View style={styles.chatContainer}>
           <View style={styles.chatDetails}>
-            <Text style={styles.wallet}>{props.wallet}</Text>
+            <Text style={styles.wallet}>
+              {getFormattedAddress(props.wallet)}
+            </Text>
             <Text style={props.count ? styles.activeText : styles.text}>
               {props.text}
             </Text>
@@ -90,9 +109,11 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     resizeMode: 'contain',
+    borderRadius: 50 / 2,
+    overflow: 'hidden',
   },
   count: {
     backgroundColor: Globals.COLORS.PINK,
