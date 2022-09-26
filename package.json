@@ -55,6 +55,7 @@
     "react": "18.0.0",
     "react-native": "0.69.4",
     "react-native-crypto": "^2.2.0",
+    "react-native-fast-openpgp": "^2.4.2",
     "react-native-gesture-handler": "^2.5.0",
     "react-native-hash": "^3.0.0",
     "react-native-image-viewing": "^0.2.2",
@@ -83,6 +84,7 @@
     "secp256k1-v4": "https://github.com/HarshRajat/secp256k1-node",
     "stream-browserify": "^1.0.0",
     "styled-components": "^5.3.5",
+    "text-encoding": "^0.7.0",
     "url": "^0.10.3",
     "web3": "^1.7.5"
   },

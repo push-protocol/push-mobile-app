@@ -4224,7 +4224,7 @@ big-integer@1.6.36:
   resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.36.tgz#78631076265d4ae3555c04f85e7d9d2f3a071a36"
   integrity sha512-t70bfa7HYEA1D9idDbmuv7YbsbVkQ+Hp+8KFSul4aE5e/i1bjCNIRYJZlA8Q8p0r9T8cF/RVvwUgRA//FydEyg==
 
-big-integer@1.6.x:
+big-integer@1.6.x, big-integer@^1.6.51:
   version "1.6.51"
   resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.51.tgz#0df92a5d9880560d3ff2d5fd20245c889d130686"
   integrity sha512-GPEid2Y9QU1Exl1rpO9B2IPJGHPSupF5GnVIP0blYvNOMer2bTvSWs1jGOUg04hTmu67nmLsQ9TBo1puaotBHg==
@@ -6832,6 +6832,11 @@ flat-cache@^3.0.4:
   dependencies:
     flatted "^3.1.0"
     rimraf "^3.0.2"
+
+flatbuffers@^2.0.6:
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/flatbuffers/-/flatbuffers-2.0.7.tgz#3e8e2c46930820747578158cdf11c8b80f8abf89"
+  integrity sha512-5JulPk3a7zTdb2p2ElkAT8hmw4udmSL8GoRKkDa/y9+qFwKbFrRgAbF4VgSt2oIGTEpBqz9CmsvwCstwJ5D9kg==
 
 flatted@^3.1.0:
   version "3.2.7"
@@ -11112,6 +11117,14 @@ react-native-dotenv@^3.3.1:
   dependencies:
     dotenv "^10.0.0"
 
+react-native-fast-openpgp@^2.4.2:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-fast-openpgp/-/react-native-fast-openpgp-2.4.2.tgz#7d2cb64e9881064e9c32dec7c73b229120359709"
+  integrity sha512-LMGnuzjzZ/YmYxFyWZJBWBuDezOc99ke0doSTo3Dan1E8gG6bD32GtxilFMuUHMQTdKBz6m41TCTbwnW1VzpMg==
+  dependencies:
+    big-integer "^1.6.51"
+    flatbuffers "^2.0.6"
+
 react-native-gesture-handler@^2.5.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.6.0.tgz#8eeb25a2be9718db2e241084f4a337bec0e30ed1"
@@ -12768,6 +12781,11 @@ test-exclude@^6.0.0:
     "@istanbuljs/schema" "^0.1.2"
     glob "^7.1.4"
     minimatch "^3.0.4"
+
+text-encoding@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/text-encoding/-/text-encoding-0.7.0.tgz#f895e836e45990624086601798ea98e8f36ee643"
+  integrity sha512-oJQ3f1hrOnbRLOcwKz0Liq2IcrvDeZRHXhd9RgLrsT+DjWY/nty1Hi7v3dtkaEYbPYe0mUoOfzRrMwfXXwgPUA==
 
 text-table@^0.2.0:
   version "0.2.0"

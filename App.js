@@ -15,8 +15,6 @@ import {NotifeeDisplayNotification} from 'src/notifee';
 import store from 'src/redux';
 import Notify from 'src/singletons/Notify';
 
-import './shim.js';
-
 let persistor = persistStore(store);
 
 const App = () => {

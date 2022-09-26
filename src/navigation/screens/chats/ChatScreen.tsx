@@ -11,10 +11,14 @@ import {
 import Globals from 'src/Globals';
 
 import {Chat, Requests} from './components';
+import {ChatSetup} from './components/ChatSetup';
 import {TABS} from './constants';
+import {useChatLoader} from './helpers/useChatLoader';
 
 const ChatScreen = () => {
   const [tab, setTab] = useState(TABS.CHATS);
+
+  const [isLoading] = useChatLoader();
 
   const onPress = (value: string) => {
     setTab(value);
@@ -22,48 +26,54 @@ const ChatScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableWithoutFeedback onPress={() => onPress(TABS.CHATS)}>
-          <View
-            style={tab === TABS.CHATS ? styles.activeTab : styles.inactiveTab}
-          >
-            <Text
-              style={
-                tab === TABS.CHATS
-                  ? styles.activeTabText
-                  : styles.inactiveTabText
-              }
-            >
-              Chats
-            </Text>
-          </View>
-        </TouchableWithoutFeedback>
+      {isLoading ? (
+        <ChatSetup />
+      ) : (
+        <View>
+          <View style={styles.header}>
+            <TouchableWithoutFeedback onPress={() => onPress(TABS.CHATS)}>
+              <View
+                style={
+                  tab === TABS.CHATS ? styles.activeTab : styles.inactiveTab
+                }>
+                <Text
+                  style={
+                    tab === TABS.CHATS
+                      ? styles.activeTabText
+                      : styles.inactiveTabText
+                  }>
+                  Chats
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
 
-        <TouchableWithoutFeedback onPress={() => onPress(TABS.REQUESTS)}>
-          <View
-            style={
-              tab === TABS.REQUESTS ? styles.activeTab : styles.inactiveTab
-            }
-          >
-            <Text
-              style={
-                tab === TABS.REQUESTS
-                  ? styles.activeTabText
-                  : styles.inactiveTabText
-              }
-            >
-              Requests
-            </Text>
-            <View style={styles.count}>
-              <Text style={styles.countText}>{10}</Text>
-            </View>
+            <TouchableWithoutFeedback onPress={() => onPress(TABS.REQUESTS)}>
+              <View
+                style={
+                  tab === TABS.REQUESTS ? styles.activeTab : styles.inactiveTab
+                }>
+                <Text
+                  style={
+                    tab === TABS.REQUESTS
+                      ? styles.activeTabText
+                      : styles.inactiveTabText
+                  }>
+                  Requests
+                </Text>
+                <View style={styles.count}>
+                  <Text style={styles.countText}>{10}</Text>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        </TouchableWithoutFeedback>
-      </View>
 
-      <ScrollView style={styles.content} showsHorizontalScrollIndicator={false}>
-        {tab === TABS.CHATS ? <Chat /> : <Requests />}
-      </ScrollView>
+          <ScrollView
+            style={styles.content}
+            showsHorizontalScrollIndicator={false}>
+            {tab === TABS.CHATS ? <Chat /> : <Requests />}
+          </ScrollView>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

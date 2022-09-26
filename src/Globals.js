@@ -105,6 +105,12 @@ export default {
     BADGE_RED: 'rgba(208.0, 44.0, 30.0, 1.0)',
     LIGHT_MAROON: 'rgba(159.0, 0.0, 0.0, 1.0)',
     LIGHTER_MAROON: 'rgba(129.0, 0.0, 0.0, 1.0)',
+
+    // Chats
+    PINK: '#D53A94',
+    LIGHT_BLUE: '#F4F5FA',
+    CHAT_BLACK: '#1E1E1E',
+    CHAT_LIGHT_DARK: '#657795',
   },
   SCREENS: {
     WELCOME: 'Welcome',

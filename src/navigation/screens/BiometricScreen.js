@@ -164,6 +164,7 @@ class BiometricScreen extends Component {
   changePassCode = value => {
     // accept only digits
     if (/^\d+$/.test(value) || value === '') {
+      console.log('called', value);
       if (this.state.passcodeVerifyStep == false) {
         this.setState(
           {
