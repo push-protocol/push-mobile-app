@@ -6,7 +6,7 @@ import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
-import {DUMMY_CHATS} from '../constants';
+// import {DUMMY_CHATS} from '../constants';
 import SingleChatItem from './SingleChatItem';
 
 type ChatsProps = {
@@ -42,7 +42,7 @@ const Chats = ({feeds}: ChatsProps) => {
             key={index}
             image={item.profilePicture}
             wallet={caip10ToWallet(item.wallets)}
-            text={'Call me back'}
+            text={item.threadhash ? item.threadhash : ''}
             time={'6:18 PM'}
             onPress={() =>
               //@ts-ignore

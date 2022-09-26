@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   Image,
   StyleSheet,
@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import Globals from 'src/Globals';
+import * as PushNodeClient from 'src/apis';
 
 import {SingleChatItemProps} from '../types';
 
@@ -21,8 +22,19 @@ const getFormattedAddress = (originalAddress: string) => {
   return originalAddress;
 };
 
+// const decryptFeed = async () => {};
+
 const ChatItem = (props: SingleChatItemProps) => {
-  console.log('got cid', props.text);
+  const cid = props.text;
+  useEffect(() => {
+    (async () => {
+      console.log('calling...', cid);
+      const res = await PushNodeClient.getFromIPFS(cid);
+      const encryptedSec = res.encryptedSecret;
+      console.log('content', res.messageContent);
+      console.log('all good', encryptedSec);
+    })();
+  });
 
   return (
     <TouchableWithoutFeedback onPress={props.onPress}>
