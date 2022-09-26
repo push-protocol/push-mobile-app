@@ -264,6 +264,9 @@ const CryptoHelper = {
   getPublicKeyFromPrivateKey: privateKey => {
     return EthCrypto.publicKeyByPrivateKey(privateKey);
   },
+  getAddressFromPublicKey: publicKey => {
+    return EthCrypto.publicKey.toAddress(publicKey);
+  },
   // To generate a random secret
   generateRandomSecret: length => {
     let result = '';
