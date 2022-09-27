@@ -9,10 +9,6 @@ import {
 } from 'src/helpers/w2w/metamaskSigUtil';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
 
-// import MetaStorage from 'src/singletons/MetaStorage';
-
-// TODO: migrate this to global
-
 export interface ChatData {
   connectedUserData: PushNodeClient.ConnectedUser | undefined;
   feeds: PushNodeClient.Feeds[];
@@ -98,8 +94,8 @@ const useChatLoader = (): [boolean, ChatData] => {
     (async () => {
       // const {wallet} = await MetaStorage.instance.getStoredWallets()[0];
       const userPk =
-        'ca0976b89057e08afa01285d8ce126045e7ba61f09fd44858d2e7fe2c380b4cf'; // my chrome
-      // 'c39d17b1575c8d5e6e615767e19dc285d1f803d21882fb0c60f7f5b7edb759b2'; // my brave
+        // 'ca0976b89057e08afa01285d8ce126045e7ba61f09fd44858d2e7fe2c380b4cf'; // my chrome
+        'c39d17b1575c8d5e6e615767e19dc285d1f803d21882fb0c60f7f5b7edb759b2'; // my brave
 
       const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
 

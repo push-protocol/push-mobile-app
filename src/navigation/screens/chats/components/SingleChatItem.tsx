@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Image,
   StyleSheet,
@@ -26,46 +26,57 @@ const getFormattedAddress = (originalAddress: string) => {
 };
 
 const getAES = async (pgpSecret: string, pgpPrivateKey: string) => {
-  console.log('pkey\n', pgpPrivateKey);
-  console.log('sec\n', pgpSecret);
-
   const AES_KEY = await pgpDecrypt(pgpSecret, pgpPrivateKey);
-  console.log('got aes key', AES_KEY);
-  console.log('ended decryption');
-
   return AES_KEY;
+};
+
+const resolveCID = async (cid: string, pgpPrivateKey: string) => {
+  const res = await PushNodeClient.getFromIPFS(cid);
+
+  const timeStamp = res.timestamp ? res.timestamp : 0;
+  const formatedTime = parseTimeStamp(timeStamp);
+
+  const AES_KEY = await getAES(res.encryptedSecret, pgpPrivateKey);
+  const messageToDecrypt = res.messageContent;
+  const encryptedMessage = CryptoHelper.decryptWithAES(
+    messageToDecrypt,
+    AES_KEY,
+  );
+
+  const nextMessage = res.link;
+
+  return [formatedTime, encryptedMessage, nextMessage];
+};
+
+const parseTimeStamp = (timestamp: number) => {
+  const time = new Date(timestamp);
+  const date =
+    time.toLocaleTimeString('en-US').slice(0, -6) +
+    ':' +
+    time.toLocaleTimeString('en-US').slice(-2);
+
+  return date;
 };
 
 const ChatItem = (props: SingleChatItemProps) => {
   const appContext = useContext(Context);
-
+  const cid = props.text;
   if (!appContext) {
     throw new Error('Invalid context');
   }
 
-  const cid = props.text;
+  const [lastMessage, setLastMessage] = useState('decrypting....');
+  const [timeStamp, setTimeStamp] = useState('...');
+
   useEffect(() => {
     (async () => {
-      console.log('calling...', cid);
-      const res = await PushNodeClient.getFromIPFS(cid);
-      // const encryptedSec = res.encryptedSecret;
-      console.log('cid res', Object.keys(res));
-      console.log(res);
-
-      console.log('\n\n\n****all good***\n\n\n');
-      const AES_KEY = await getAES(
-        res.encryptedSecret,
+      const [_timestamp, encryptedMessage] = await resolveCID(
+        cid,
         appContext.connectedUser.privateKey,
       );
 
-      const messageToDecrypt = res.messageContent;
-      console.log('now break this', messageToDecrypt);
-      console.log('\n\n\n****all good***\n\n\n');
-
-      const final = CryptoHelper.decryptWithAES(messageToDecrypt, AES_KEY);
-      console.log('res', final);
-
-      // console.log('content', res.messageContent);
+      setLastMessage(encryptedMessage);
+      setTimeStamp(_timestamp);
     })();
   });
 
@@ -84,13 +95,13 @@ const ChatItem = (props: SingleChatItemProps) => {
               {getFormattedAddress(props.wallet)}
             </Text>
             <Text style={props.count ? styles.activeText : styles.text}>
-              {props.text}
+              {lastMessage}
             </Text>
           </View>
 
           <View>
             <Text style={props.count ? styles.activeTime : styles.time}>
-              {props.time}
+              {timeStamp}
             </Text>
             {props.count && (
               <View style={styles.count}>

@@ -43,7 +43,7 @@ const Chats = ({feeds}: ChatsProps) => {
             image={item.profilePicture}
             wallet={caip10ToWallet(item.wallets)}
             text={item.threadhash ? item.threadhash : ''}
-            time={'today'}
+            time={'6:40'}
             onPress={() =>
               //@ts-ignore
               navigation.navigate(Globals.SCREENS.SINGLE_CHAT, {
