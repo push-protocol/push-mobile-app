@@ -14,10 +14,23 @@ import LinearGradient from 'react-native-linear-gradient';
 import Globals from 'src/Globals';
 
 import {Recipient, Sender, Time} from './components';
-import {CHAT_TYPES, FULL_CHAT} from './constants';
+import {getFormattedAddress} from './helpers/chatAddressFormatter';
+import {useConversationLoader} from './helpers/useConverstaionLoader';
 
-const SingleChatScreen = () => {
+const SingleChatScreen = ({route}: any) => {
   const navigation = useNavigation();
+  const {cid, senderAddress, pgpPrivateKey} = route.params;
+
+  const [isLoading, chatMessages] = useConversationLoader(cid, pgpPrivateKey);
+
+  if (!isLoading) {
+    console.log('verify');
+    console.log(
+      chatMessages.map(e => {
+        console.log('frome', e.from, 'they', senderAddress);
+      }),
+    );
+  }
 
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
@@ -36,23 +49,31 @@ const SingleChatScreen = () => {
               source={require('assets/chat/wallet1.png')}
             />
 
-            <Text style={styles.wallet}>Adam.eth</Text>
+            <Text style={styles.wallet}>
+              {getFormattedAddress(senderAddress)}
+            </Text>
           </View>
           <Feather name="more-vertical" size={24} color="black" />
         </View>
       </View>
 
-      <ScrollView style={styles.section} showsHorizontalScrollIndicator={false}>
-        <Time text="July 26, 2022" />
+      {isLoading ? (
+        <Text style={{marginTop: 150}}>Loading conversation...</Text>
+      ) : (
+        <ScrollView
+          style={styles.section}
+          showsHorizontalScrollIndicator={false}>
+          <Time text="July 26, 2022" />
 
-        {FULL_CHAT.map(({text, time, type}, index) =>
-          type === CHAT_TYPES.RECIPIENT ? (
-            <Recipient text={text} time={time} key={index} />
-          ) : (
-            <Sender text={text} time={time} key={index} />
-          ),
-        )}
-      </ScrollView>
+          {chatMessages.map((msg, index) =>
+            msg.to === senderAddress ? (
+              <Sender text={msg.message} time={msg.time} key={index} />
+            ) : (
+              <Recipient text={msg.message} time={msg.time} key={index} />
+            ),
+          )}
+        </ScrollView>
+      )}
     </LinearGradient>
   );
 };

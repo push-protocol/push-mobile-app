@@ -1,5 +1,4 @@
 import {EvilIcons} from '@expo/vector-icons';
-import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
 import Globals from 'src/Globals';
@@ -15,7 +14,6 @@ type ChatsProps = {
 
 const Chats = ({feeds}: ChatsProps) => {
   const [value, setValue] = useState('');
-  const navigation = useNavigation();
 
   console.log('feeds', Object.keys(feeds[0]));
 
@@ -43,13 +41,6 @@ const Chats = ({feeds}: ChatsProps) => {
             image={item.profilePicture}
             wallet={caip10ToWallet(item.wallets)}
             text={item.threadhash ? item.threadhash : ''}
-            time={'6:40'}
-            onPress={() =>
-              //@ts-ignore
-              navigation.navigate(Globals.SCREENS.SINGLE_CHAT, {
-                wallet: item.wallets,
-              })
-            }
           />
         ))}
       </View>

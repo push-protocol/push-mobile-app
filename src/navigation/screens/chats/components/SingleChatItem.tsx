@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import React, {useContext, useEffect, useState} from 'react';
 import {
   Image,
@@ -7,58 +8,14 @@ import {
   View,
 } from 'react-native';
 import Globals from 'src/Globals';
-import * as PushNodeClient from 'src/apis';
-import CryptoHelper from 'src/helpers/CryptoHelper';
-import {pgpDecrypt} from 'src/helpers/w2w/pgp';
 import {Context} from 'src/navigation/screens/chats/ChatScreen';
 
+import {getFormattedAddress} from '../helpers/chatAddressFormatter';
+import {resolveCID} from '../helpers/chatResolver';
 import {SingleChatItemProps} from '../types';
 
-const MAX_ADDRESS_LEN = 21;
-const getFormattedAddress = (originalAddress: string) => {
-  const addrsLen = originalAddress.length;
-  if (addrsLen >= MAX_ADDRESS_LEN) {
-    return `${originalAddress.substring(0, 8)}...${originalAddress.substring(
-      addrsLen - 7,
-    )}`;
-  }
-  return originalAddress;
-};
-
-const getAES = async (pgpSecret: string, pgpPrivateKey: string) => {
-  const AES_KEY = await pgpDecrypt(pgpSecret, pgpPrivateKey);
-  return AES_KEY;
-};
-
-const resolveCID = async (cid: string, pgpPrivateKey: string) => {
-  const res = await PushNodeClient.getFromIPFS(cid);
-
-  const timeStamp = res.timestamp ? res.timestamp : 0;
-  const formatedTime = parseTimeStamp(timeStamp);
-
-  const AES_KEY = await getAES(res.encryptedSecret, pgpPrivateKey);
-  const messageToDecrypt = res.messageContent;
-  const encryptedMessage = CryptoHelper.decryptWithAES(
-    messageToDecrypt,
-    AES_KEY,
-  );
-
-  const nextMessage = res.link;
-
-  return [formatedTime, encryptedMessage, nextMessage];
-};
-
-const parseTimeStamp = (timestamp: number) => {
-  const time = new Date(timestamp);
-  const date =
-    time.toLocaleTimeString('en-US').slice(0, -6) +
-    ':' +
-    time.toLocaleTimeString('en-US').slice(-2);
-
-  return date;
-};
-
 const ChatItem = (props: SingleChatItemProps) => {
+  const navigation = useNavigation();
   const appContext = useContext(Context);
   const cid = props.text;
   if (!appContext) {
@@ -67,21 +24,37 @@ const ChatItem = (props: SingleChatItemProps) => {
 
   const [lastMessage, setLastMessage] = useState('decrypting....');
   const [timeStamp, setTimeStamp] = useState('...');
+  const [isLoading, setLoading] = useState(true);
+
+  const handleChatDetail = async () => {
+    if (isLoading) {
+      console.log('thread info loading');
+      return;
+    }
+
+    // @ts-ignore
+    navigation.navigate(Globals.SCREENS.SINGLE_CHAT, {
+      cid: cid,
+      senderAddress: props.wallet,
+      pgpPrivateKey: appContext.connectedUser.privateKey,
+    });
+  };
 
   useEffect(() => {
     (async () => {
-      const [_timestamp, encryptedMessage] = await resolveCID(
+      const [chatMessage] = await resolveCID(
         cid,
         appContext.connectedUser.privateKey,
       );
 
-      setLastMessage(encryptedMessage);
-      setTimeStamp(_timestamp);
+      setLastMessage(chatMessage.message);
+      setTimeStamp(chatMessage.time);
+      setLoading(false);
     })();
   });
 
   return (
-    <TouchableWithoutFeedback onPress={props.onPress}>
+    <TouchableWithoutFeedback onPress={handleChatDetail}>
       <View style={styles.container}>
         <Image
           source={{uri: props.image}}

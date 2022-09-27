@@ -26,6 +26,7 @@ export const getFromIPFS = async (cid: string): Promise<MessageIPFSWithCID> => {
       'content-Type': 'application/json',
     },
   });
+
   const messageIPFS: MessageIPFS = await response.json();
   const messageIPFSWithCID: MessageIPFSWithCID = {...messageIPFS, cid};
   return messageIPFSWithCID;
