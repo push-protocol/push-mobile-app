@@ -17,7 +17,7 @@ const Chats = ({feeds}: ChatsProps) => {
   const [value, setValue] = useState('');
   const navigation = useNavigation();
 
-  console.log(Object.keys(feeds[0]));
+  console.log('feeds', Object.keys(feeds[0]));
 
   return (
     <View style={styles.container}>
@@ -43,7 +43,7 @@ const Chats = ({feeds}: ChatsProps) => {
             image={item.profilePicture}
             wallet={caip10ToWallet(item.wallets)}
             text={item.threadhash ? item.threadhash : ''}
-            time={'6:18 PM'}
+            time={'today'}
             onPress={() =>
               //@ts-ignore
               navigation.navigate(Globals.SCREENS.SINGLE_CHAT, {

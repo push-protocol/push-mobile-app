@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {
   Image,
   StyleSheet,
@@ -8,6 +8,9 @@ import {
 } from 'react-native';
 import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
+import CryptoHelper from 'src/helpers/CryptoHelper';
+import {pgpDecrypt} from 'src/helpers/w2w/pgp';
+import {Context} from 'src/navigation/screens/chats/ChatScreen';
 
 import {SingleChatItemProps} from '../types';
 
@@ -22,17 +25,47 @@ const getFormattedAddress = (originalAddress: string) => {
   return originalAddress;
 };
 
-// const decryptFeed = async () => {};
+const getAES = async (pgpSecret: string, pgpPrivateKey: string) => {
+  console.log('pkey\n', pgpPrivateKey);
+  console.log('sec\n', pgpSecret);
+
+  const AES_KEY = await pgpDecrypt(pgpSecret, pgpPrivateKey);
+  console.log('got aes key', AES_KEY);
+  console.log('ended decryption');
+
+  return AES_KEY;
+};
 
 const ChatItem = (props: SingleChatItemProps) => {
+  const appContext = useContext(Context);
+
+  if (!appContext) {
+    throw new Error('Invalid context');
+  }
+
   const cid = props.text;
   useEffect(() => {
     (async () => {
       console.log('calling...', cid);
       const res = await PushNodeClient.getFromIPFS(cid);
-      const encryptedSec = res.encryptedSecret;
-      console.log('content', res.messageContent);
-      console.log('all good', encryptedSec);
+      // const encryptedSec = res.encryptedSecret;
+      console.log('cid res', Object.keys(res));
+      console.log(res);
+
+      console.log('\n\n\n****all good***\n\n\n');
+      const AES_KEY = await getAES(
+        res.encryptedSecret,
+        appContext.connectedUser.privateKey,
+      );
+
+      const messageToDecrypt = res.messageContent;
+      console.log('now break this', messageToDecrypt);
+      console.log('\n\n\n****all good***\n\n\n');
+
+      const final = CryptoHelper.decryptWithAES(messageToDecrypt, AES_KEY);
+      console.log('res', final);
+
+      // console.log('content', res.messageContent);
     })();
   });
 

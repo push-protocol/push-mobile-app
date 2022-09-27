@@ -9,11 +9,19 @@ import {
   View,
 } from 'react-native';
 import Globals from 'src/Globals';
+import * as PushNodeClient from 'src/apis';
 
 import {Chat, Requests} from './components';
 import {ChatSetup} from './components/ChatSetup';
 import {TABS} from './constants';
 import {useChatLoader} from './helpers/useChatLoader';
+
+export interface AppContext {
+  connectedUser: PushNodeClient.ConnectedUser;
+  feeds: PushNodeClient.Feeds[];
+}
+
+export const Context = React.createContext<AppContext | null>(null);
 
 const ChatScreen = () => {
   const [tab, setTab] = useState(TABS.CHATS);
@@ -28,11 +36,25 @@ const ChatScreen = () => {
     console.log('Chat data loaded', 'num threads', chatData.feeds.length);
   }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      {isLoading ? (
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
         <ChatSetup />
-      ) : (
+      </SafeAreaView>
+    );
+  }
+
+  if (!chatData.connectedUserData) {
+    throw new Error('No user data');
+  }
+
+  return (
+    <Context.Provider
+      value={{
+        connectedUser: chatData.connectedUserData,
+        feeds: chatData.feeds,
+      }}>
+      <SafeAreaView style={styles.container}>
         <View>
           <View style={styles.header}>
             <TouchableWithoutFeedback onPress={() => onPress(TABS.CHATS)}>
@@ -70,7 +92,6 @@ const ChatScreen = () => {
               </View>
             </TouchableWithoutFeedback>
           </View>
-
           <ScrollView
             style={styles.content}
             showsHorizontalScrollIndicator={false}>
@@ -81,8 +102,8 @@ const ChatScreen = () => {
             )}
           </ScrollView>
         </View>
-      )}
-    </SafeAreaView>
+      </SafeAreaView>
+    </Context.Provider>
   );
 };
 
