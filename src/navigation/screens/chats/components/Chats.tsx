@@ -25,7 +25,9 @@ const Chats = ({feeds}: ChatsProps) => {
           onChangeText={setValue}
           value={value}
           placeholder="Search name.eth or 0x123.."
+          autoFocus
         />
+
         <EvilIcons
           name="search"
           size={30}
@@ -64,9 +66,11 @@ const styles = StyleSheet.create({
     color: Globals.COLORS.BLACK,
     fontSize: 18,
     textTransform: 'capitalize',
-    height: 50,
+    height: 60,
     paddingLeft: 15,
     paddingRight: 10,
+    width: '70%',
+    minWidth: '70%',
   },
   searchView: {
     flexDirection: 'row',
