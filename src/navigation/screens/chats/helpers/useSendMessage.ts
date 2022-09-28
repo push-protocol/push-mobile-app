@@ -20,8 +20,9 @@ const getEncryptedMessage = async (
     privateKeyArmored: connectedUser.privateKey,
   });
 
-  console.log(encryptedMessage);
-  console.log('all god ser');
+  // console.log(encryptedMessage);
+  // console.log('all god ser');
+  return encryptedMessage;
 };
 
 const useSendMessage = (
@@ -49,10 +50,40 @@ const useSendMessage = (
   }, []);
 
   const sendMessage = async (message: string) => {
+    if (!isSendingReady) {
+      return;
+    }
     setIsSending(true);
-    console.log('****send message');
-    await getEncryptedMessage(connectedUser, messageReceiver.current, message);
-    console.log('*****');
+    console.log('**** send message');
+    const msg = await getEncryptedMessage(
+      connectedUser,
+      messageReceiver.current,
+      message,
+    );
+
+    const postBody = {
+      fromCAIP10: connectedUser.wallets,
+      fromDID: connectedUser.wallets,
+      toDID: messageReceiver.current.ethAddress,
+      toCAIP10: messageReceiver.current.ethAddress,
+      messageContent: msg.cipherText,
+      messageType: 'Text',
+      signature: msg.signature,
+      encType: msg.encType,
+      sigType: msg.sigType,
+      encryptedSecret: msg.encryptedSecret,
+    };
+
+    console.log('posting', JSON.stringify(postBody));
+
+    try {
+      const res = await PushNodeClient.postMessage(postBody);
+      console.log(res);
+    } catch (error) {
+      console.log('error', error);
+    }
+    console.log('**** message successfully sent');
+
     setIsSending(false);
   };
 

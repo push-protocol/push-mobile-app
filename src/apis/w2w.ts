@@ -1,5 +1,7 @@
 import ENV_CONFIG from 'src/env.config';
 
+import {MessageIPFS} from './ipfs';
+
 export interface User {
   did: string;
   wallets: string;
@@ -151,4 +153,56 @@ export const getInbox = async (did: string): Promise<Feeds[] | undefined> => {
       continue;
     }
   }
+};
+
+export interface MessageIPFSWithCID extends MessageIPFS {
+  cid: string;
+}
+
+export const postMessage = async ({
+  fromCAIP10,
+  fromDID,
+  toDID,
+  toCAIP10,
+  messageContent,
+  messageType,
+  signature,
+  encType,
+  sigType,
+  encryptedSecret,
+}: {
+  fromCAIP10: string;
+  fromDID: string;
+  toCAIP10: string;
+  toDID: string;
+  messageContent: string;
+  messageType: string;
+  signature: string;
+  encType: string;
+  sigType: string;
+  encryptedSecret: string;
+}): Promise<MessageIPFSWithCID | string> => {
+  const response = await fetch(BASE_URL + '/v1/w2w/messages', {
+    method: 'POST',
+    headers: {
+      'content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      fromCAIP10,
+      toCAIP10,
+      fromDID,
+      toDID,
+      messageContent,
+      messageType,
+      signature,
+      encType,
+      encryptedSecret,
+      sigType,
+    }),
+  });
+  if (response.status > 299) {
+    throw new Error('Error posting message');
+  }
+  const data: MessageIPFSWithCID | string = await response.json();
+  return data;
 };

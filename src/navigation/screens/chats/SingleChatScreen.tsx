@@ -64,7 +64,7 @@ const SingleChatScreen = ({route}: any) => {
 
   if (!isLoading) {
     chatMessages.map(e => {
-      console.log('frome', e.from, ' to ', senderAddress);
+      // console.log('frome', e.from, ' to ', senderAddress);
     });
   }
 
