@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 import {ChatMessage, resolveCID} from './chatResolver';
 
@@ -10,14 +10,21 @@ const useConversationLoader = (
 ): [boolean, ChatMessage[]] => {
   const [isLoading, setIsLoading] = useState(true);
   const [chatData, setChatData] = useState<ChatMessage[]>([]);
-  const [currentHash, setCurrentHash] = useState(cid);
+  const currentHash = useRef(cid);
+  const isFetching = useRef(false);
 
   const fetchChats = async (_pgpPrivateKey: string) => {
+    isFetching.current = true;
     let chats: ChatMessage[] = [];
-    let hash = currentHash;
+    let hash = currentHash.current;
+
+    console.log('\nfetching');
+
     for (let i = 0; i < FETCH_ONCE; i++) {
       try {
         const [chatMessage, next_hash] = await resolveCID(hash, _pgpPrivateKey);
+        console.log('says', hash, ':', chatMessage.message, '---->', next_hash);
+
         chats.unshift(chatMessage);
         if (!next_hash) {
           break;
@@ -29,7 +36,7 @@ const useConversationLoader = (
       }
     }
 
-    setCurrentHash(hash);
+    isFetching.current = false;
 
     return chats;
   };
@@ -44,7 +51,9 @@ const useConversationLoader = (
 
       //listen to new chats
       const chatListener = setInterval(async () => {
-        // fetchChats();
+        // if (!isFetching.current) {
+        //   fetchChats(pgpPrivateKey);
+        // }
       }, 3000);
       return () => clearInterval(chatListener);
     })();

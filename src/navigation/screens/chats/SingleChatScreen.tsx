@@ -39,6 +39,7 @@ const SingleChatScreen = ({route}: any) => {
   const {cid, senderAddress, pgpPrivateKey} = route.params;
 
   const [isLoading, chatMessages] = useConversationLoader(cid, pgpPrivateKey);
+  const scrollViewRef: React.RefObject<ScrollView> = React.createRef();
 
   if (!isLoading) {
     console.log('verify');
@@ -78,33 +79,38 @@ const SingleChatScreen = ({route}: any) => {
       {isLoading ? (
         <Text style={{marginTop: 150}}>Loading conversation...</Text>
       ) : (
-        //   <ScrollView
-        //     style={styles.section}
-        //     showsHorizontalScrollIndicator={false}>
-        //     <Time text="July 26, 2022" />
-
-        //   {chatMessages.map((msg, index) =>
-        //       msg.to === senderAddress ? (
-        //         <Sender text={msg.message} time={msg.time} key={index} />
-        //       ) : (
-        //         <Recipient text={msg.message} time={msg.time} key={index} />
-        //       ),
-        //     )}
-        // </ScrollView>
-
         <ScrollView
           style={styles.section}
-          showsHorizontalScrollIndicator={false}>
+          showsHorizontalScrollIndicator={false}
+          ref={scrollViewRef}
+          onContentSizeChange={() =>
+            scrollViewRef.current?.scrollToEnd({animated: true})
+          }>
           <Time text="July 26, 2022" />
 
-          {chats.map((chat, index) =>
-            chat.type === CHAT_TYPES.RECIPIENT ? (
-              <Recipient text={chat.text} time={chat.time} key={index} />
+          {chatMessages.map((msg, index) =>
+            msg.to === senderAddress ? (
+              <Sender text={msg.message} time={msg.time} key={index} />
             ) : (
-              <Sender text={chat.text} time={chat.time} key={index} />
+              <Recipient text={msg.message} time={msg.time} key={index} />
             ),
           )}
         </ScrollView>
+
+        //  Static
+        // <ScrollView
+        //   style={styles.section}
+        //   showsHorizontalScrollIndicator={false}>
+        //   <Time text="July 26, 2022" />
+
+        //   {chats.map((chat, index) =>
+        //     chat.type === CHAT_TYPES.RECIPIENT ? (
+        //       <Recipient text={chat.text} time={chat.time} key={index} />
+        //     ) : (
+        //       <Sender text={chat.text} time={chat.time} key={index} />
+        //     ),
+        //   )}
+        // </ScrollView>
       )}
       <View style={styles.keyboard}>
         <View style={styles.textInputContainer}>
@@ -190,7 +196,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   section: {
-    maxHeight: (windowHeight * 3) / 5,
+    maxHeight: (windowHeight * 4) / 6,
     width: windowWidth,
     paddingVertical: 10,
     paddingHorizontal: 20,
