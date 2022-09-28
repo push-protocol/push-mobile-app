@@ -15,6 +15,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Globals from 'src/Globals';
 
 import {Recipient, Sender, Time} from './components';
+import {CHAT_TYPES, FULL_CHAT} from './constants';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
 
@@ -77,20 +78,34 @@ const SingleChatScreen = ({route}: any) => {
       {isLoading ? (
         <Text style={{marginTop: 150}}>Loading conversation...</Text>
       ) : (
+        //   <ScrollView
+        //     style={styles.section}
+        //     showsHorizontalScrollIndicator={false}>
+        //     <Time text="July 26, 2022" />
+
+        //   {chatMessages.map((msg, index) =>
+        //       msg.to === senderAddress ? (
+        //         <Sender text={msg.message} time={msg.time} key={index} />
+        //       ) : (
+        //         <Recipient text={msg.message} time={msg.time} key={index} />
+        //       ),
+        //     )}
+        // </ScrollView>
+
         <ScrollView
           style={styles.section}
           showsHorizontalScrollIndicator={false}>
           <Time text="July 26, 2022" />
 
-        {chatMessages.map((msg, index) =>
-            msg.to === senderAddress ? (
-              <Sender text={msg.message} time={msg.time} key={index} />
+          {chats.map((chat, index) =>
+            chat.type === CHAT_TYPES.RECIPIENT ? (
+              <Recipient text={chat.text} time={chat.time} key={index} />
             ) : (
-              <Recipient text={msg.message} time={msg.time} key={index} />
+              <Sender text={chat.text} time={chat.time} key={index} />
             ),
           )}
-      </ScrollView>
-
+        </ScrollView>
+      )}
       <View style={styles.keyboard}>
         <View style={styles.textInputContainer}>
           <View style={styles.smileyIcon}>
@@ -175,7 +190,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   section: {
-    maxHeight: (windowHeight * 3) / 5 - 15,
+    maxHeight: (windowHeight * 3) / 5,
     width: windowWidth,
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -187,7 +202,7 @@ const styles = StyleSheet.create({
   keyboard: {
     display: 'flex',
     position: 'absolute',
-    bottom: 5,
+    bottom: 10,
     backgroundColor: Globals.COLORS.WHITE,
     borderRadius: 16,
     width: '90%',
