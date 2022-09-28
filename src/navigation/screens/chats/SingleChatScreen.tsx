@@ -15,6 +15,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Globals from 'src/Globals';
 
 import {Recipient, Sender, Time} from './components';
+import {CHAT_TYPES, FULL_CHAT} from './constants';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
 
@@ -77,50 +78,53 @@ const SingleChatScreen = ({route}: any) => {
       {isLoading ? (
         <Text style={{marginTop: 150}}>Loading conversation...</Text>
       ) : (
-        <ScrollView
-          style={styles.section}
-          showsHorizontalScrollIndicator={false}>
-          <Time text="July 26, 2022" />
+        <>
+          <ScrollView
+            style={styles.section}
+            showsHorizontalScrollIndicator={false}>
+            <Time text="July 26, 2022" />
 
-        {chatMessages.map((msg, index) =>
-            msg.to === senderAddress ? (
-              <Sender text={msg.message} time={msg.time} key={index} />
-            ) : (
-              <Recipient text={msg.message} time={msg.time} key={index} />
-            ),
-          )}
-      </ScrollView>
+            {chatMessages.map((msg, index) =>
+              msg.to === senderAddress ? (
+                <Sender text={msg.message} time={msg.time} key={index} />
+              ) : (
+                <Recipient text={msg.message} time={msg.time} key={index} />
+              ),
+            )}
+          </ScrollView>
 
-      <View style={styles.keyboard}>
-        <View style={styles.textInputContainer}>
-          <View style={styles.smileyIcon}>
-            <FontAwesome5 name="smile" size={20} color="black" />
+          <View style={styles.keyboard}>
+            <View style={styles.textInputContainer}>
+              <View style={styles.smileyIcon}>
+                <FontAwesome5 name="smile" size={20} color="black" />
+              </View>
+
+              <TextInput
+                style={styles.input}
+                onChangeText={onChangeText}
+                value={text}
+                placeholder="Type your message here..."
+                placeholderTextColor="#494D5F"
+              />
+            </View>
+
+            <View style={styles.textButtonContainer}>
+              <View>
+                <Feather name="paperclip" size={20} color="black" />
+              </View>
+
+              <View style={styles.sendIcon}>
+                <FontAwesome
+                  name="send"
+                  size={24}
+                  color={Globals.COLORS.PINK}
+                  onPress={onSend}
+                />
+              </View>
+            </View>
           </View>
-
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeText}
-            value={text}
-            placeholder="Type your message here..."
-            placeholderTextColor="#494D5F"
-          />
-        </View>
-
-        <View style={styles.textButtonContainer}>
-          <View>
-            <Feather name="paperclip" size={20} color="black" />
-          </View>
-
-          <View style={styles.sendIcon}>
-            <FontAwesome
-              name="send"
-              size={24}
-              color={Globals.COLORS.PINK}
-              onPress={onSend}
-            />
-          </View>
-        </View>
-      </View>
+        </>
+      )}
     </LinearGradient>
   );
 };
