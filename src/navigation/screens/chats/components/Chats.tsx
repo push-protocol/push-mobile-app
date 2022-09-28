@@ -25,6 +25,7 @@ const Chats = ({feeds}: ChatsProps) => {
           onChangeText={setValue}
           value={value}
           placeholder="Search name.eth or 0x123.."
+          autoFocus
         />
 
         <EvilIcons

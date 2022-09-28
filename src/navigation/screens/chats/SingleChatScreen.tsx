@@ -156,6 +156,7 @@ const SingleChatScreen = ({route}: any) => {
                 value={text}
                 placeholder="Type your message here..."
                 placeholderTextColor="#494D5F"
+                autoFocus
               />
             </View>
 
