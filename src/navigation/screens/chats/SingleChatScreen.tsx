@@ -1,10 +1,10 @@
 import {Feather, FontAwesome, FontAwesome5, Ionicons} from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
-import dayjs from 'dayjs';
-import React, {useState} from 'react';
+import React from 'react';
 import {
   Dimensions,
   Image,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,41 +13,46 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Globals from 'src/Globals';
+import {ConnectedUser} from 'src/apis';
 
 import {Recipient, Sender, Time} from './components';
-import {CHAT_TYPES, FULL_CHAT} from './constants';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
+import {useSendMessage} from './helpers/useSendMessage';
+
+interface ChatScreenParam {
+  cid: string;
+  senderAddress: string;
+  connectedUser: ConnectedUser;
+}
 
 const SingleChatScreen = ({route}: any) => {
   const navigation = useNavigation();
-  const [text, onChangeText] = React.useState('');
-  const [chats, setChats] = useState(FULL_CHAT);
+  const [text, setText] = React.useState('');
+  // const [chats, setChats] = useState(FULL_CHAT);
+  const {cid, senderAddress, connectedUser}: ChatScreenParam = route.params;
+  const senderAddressFormatted = getFormattedAddress(senderAddress);
 
-  const onSend = () => {
-    setChats([
-      ...chats,
-      {
-        type: CHAT_TYPES.SENDER,
-        text,
-        time: dayjs(new Date().toISOString()).format('HH:mm'),
-      },
-    ]);
-    onChangeText('');
-  };
+  const [isLoading, chatMessages] = useConversationLoader(
+    cid,
+    connectedUser.privateKey,
+  );
 
-  const {cid, senderAddress, pgpPrivateKey} = route.params;
-
-  const [isLoading, chatMessages] = useConversationLoader(cid, pgpPrivateKey);
+  const [isSending, sendMessage] = useSendMessage(connectedUser, senderAddress);
   const scrollViewRef: React.RefObject<ScrollView> = React.createRef();
 
+  const handleSend = async () => {
+    const _text = text;
+    setText('');
+    Keyboard.dismiss();
+
+    await sendMessage(_text);
+  };
+
   if (!isLoading) {
-    console.log('verify');
-    console.log(
-      chatMessages.map(e => {
-        console.log('frome', e.from, 'they', senderAddress);
-      }),
-    );
+    chatMessages.map(e => {
+      console.log('frome', e.from, ' to ', senderAddress);
+    });
   }
 
   return (
@@ -67,9 +72,7 @@ const SingleChatScreen = ({route}: any) => {
               source={require('assets/chat/wallet1.png')}
             />
 
-            <Text style={styles.wallet}>
-              {getFormattedAddress(senderAddress)}
-            </Text>
+            <Text style={styles.wallet}>{senderAddressFormatted}</Text>
           </View>
 
           <Feather name="more-vertical" size={24} color="black" />
@@ -120,7 +123,7 @@ const SingleChatScreen = ({route}: any) => {
 
           <TextInput
             style={styles.input}
-            onChangeText={onChangeText}
+            onChangeText={setText}
             value={text}
             placeholder="Type your message here..."
             placeholderTextColor="#494D5F"
@@ -133,12 +136,20 @@ const SingleChatScreen = ({route}: any) => {
           </View>
 
           <View style={styles.sendIcon}>
-            <FontAwesome
-              name="send"
-              size={24}
-              color={Globals.COLORS.PINK}
-              onPress={onSend}
-            />
+            {isSending ? (
+              <FontAwesome
+                name="spinner"
+                size={24}
+                color={Globals.COLORS.MID_GRAY}
+              />
+            ) : (
+              <FontAwesome
+                name="send"
+                size={24}
+                color={Globals.COLORS.PINK}
+                onPress={handleSend}
+              />
+            )}
           </View>
         </View>
       </View>

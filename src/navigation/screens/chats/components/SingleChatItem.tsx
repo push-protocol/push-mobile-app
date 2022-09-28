@@ -36,7 +36,7 @@ const ChatItem = (props: SingleChatItemProps) => {
     navigation.navigate(Globals.SCREENS.SINGLE_CHAT, {
       cid: cid,
       senderAddress: props.wallet,
-      pgpPrivateKey: appContext.connectedUser.privateKey,
+      connectedUser: appContext.connectedUser,
     });
   };
 
