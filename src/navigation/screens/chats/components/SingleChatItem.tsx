@@ -1,4 +1,5 @@
-import React from 'react';
+import {useNavigation} from '@react-navigation/native';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Image,
   StyleSheet,
@@ -7,26 +8,73 @@ import {
   View,
 } from 'react-native';
 import Globals from 'src/Globals';
+import {Context} from 'src/navigation/screens/chats/ChatScreen';
 
+import {getFormattedAddress} from '../helpers/chatAddressFormatter';
+import {resolveCID} from '../helpers/chatResolver';
 import {SingleChatItemProps} from '../types';
 
 const ChatItem = (props: SingleChatItemProps) => {
+  const navigation = useNavigation();
+  const appContext = useContext(Context);
+  const cid = props.text;
+  if (!appContext) {
+    throw new Error('Invalid context');
+  }
+
+  const [lastMessage, setLastMessage] = useState('decrypting....');
+  const [timeStamp, setTimeStamp] = useState('...');
+  const [isLoading, setLoading] = useState(true);
+
+  const handleChatDetail = async () => {
+    if (isLoading) {
+      console.log('thread info loading');
+      return;
+    }
+
+    // @ts-ignore
+    navigation.navigate(Globals.SCREENS.SINGLE_CHAT, {
+      cid: cid,
+      senderAddress: props.wallet,
+      pgpPrivateKey: appContext.connectedUser.privateKey,
+    });
+  };
+
+  useEffect(() => {
+    (async () => {
+      const [chatMessage] = await resolveCID(
+        cid,
+        appContext.connectedUser.privateKey,
+      );
+
+      setLastMessage(chatMessage.message);
+      setTimeStamp(chatMessage.time);
+      setLoading(false);
+    })();
+  });
+
   return (
-    <TouchableWithoutFeedback onPress={props.onPress}>
+    <TouchableWithoutFeedback onPress={handleChatDetail}>
       <View style={styles.container}>
-        <Image style={styles.image} source={props.image} />
+        <Image
+          source={{uri: props.image}}
+          style={styles.image}
+          resizeMode={'cover'}
+        />
 
         <View style={styles.chatContainer}>
           <View style={styles.chatDetails}>
-            <Text style={styles.wallet}>{props.wallet}</Text>
+            <Text style={styles.wallet}>
+              {getFormattedAddress(props.wallet)}
+            </Text>
             <Text style={props.count ? styles.activeText : styles.text}>
-              {props.text}
+              {lastMessage}
             </Text>
           </View>
 
           <View>
             <Text style={props.count ? styles.activeTime : styles.time}>
-              {props.time}
+              {timeStamp}
             </Text>
             {props.count && (
               <View style={styles.count}>
@@ -90,9 +138,11 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     resizeMode: 'contain',
+    borderRadius: 50 / 2,
+    overflow: 'hidden',
   },
   count: {
     backgroundColor: Globals.COLORS.PINK,

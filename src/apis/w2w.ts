@@ -16,7 +16,44 @@ export interface User {
   linkedListHash?: string | null;
 }
 
-const BASE_URL = ENV_CONFIG.EPNS_SERVER;
+export interface InboxChat {
+  name: string;
+  profilePicture: string;
+  timestamp: number;
+  fromDID: string;
+  toDID: string;
+  fromCAIP10: string;
+  toCAIP10: string;
+  lastMessage: string;
+  messageType: string;
+  encType: string;
+  signature: string;
+  signatureType: string;
+  encryptedSecret: string;
+}
+
+export interface Feeds {
+  // This property contains all the info to be displayed on the sidebar for the other peer's information
+  // Such as the decrypted message content and peer's profilePicture
+  msg: InboxChat;
+  did: string;
+  wallets: string;
+  profilePicture: string | null;
+  publicKey: string | null;
+  about: string | null;
+  threadhash: string | null;
+  intent: string | null;
+  intentSentBy: string | null;
+  intentTimestamp: Date;
+  combinedDID: string;
+  cid: string;
+}
+
+export interface ConnectedUser extends User {
+  privateKey: string;
+}
+
+const BASE_URL = 'https://backend-dev.epns.io/apis';
 
 export const createUser = async ({
   caip10,
@@ -69,6 +106,8 @@ export const getUser = async (caip10: string): Promise<User | undefined> => {
       if (caip10) {
         path += `?caip10=${caip10}`;
       }
+      console.log('calling', BASE_URL + path);
+
       const response = await fetch(BASE_URL + path, {
         method: 'GET',
         headers: {
@@ -76,6 +115,32 @@ export const getUser = async (caip10: string): Promise<User | undefined> => {
         },
       });
       const data: User = await response.json();
+      return data;
+    } catch (err) {
+      if (retry > 1) {
+        console.log('An Error Occurred! Please Reload the Page');
+      }
+      console.log('Error in the API call', err);
+      retry++;
+      continue;
+    }
+  }
+};
+
+export const getInbox = async (did: string): Promise<Feeds[] | undefined> => {
+  let retry = 0;
+  for (let i = 0; i < 3; i++) {
+    try {
+      const path = BASE_URL + '/v1/w2w/users/eip155:' + did + '/messages';
+      console.log('calling', path);
+
+      const response = await fetch(path, {
+        method: 'GET',
+      });
+      if (response.status >= 500) {
+        continue;
+      }
+      const data: Feeds[] = await response.json();
       return data;
     } catch (err) {
       if (retry > 1) {

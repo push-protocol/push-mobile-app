@@ -1,3 +1,4 @@
+import {cipher} from 'eth-crypto';
 import OpenPGP from 'react-native-fast-openpgp';
 
 export const generateKeyPair = async (): Promise<{
@@ -17,4 +18,9 @@ export const generateKeyPair = async (): Promise<{
     privateKeyArmored: keys.privateKey,
     publicKeyArmored: keys.publicKey,
   };
+};
+
+export const pgpDecrypt = async (_cipher: string, privateKey: string) => {
+  const output = await OpenPGP.decrypt(_cipher, privateKey, '');
+  return output;
 };
