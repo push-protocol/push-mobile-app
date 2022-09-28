@@ -1,4 +1,11 @@
-import {Feather, FontAwesome, FontAwesome5, Ionicons} from '@expo/vector-icons';
+import {
+  AntDesign,
+  Entypo,
+  Feather,
+  FontAwesome,
+  FontAwesome5,
+  Ionicons,
+} from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
 import dayjs from 'dayjs';
 import React, {useState} from 'react';
@@ -12,9 +19,10 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import {Menu, MenuItem} from 'react-native-material-menu';
 import Globals from 'src/Globals';
 
-import {Recipient, Sender, Time} from './components';
+import {AcceptIntent, Recipient, Sender, Time} from './components';
 import {CHAT_TYPES, FULL_CHAT} from './constants';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
@@ -49,6 +57,29 @@ const SingleChatScreen = ({route}: any) => {
     );
   }
 
+  const onAccept = () => {};
+
+  const onDecline = () => {};
+
+  const [visible, setVisible] = useState(false);
+
+  const hideMenu = () => setVisible(false);
+
+  const showMenu = () => setVisible(true);
+
+  const MENU_ITEMS = [
+    {
+      text: 'Give Nickname',
+      icon: <AntDesign name="user" size={24} color="black" />,
+      onPress: hideMenu,
+    },
+    {
+      text: 'Block User',
+      icon: <Entypo name="block" size={24} color="black" />,
+      onPress: hideMenu,
+    },
+  ];
+
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
       <View style={styles.header}>
@@ -71,7 +102,26 @@ const SingleChatScreen = ({route}: any) => {
             </Text>
           </View>
 
-          <Feather name="more-vertical" size={24} color="black" />
+          <Menu
+            visible={visible}
+            anchor={
+              <Feather
+                name="more-vertical"
+                onPress={showMenu}
+                size={24}
+                color="black"
+              />
+            }
+            onRequestClose={hideMenu}>
+            {MENU_ITEMS.map((item, index) => (
+              <MenuItem onPress={item.onPress} key={index}>
+                <View style={styles.menuItem}>
+                  {item.icon}
+                  <Text style={styles.menuItemText}>{item.text}</Text>
+                </View>
+              </MenuItem>
+            ))}
+          </Menu>
         </View>
       </View>
 
@@ -83,6 +133,7 @@ const SingleChatScreen = ({route}: any) => {
             style={styles.section}
             showsHorizontalScrollIndicator={false}>
             <Time text="July 26, 2022" />
+            <AcceptIntent onAccept={onAccept} onDecline={onDecline} />
 
             {chatMessages.map((msg, index) =>
               msg.to === senderAddress ? (
@@ -179,7 +230,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   section: {
-    maxHeight: (windowHeight * 3) / 5 - 15,
+    maxHeight: (windowHeight * 3) / 5,
     width: windowWidth,
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -191,7 +242,7 @@ const styles = StyleSheet.create({
   keyboard: {
     display: 'flex',
     position: 'absolute',
-    bottom: 5,
+    bottom: 35,
     backgroundColor: Globals.COLORS.WHITE,
     borderRadius: 16,
     width: '90%',
@@ -222,5 +273,14 @@ const styles = StyleSheet.create({
   fileIcon: {},
   sendIcon: {
     marginLeft: 10,
+  },
+  menuItem: {
+    display: 'flex',
+    flexDirection: 'row',
+    padding: 10,
+  },
+  menuItemText: {
+    marginLeft: 10,
+    marginTop: 5,
   },
 });

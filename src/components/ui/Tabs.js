@@ -26,8 +26,7 @@ export default function Tabs() {
       inactiveColor="#ccc"
       barStyle={{backgroundColor: '#fefefe'}}
       shifting={true}
-      labeled={true}
-    >
+      labeled={true}>
       <Tab.Screen
         name={GLOBALS.SCREENS.FEED}
         component={HomeScreen}
