@@ -92,6 +92,8 @@ const useChatLoader = (): [boolean, ChatData] => {
 
   useEffect(() => {
     (async () => {
+      console.log('this was called');
+
       // const {wallet} = await MetaStorage.instance.getStoredWallets()[0];
       const userPk =
         // 'ca0976b89057e08afa01285d8ce126045e7ba61f09fd44858d2e7fe2c380b4cf'; // my chrome

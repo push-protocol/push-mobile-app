@@ -7,11 +7,11 @@ import {
   Ionicons,
 } from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
-import dayjs from 'dayjs';
-import React, {useState} from 'react';
+import React from 'react';
 import {
   Dimensions,
   Image,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -21,40 +21,47 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {Menu, MenuItem} from 'react-native-material-menu';
 import Globals from 'src/Globals';
+import {ConnectedUser} from 'src/apis';
 
 import {AcceptIntent, Recipient, Sender, Time} from './components';
 import {CHAT_TYPES, FULL_CHAT} from './constants';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
+import {useSendMessage} from './helpers/useSendMessage';
+
+interface ChatScreenParam {
+  cid: string;
+  senderAddress: string;
+  connectedUser: ConnectedUser;
+}
 
 const SingleChatScreen = ({route}: any) => {
   const navigation = useNavigation();
-  const [text, onChangeText] = React.useState('');
-  const [chats, setChats] = useState(FULL_CHAT);
+  const [text, setText] = React.useState('');
+  // const [chats, setChats] = useState(FULL_CHAT);
+  const {cid, senderAddress, connectedUser}: ChatScreenParam = route.params;
+  const senderAddressFormatted = getFormattedAddress(senderAddress);
 
-  const onSend = () => {
-    setChats([
-      ...chats,
-      {
-        type: CHAT_TYPES.SENDER,
-        text,
-        time: dayjs(new Date().toISOString()).format('HH:mm'),
-      },
-    ]);
-    onChangeText('');
+  const [isLoading, chatMessages] = useConversationLoader(
+    cid,
+    connectedUser.privateKey,
+  );
+
+  const [isSending, sendMessage] = useSendMessage(connectedUser, senderAddress);
+  const scrollViewRef: React.RefObject<ScrollView> = React.createRef();
+
+  const handleSend = async () => {
+    const _text = text;
+    setText('');
+    Keyboard.dismiss();
+
+    await sendMessage(_text);
   };
 
-  const {cid, senderAddress, pgpPrivateKey} = route.params;
-
-  const [isLoading, chatMessages] = useConversationLoader(cid, pgpPrivateKey);
-
   if (!isLoading) {
-    console.log('verify');
-    console.log(
-      chatMessages.map(e => {
-        console.log('frome', e.from, 'they', senderAddress);
-      }),
-    );
+    chatMessages.map(e => {
+      console.log('frome', e.from, ' to ', senderAddress);
+    });
   }
 
   const onAccept = () => {};
@@ -67,7 +74,7 @@ const SingleChatScreen = ({route}: any) => {
 
   const showMenu = () => setVisible(true);
 
-  const MENU_ITEMS = [
+  const MENU_ITEMS = [.
     {
       text: 'Give Nickname',
       icon: <AntDesign name="user" size={24} color="black" />,
@@ -97,9 +104,7 @@ const SingleChatScreen = ({route}: any) => {
               source={require('assets/chat/wallet1.png')}
             />
 
-            <Text style={styles.wallet}>
-              {getFormattedAddress(senderAddress)}
-            </Text>
+            <Text style={styles.wallet}>{senderAddressFormatted}</Text>
           </View>
 
           <Menu
@@ -128,55 +133,79 @@ const SingleChatScreen = ({route}: any) => {
       {isLoading ? (
         <Text style={{marginTop: 150}}>Loading conversation...</Text>
       ) : (
-        <>
-          <ScrollView
-            style={styles.section}
-            showsHorizontalScrollIndicator={false}>
-            <Time text="July 26, 2022" />
-            <AcceptIntent onAccept={onAccept} onDecline={onDecline} />
+        <ScrollView
+          style={styles.section}
+          showsHorizontalScrollIndicator={false}
+          ref={scrollViewRef}
+          onContentSizeChange={() =>
+            scrollViewRef.current?.scrollToEnd({animated: true})
+          }>
+          <Time text="July 26, 2022" />
+          <Time text="July 26, 2022" />
+          <AcceptIntent onAccept={onAccept} onDecline={onDecline} />
 
-            {chatMessages.map((msg, index) =>
-              msg.to === senderAddress ? (
-                <Sender text={msg.message} time={msg.time} key={index} />
-              ) : (
-                <Recipient text={msg.message} time={msg.time} key={index} />
-              ),
-            )}
-          </ScrollView>
+          {chatMessages.map((msg, index) =>
+            msg.to === senderAddress ? (
+              <Sender text={msg.message} time={msg.time} key={index} />
+            ) : (
+              <Recipient text={msg.message} time={msg.time} key={index} />
+            ),
+          )}
+        </ScrollView>
 
-          <View style={styles.keyboard}>
-            <View style={styles.textInputContainer}>
-              <View style={styles.smileyIcon}>
-                <FontAwesome5 name="smile" size={20} color="black" />
-              </View>
+        //  Static
+        // <ScrollView
+        //   style={styles.section}
+        //   showsHorizontalScrollIndicator={false}>
+        //   <Time text="July 26, 2022" />
 
-              <TextInput
-                style={styles.input}
-                onChangeText={onChangeText}
-                value={text}
-                placeholder="Type your message here..."
-                placeholderTextColor="#494D5F"
-                autoFocus
-              />
-            </View>
-
-            <View style={styles.textButtonContainer}>
-              <View>
-                <Feather name="paperclip" size={20} color="black" />
-              </View>
-
-              <View style={styles.sendIcon}>
-                <FontAwesome
-                  name="send"
-                  size={24}
-                  color={Globals.COLORS.PINK}
-                  onPress={onSend}
-                />
-              </View>
-            </View>
-          </View>
-        </>
+        //   {chats.map((chat, index) =>
+        //     chat.type === CHAT_TYPES.RECIPIENT ? (
+        //       <Recipient text={chat.text} time={chat.time} key={index} />
+        //     ) : (
+        //       <Sender text={chat.text} time={chat.time} key={index} />
+        //     ),
+        //   )}
+        // </ScrollView>
       )}
+      <View style={styles.keyboard}>
+        <View style={styles.textInputContainer}>
+          <View style={styles.smileyIcon}>
+            <FontAwesome5 name="smile" size={20} color="black" />
+          </View>
+
+          <TextInput
+            style={styles.input}
+            onChangeText={setText}
+            value={text}
+            placeholder="Type your message here..."
+            placeholderTextColor="#494D5F"
+          />
+        </View>
+
+        <View style={styles.textButtonContainer}>
+          <View>
+            <Feather name="paperclip" size={20} color="black" />
+          </View>
+
+          <View style={styles.sendIcon}>
+            {isSending ? (
+              <FontAwesome
+                name="spinner"
+                size={24}
+                color={Globals.COLORS.MID_GRAY}
+              />
+            ) : (
+              <FontAwesome
+                name="send"
+                size={24}
+                color={Globals.COLORS.PINK}
+                onPress={handleSend}
+              />
+            )}
+          </View>
+        </View>
+      </View>
     </LinearGradient>
   );
 };
@@ -243,7 +272,7 @@ const styles = StyleSheet.create({
   keyboard: {
     display: 'flex',
     position: 'absolute',
-    bottom: 35,
+    bottom: 10,
     backgroundColor: Globals.COLORS.WHITE,
     borderRadius: 16,
     width: '90%',
