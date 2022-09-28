@@ -24,7 +24,6 @@ import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 
 import {AcceptIntent, Recipient, Sender, Time} from './components';
-// import {CHAT_TYPES, FULL_CHAT} from './constants';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
 import {useSendMessage} from './helpers/useSendMessage';
@@ -62,20 +61,16 @@ const SingleChatScreen = ({route}: any) => {
     await sendMessage(_text);
   };
 
-  if (!isLoading) {
-    chatMessages.map(e => {
-      // console.log('frome', e.from, ' to ', senderAddress);
-    });
-  }
+  // if (!isLoading) {
+  //   chatMessages.map(e => {
+  //     console.log('frome', e.from, ' to ', senderAddress);
+  //   });
+  // }
 
   const onAccept = () => {};
-
   const onDecline = () => {};
-
   const [visible, setVisible] = useState(false);
-
   const hideMenu = () => setVisible(false);
-
   const showMenu = () => setVisible(true);
 
   const MENU_ITEMS = [

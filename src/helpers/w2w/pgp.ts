@@ -25,6 +25,11 @@ export const pgpDecrypt = async (_cipher: string, privateKey: string) => {
   return output;
 };
 
+// Encrypt with multiple keys
+const concatPublicKeys = (senderAddress: string, receiverAddress: string) => {
+  return `${receiverAddress}\n${senderAddress}`;
+};
+
 export const encryptAndSign = async ({
   plainText,
   fromPublicKeyArmored,
@@ -44,7 +49,10 @@ export const encryptAndSign = async ({
 }> => {
   const secretKey: string = CryptoHelper.generateRandomSecret(15);
   const cipherText: string = CryptoHelper.encryptWithAES(plainText, secretKey);
-  const encryptedSecret = await OpenPGP.encrypt(secretKey, toPublicKeyArmored);
+  const encryptedSecret = await OpenPGP.encrypt(
+    secretKey,
+    concatPublicKeys(fromPublicKeyArmored, toPublicKeyArmored),
+  );
   const signature: string = await OpenPGP.sign(
     cipherText,
     fromPublicKeyArmored,

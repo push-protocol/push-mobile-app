@@ -32,14 +32,16 @@ const useSendMessage = (
   const [isSending, setIsSending] = useState(false);
   const [isSendingReady, setIsSendingReady] = useState(false);
   const messageReceiver = useRef<MessageReciver>({
-    ethAddress: receiverAddress,
+    ethAddress: getCAIPAddress(receiverAddress),
     pgpAddress: '',
   });
 
   useEffect(() => {
     (async () => {
-      console.log('sending to', receiverAddress);
-      const res = await PushNodeClient.getUser(getCAIPAddress(receiverAddress));
+      console.log('abishek sending to', receiverAddress);
+      const res = await PushNodeClient.getUser(
+        messageReceiver.current.ethAddress,
+      );
       if (res) {
         messageReceiver.current.pgpAddress = res.publicKey;
         setIsSendingReady(true);
