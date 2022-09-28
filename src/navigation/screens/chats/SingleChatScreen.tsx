@@ -16,6 +16,7 @@ import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 
 import {Recipient, Sender, Time} from './components';
+import {CHAT_TYPES, FULL_CHAT} from './constants';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
 import {useSendMessage} from './helpers/useSendMessage';
