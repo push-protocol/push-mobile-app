@@ -1,13 +1,14 @@
-import {Feather} from '@expo/vector-icons';
-import {Ionicons} from '@expo/vector-icons';
+import {Feather, FontAwesome, FontAwesome5, Ionicons} from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import dayjs from 'dayjs';
+import React, {useState} from 'react';
 import {
   Dimensions,
   Image,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -19,6 +20,21 @@ import {useConversationLoader} from './helpers/useConverstaionLoader';
 
 const SingleChatScreen = ({route}: any) => {
   const navigation = useNavigation();
+  const [text, onChangeText] = React.useState('');
+  const [chats, setChats] = useState(FULL_CHAT);
+
+  const onSend = () => {
+    setChats([
+      ...chats,
+      {
+        type: CHAT_TYPES.SENDER,
+        text,
+        time: dayjs(new Date().toISOString()).format('HH:mm'),
+      },
+    ]);
+    onChangeText('');
+  };
+
   const {cid, senderAddress, pgpPrivateKey} = route.params;
 
   const [isLoading, chatMessages] = useConversationLoader(cid, pgpPrivateKey);
@@ -53,6 +69,7 @@ const SingleChatScreen = ({route}: any) => {
               {getFormattedAddress(senderAddress)}
             </Text>
           </View>
+
           <Feather name="more-vertical" size={24} color="black" />
         </View>
       </View>
@@ -65,15 +82,45 @@ const SingleChatScreen = ({route}: any) => {
           showsHorizontalScrollIndicator={false}>
           <Time text="July 26, 2022" />
 
-          {chatMessages.map((msg, index) =>
+        {chatMessages.map((msg, index) =>
             msg.to === senderAddress ? (
               <Sender text={msg.message} time={msg.time} key={index} />
             ) : (
               <Recipient text={msg.message} time={msg.time} key={index} />
             ),
           )}
-        </ScrollView>
-      )}
+      </ScrollView>
+
+      <View style={styles.keyboard}>
+        <View style={styles.textInputContainer}>
+          <View style={styles.smileyIcon}>
+            <FontAwesome5 name="smile" size={20} color="black" />
+          </View>
+
+          <TextInput
+            style={styles.input}
+            onChangeText={onChangeText}
+            value={text}
+            placeholder="Type your message here..."
+            placeholderTextColor="#494D5F"
+          />
+        </View>
+
+        <View style={styles.textButtonContainer}>
+          <View>
+            <Feather name="paperclip" size={20} color="black" />
+          </View>
+
+          <View style={styles.sendIcon}>
+            <FontAwesome
+              name="send"
+              size={24}
+              color={Globals.COLORS.PINK}
+              onPress={onSend}
+            />
+          </View>
+        </View>
+      </View>
     </LinearGradient>
   );
 };
@@ -89,6 +136,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     width: windowWidth,
+    position: 'relative',
   },
   header: {
     width: '100%',
@@ -127,9 +175,48 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   section: {
-    height: windowHeight,
+    maxHeight: (windowHeight * 3) / 5 - 15,
     width: windowWidth,
     paddingVertical: 10,
     paddingHorizontal: 20,
+    overflow: 'scroll',
+  },
+  moreIcon: {
+    marginTop: -3,
+  },
+  keyboard: {
+    display: 'flex',
+    position: 'absolute',
+    bottom: 5,
+    backgroundColor: Globals.COLORS.WHITE,
+    borderRadius: 16,
+    width: '90%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  input: {
+    height: 35,
+    margin: 12,
+    padding: 10,
+    color: Globals.COLORS.BLACK,
+    fontSize: 16,
+  },
+  smileyIcon: {
+    marginTop: 20,
+    marginLeft: 20,
+  },
+  textInputContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  textButtonContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: 20,
+    marginRight: 20,
+  },
+  fileIcon: {},
+  sendIcon: {
+    marginLeft: 10,
   },
 });

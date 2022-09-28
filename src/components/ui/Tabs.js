@@ -8,7 +8,7 @@ import ChannelsScreen from 'src/navigation/screens/ChannelsScreen';
 import HomeScreen from 'src/navigation/screens/HomeScreen';
 import SampleFeedScreen from 'src/navigation/screens/SampleFeedScreen';
 import SpamBoxScreen from 'src/navigation/screens/SpamBoxScreen';
-import {ChatScreen} from 'src/navigation/screens/chats';
+import {SingleChatScreen} from 'src/navigation/screens/chats';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 export default function Tabs() {
@@ -97,7 +97,7 @@ export default function Tabs() {
 
       <Tab.Screen
         name={GLOBALS.SCREENS.CHATS}
-        component={ChatScreen}
+        component={SingleChatScreen}
         options={{
           tabBarLabel: 'Chats',
           tabBarIcon: ({color}) => (
