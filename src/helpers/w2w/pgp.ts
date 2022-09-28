@@ -1,5 +1,5 @@
-import {cipher} from 'eth-crypto';
 import OpenPGP from 'react-native-fast-openpgp';
+import CryptoHelper from 'src/helpers/CryptoHelper';
 
 export const generateKeyPair = async (): Promise<{
   privateKeyArmored: string;
@@ -23,4 +23,39 @@ export const generateKeyPair = async (): Promise<{
 export const pgpDecrypt = async (_cipher: string, privateKey: string) => {
   const output = await OpenPGP.decrypt(_cipher, privateKey, '');
   return output;
+};
+
+export const encryptAndSign = async ({
+  plainText,
+  fromPublicKeyArmored,
+  toPublicKeyArmored,
+  privateKeyArmored,
+}: {
+  plainText: string;
+  fromPublicKeyArmored: string;
+  toPublicKeyArmored: string;
+  privateKeyArmored: string;
+}): Promise<{
+  cipherText: string;
+  encryptedSecret: string;
+  signature: string;
+  sigType: string;
+  encType: string;
+}> => {
+  const secretKey: string = CryptoHelper.generateRandomSecret(15);
+  const cipherText: string = CryptoHelper.encryptWithAES(plainText, secretKey);
+  const encryptedSecret = await OpenPGP.encrypt(secretKey, toPublicKeyArmored);
+  const signature: string = await OpenPGP.sign(
+    cipherText,
+    fromPublicKeyArmored,
+    privateKeyArmored,
+    '',
+  );
+  return {
+    cipherText,
+    encryptedSecret, // enc AES key here
+    signature,
+    sigType: 'pgp',
+    encType: 'pgp',
+  };
 };

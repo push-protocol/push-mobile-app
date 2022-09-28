@@ -1,5 +1,5 @@
-const getCAIPAddress = (address: string) => {
-  return `eip155:42:${address}`;
+const getCAIPAddress = (ethAddress: string) => {
+  return `eip155:${ethAddress}`;
 };
 
 export const walletToCAIP10 = (account: string): string => {

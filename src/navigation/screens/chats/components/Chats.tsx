@@ -15,8 +15,6 @@ type ChatsProps = {
 const Chats = ({feeds}: ChatsProps) => {
   const [value, setValue] = useState('');
 
-  console.log('feeds', Object.keys(feeds[0]));
-
   return (
     <View style={styles.container}>
       <View style={styles.searchView}>

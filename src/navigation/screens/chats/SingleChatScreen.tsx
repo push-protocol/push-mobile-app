@@ -7,7 +7,7 @@ import {
   Ionicons,
 } from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -24,7 +24,7 @@ import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 
 import {AcceptIntent, Recipient, Sender, Time} from './components';
-import {CHAT_TYPES, FULL_CHAT} from './constants';
+// import {CHAT_TYPES, FULL_CHAT} from './constants';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
 import {useSendMessage} from './helpers/useSendMessage';
@@ -36,25 +36,29 @@ interface ChatScreenParam {
 }
 
 const SingleChatScreen = ({route}: any) => {
+  const {cid, senderAddress, connectedUser}: ChatScreenParam = route.params;
+
   const navigation = useNavigation();
   const [text, setText] = React.useState('');
-  // const [chats, setChats] = useState(FULL_CHAT);
-  const {cid, senderAddress, connectedUser}: ChatScreenParam = route.params;
-  const senderAddressFormatted = getFormattedAddress(senderAddress);
-
   const [isLoading, chatMessages] = useConversationLoader(
     cid,
     connectedUser.privateKey,
   );
+  const [isSending, sendMessage, isSendReady] = useSendMessage(
+    connectedUser,
+    senderAddress,
+  );
 
-  const [isSending, sendMessage] = useSendMessage(connectedUser, senderAddress);
+  const senderAddressFormatted = getFormattedAddress(senderAddress);
   const scrollViewRef: React.RefObject<ScrollView> = React.createRef();
 
   const handleSend = async () => {
     const _text = text;
     setText('');
     Keyboard.dismiss();
-
+    if (_text.trim() === '') {
+      return;
+    }
     await sendMessage(_text);
   };
 
@@ -74,7 +78,7 @@ const SingleChatScreen = ({route}: any) => {
 
   const showMenu = () => setVisible(true);
 
-  const MENU_ITEMS = [.
+  const MENU_ITEMS = [
     {
       text: 'Give Nickname',
       icon: <AntDesign name="user" size={24} color="black" />,
@@ -152,21 +156,6 @@ const SingleChatScreen = ({route}: any) => {
             ),
           )}
         </ScrollView>
-
-        //  Static
-        // <ScrollView
-        //   style={styles.section}
-        //   showsHorizontalScrollIndicator={false}>
-        //   <Time text="July 26, 2022" />
-
-        //   {chats.map((chat, index) =>
-        //     chat.type === CHAT_TYPES.RECIPIENT ? (
-        //       <Recipient text={chat.text} time={chat.time} key={index} />
-        //     ) : (
-        //       <Sender text={chat.text} time={chat.time} key={index} />
-        //     ),
-        //   )}
-        // </ScrollView>
       )}
       <View style={styles.keyboard}>
         <View style={styles.textInputContainer}>
@@ -189,7 +178,7 @@ const SingleChatScreen = ({route}: any) => {
           </View>
 
           <View style={styles.sendIcon}>
-            {isSending ? (
+            {isSending || !isSendReady ? (
               <FontAwesome
                 name="spinner"
                 size={24}

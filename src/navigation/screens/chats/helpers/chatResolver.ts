@@ -26,10 +26,12 @@ export interface ChatMessage {
   time: string;
 }
 
+type NextHash = string | null;
+
 const resolveCID = async (
   cid: string,
   pgpPrivateKey: string,
-): Promise<[ChatMessage, string | null]> => {
+): Promise<[ChatMessage, NextHash]> => {
   const res = await PushNodeClient.getFromIPFS(cid);
 
   const timeStamp = res.timestamp ? res.timestamp : 0;
