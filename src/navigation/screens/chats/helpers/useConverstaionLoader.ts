@@ -40,6 +40,7 @@ const useConversationLoader = (
 
     return chats;
   };
+
   useEffect(() => {
     (async () => {
       console.log('fetching chats');

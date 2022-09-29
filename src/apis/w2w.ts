@@ -46,7 +46,7 @@ export interface Feeds {
   threadhash: string | null;
   intent: string | null;
   intentSentBy: string | null;
-  intentTimestamp: Date;
+  intentTimestamp: string;
   combinedDID: string;
   cid: string;
 }

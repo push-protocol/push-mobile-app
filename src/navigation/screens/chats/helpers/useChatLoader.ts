@@ -9,10 +9,56 @@ import {
 } from 'src/helpers/w2w/metamaskSigUtil';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
 
+const createNewPgpPair = async (
+  caip10: string,
+  encryptionPublicKey: string,
+) => {
+  // Obtain pgp key
+  const keyPairs = await generateKeyPair();
+
+  const encryptedPgpKey = encryptWithRPCEncryptionPublicKeyReturnRawData(
+    keyPairs.privateKeyArmored,
+    encryptionPublicKey,
+  );
+
+  console.log('doing request');
+  const createdUser = await PushNodeClient.createUser({
+    caip10,
+    did: caip10,
+    publicKey: keyPairs.publicKeyArmored,
+    encryptedPrivateKey: JSON.stringify(encryptedPgpKey),
+    encryptionType: 'x25519-xsalsa20-poly1305',
+    signature: 'xyz',
+    sigType: 'a',
+  });
+  console.log('create new user', createdUser);
+};
+
 export interface ChatData {
   connectedUserData: PushNodeClient.ConnectedUser | undefined;
   feeds: PushNodeClient.Feeds[];
 }
+
+interface ChatFeedCache {
+  [key: string]: string;
+}
+
+const checkIfItemInCache = (
+  cache: ChatFeedCache,
+  feeds: PushNodeClient.Feeds[],
+) => {
+  let isInCache = true;
+  for (let i = 0; i < feeds.length; i++) {
+    const {threadhash, combinedDID} = feeds[i];
+
+    // update cache
+    if (!cache[combinedDID] || threadhash !== cache[combinedDID]) {
+      isInCache = false;
+      cache[combinedDID] = threadhash!;
+    }
+  }
+  return isInCache;
+};
 
 const useChatLoader = (): [boolean, ChatData] => {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,32 +66,8 @@ const useChatLoader = (): [boolean, ChatData] => {
     connectedUserData: undefined,
     feeds: [],
   });
-  // const [isError, setIsError] = useState(false);
 
-  const createNewPgpPair = async (
-    caip10: string,
-    encryptionPublicKey: string,
-  ) => {
-    // Obtain pgp key
-    const keyPairs = await generateKeyPair();
-
-    const encryptedPgpKey = encryptWithRPCEncryptionPublicKeyReturnRawData(
-      keyPairs.privateKeyArmored,
-      encryptionPublicKey,
-    );
-
-    console.log('doing request');
-    const createdUser = await PushNodeClient.createUser({
-      caip10,
-      did: caip10,
-      publicKey: keyPairs.publicKeyArmored,
-      encryptedPrivateKey: JSON.stringify(encryptedPgpKey),
-      encryptionType: 'x25519-xsalsa20-poly1305',
-      signature: 'xyz',
-      sigType: 'a',
-    });
-    console.log('create new user', createdUser);
-  };
+  const feedCache: ChatFeedCache = {};
 
   const checkUserProfile = async (
     caipAddress: string,
@@ -83,37 +105,51 @@ const useChatLoader = (): [boolean, ChatData] => {
 
   const loadInbox = async (ethAddress: string) => {
     const feeds = await PushNodeClient.getInbox(ethAddress);
+
     if (!feeds) {
       return;
     }
+
+    // check if message is already contained in cached
+    // donot update if cache is same
+    if (checkIfItemInCache(feedCache, feeds)) {
+      return;
+    }
+
+    feeds.sort(
+      (c1, c2) =>
+        Date.parse(c2.intentTimestamp) - Date.parse(c1.intentTimestamp),
+    );
 
     setChatData(prev => ({...prev, feeds}));
   };
 
   useEffect(() => {
+    console.log('this was called');
+
+    const userPk =
+      '081698f3d1afb6285784c0a88601725e97f23a0115fd4f75651fbe25d0ec2b9a'; // my chrome
+    // 'c39d17b1575c8d5e6e615767e19dc285d1f803d21882fb0c60f7f5b7edb759b2'; // my brave
+
+    const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
+    const derivedAddress = CryptoHelper.getAddressFromPublicKey(ethPublicKey);
+    console.log('derived address', derivedAddress);
+    const caipAddress = CaipHelper.walletToCAIP10(derivedAddress);
+    const encryptionPublicKey = getEncryptionPublicKey(userPk);
+
+    let fetechNewMessages: NodeJS.Timer;
     (async () => {
-      console.log('this was called');
-
-      // const {wallet} = await MetaStorage.instance.getStoredWallets()[0];
-      const userPk =
-        // 'ca0976b89057e08afa01285d8ce126045e7ba61f09fd44858d2e7fe2c380b4cf'; // my chrome
-        'c39d17b1575c8d5e6e615767e19dc285d1f803d21882fb0c60f7f5b7edb759b2'; // my brave
-
-      const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
-
-      const derivedAddress = CryptoHelper.getAddressFromPublicKey(ethPublicKey);
-      console.log('derived address', derivedAddress);
-
-      const caipAddress = CaipHelper.walletToCAIP10(derivedAddress);
-
-      const encryptionPublicKey = getEncryptionPublicKey(userPk);
-
       await checkUserProfile(caipAddress, encryptionPublicKey, userPk);
-
       await loadInbox(derivedAddress);
 
+      fetechNewMessages = setInterval(async () => {
+        console.log('Fetching new inbox');
+        await loadInbox(derivedAddress);
+      }, 3000);
       setIsLoading(false);
     })();
+
+    return () => clearInterval(fetechNewMessages);
   }, []);
 
   return [isLoading, chatData];

@@ -5,7 +5,6 @@ import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
-// import {DUMMY_CHATS} from '../constants';
 import SingleChatItem from './SingleChatItem';
 
 type ChatsProps = {
