@@ -40,6 +40,7 @@ const Chats = ({feeds}: ChatsProps) => {
             image={item.profilePicture}
             wallet={caip10ToWallet(item.wallets)}
             text={item.threadhash ? item.threadhash : ''}
+            combinedDID={item.combinedDID}
           />
         ))}
       </View>

@@ -7,7 +7,7 @@ import {
   Ionicons,
 } from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -32,16 +32,20 @@ interface ChatScreenParam {
   cid: string;
   senderAddress: string;
   connectedUser: ConnectedUser;
+  combinedDID: string;
 }
 
 const SingleChatScreen = ({route}: any) => {
-  const {cid, senderAddress, connectedUser}: ChatScreenParam = route.params;
+  const scrollViewRef = useRef<ScrollView>(null);
+  const {cid, senderAddress, connectedUser, combinedDID}: ChatScreenParam =
+    route.params;
 
   const navigation = useNavigation();
   const [text, setText] = React.useState('');
   const [isLoading, chatMessages] = useConversationLoader(
     cid,
     connectedUser.privateKey,
+    combinedDID,
   );
   const [isSending, sendMessage, isSendReady] = useSendMessage(
     connectedUser,
@@ -49,7 +53,6 @@ const SingleChatScreen = ({route}: any) => {
   );
 
   const senderAddressFormatted = getFormattedAddress(senderAddress);
-  const scrollViewRef: React.RefObject<ScrollView> = React.createRef();
 
   const handleSend = async () => {
     const _text = text;
@@ -60,12 +63,6 @@ const SingleChatScreen = ({route}: any) => {
     }
     await sendMessage(_text);
   };
-
-  // if (!isLoading) {
-  //   chatMessages.map(e => {
-  //     console.log('frome', e.from, ' to ', senderAddress);
-  //   });
-  // }
 
   const onAccept = () => {};
   const onDecline = () => {};
@@ -136,10 +133,11 @@ const SingleChatScreen = ({route}: any) => {
           style={styles.section}
           showsHorizontalScrollIndicator={false}
           ref={scrollViewRef}
-          onContentSizeChange={() =>
-            scrollViewRef.current?.scrollToEnd({animated: true})
-          }>
-          <Time text="July 26, 2022" />
+          onContentSizeChange={() => {
+            if (scrollViewRef.current) {
+              scrollViewRef.current.scrollToEnd({animated: true});
+            }
+          }}>
           <Time text="July 26, 2022" />
           <AcceptIntent onAccept={onAccept} onDecline={onDecline} />
 

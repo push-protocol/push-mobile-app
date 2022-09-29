@@ -3,4 +3,5 @@ export interface SingleChatItemProps {
   wallet: string;
   text: string;
   count?: number;
+  combinedDID: string;
 }

@@ -134,7 +134,6 @@ export const getInbox = async (did: string): Promise<Feeds[] | undefined> => {
   for (let i = 0; i < 3; i++) {
     try {
       const path = BASE_URL + '/v1/w2w/users/eip155:' + did + '/messages';
-      console.log('calling', path);
 
       const response = await fetch(path, {
         method: 'GET',
