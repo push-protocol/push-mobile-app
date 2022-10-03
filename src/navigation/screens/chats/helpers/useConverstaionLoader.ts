@@ -3,6 +3,7 @@ import * as PushNodeClient from 'src/apis';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
 import {ChatMessage, resolveCID} from './chatResolver';
+import {getStoredConversationData} from './storage';
 
 const FETCH_ONCE = 15;
 
@@ -31,6 +32,7 @@ const useConversationLoader = (
   const isFetching = useRef(false);
 
   const fetchChats = async (_pgpPrivateKey: string) => {
+    console.log('_pgpPrivateKey: ', _pgpPrivateKey);
     isFetching.current = true;
     let chats: ChatMessage[] = [];
     let hash = currentHash.current;

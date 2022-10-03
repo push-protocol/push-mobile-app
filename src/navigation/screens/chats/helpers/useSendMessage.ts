@@ -4,6 +4,8 @@ import * as PushNodeClient from 'src/apis';
 import {getCAIPAddress} from 'src/helpers/CAIPHelper';
 import {encryptAndSign} from 'src/helpers/w2w/pgp';
 
+import {storeConversationData} from './storage';
+
 type sendMessageFunc = (message: string) => Promise<void>;
 type useSendMessageReturnType = [boolean, sendMessageFunc, boolean];
 type MessageReciver = {ethAddress: string; pgpAddress: string};
@@ -80,7 +82,9 @@ const useSendMessage = (
 
     try {
       const res = await PushNodeClient.postMessage(postBody);
-      console.log(res);
+
+      await storeConversationData(messageReceiver.current.ethAddress, res);
+      console.log('Message response: ', res);
     } catch (error) {
       console.log('error', error);
     }

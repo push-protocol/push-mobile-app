@@ -137,3 +137,11 @@ export const FULL_CHAT = [
     text: 'No, I did not',
   },
 ];
+
+export const STORAGE_CONSTANTS = {
+  CHAT_DATA: 'chat-data',
+  PRIVATE_CHAT: 'private-chat',
+};
+
+export const CACHE_LIMIT = 100;
+

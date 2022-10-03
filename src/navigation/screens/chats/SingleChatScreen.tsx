@@ -42,11 +42,14 @@ const SingleChatScreen = ({route}: any) => {
 
   const navigation = useNavigation();
   const [text, setText] = React.useState('');
+
   const [isLoading, chatMessages] = useConversationLoader(
     cid,
     connectedUser.privateKey,
     combinedDID,
   );
+
+  console.log('Chat Messages: ', chatMessages);
   const [isSending, sendMessage, isSendReady] = useSendMessage(
     connectedUser,
     senderAddress,
@@ -254,7 +257,7 @@ const styles = StyleSheet.create({
   keyboard: {
     display: 'flex',
     position: 'absolute',
-    bottom: 10,
+    bottom: 20,
     backgroundColor: Globals.COLORS.WHITE,
     borderRadius: 16,
     width: '90%',

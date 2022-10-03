@@ -9,6 +9,8 @@ import {
 } from 'src/helpers/w2w/metamaskSigUtil';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
 
+import {getPersistedChatData, persistChatData} from './storage';
+
 const createNewPgpPair = async (
   caip10: string,
   encryptionPublicKey: string,
@@ -62,6 +64,7 @@ const checkIfItemInCache = (
 
 const useChatLoader = (): [boolean, ChatData] => {
   const [isLoading, setIsLoading] = useState(true);
+
   const [chatData, setChatData] = useState<ChatData>({
     connectedUserData: undefined,
     feeds: [],
@@ -100,7 +103,21 @@ const useChatLoader = (): [boolean, ChatData] => {
       privateKey: decryptedPrivateKey,
     };
 
+    persistChatData({
+      ...chatData,
+      connectedUserData,
+    });
+
     setChatData(prev => ({...prev, connectedUserData}));
+  };
+
+  const loadCachedInbox = async () => {
+    const cachedData = await getPersistedChatData();
+
+    if (cachedData) {
+      setChatData(cachedData);
+      setIsLoading(false);
+    }
   };
 
   const loadInbox = async (ethAddress: string) => {
@@ -121,7 +138,14 @@ const useChatLoader = (): [boolean, ChatData] => {
         Date.parse(c2.intentTimestamp) - Date.parse(c1.intentTimestamp),
     );
 
+    persistChatData({
+      ...chatData,
+      feeds,
+    });
+
     setChatData(prev => ({...prev, feeds}));
+
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -137,19 +161,20 @@ const useChatLoader = (): [boolean, ChatData] => {
     const caipAddress = CaipHelper.walletToCAIP10(derivedAddress);
     const encryptionPublicKey = getEncryptionPublicKey(userPk);
 
-    let fetechNewMessages: NodeJS.Timer;
+    let fetchNewMessages: NodeJS.Timer;
+
     (async () => {
       await checkUserProfile(caipAddress, encryptionPublicKey, userPk);
+      await loadCachedInbox();
       await loadInbox(derivedAddress);
 
-      fetechNewMessages = setInterval(async () => {
+      fetchNewMessages = setInterval(async () => {
         console.log('Fetching new inbox');
         await loadInbox(derivedAddress);
       }, 3000);
-      setIsLoading(false);
     })();
 
-    return () => clearInterval(fetechNewMessages);
+    return () => clearInterval(fetchNewMessages);
   }, []);
 
   return [isLoading, chatData];
