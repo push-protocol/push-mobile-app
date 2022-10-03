@@ -1,29 +1,27 @@
-import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import Globals from 'src/Globals';
+import {Feeds} from 'src/apis';
+import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
-import {DUMMY_REQUESTS} from '../constants';
 import SingleChatItem from './SingleChatItem';
 
-const Requests = () => {
-  const navigation = useNavigation();
+type RequestProps = {
+  requests: Feeds[];
+  isIntentPage: boolean;
+};
+
+const Requests = ({requests, isIntentPage}: RequestProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        {DUMMY_REQUESTS.map((item, index) => (
+        {requests.map((item, index) => (
           <SingleChatItem
             key={index}
-            image={item.image}
-            wallet={item.wallet}
-            text={item.text}
-            time={item.time}
-            onPress={() =>
-              //@ts-ignore
-              navigation.navigate(Globals.SCREENS.SINGLE_CHAT, {
-                wallet: item.wallet,
-              })
-            }
+            image={item.profilePicture}
+            wallet={caip10ToWallet(item.wallets)}
+            text={item.threadhash ? item.threadhash : ''}
+            combinedDID={item.combinedDID}
+            isIntentPage={isIntentPage}
           />
         ))}
       </View>

@@ -205,3 +205,29 @@ export const postMessage = async ({
   const data: MessageIPFSWithCID | string = await response.json();
   return data;
 };
+
+export const approveIntent = async (
+  fromDID: string,
+  toDID: string,
+  status: string,
+  signature: string,
+  sigType: string,
+): Promise<string> => {
+  const response = await fetch(BASE_URL + '/v1/w2w/intents', {
+    method: 'PUT',
+    headers: {
+      'content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      toDID,
+      fromDID,
+      status,
+      signature,
+      sigType,
+    }),
+  });
+  if (response.status < 200 || response.status > 299) {
+    throw new Error('Error changing intent status');
+  }
+  return await response.json();
+};

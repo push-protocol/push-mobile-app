@@ -37,6 +37,7 @@ const createNewPgpPair = async (
 export interface ChatData {
   connectedUserData: PushNodeClient.ConnectedUser | undefined;
   feeds: PushNodeClient.Feeds[];
+  requests: PushNodeClient.Feeds[];
 }
 
 interface ChatFeedCache {
@@ -65,6 +66,7 @@ const useChatLoader = (): [boolean, ChatData] => {
   const [chatData, setChatData] = useState<ChatData>({
     connectedUserData: undefined,
     feeds: [],
+    requests: [],
   });
 
   const feedCache: ChatFeedCache = {};
@@ -103,6 +105,23 @@ const useChatLoader = (): [boolean, ChatData] => {
     setChatData(prev => ({...prev, connectedUserData}));
   };
 
+  const filterChatAndRequestFeeds = (
+    userAddress: string,
+    feeds: PushNodeClient.Feeds[],
+  ) => {
+    const chatFeeds: PushNodeClient.Feeds[] = [];
+    const requestFeeds: PushNodeClient.Feeds[] = [];
+
+    feeds.forEach(element => {
+      if (element.intent?.includes(userAddress)) {
+        chatFeeds.push(element);
+      } else {
+        requestFeeds.push(element);
+      }
+    });
+    return [chatFeeds, requestFeeds];
+  };
+
   const loadInbox = async (ethAddress: string) => {
     const feeds = await PushNodeClient.getInbox(ethAddress);
 
@@ -121,7 +140,16 @@ const useChatLoader = (): [boolean, ChatData] => {
         Date.parse(c2.intentTimestamp) - Date.parse(c1.intentTimestamp),
     );
 
-    setChatData(prev => ({...prev, feeds}));
+    const [newChatFeeds, newRequestFeeds] = filterChatAndRequestFeeds(
+      ethAddress,
+      feeds,
+    );
+
+    setChatData(prev => ({
+      ...prev,
+      feeds: newChatFeeds,
+      requests: newRequestFeeds,
+    }));
   };
 
   useEffect(() => {

@@ -9,9 +9,10 @@ import SingleChatItem from './SingleChatItem';
 
 type ChatsProps = {
   feeds: PushNodeClient.Feeds[];
+  isIntentPage: boolean;
 };
 
-const Chats = ({feeds}: ChatsProps) => {
+const Chats = ({feeds, isIntentPage}: ChatsProps) => {
   const [value, setValue] = useState('');
 
   return (
@@ -41,6 +42,7 @@ const Chats = ({feeds}: ChatsProps) => {
             wallet={caip10ToWallet(item.wallets)}
             text={item.threadhash ? item.threadhash : ''}
             combinedDID={item.combinedDID}
+            isIntentPage={isIntentPage}
           />
         ))}
       </View>
