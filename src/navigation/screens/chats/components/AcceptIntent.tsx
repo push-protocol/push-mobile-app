@@ -11,21 +11,21 @@ const AcceptIntent = (props: Props) => {
   return (
     <View style={styles.container}>
       <View style={styles.textView}>
-        <Text>Please accept to continue or reject to decline!</Text>
+        <Text>Please accept to enable push chat from this wallet</Text>
       </View>
 
       <View style={styles.buttons}>
-        <AntDesign
+        {/* <AntDesign
           name="closecircleo"
           size={24}
           color="#657795"
           style={styles.closeButton}
           onPress={props.onDecline}
-        />
+        /> */}
 
         <AntDesign
           name="checkcircle"
-          size={24}
+          size={38}
           color="#30CC8B"
           style={styles.acceptButton}
           onPress={props.onAccept}

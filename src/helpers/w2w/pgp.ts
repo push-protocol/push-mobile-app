@@ -5,7 +5,6 @@ export const generateKeyPair = async (): Promise<{
   privateKeyArmored: string;
   publicKeyArmored: string;
 }> => {
-  console.log('called');
   const keys = await OpenPGP.generate({
     name: '',
     email: '',
@@ -66,4 +65,19 @@ export const encryptAndSign = async ({
     sigType: 'pgp',
     encType: 'pgp',
   };
+};
+
+export const pgpSign = async (
+  plainText: string,
+  fromPublicKeyArmored: string,
+  privateKeyArmored: string,
+) => {
+  const signature: string = await OpenPGP.sign(
+    plainText,
+    fromPublicKeyArmored,
+    privateKeyArmored,
+    '',
+  );
+
+  return signature;
 };

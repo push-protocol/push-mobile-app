@@ -19,6 +19,7 @@ import {useChatLoader} from './helpers/useChatLoader';
 export interface AppContext {
   connectedUser: PushNodeClient.ConnectedUser;
   feeds: PushNodeClient.Feeds[];
+  requests: PushNodeClient.Feeds[];
 }
 
 export const Context = React.createContext<AppContext | null>(null);
@@ -53,6 +54,7 @@ const ChatScreen = () => {
       value={{
         connectedUser: chatData.connectedUserData,
         feeds: chatData.feeds,
+        requests: chatData.requests,
       }}>
       <SafeAreaView style={styles.container}>
         <View>
@@ -87,7 +89,9 @@ const ChatScreen = () => {
                   Requests
                 </Text>
                 <View style={styles.count}>
-                  <Text style={styles.countText}>{10}</Text>
+                  <Text style={styles.countText}>
+                    {chatData.requests ? chatData.requests.length : 0}
+                  </Text>
                 </View>
               </View>
             </TouchableWithoutFeedback>
@@ -97,9 +101,9 @@ const ChatScreen = () => {
             style={styles.content}
             showsHorizontalScrollIndicator={false}>
             {tab === TABS.CHATS ? (
-              <Chat feeds={chatData.feeds} />
+              <Chat feeds={chatData.feeds} isIntentPage={false} />
             ) : (
-              <Requests />
+              <Requests requests={chatData.requests} isIntentPage={true} />
             )}
           </ScrollView>
         </View>
@@ -174,7 +178,10 @@ const styles = StyleSheet.create({
   },
   countText: {
     color: 'white',
+    paddingLeft: 3,
+    paddingRight: 3,
   },
+
   bottomText: {
     color: Globals.COLORS.BLACK,
     marginLeft: 10,

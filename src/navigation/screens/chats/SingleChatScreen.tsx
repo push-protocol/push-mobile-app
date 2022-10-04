@@ -22,6 +22,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import {Menu, MenuItem} from 'react-native-material-menu';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
+import * as PushNodeClient from 'src/apis';
+import {walletToCAIP10} from 'src/helpers/CAIPHelper';
+import {pgpSign} from 'src/helpers/w2w/pgp';
 
 import {AcceptIntent, Recipient, Sender, Time} from './components';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
@@ -33,12 +36,17 @@ interface ChatScreenParam {
   senderAddress: string;
   connectedUser: ConnectedUser;
   combinedDID: string;
+  isIntentPage: boolean;
 }
 
 const SingleChatScreen = ({route}: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const {cid, senderAddress, connectedUser, combinedDID}: ChatScreenParam =
     route.params;
+
+  const [isIntentPage, setIsIntentPage] = useState<boolean>(
+    route.params.isIntentPage,
+  );
 
   const navigation = useNavigation();
   const [text, setText] = React.useState('');
@@ -49,7 +57,6 @@ const SingleChatScreen = ({route}: any) => {
     combinedDID,
   );
 
-  console.log('Chat Messages: ', chatMessages);
   const [isSending, sendMessage, isSendReady] = useSendMessage(
     connectedUser,
     senderAddress,
@@ -67,7 +74,29 @@ const SingleChatScreen = ({route}: any) => {
     await sendMessage(_text);
   };
 
-  const onAccept = () => {};
+  const onAccept = async () => {
+    // user approves with signature
+    const APPROVED_INTENT = 'Approved';
+    const signature = await pgpSign(
+      APPROVED_INTENT,
+      connectedUser.publicKey,
+      connectedUser.privateKey,
+    );
+
+    // post to the
+    const updatedIntent: string = await PushNodeClient.approveIntent(
+      walletToCAIP10(senderAddress),
+      connectedUser.wallets,
+      APPROVED_INTENT,
+      signature,
+      'sigType',
+    );
+
+    console.log('approved intent', updatedIntent);
+
+    // update state to load chats
+    setIsIntentPage(false);
+  };
   const onDecline = () => {};
   const [visible, setVisible] = useState(false);
   const hideMenu = () => setVisible(false);
@@ -141,8 +170,9 @@ const SingleChatScreen = ({route}: any) => {
               scrollViewRef.current.scrollToEnd({animated: true});
             }
           }}>
-          <Time text="July 26, 2022" />
-          <AcceptIntent onAccept={onAccept} onDecline={onDecline} />
+          <Time
+            text={chatMessages.length > 0 ? chatMessages[0].time : 'No date'}
+          />
 
           {chatMessages.map((msg, index) =>
             msg.to === senderAddress ? (
@@ -151,46 +181,55 @@ const SingleChatScreen = ({route}: any) => {
               <Recipient text={msg.message} time={msg.time} key={index} />
             ),
           )}
+
+          {/* Donot show intent checkbox in chat page */}
+          {isIntentPage && (
+            <AcceptIntent onAccept={onAccept} onDecline={onDecline} />
+          )}
         </ScrollView>
       )}
-      <View style={styles.keyboard}>
-        <View style={styles.textInputContainer}>
-          <View style={styles.smileyIcon}>
-            <FontAwesome5 name="smile" size={20} color="black" />
+
+      {/* Donot show keyboard at intent page */}
+      {!isIntentPage && (
+        <View style={styles.keyboard}>
+          <View style={styles.textInputContainer}>
+            <View style={styles.smileyIcon}>
+              <FontAwesome5 name="smile" size={20} color="black" />
+            </View>
+
+            <TextInput
+              style={styles.input}
+              onChangeText={setText}
+              value={text}
+              placeholder="Type your message here..."
+              placeholderTextColor="#494D5F"
+            />
           </View>
 
-          <TextInput
-            style={styles.input}
-            onChangeText={setText}
-            value={text}
-            placeholder="Type your message here..."
-            placeholderTextColor="#494D5F"
-          />
+          <View style={styles.textButtonContainer}>
+            <View>
+              <Feather name="paperclip" size={20} color="black" />
+            </View>
+
+            <View style={styles.sendIcon}>
+              {isSending || !isSendReady ? (
+                <FontAwesome
+                  name="spinner"
+                  size={24}
+                  color={Globals.COLORS.MID_GRAY}
+                />
+              ) : (
+                <FontAwesome
+                  name="send"
+                  size={24}
+                  color={Globals.COLORS.PINK}
+                  onPress={handleSend}
+                />
+              )}
+            </View>
+          </View>
         </View>
-
-        <View style={styles.textButtonContainer}>
-          <View>
-            <Feather name="paperclip" size={20} color="black" />
-          </View>
-
-          <View style={styles.sendIcon}>
-            {isSending || !isSendReady ? (
-              <FontAwesome
-                name="spinner"
-                size={24}
-                color={Globals.COLORS.MID_GRAY}
-              />
-            ) : (
-              <FontAwesome
-                name="send"
-                size={24}
-                color={Globals.COLORS.PINK}
-                onPress={handleSend}
-              />
-            )}
-          </View>
-        </View>
-      </View>
+      )}
     </LinearGradient>
   );
 };
