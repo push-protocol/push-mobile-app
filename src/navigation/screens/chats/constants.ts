@@ -145,3 +145,4 @@ export const STORAGE_CONSTANTS = {
 
 export const CACHE_LIMIT = 100;
 
+export const FETCH_ONCE = 15;

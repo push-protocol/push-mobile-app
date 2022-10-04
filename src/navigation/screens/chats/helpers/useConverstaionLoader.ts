@@ -2,10 +2,9 @@ import {useEffect, useRef, useState} from 'react';
 import * as PushNodeClient from 'src/apis';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
+import {FETCH_ONCE} from '../constants';
 import {ChatMessage, resolveCID} from './chatResolver';
 import {getStoredConversationData} from './storage';
-
-const FETCH_ONCE = 15;
 
 const getLatestHash = async (
   combinedDID: string,
@@ -91,6 +90,11 @@ const useConversationLoader = (
     (async () => {
       console.log('fetching chats');
       setChatData([]);
+      const cachedMessages = await getStoredConversationData(pgpPrivateKey);
+      if (cachedMessages) {
+        setChatData(prev => [...prev, ...cachedMessages]);
+        setIsLoading(false);
+      }
       const msgs = await fetchChats(pgpPrivateKey);
       setChatData(prev => [...prev, ...msgs]);
       setIsLoading(false);

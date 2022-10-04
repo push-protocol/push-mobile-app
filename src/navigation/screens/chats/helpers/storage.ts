@@ -66,17 +66,13 @@ export const storeConversationData = async (
       return;
     }
 
-    let parsedData = JSON.parse(cachedData);
-
-    if (parsedData.length >= CACHE_LIMIT) {
-      parsedData = parsedData.slice(-CACHE_LIMIT + 1);
-    }
+    const parsedData = JSON.parse(cachedData);
 
     parsedData.push(payload);
 
     await AsyncStorage.setItem(
       `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
-      JSON.stringify(parsedData),
+      JSON.stringify(parsedData.slice(-CACHE_LIMIT)),
     );
   } catch (error) {
     console.error(error);
