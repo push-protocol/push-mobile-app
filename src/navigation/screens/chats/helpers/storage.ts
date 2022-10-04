@@ -1,11 +1,11 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 import {CACHE_LIMIT, STORAGE_CONSTANTS} from '../constants';
 import {ChatData} from './useChatLoader';
 
 export const persistChatData = async (payload: ChatData): Promise<void> => {
   try {
-    await AsyncStorage.setItem(
+    await EncryptedStorage.setItem(
       STORAGE_CONSTANTS.CHAT_DATA,
       JSON.stringify(payload),
     );
@@ -16,7 +16,7 @@ export const persistChatData = async (payload: ChatData): Promise<void> => {
 
 export const getPersistedChatData = async (): Promise<ChatData | null> => {
   try {
-    const data = await AsyncStorage.getItem(STORAGE_CONSTANTS.CHAT_DATA);
+    const data = await EncryptedStorage.getItem(STORAGE_CONSTANTS.CHAT_DATA);
 
     if (data == null) {
       return null;
@@ -34,7 +34,7 @@ export const getStoredConversationData = async (
   userAddress: string,
 ): Promise<any | null> => {
   try {
-    const cachedData = await AsyncStorage.getItem(
+    const cachedData = await EncryptedStorage.getItem(
       `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
     );
 
@@ -58,7 +58,7 @@ export const storeConversationData = async (
     const cachedData = await getStoredConversationData(userAddress);
 
     if (cachedData == null) {
-      await AsyncStorage.setItem(
+      await EncryptedStorage.setItem(
         `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
         JSON.stringify([payload]),
       );
@@ -70,10 +70,18 @@ export const storeConversationData = async (
 
     parsedData.push(payload);
 
-    await AsyncStorage.setItem(
+    await EncryptedStorage.setItem(
       `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
       JSON.stringify(parsedData.slice(-CACHE_LIMIT)),
     );
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const clearStorage = async () => {
+  try {
+    await EncryptedStorage.clear();
   } catch (error) {
     console.error(error);
   }

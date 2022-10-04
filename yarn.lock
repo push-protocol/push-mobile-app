@@ -11636,6 +11636,11 @@
   dependencies:
     "dotenv" "^10.0.0"
 
+"react-native-encrypted-storage@^4.0.2":
+  "integrity" "sha512-vneDkHGDuTvLQjUBztqb2YI8QoH1zxdJonPGTS+g57lfJZff9fAjoLSSb6NgMBebpXFcK3I3sEresGyL+3AArw=="
+  "resolved" "https://registry.npmjs.org/react-native-encrypted-storage/-/react-native-encrypted-storage-4.0.2.tgz"
+  "version" "4.0.2"
+
 "react-native-fast-openpgp@^2.4.2":
   "integrity" "sha512-LMGnuzjzZ/YmYxFyWZJBWBuDezOc99ke0doSTo3Dan1E8gG6bD32GtxilFMuUHMQTdKBz6m41TCTbwnW1VzpMg=="
   "resolved" "https://registry.npmjs.org/react-native-fast-openpgp/-/react-native-fast-openpgp-2.4.2.tgz"
