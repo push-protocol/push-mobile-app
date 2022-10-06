@@ -22,6 +22,9 @@ const ChatItem = (props: SingleChatItemProps) => {
     throw new Error('Invalid context');
   }
 
+  console.log('got image', props.image);
+  console.log('got did', props.combinedDID);
+
   const [lastMessage, setLastMessage] = useState('decrypting....');
   const [timeStamp, setTimeStamp] = useState('...');
   const [isLoading, setLoading] = useState(true);
@@ -44,6 +47,11 @@ const ChatItem = (props: SingleChatItemProps) => {
 
   useEffect(() => {
     (async () => {
+      if (!cid) {
+        setLastMessage('Start new conversation');
+        setLoading(false);
+        return;
+      }
       const [chatMessage] = await resolveCID(
         cid,
         appContext.connectedUser.privateKey,

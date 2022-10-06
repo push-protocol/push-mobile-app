@@ -38,7 +38,7 @@ const useSendMessage = (
 
   useEffect(() => {
     (async () => {
-      console.log('abishek sending to', receiverAddress);
+      console.log('sending to', receiverAddress);
       const res = await PushNodeClient.getUser(
         messageReceiver.current.ethAddress,
       );
