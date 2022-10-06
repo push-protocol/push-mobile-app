@@ -4,7 +4,7 @@ import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
 import {FETCH_ONCE} from '../constants';
 import {ChatMessage, resolveCID} from './chatResolver';
-import {getStoredConversationData} from './storage';
+import {getStoredConversationData, storeConversationData} from './storage';
 
 const getLatestHash = async (
   combinedDID: string,
@@ -97,6 +97,7 @@ const useConversationLoader = (
       }
       const msgs = await fetchChats(pgpPrivateKey);
       setChatData(prev => [...prev, ...msgs]);
+      await storeConversationData(pgpPrivateKey, msgs);
       setIsLoading(false);
       console.log('chats loaded');
 
@@ -119,6 +120,7 @@ const useConversationLoader = (
               currentHash.current,
             );
             console.log('new message palced');
+            await storeConversationData(pgpPrivateKey, newMsgs);
             setChatData(prev => [...prev, ...newMsgs]);
           }
         }

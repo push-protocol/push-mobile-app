@@ -52,23 +52,34 @@ export const getStoredConversationData = async (
 
 export const storeConversationData = async (
   userAddress: string,
-  payload: any,
+  payload: any | any[],
 ): Promise<void> => {
   try {
     const cachedData = await getStoredConversationData(userAddress);
 
     if (cachedData == null) {
-      await EncryptedStorage.setItem(
-        `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
-        JSON.stringify([payload]),
-      );
+      if (Array.isArray(payload)) {
+        await EncryptedStorage.setItem(
+          `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
+          JSON.stringify(payload),
+        );
+      } else {
+        await EncryptedStorage.setItem(
+          `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
+          JSON.stringify([payload]),
+        );
+      }
 
       return;
     }
 
-    const parsedData = JSON.parse(cachedData);
+    let parsedData = JSON.parse(cachedData);
 
-    parsedData.push(payload);
+    if (Array.isArray(payload)) {
+      parsedData = parsedData.concat(payload);
+    } else {
+      parsedData.push(payload);
+    }
 
     await EncryptedStorage.setItem(
       `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
