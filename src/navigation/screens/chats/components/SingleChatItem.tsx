@@ -41,7 +41,8 @@ const ChatItem = (props: SingleChatItemProps) => {
       senderAddress: props.wallet,
       connectedUser: appContext.connectedUser,
       combinedDID: props.combinedDID,
-      isIntentPage: props.isIntentPage,
+      isIntentReceivePage: props.isIntentReceivePage,
+      isIntentSendPage: props.isIntentSendPage,
     });
   };
 

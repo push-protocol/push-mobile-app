@@ -4,5 +4,6 @@ export interface SingleChatItemProps {
   text: string | null;
   count?: number;
   combinedDID: string;
-  isIntentPage: boolean;
+  isIntentReceivePage: boolean;
+  isIntentSendPage: boolean;
 }

@@ -36,16 +36,22 @@ interface ChatScreenParam {
   senderAddress: string;
   connectedUser: ConnectedUser;
   combinedDID: string;
-  isIntentPage: boolean;
+  isIntentSendPage: boolean;
+  isIntentReceivePage: boolean;
 }
 
 const SingleChatScreen = ({route}: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
-  const {cid, senderAddress, connectedUser, combinedDID}: ChatScreenParam =
-    route.params;
+  const {
+    cid,
+    senderAddress,
+    connectedUser,
+    combinedDID,
+    isIntentSendPage,
+  }: ChatScreenParam = route.params;
 
-  const [isIntentPage, setIsIntentPage] = useState<boolean>(
-    route.params.isIntentPage,
+  const [isIntentReceivePage, setisIntentReceivePage] = useState<boolean>(
+    route.params.isIntentReceivePage,
   );
 
   const navigation = useNavigation();
@@ -59,6 +65,7 @@ const SingleChatScreen = ({route}: any) => {
   const [isSending, sendMessage, isSendReady] = useSendMessage(
     connectedUser,
     senderAddress,
+    isIntentSendPage,
   );
 
   const senderAddressFormatted = getFormattedAddress(senderAddress);
@@ -94,7 +101,7 @@ const SingleChatScreen = ({route}: any) => {
     console.log('approved intent', updatedIntent);
 
     // update state to load chats
-    setIsIntentPage(false);
+    setisIntentReceivePage(false);
   };
   const onDecline = () => {};
   const [visible, setVisible] = useState(false);
@@ -182,14 +189,14 @@ const SingleChatScreen = ({route}: any) => {
           )}
 
           {/* Donot show intent checkbox in chat page */}
-          {isIntentPage && (
+          {isIntentReceivePage && (
             <AcceptIntent onAccept={onAccept} onDecline={onDecline} />
           )}
         </ScrollView>
       )}
 
       {/* Donot show keyboard at intent page */}
-      {!isIntentPage && (
+      {!isIntentReceivePage && (
         <View style={styles.keyboard}>
           <View style={styles.textInputContainer}>
             <View style={styles.smileyIcon}>

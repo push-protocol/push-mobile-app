@@ -11,7 +11,7 @@ import SingleChatItem from './SingleChatItem';
 
 type ChatsProps = {
   feeds: PushNodeClient.Feeds[];
-  isIntentPage: boolean;
+  isIntentReceivePage: boolean;
 };
 
 const getCombinedDID = (addrs1: string, addrs2: string) => {
@@ -21,7 +21,7 @@ const getCombinedDID = (addrs1: string, addrs2: string) => {
 const tempImage =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA60lEQVR4AcXBsW3EMAxA0R9CM7jPEgY8QUqtoIaNu9SuvYIbNVyBUxxwo2iJpKVTKDhcwfc+vj6/f5g49kF0Xgszxz6IzmthRkgmJBOSFTUn6q0SjfXBzVWZGeuDm6sSqTmRkExIJiQrvVUiNSfqrRKpOTO9VSI1J+qtEgnJhGRCssI/1JxXqDmvEJIJyYRk5dgH0eCut0qk5sz0VonUnOjYB5GQTEgmJCvntRDpyo2aE/VWmVFzZs5rIRKSCcmEZIU/ludGNNYHkZrziuW5MSMkE5IJyYqac/PciHqrvOPYB5GaEwnJhGRCsl/QAz+87qkGxwAAAABJRU5ErkJggg==';
 
-const Chats = ({feeds, isIntentPage}: ChatsProps) => {
+const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
   const [value, setValue] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchEnabled, setIsSearchEnabled] = useState(false);
@@ -98,7 +98,8 @@ const Chats = ({feeds, isIntentPage}: ChatsProps) => {
               value,
               appContext?.connectedUser.wallets!,
             )}
-            isIntentPage={isIntentPage}
+            isIntentReceivePage={isIntentReceivePage}
+            isIntentSendPage={true}
           />
         </View>
       )}
@@ -112,7 +113,8 @@ const Chats = ({feeds, isIntentPage}: ChatsProps) => {
               wallet={caip10ToWallet(item.wallets)}
               text={item.threadhash ? item.threadhash : ''}
               combinedDID={item.combinedDID}
-              isIntentPage={isIntentPage}
+              isIntentReceivePage={isIntentReceivePage}
+              isIntentSendPage={false}
             />
           ))}
         </View>

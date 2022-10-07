@@ -28,6 +28,7 @@ const getEncryptedMessage = async (
 const useSendMessage = (
   connectedUser: ConnectedUser,
   receiverAddress: string,
+  isIntentSendPage: boolean,
 ): useSendMessageReturnType => {
   const [isSending, setIsSending] = useState(false);
   const [isSendingReady, setIsSendingReady] = useState(false);
@@ -89,7 +90,49 @@ const useSendMessage = (
     setIsSending(false);
   };
 
-  return [isSending, sendMessage, isSendingReady];
+  const sendIntent = async (message: string) => {
+    if (!isSendingReady) {
+      return;
+    }
+    setIsSending(true);
+    console.log('**** send intent');
+    const msg = await getEncryptedMessage(
+      connectedUser,
+      messageReceiver.current,
+      message,
+    );
+
+    const postBody = {
+      fromCAIP10: connectedUser.wallets,
+      fromDID: connectedUser.wallets,
+      toDID: messageReceiver.current.ethAddress,
+      toCAIP10: messageReceiver.current.ethAddress,
+      messageContent: msg.cipherText,
+      messageType: 'Text',
+      signature: msg.signature,
+      encType: msg.encType,
+      sigType: msg.sigType,
+      encryptedSecret: msg.encryptedSecret,
+    };
+
+    console.log('posting', JSON.stringify(postBody));
+
+    try {
+      const res = await PushNodeClient.postIntent(postBody);
+      console.log(res);
+    } catch (error) {
+      console.log('error', error);
+    }
+    console.log('**** intent successfully sent');
+
+    setIsSending(false);
+  };
+
+  if (isIntentSendPage) {
+    return [isSending, sendIntent, isSendingReady];
+  } else {
+    return [isSending, sendMessage, isSendingReady];
+  }
 };
 
 export {useSendMessage};

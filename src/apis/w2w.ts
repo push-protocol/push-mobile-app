@@ -232,7 +232,7 @@ export const approveIntent = async (
   return await response.json();
 };
 
-export const createIntent = async ({
+export const postIntent = async ({
   toDID,
   fromDID,
   fromCAIP10,

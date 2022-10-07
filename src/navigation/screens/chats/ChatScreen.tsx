@@ -101,9 +101,12 @@ const ChatScreen = () => {
             style={styles.content}
             showsHorizontalScrollIndicator={false}>
             {tab === TABS.CHATS ? (
-              <Chat feeds={chatData.feeds} isIntentPage={false} />
+              <Chat feeds={chatData.feeds} isIntentReceivePage={false} />
             ) : (
-              <Requests requests={chatData.requests} isIntentPage={true} />
+              <Requests
+                requests={chatData.requests}
+                isIntentReceivePage={true}
+              />
             )}
           </ScrollView>
         </View>
