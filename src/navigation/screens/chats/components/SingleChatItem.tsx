@@ -22,16 +22,12 @@ const ChatItem = (props: SingleChatItemProps) => {
     throw new Error('Invalid context');
   }
 
-  console.log('got image', props.image);
-  console.log('got did', props.combinedDID);
-
   const [lastMessage, setLastMessage] = useState('decrypting....');
   const [timeStamp, setTimeStamp] = useState('...');
   const [isLoading, setLoading] = useState(true);
 
   const handleChatDetail = async () => {
     if (isLoading) {
-      console.log('thread info loading');
       return;
     }
 

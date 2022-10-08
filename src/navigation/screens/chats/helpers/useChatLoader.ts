@@ -1,13 +1,14 @@
 import {getEncryptionPublicKey} from '@metamask/eth-sig-util';
 import {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
 import * as PushNodeClient from 'src/apis';
 import * as CaipHelper from 'src/helpers/CAIPHelper';
-import CryptoHelper from 'src/helpers/CryptoHelper';
 import {
   decryptWithWalletRPCMethod,
   encryptWithRPCEncryptionPublicKeyReturnRawData,
 } from 'src/helpers/w2w/metamaskSigUtil';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
+import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 const createNewPgpPair = async (
   caip10: string,
@@ -21,7 +22,6 @@ const createNewPgpPair = async (
     encryptionPublicKey,
   );
 
-  console.log('doing request');
   const createdUser = await PushNodeClient.createUser({
     caip10,
     did: caip10,
@@ -70,6 +70,8 @@ const useChatLoader = (): [boolean, ChatData] => {
   });
 
   const feedCache: ChatFeedCache = {};
+  const users = useSelector(selectUsers);
+  const currentUser = useSelector(selectCurrentUser);
 
   const checkUserProfile = async (
     caipAddress: string,
@@ -153,15 +155,17 @@ const useChatLoader = (): [boolean, ChatData] => {
   };
 
   useEffect(() => {
-    console.log('this was called');
+    // request private key
+    let userPk = users[currentUser].userPKey;
+    userPk = userPk.includes('0x') ? userPk.slice(2) : userPk;
 
-    const userPk =
-      '081698f3d1afb6285784c0a88601725e97f23a0115fd4f75651fbe25d0ec2b9a'; // my chrome
+    // TODO: for debug, remove later
+    // ('081698f3d1afb6285784c0a88601725e97f23a0115fd4f75651fbe25d0ec2b9a'); // my chrome
     // 'c39d17b1575c8d5e6e615767e19dc285d1f803d21882fb0c60f7f5b7edb759b2'; // my brave
+    // const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
+    // const derivedAddress = CryptoHelper.getAddressFromPublicKey(ethPublicKey);
 
-    const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
-    const derivedAddress = CryptoHelper.getAddressFromPublicKey(ethPublicKey);
-    console.log('derived address', derivedAddress);
+    let derivedAddress = users[currentUser].wallet;
     const caipAddress = CaipHelper.walletToCAIP10(derivedAddress);
     const encryptionPublicKey = getEncryptionPublicKey(userPk);
 

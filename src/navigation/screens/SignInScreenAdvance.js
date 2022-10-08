@@ -1,6 +1,5 @@
 import {useFocusEffect} from '@react-navigation/native';
 import {Camera} from 'expo-camera';
-import * as Permissions from 'expo-permissions';
 import React, {useEffect, useState} from 'react';
 import {
   Animated,
