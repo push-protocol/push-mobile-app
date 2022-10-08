@@ -3,36 +3,14 @@ import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import * as PushNodeClient from 'src/apis';
 import * as CaipHelper from 'src/helpers/CAIPHelper';
-import {
-  decryptWithWalletRPCMethod,
-  encryptWithRPCEncryptionPublicKeyReturnRawData,
-} from 'src/helpers/w2w/metamaskSigUtil';
-import {generateKeyPair} from 'src/helpers/w2w/pgp';
+import {decryptWithWalletRPCMethod} from 'src/helpers/w2w/metamaskSigUtil';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
-const createNewPgpPair = async (
-  caip10: string,
-  encryptionPublicKey: string,
-) => {
-  // Obtain pgp key
-  const keyPairs = await generateKeyPair();
-
-  const encryptedPgpKey = encryptWithRPCEncryptionPublicKeyReturnRawData(
-    keyPairs.privateKeyArmored,
-    encryptionPublicKey,
-  );
-
-  const createdUser = await PushNodeClient.createUser({
-    caip10,
-    did: caip10,
-    publicKey: keyPairs.publicKeyArmored,
-    encryptedPrivateKey: JSON.stringify(encryptedPgpKey),
-    encryptionType: 'x25519-xsalsa20-poly1305',
-    signature: 'xyz',
-    sigType: 'a',
-  });
-  console.log('create new user', createdUser);
-};
+import {
+  checkIfItemInCache,
+  createNewPgpPair,
+  filterChatAndRequestFeeds,
+} from './userChatLoaderHelper';
 
 export interface ChatData {
   connectedUserData: PushNodeClient.ConnectedUser | undefined;
@@ -40,26 +18,9 @@ export interface ChatData {
   requests: PushNodeClient.Feeds[];
 }
 
-interface ChatFeedCache {
+export interface ChatFeedCache {
   [key: string]: string;
 }
-
-const checkIfItemInCache = (
-  cache: ChatFeedCache,
-  feeds: PushNodeClient.Feeds[],
-) => {
-  let isInCache = true;
-  for (let i = 0; i < feeds.length; i++) {
-    const {threadhash, combinedDID} = feeds[i];
-
-    // update cache
-    if (!cache[combinedDID] || threadhash !== cache[combinedDID]) {
-      isInCache = false;
-      cache[combinedDID] = threadhash!;
-    }
-  }
-  return isInCache;
-};
 
 const useChatLoader = (): [boolean, ChatData] => {
   const [isLoading, setIsLoading] = useState(true);
@@ -78,7 +39,7 @@ const useChatLoader = (): [boolean, ChatData] => {
     encryptionPublicKey: string,
     privateKey: string,
   ) => {
-    console.log('checking for user', caipAddress);
+    console.log('check user info at push node', caipAddress);
     let user = await PushNodeClient.getUser(caipAddress);
 
     // register if not reigistered
@@ -99,29 +60,12 @@ const useChatLoader = (): [boolean, ChatData] => {
     );
     console.log('Decrypt was success');
 
+    // User info done, store to state
     const connectedUserData: PushNodeClient.ConnectedUser = {
       ...user,
       privateKey: decryptedPrivateKey,
     };
-
     setChatData(prev => ({...prev, connectedUserData}));
-  };
-
-  const filterChatAndRequestFeeds = (
-    userAddress: string,
-    feeds: PushNodeClient.Feeds[],
-  ) => {
-    const chatFeeds: PushNodeClient.Feeds[] = [];
-    const requestFeeds: PushNodeClient.Feeds[] = [];
-
-    feeds.forEach(element => {
-      if (element.intent?.includes(userAddress)) {
-        chatFeeds.push(element);
-      } else {
-        requestFeeds.push(element);
-      }
-    });
-    return [chatFeeds, requestFeeds];
   };
 
   const loadInbox = async (ethAddress: string) => {
@@ -137,6 +81,8 @@ const useChatLoader = (): [boolean, ChatData] => {
       return;
     }
 
+    // sort message based on time
+    // latest chat shown at first
     feeds.sort(
       (c1, c2) =>
         Date.parse(c2.intentTimestamp) - Date.parse(c1.intentTimestamp),
@@ -174,6 +120,7 @@ const useChatLoader = (): [boolean, ChatData] => {
       await checkUserProfile(caipAddress, encryptionPublicKey, userPk);
       await loadInbox(derivedAddress);
 
+      // qeury for new threads evey 3 second
       fetechNewMessages = setInterval(async () => {
         console.log('Fetching new inbox');
         await loadInbox(derivedAddress);
