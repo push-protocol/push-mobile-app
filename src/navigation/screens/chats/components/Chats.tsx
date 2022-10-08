@@ -3,23 +3,17 @@ import React, {useContext, useState} from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
 import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
-import {caip10ToWallet} from 'src/helpers/CAIPHelper';
+import {caip10ToWallet, getCombinedDID} from 'src/helpers/CAIPHelper';
 import Web3Helper from 'src/helpers/Web3Helper';
 import {Context} from 'src/navigation/screens/chats/ChatScreen';
 
+import {DEFAULT_AVATAR} from '../constants';
 import SingleChatItem from './SingleChatItem';
 
 type ChatsProps = {
   feeds: PushNodeClient.Feeds[];
   isIntentReceivePage: boolean;
 };
-
-const getCombinedDID = (addrs1: string, addrs2: string) => {
-  return `eip155:${addrs1}_eip155:${addrs2}`;
-};
-
-const tempImage =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA60lEQVR4AcXBsW3EMAxA0R9CM7jPEgY8QUqtoIaNu9SuvYIbNVyBUxxwo2iJpKVTKDhcwfc+vj6/f5g49kF0Xgszxz6IzmthRkgmJBOSFTUn6q0SjfXBzVWZGeuDm6sSqTmRkExIJiQrvVUiNSfqrRKpOTO9VSI1J+qtEgnJhGRCssI/1JxXqDmvEJIJyYRk5dgH0eCut0qk5sz0VonUnOjYB5GQTEgmJCvntRDpyo2aE/VWmVFzZs5rIRKSCcmEZIU/ludGNNYHkZrziuW5MSMkE5IJyYqac/PciHqrvOPYB5GaEwnJhGRCsl/QAz+87qkGxwAAAABJRU5ErkJggg==';
 
 const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
   const [value, setValue] = useState('');
@@ -91,7 +85,7 @@ const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
       {isSearchEnabled && (
         <View style={styles.content}>
           <SingleChatItem
-            image={tempImage}
+            image={DEFAULT_AVATAR}
             wallet={value}
             text={null}
             combinedDID={getCombinedDID(

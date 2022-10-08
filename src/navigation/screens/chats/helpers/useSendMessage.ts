@@ -20,17 +20,16 @@ const getEncryptedMessage = async (
     privateKeyArmored: connectedUser.privateKey,
   });
 
-  // console.log(encryptedMessage);
-  // console.log('all god ser');
   return encryptedMessage;
 };
 
 const useSendMessage = (
   connectedUser: ConnectedUser,
   receiverAddress: string,
-  isIntentSendPage: boolean,
+  _isIntentSendPage: boolean,
 ): useSendMessageReturnType => {
   const [isSending, setIsSending] = useState(false);
+  const [isIntentSendPage, setIsIntentSendPage] = useState(_isIntentSendPage);
   const [isSendingReady, setIsSendingReady] = useState(false);
   const messageReceiver = useRef<MessageReciver>({
     ethAddress: getCAIPAddress(receiverAddress),
@@ -38,8 +37,8 @@ const useSendMessage = (
   });
 
   useEffect(() => {
+    // getting receivers infos
     (async () => {
-      console.log('sending to', receiverAddress);
       const res = await PushNodeClient.getUser(
         messageReceiver.current.ethAddress,
       );
@@ -115,7 +114,7 @@ const useSendMessage = (
       encryptedSecret: msg.encryptedSecret,
     };
 
-    console.log('posting', JSON.stringify(postBody));
+    console.log('posting intent', JSON.stringify(postBody));
 
     try {
       const res = await PushNodeClient.postIntent(postBody);
@@ -124,7 +123,7 @@ const useSendMessage = (
       console.log('error', error);
     }
     console.log('**** intent successfully sent');
-
+    setIsIntentSendPage(false);
     setIsSending(false);
   };
 

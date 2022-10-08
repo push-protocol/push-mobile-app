@@ -11,4 +11,8 @@ export const caip10ToWallet = (wallet: string): string => {
   return wallet;
 };
 
+export const getCombinedDID = (addrs1: string, addrs2: string) => {
+  return `eip155:${addrs1}_eip155:${addrs2}`;
+};
+
 export {getCAIPAddress};

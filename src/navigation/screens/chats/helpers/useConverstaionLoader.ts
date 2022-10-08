@@ -12,7 +12,8 @@ const getLatestHash = async (
   try {
     const address = caip10ToWallet(combinedDID.split('_')[0]);
     const feeds = await PushNodeClient.getInbox(address);
-    const filtertedFeeds = feeds?.filter(e => e.combinedDID === combinedDID);
+    const filtertedFeeds = feeds?.filter(e => e.combinedDID.includes(address));
+
     const cid = filtertedFeeds![0].threadhash;
     return [false, cid!];
   } catch (error) {
@@ -96,7 +97,7 @@ const useConversationLoader = (
 
       //listen to new chats
       chatListener = setInterval(async () => {
-        console.log('looking for new conversations');
+        console.log('looking for new conversations', combinedDID);
         if (!isFetching.current) {
           const [error, newCid] = await getLatestHash(combinedDID);
           if (error) {
