@@ -16,7 +16,7 @@ type ChatsProps = {
 };
 
 const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
-  const [value, setValue] = useState('');
+  const [ethAddress, setEthAddress] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchEnabled, setIsSearchEnabled] = useState(false);
 
@@ -24,15 +24,20 @@ const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
 
   const handleSearch = async () => {
     setIsSearching(true);
-    const query = value.trim();
+    const query = ethAddress.trim();
     if (Web3Helper.isHex(query)) {
       try {
-        const finalAddress = Web3Helper.getAddressChecksum(query.toLowerCase());
-        console.log(finalAddress);
+        Web3Helper.getAddressChecksum(query.toLowerCase());
       } catch {
         console.log('Error invalid address');
-        handleClearSearch();
         return;
+      }
+    } else {
+      try {
+        const address = await Web3Helper.resolveBlockchainDomain(query, 'eth');
+        setEthAddress(address);
+      } catch {
+        console.log('Invalid ens name');
       }
     }
     setIsSearchEnabled(true);
@@ -42,7 +47,7 @@ const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
   const handleClearSearch = () => {
     setIsSearchEnabled(false);
     setIsSearching(false);
-    setValue('');
+    setEthAddress('');
   };
 
   return (
@@ -50,8 +55,8 @@ const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
       <View style={styles.searchView}>
         <TextInput
           style={styles.input}
-          onChangeText={setValue}
-          value={value}
+          onChangeText={setEthAddress}
+          value={ethAddress}
           placeholder="Search name.eth or 0x123.."
           editable={!isSearching}
           selectTextOnFocus={!isSearching}
@@ -86,10 +91,10 @@ const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
         <View style={styles.content}>
           <SingleChatItem
             image={DEFAULT_AVATAR}
-            wallet={value}
+            wallet={ethAddress}
             text={null}
             combinedDID={getCombinedDID(
-              value,
+              ethAddress,
               appContext?.connectedUser.wallets!,
             )}
             isIntentReceivePage={isIntentReceivePage}
@@ -132,7 +137,6 @@ const styles = StyleSheet.create({
     padding: 20,
     color: Globals.COLORS.BLACK,
     fontSize: 18,
-    textTransform: 'capitalize',
     height: 60,
     paddingLeft: 15,
     paddingRight: 10,

@@ -1,5 +1,5 @@
 import ENS from 'ethereum-ens';
-import { ethers } from 'ethers';
+import {ethers} from 'ethers';
 import ENV_CONFIG from 'src/env.config';
 import MetaStorage from 'src/singletons/MetaStorage';
 import Web3 from 'web3';
@@ -83,8 +83,8 @@ const Web3Helper = {
 
       // console.log("Fetched Name... Forward Checking now: " + name);
 
-      if (wallet != (await ens.resolver(name).addr())) {
-        name = null;
+      if (wallet !== (await ens.resolver(name).addr())) {
+        // name = null;
         throw "Name Didn't Match";
       } else {
         const response = {
@@ -232,11 +232,11 @@ const Web3Helper = {
   },
   // Check if the entry is non hex
   isHex: str => {
-    if (str.length == 0) {
+    if (str.length === 0) {
       return true;
-    } else if (str.length == 1 && str.substring(0, 1) === '0') {
+    } else if (str.length === 1 && str.substring(0, 1) === '0') {
       return true;
-    } else if (str.length == 2 && str.substring(0, 2) === '0x') {
+    } else if (str.length === 2 && str.substring(0, 2) === '0x') {
       return true;
     } else {
       let modStr = str;
