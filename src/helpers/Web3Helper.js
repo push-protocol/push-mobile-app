@@ -77,8 +77,6 @@ const Web3Helper = {
       provider = Web3Helper.getWeb3Provider();
     }
 
-    console.log('got porvider', provider);
-
     try {
       const ens = Web3Helper.getENS(provider);
       const name = await ens.reverse(wallet).name();
