@@ -77,11 +77,11 @@ const Web3Helper = {
       provider = Web3Helper.getWeb3Provider();
     }
 
+    console.log('got porvider', provider);
+
     try {
       const ens = Web3Helper.getENS(provider);
       const name = await ens.reverse(wallet).name();
-
-      // console.log("Fetched Name... Forward Checking now: " + name);
 
       if (wallet != (await ens.resolver(name).addr())) {
         name = null;
@@ -254,7 +254,6 @@ const Web3Helper = {
       resolution
         .addr(domain, currency)
         .then(address => {
-          console.log(address);
           resolve(address);
         })
         .catch(err => {
