@@ -5,7 +5,6 @@ import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import ServerHelper from 'src/helpers/ServerHelper';
 import Web3Helper from 'src/helpers/Web3Helper';
 import MetaStorage from 'src/singletons/MetaStorage';
-import Notify from 'src/singletons/Notify';
 
 // Authentication Helper Function
 const AuthenticationHelper = {

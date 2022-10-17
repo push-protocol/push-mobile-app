@@ -7,10 +7,10 @@ import SingleChatItem from './SingleChatItem';
 
 type RequestProps = {
   requests: Feeds[];
-  isIntentPage: boolean;
+  isIntentReceivePage: boolean;
 };
 
-const Requests = ({requests, isIntentPage}: RequestProps) => {
+const Requests = ({requests, isIntentReceivePage}: RequestProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -21,7 +21,8 @@ const Requests = ({requests, isIntentPage}: RequestProps) => {
             wallet={caip10ToWallet(item.wallets)}
             text={item.threadhash ? item.threadhash : ''}
             combinedDID={item.combinedDID}
-            isIntentPage={isIntentPage}
+            isIntentReceivePage={isIntentReceivePage}
+            isIntentSendPage={false}
           />
         ))}
       </View>

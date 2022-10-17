@@ -22,16 +22,16 @@ const getEncryptedMessage = async (
     privateKeyArmored: connectedUser.privateKey,
   });
 
-  // console.log(encryptedMessage);
-  // console.log('all god ser');
   return encryptedMessage;
 };
 
 const useSendMessage = (
   connectedUser: ConnectedUser,
   receiverAddress: string,
+  _isIntentSendPage: boolean,
 ): useSendMessageReturnType => {
   const [isSending, setIsSending] = useState(false);
+  const [isIntentSendPage, setIsIntentSendPage] = useState(_isIntentSendPage);
   const [isSendingReady, setIsSendingReady] = useState(false);
   const messageReceiver = useRef<MessageReciver>({
     ethAddress: getCAIPAddress(receiverAddress),
@@ -39,8 +39,8 @@ const useSendMessage = (
   });
 
   useEffect(() => {
+    // getting receivers infos
     (async () => {
-      console.log('abishek sending to', receiverAddress);
       const res = await PushNodeClient.getUser(
         messageReceiver.current.ethAddress,
       );
@@ -93,7 +93,49 @@ const useSendMessage = (
     setIsSending(false);
   };
 
-  return [isSending, sendMessage, isSendingReady];
+  const sendIntent = async (message: string) => {
+    if (!isSendingReady) {
+      return;
+    }
+    setIsSending(true);
+    console.log('**** send intent');
+    const msg = await getEncryptedMessage(
+      connectedUser,
+      messageReceiver.current,
+      message,
+    );
+
+    const postBody = {
+      fromCAIP10: connectedUser.wallets,
+      fromDID: connectedUser.wallets,
+      toDID: messageReceiver.current.ethAddress,
+      toCAIP10: messageReceiver.current.ethAddress,
+      messageContent: msg.cipherText,
+      messageType: 'Text',
+      signature: msg.signature,
+      encType: msg.encType,
+      sigType: msg.sigType,
+      encryptedSecret: msg.encryptedSecret,
+    };
+
+    console.log('posting intent', JSON.stringify(postBody));
+
+    try {
+      const res = await PushNodeClient.postIntent(postBody);
+      console.log(res);
+    } catch (error) {
+      console.log('error', error);
+    }
+    console.log('**** intent successfully sent');
+    setIsIntentSendPage(false);
+    setIsSending(false);
+  };
+
+  if (isIntentSendPage) {
+    return [isSending, sendIntent, isSendingReady];
+  } else {
+    return [isSending, sendMessage, isSendingReady];
+  }
 };
 
 export {useSendMessage};

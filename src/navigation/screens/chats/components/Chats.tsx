@@ -1,51 +1,123 @@
 import {EvilIcons} from '@expo/vector-icons';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
 import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
-import {caip10ToWallet} from 'src/helpers/CAIPHelper';
+import {caip10ToWallet, getCombinedDID} from 'src/helpers/CAIPHelper';
+import Web3Helper from 'src/helpers/Web3Helper';
+import {Context} from 'src/navigation/screens/chats/ChatScreen';
 
+import {DEFAULT_AVATAR} from '../constants';
 import SingleChatItem from './SingleChatItem';
 
 type ChatsProps = {
   feeds: PushNodeClient.Feeds[];
-  isIntentPage: boolean;
+  isIntentReceivePage: boolean;
 };
 
-const Chats = ({feeds, isIntentPage}: ChatsProps) => {
-  const [value, setValue] = useState('');
+const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
+  const [ethAddress, setEthAddress] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [isSearchEnabled, setIsSearchEnabled] = useState(false);
+
+  const appContext = useContext(Context);
+
+  const handleSearch = async () => {
+    setIsSearching(true);
+    const query = ethAddress.trim();
+    if (Web3Helper.isHex(query)) {
+      try {
+        Web3Helper.getAddressChecksum(query.toLowerCase());
+      } catch {
+        console.log('Error invalid address');
+        return;
+      }
+    } else {
+      try {
+        const address = await Web3Helper.resolveBlockchainDomain(query, 'eth');
+        setEthAddress(address);
+      } catch {
+        console.log('Invalid ens name');
+      }
+    }
+    setIsSearchEnabled(true);
+    setIsSearching(false);
+  };
+
+  const handleClearSearch = () => {
+    setIsSearchEnabled(false);
+    setIsSearching(false);
+    setEthAddress('');
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.searchView}>
         <TextInput
           style={styles.input}
-          onChangeText={setValue}
-          value={value}
+          onChangeText={setEthAddress}
+          value={ethAddress}
           placeholder="Search name.eth or 0x123.."
-          autoFocus
+          editable={!isSearching}
+          selectTextOnFocus={!isSearching}
         />
-
-        <EvilIcons
-          name="search"
-          size={30}
-          color="black"
-          style={styles.searchImage}
-        />
-      </View>
-
-      <View style={styles.content}>
-        {feeds.map((item, index) => (
-          <SingleChatItem
-            key={index}
-            image={item.profilePicture}
-            wallet={caip10ToWallet(item.wallets)}
-            text={item.threadhash ? item.threadhash : ''}
-            combinedDID={item.combinedDID}
-            isIntentPage={isIntentPage}
+        {isSearching ? (
+          <EvilIcons
+            name="spinner"
+            size={30}
+            color="black"
+            style={styles.searchImage}
           />
-        ))}
+        ) : isSearchEnabled ? (
+          <EvilIcons
+            name="close"
+            size={30}
+            color="black"
+            style={styles.searchImage}
+            onPress={handleClearSearch}
+          />
+        ) : (
+          <EvilIcons
+            name="search"
+            size={30}
+            color="black"
+            style={styles.searchImage}
+            onPress={handleSearch}
+          />
+        )}
       </View>
+
+      {isSearchEnabled && (
+        <View style={styles.content}>
+          <SingleChatItem
+            image={DEFAULT_AVATAR}
+            wallet={ethAddress}
+            text={null}
+            combinedDID={getCombinedDID(
+              ethAddress,
+              appContext?.connectedUser.wallets!,
+            )}
+            isIntentReceivePage={isIntentReceivePage}
+            isIntentSendPage={true}
+          />
+        </View>
+      )}
+
+      {!isSearchEnabled && (
+        <View style={styles.content}>
+          {feeds.map((item, index) => (
+            <SingleChatItem
+              key={index}
+              image={item.profilePicture}
+              wallet={caip10ToWallet(item.wallets)}
+              text={item.threadhash ? item.threadhash : ''}
+              combinedDID={item.combinedDID}
+              isIntentReceivePage={isIntentReceivePage}
+              isIntentSendPage={false}
+            />
+          ))}
+        </View>
+      )}
     </View>
   );
 };
@@ -65,7 +137,6 @@ const styles = StyleSheet.create({
     padding: 20,
     color: Globals.COLORS.BLACK,
     fontSize: 18,
-    textTransform: 'capitalize',
     height: 60,
     paddingLeft: 15,
     paddingRight: 10,
@@ -84,6 +155,7 @@ const styles = StyleSheet.create({
     color: Globals.COLORS.BLACK,
     marginBottom: 10,
   },
+
   searchImage: {
     marginRight: 20,
   },

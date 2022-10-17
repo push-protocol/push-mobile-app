@@ -231,3 +231,67 @@ export const approveIntent = async (
   }
   return await response.json();
 };
+
+export const postIntent = async ({
+  toDID,
+  fromDID,
+  fromCAIP10,
+  toCAIP10,
+  messageContent,
+  messageType,
+  signature,
+  encType,
+  sigType,
+  encryptedSecret,
+}: {
+  toDID: string;
+  fromDID: string;
+  fromCAIP10: string;
+  toCAIP10: string;
+  messageContent: string;
+  messageType: string;
+  signature: string;
+  encType: string;
+  sigType: string;
+  encryptedSecret: string;
+}): Promise<MessageIPFSWithCID | string> => {
+  let data: MessageIPFSWithCID | string;
+  if (messageContent.length > 0) {
+    const response = await fetch(BASE_URL + '/v1/w2w/intents', {
+      method: 'POST',
+      headers: {
+        'content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        toDID,
+        fromDID,
+        fromCAIP10,
+        toCAIP10,
+        messageContent,
+        messageType,
+        signature,
+        encType,
+        encryptedSecret,
+        sigType,
+      }),
+    });
+    data = await response.json();
+  } else {
+    const response = await fetch(BASE_URL + '/v1/w2w/intents', {
+      method: 'POST',
+      headers: {
+        'content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        toDID,
+        fromDID,
+        fromCAIP10,
+        messageType,
+        signature,
+        encType,
+      }),
+    });
+    data = await response.json();
+  }
+  return data;
+};

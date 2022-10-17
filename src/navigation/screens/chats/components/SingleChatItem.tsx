@@ -28,7 +28,6 @@ const ChatItem = (props: SingleChatItemProps) => {
 
   const handleChatDetail = async () => {
     if (isLoading) {
-      console.log('thread info loading');
       return;
     }
 
@@ -38,12 +37,18 @@ const ChatItem = (props: SingleChatItemProps) => {
       senderAddress: props.wallet,
       connectedUser: appContext.connectedUser,
       combinedDID: props.combinedDID,
-      isIntentPage: props.isIntentPage,
+      isIntentReceivePage: props.isIntentReceivePage,
+      isIntentSendPage: props.isIntentSendPage,
     });
   };
 
   useEffect(() => {
     (async () => {
+      if (!cid) {
+        setLastMessage('Start new conversation');
+        setLoading(false);
+        return;
+      }
       const [chatMessage] = await resolveCID(
         cid,
         appContext.connectedUser.privateKey,

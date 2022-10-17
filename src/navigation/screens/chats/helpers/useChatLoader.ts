@@ -1,40 +1,17 @@
 import {getEncryptionPublicKey} from '@metamask/eth-sig-util';
 import {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
 import * as PushNodeClient from 'src/apis';
 import * as CaipHelper from 'src/helpers/CAIPHelper';
-import CryptoHelper from 'src/helpers/CryptoHelper';
-import {
-  decryptWithWalletRPCMethod,
-  encryptWithRPCEncryptionPublicKeyReturnRawData,
-} from 'src/helpers/w2w/metamaskSigUtil';
-import {generateKeyPair} from 'src/helpers/w2w/pgp';
+import {decryptWithWalletRPCMethod} from 'src/helpers/w2w/metamaskSigUtil';
+import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 import {getPersistedChatData, persistChatData} from './storage';
-
-const createNewPgpPair = async (
-  caip10: string,
-  encryptionPublicKey: string,
-) => {
-  // Obtain pgp key
-  const keyPairs = await generateKeyPair();
-
-  const encryptedPgpKey = encryptWithRPCEncryptionPublicKeyReturnRawData(
-    keyPairs.privateKeyArmored,
-    encryptionPublicKey,
-  );
-
-  console.log('doing request');
-  const createdUser = await PushNodeClient.createUser({
-    caip10,
-    did: caip10,
-    publicKey: keyPairs.publicKeyArmored,
-    encryptedPrivateKey: JSON.stringify(encryptedPgpKey),
-    encryptionType: 'x25519-xsalsa20-poly1305',
-    signature: 'xyz',
-    sigType: 'a',
-  });
-  console.log('create new user', createdUser);
-};
+import {
+  checkIfItemInCache,
+  createNewPgpPair,
+  filterChatAndRequestFeeds,
+} from './userChatLoaderHelper';
 
 export interface ChatData {
   connectedUserData: PushNodeClient.ConnectedUser | undefined;
@@ -42,26 +19,9 @@ export interface ChatData {
   requests: PushNodeClient.Feeds[];
 }
 
-interface ChatFeedCache {
+export interface ChatFeedCache {
   [key: string]: string;
 }
-
-const checkIfItemInCache = (
-  cache: ChatFeedCache,
-  feeds: PushNodeClient.Feeds[],
-) => {
-  let isInCache = true;
-  for (let i = 0; i < feeds.length; i++) {
-    const {threadhash, combinedDID} = feeds[i];
-
-    // update cache
-    if (!cache[combinedDID] || threadhash !== cache[combinedDID]) {
-      isInCache = false;
-      cache[combinedDID] = threadhash!;
-    }
-  }
-  return isInCache;
-};
 
 const useChatLoader = (): [boolean, ChatData] => {
   const [isLoading, setIsLoading] = useState(true);
@@ -73,13 +33,15 @@ const useChatLoader = (): [boolean, ChatData] => {
   });
 
   const feedCache: ChatFeedCache = {};
+  const users = useSelector(selectUsers);
+  const currentUser = useSelector(selectCurrentUser);
 
   const checkUserProfile = async (
     caipAddress: string,
     encryptionPublicKey: string,
     privateKey: string,
   ) => {
-    console.log('checking for user', caipAddress);
+    console.log('check user info at push node', caipAddress);
     let user = await PushNodeClient.getUser(caipAddress);
 
     // register if not reigistered
@@ -100,6 +62,7 @@ const useChatLoader = (): [boolean, ChatData] => {
     );
     console.log('Decrypt was success');
 
+    // User info done, store to state
     const connectedUserData: PushNodeClient.ConnectedUser = {
       ...user,
       privateKey: decryptedPrivateKey,
@@ -122,23 +85,6 @@ const useChatLoader = (): [boolean, ChatData] => {
     }
   };
 
-  const filterChatAndRequestFeeds = (
-    userAddress: string,
-    feeds: PushNodeClient.Feeds[],
-  ) => {
-    const chatFeeds: PushNodeClient.Feeds[] = [];
-    const requestFeeds: PushNodeClient.Feeds[] = [];
-
-    feeds.forEach(element => {
-      if (element.intent?.includes(userAddress)) {
-        chatFeeds.push(element);
-      } else {
-        requestFeeds.push(element);
-      }
-    });
-    return [chatFeeds, requestFeeds];
-  };
-
   const loadInbox = async (ethAddress: string) => {
     const feeds = await PushNodeClient.getInbox(ethAddress);
 
@@ -152,6 +98,8 @@ const useChatLoader = (): [boolean, ChatData] => {
       return;
     }
 
+    // sort message based on time
+    // latest chat shown at first
     feeds.sort(
       (c1, c2) =>
         Date.parse(c2.intentTimestamp) - Date.parse(c1.intentTimestamp),
@@ -178,15 +126,17 @@ const useChatLoader = (): [boolean, ChatData] => {
   };
 
   useEffect(() => {
-    console.log('this was called');
+    // request private key
+    let userPk = users[currentUser].userPKey;
+    userPk = userPk.includes('0x') ? userPk.slice(2) : userPk;
 
-    const userPk =
-      '081698f3d1afb6285784c0a88601725e97f23a0115fd4f75651fbe25d0ec2b9a'; // my chrome
+    // TODO: for debug, remove later
+    // ('081698f3d1afb6285784c0a88601725e97f23a0115fd4f75651fbe25d0ec2b9a'); // my chrome
     // 'c39d17b1575c8d5e6e615767e19dc285d1f803d21882fb0c60f7f5b7edb759b2'; // my brave
+    // const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
+    // const derivedAddress = CryptoHelper.getAddressFromPublicKey(ethPublicKey);
 
-    const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
-    const derivedAddress = CryptoHelper.getAddressFromPublicKey(ethPublicKey);
-    console.log('derived address', derivedAddress);
+    let derivedAddress = users[currentUser].wallet;
     const caipAddress = CaipHelper.walletToCAIP10(derivedAddress);
     const encryptionPublicKey = getEncryptionPublicKey(userPk);
 
@@ -197,6 +147,7 @@ const useChatLoader = (): [boolean, ChatData] => {
       await loadCachedInbox();
       await loadInbox(derivedAddress);
 
+      // qeury for new threads evey 3 second
       fetchNewMessages = setInterval(async () => {
         console.log('Fetching new inbox');
         await loadInbox(derivedAddress);

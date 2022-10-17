@@ -1,10 +1,13 @@
-import {useEffect, useRef, useState} from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as PushNodeClient from 'src/apis';
-import {caip10ToWallet} from 'src/helpers/CAIPHelper';
+import { caip10ToWallet } from 'src/helpers/CAIPHelper';
 
-import {FETCH_ONCE} from '../constants';
-import {ChatMessage, resolveCID} from './chatResolver';
-import {getStoredConversationData, storeConversationData} from './storage';
+
+
+import { FETCH_ONCE } from '../constants';
+import { ChatMessage, resolveCID } from './chatResolver';
+import { getStoredConversationData, storeConversationData } from './storage';
+
 
 const getLatestHash = async (
   combinedDID: string,
@@ -12,12 +15,36 @@ const getLatestHash = async (
   try {
     const address = caip10ToWallet(combinedDID.split('_')[0]);
     const feeds = await PushNodeClient.getInbox(address);
-    const filtertedFeeds = feeds?.filter(e => e.combinedDID === combinedDID);
+    const filtertedFeeds = feeds?.filter(e => e.combinedDID.includes(address));
+
     const cid = filtertedFeeds![0].threadhash;
     return [false, cid!];
   } catch (error) {
     return [true, ''];
   }
+};
+
+const loadMessageBatch = async (
+  hash: string,
+  chats: ChatMessage[],
+  pgpPrivateKey: string,
+  stopCid: String = '',
+) => {
+  for (let i = 0; i < FETCH_ONCE; i++) {
+    try {
+      const [chatMessage, next_hash] = await resolveCID(hash, pgpPrivateKey);
+      chats.unshift(chatMessage);
+      if (!next_hash || next_hash === stopCid) {
+        break;
+      }
+      hash = next_hash;
+    } catch (error) {
+      console.log('Error ***', error);
+      break;
+    }
+  }
+
+  return hash;
 };
 
 const useConversationLoader = (
@@ -30,64 +57,33 @@ const useConversationLoader = (
   const currentHash = useRef(cid);
   const isFetching = useRef(false);
 
-  const fetchChats = async (_pgpPrivateKey: string) => {
-    console.log('_pgpPrivateKey: ', _pgpPrivateKey);
-    isFetching.current = true;
-    let chats: ChatMessage[] = [];
-    let hash = currentHash.current;
-
-    for (let i = 0; i < FETCH_ONCE; i++) {
-      try {
-        const [chatMessage, next_hash] = await resolveCID(hash, _pgpPrivateKey);
-        chats.unshift(chatMessage);
-        if (!next_hash) {
-          break;
-        }
-        hash = next_hash;
-      } catch (error) {
-        console.log('Error ***', error);
-        break;
-      }
-    }
-
-    isFetching.current = false;
-
-    return chats;
-  };
-
-  const fetchUnitl = async (
+  const fetchChats = async (
     _pgpPrivateKey: string,
-    latestCid: string,
-    stopCid: string,
+    currentCid: string,
+    stopCid: string = '',
   ) => {
     isFetching.current = true;
     let chats: ChatMessage[] = [];
-    let hash = latestCid;
 
-    for (let i = 0; i < FETCH_ONCE; i++) {
-      try {
-        const [chatMessage, next_hash] = await resolveCID(hash, _pgpPrivateKey);
-        // console.log('says', hash, ':', chatMessage.message, '---->', next_hash);
+    const _currentHash = await loadMessageBatch(
+      currentCid,
+      chats,
+      pgpPrivateKey,
+      stopCid,
+    );
 
-        chats.unshift(chatMessage);
-        if (!next_hash || next_hash === stopCid) {
-          break;
-        }
-        hash = next_hash;
-      } catch (error) {
-        console.log('Error ***', error);
-        break;
-      }
+    if (stopCid !== '') {
+      currentHash.current = _currentHash;
     }
-
     isFetching.current = false;
-    currentHash.current = latestCid;
+
     return chats;
   };
 
   useEffect(() => {
     let chatListener: NodeJS.Timer;
     (async () => {
+      // fetch conversation datas
       console.log('fetching chats');
       setChatData([]);
       const cachedMessages = await getStoredConversationData(pgpPrivateKey);
@@ -95,15 +91,15 @@ const useConversationLoader = (
         setChatData(prev => [...prev, ...cachedMessages]);
         setIsLoading(false);
       }
-      const msgs = await fetchChats(pgpPrivateKey);
+      const msgs = await fetchChats(pgpPrivateKey, currentHash.current);
       setChatData(prev => [...prev, ...msgs]);
       await storeConversationData(pgpPrivateKey, msgs);
       setIsLoading(false);
       console.log('chats loaded');
 
-      //listen to new chats
+      // listen to new chats
       chatListener = setInterval(async () => {
-        console.log('looking for new conversations');
+        console.log('looking for new conversations', combinedDID);
         if (!isFetching.current) {
           const [error, newCid] = await getLatestHash(combinedDID);
           if (error) {
@@ -114,7 +110,7 @@ const useConversationLoader = (
           } else {
             // got new message
             console.log('got new conversation');
-            const newMsgs = await fetchUnitl(
+            const newMsgs = await fetchChats(
               pgpPrivateKey,
               newCid,
               currentHash.current,
