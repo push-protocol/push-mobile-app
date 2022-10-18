@@ -1,13 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import * as PushNodeClient from 'src/apis';
-import { caip10ToWallet } from 'src/helpers/CAIPHelper';
+import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
-
-
-import { FETCH_ONCE } from '../constants';
-import { ChatMessage, resolveCID } from './chatResolver';
-import { getStoredConversationData, storeConversationData } from './storage';
-
+import {FETCH_ONCE} from '../constants';
+import {ChatMessage, resolveCID} from './chatResolver';
+import {getStoredConversationData, storeConversationData} from './storage';
 
 const getLatestHash = async (
   combinedDID: string,
@@ -51,12 +48,13 @@ const useConversationLoader = (
   cid: string,
   pgpPrivateKey: string,
   combinedDID: string,
+  senderAddress: string,
 ): [boolean, ChatMessage[]] => {
   const [isLoading, setIsLoading] = useState(true);
   const [chatData, setChatData] = useState<ChatMessage[]>([]);
   const currentHash = useRef(cid);
   const isFetching = useRef(false);
-
+  console.log('Sender Address: ', senderAddress);
   const fetchChats = async (
     _pgpPrivateKey: string,
     currentCid: string,
@@ -86,14 +84,14 @@ const useConversationLoader = (
       // fetch conversation datas
       console.log('fetching chats');
       setChatData([]);
-      const cachedMessages = await getStoredConversationData(pgpPrivateKey);
+      const cachedMessages = await getStoredConversationData(senderAddress);
       if (cachedMessages) {
         setChatData(prev => [...prev, ...cachedMessages]);
         setIsLoading(false);
       }
       const msgs = await fetchChats(pgpPrivateKey, currentHash.current);
       setChatData(prev => [...prev, ...msgs]);
-      await storeConversationData(pgpPrivateKey, msgs);
+      await storeConversationData(senderAddress, msgs);
       setIsLoading(false);
       console.log('chats loaded');
 
@@ -116,7 +114,7 @@ const useConversationLoader = (
               currentHash.current,
             );
             console.log('new message palced');
-            await storeConversationData(pgpPrivateKey, newMsgs);
+            await storeConversationData(senderAddress, newMsgs);
             setChatData(prev => [...prev, ...newMsgs]);
           }
         }

@@ -61,6 +61,7 @@ const SingleChatScreen = ({route}: any) => {
     cid,
     connectedUser.privateKey,
     combinedDID,
+    senderAddress,
   );
 
   const [isSending, sendMessage, isSendReady] = useSendMessage(
