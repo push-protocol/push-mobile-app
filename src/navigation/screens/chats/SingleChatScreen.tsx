@@ -182,9 +182,9 @@ const SingleChatScreen = ({route}: any) => {
 
           {chatMessages.map((msg, index) =>
             msg.to === senderAddress ? (
-              <Sender text={msg.message} time={msg.time} key={index} />
+              <Sender {...msg} key={index} />
             ) : (
-              <Recipient text={msg.message} time={msg.time} key={index} />
+              <Recipient {...msg} key={index} />
             ),
           )}
 
