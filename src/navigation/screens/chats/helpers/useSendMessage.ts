@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
+import {showSimpleToast} from 'src/components/indicators/SimpleToast';
 import {getCAIPAddress} from 'src/helpers/CAIPHelper';
 import {encryptAndSign} from 'src/helpers/w2w/pgp';
 
@@ -118,11 +119,15 @@ const useSendMessage = (
 
     try {
       const res = await PushNodeClient.postIntent(postBody);
-      console.log(res);
+      if (res.toString().toLowerCase() === 'your wallet is not whitelisted') {
+        showSimpleToast('Your wallet is not whitelisted');
+        return;
+      }
+      console.log('intent send res', res);
+      console.log('**** intent successfully sent');
     } catch (error) {
       console.log('error', error);
     }
-    console.log('**** intent successfully sent');
     setIsIntentSendPage(false);
     setIsSending(false);
   };
