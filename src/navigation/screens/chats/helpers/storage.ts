@@ -97,3 +97,17 @@ export const clearStorage = async () => {
     console.error(error);
   }
 };
+
+export const storeLastMessageHash = async () => {
+  try {
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getLastMessageHash = async () => {
+  try {
+  } catch (error) {
+    console.error(error);
+  }
+};

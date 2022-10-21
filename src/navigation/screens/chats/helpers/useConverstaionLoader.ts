@@ -48,13 +48,12 @@ const useConversationLoader = (
   cid: string,
   pgpPrivateKey: string,
   combinedDID: string,
-  senderAddress: string,
 ): [boolean, ChatMessage[]] => {
   const [isLoading, setIsLoading] = useState(true);
   const [chatData, setChatData] = useState<ChatMessage[]>([]);
   const currentHash = useRef(cid);
   const isFetching = useRef(false);
-  console.log('Sender Address: ', senderAddress);
+
   const fetchChats = async (
     _pgpPrivateKey: string,
     currentCid: string,
@@ -84,14 +83,14 @@ const useConversationLoader = (
       // fetch conversation datas
       console.log('fetching chats');
       setChatData([]);
-      const cachedMessages = await getStoredConversationData(senderAddress);
+      const cachedMessages = await getStoredConversationData(combinedDID);
       if (cachedMessages) {
         setChatData(prev => [...prev, ...cachedMessages]);
         setIsLoading(false);
       }
       const msgs = await fetchChats(pgpPrivateKey, currentHash.current);
       setChatData(prev => [...prev, ...msgs]);
-      await storeConversationData(senderAddress, msgs);
+      await storeConversationData(combinedDID, msgs);
       setIsLoading(false);
       console.log('chats loaded');
 
@@ -114,7 +113,7 @@ const useConversationLoader = (
               currentHash.current,
             );
             console.log('new message palced');
-            await storeConversationData(senderAddress, newMsgs);
+            await storeConversationData(combinedDID, newMsgs);
             setChatData(prev => [...prev, ...newMsgs]);
           }
         }
