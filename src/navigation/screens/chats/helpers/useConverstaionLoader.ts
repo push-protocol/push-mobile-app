@@ -62,15 +62,10 @@ const useConversationLoader = (
     isFetching.current = true;
     let chats: ChatMessage[] = [];
 
-    const _currentHash = await loadMessageBatch(
-      currentCid,
-      chats,
-      pgpPrivateKey,
-      stopCid,
-    );
+    await loadMessageBatch(currentCid, chats, pgpPrivateKey, stopCid);
 
     if (stopCid !== '') {
-      currentHash.current = _currentHash;
+      currentHash.current = currentCid;
     }
     isFetching.current = false;
 
@@ -93,6 +88,7 @@ const useConversationLoader = (
         if (!isFetching.current) {
           const [error, newCid] = await getLatestHash(combinedDID);
           if (error) {
+            console.log('got error', error);
             return;
           }
           if (newCid === currentHash.current) {
@@ -100,13 +96,13 @@ const useConversationLoader = (
           } else {
             // got new message
             console.log('got new conversation');
-            const newMsgs = await fetchChats(
-              pgpPrivateKey,
-              newCid,
-              currentHash.current,
-            );
+            // const newMsgs = await fetchChats(
+            //   pgpPrivateKey,
+            //   newCid,
+            //   currentHash.current,
+            // );
             console.log('new message palced');
-            setChatData(prev => [...prev, ...newMsgs]);
+            // setChatData(prev => [...prev, ...newMsgs]);
           }
         }
       }, 3000);

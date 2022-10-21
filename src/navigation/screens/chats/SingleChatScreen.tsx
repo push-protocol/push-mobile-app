@@ -26,7 +26,7 @@ import * as PushNodeClient from 'src/apis';
 import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import {pgpSign} from 'src/helpers/w2w/pgp';
 
-import {AcceptIntent, Recipient, Sender, Time} from './components';
+import {AcceptIntent, MessageComponent, Time} from './components';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
 import {useSendMessage} from './helpers/useSendMessage';
@@ -182,9 +182,17 @@ const SingleChatScreen = ({route}: any) => {
 
           {chatMessages.map((msg, index) =>
             msg.to === senderAddress ? (
-              <Sender {...msg} key={index} />
+              <MessageComponent
+                chatMessage={msg}
+                componentType="SENDER"
+                key={index}
+              />
             ) : (
-              <Recipient {...msg} key={index} />
+              <MessageComponent
+                chatMessage={msg}
+                componentType="RECEIVER"
+                key={index}
+              />
             ),
           )}
 

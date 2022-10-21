@@ -5,7 +5,7 @@ import Globals from 'src/Globals';
 import {ChatMessage} from '../helpers/chatResolver';
 
 const Sender = ({message, time, messageType}: ChatMessage) => {
-  console.log('got message type', messageType);
+  // console.log('got message type', messageType, 'message was', message);
 
   return (
     <View style={styles.container}>
