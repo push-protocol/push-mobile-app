@@ -1,5 +1,7 @@
 import React from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, Linking, StyleSheet, Text, View} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import SvgUri from 'react-native-svg-uri';
 import Globals from 'src/Globals';
 
 import {ChatMessage} from '../helpers/chatResolver';
@@ -11,20 +13,67 @@ type MessageComponentProps = {
   componentType: MessageComponentType;
 };
 
+export interface FileMessageContent {
+  content: string;
+  name: string;
+  type: string;
+  size: number;
+}
+
+export const FILE_ICON = (extension: string) =>
+  `https://cdn.jsdelivr.net/gh/napthedev/file-icons/file/${extension}.svg`;
+
+export const formatFileSize = (size: number): string => {
+  const i = Math.floor(Math.log(size) / Math.log(1024));
+  return `${(size / Math.pow(1024, i)).toFixed(1)} ${
+    ['B', 'KB', 'MB', 'GB', 'TB'][i]
+  }`;
+};
+
+const FileMessageComponent = ({file}: {file: string}) => {
+  console.log('****This was called');
+
+  const fileContent: FileMessageContent = JSON.parse(file);
+  const name = fileContent.name;
+  let modifiedName: string;
+  if (name.length > 11) {
+    modifiedName = name.slice(0, 11) + '...';
+  } else {
+    modifiedName = name;
+  }
+  const content = fileContent.content as string;
+  const size = fileContent.size;
+
+  console.log('*********got', size, name, modifiedName);
+
+  console.log('got url', FILE_ICON(name.split('.').slice(-1)[0]));
+
+  return (
+    <View>
+      <View>
+        <SvgUri
+          source={{uri: FILE_ICON(name.split('.').slice(-1)[0])}}
+          width="100%"
+          height="40"
+        />
+      </View>
+      <View>
+        <Text>{modifiedName}</Text>
+        <Text>{formatFileSize(size)}</Text>
+      </View>
+      <TouchableOpacity onPress={() => Linking.openURL(content)}>
+        <Text>Download</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 const MessageComponent = ({
   chatMessage,
   componentType,
 }: MessageComponentProps) => {
   const styles = componentType === 'SENDER' ? SenderStyle : RecipientStyle;
   const {message, messageType, time} = chatMessage;
-
-  if (messageType === 'GIF') {
-    console.log('message gif', message);
-  }
-
-  if (messageType === 'Image') {
-    console.log('*****message image', typeof message);
-  }
 
   return (
     <View style={styles.container}>
@@ -34,10 +83,9 @@ const MessageComponent = ({
             source={{
               uri: message,
             }}
-            style={{width: 100, height: 100}}
+            style={{width: '100%', height: 120}}
           />
         )}
-        {/* {messageType === 'GIF' && <Image source={{uri: message}} />} */}
         {messageType === 'Image' && (
           <Image
             source={{
@@ -45,9 +93,9 @@ const MessageComponent = ({
             }}
             style={{width: '100%', height: 120}}
           />
-          // <Image style={{width: 100, height: 100}} source={{uri: message}} />
         )}
         {messageType === 'Text' && <Text style={styles.text}>{message}</Text>}
+        {messageType === 'File' && <FileMessageComponent file={message} />}
       </View>
 
       <Text style={styles.time}>{time}</Text>
