@@ -45,13 +45,8 @@ interface ChatScreenParam {
 
 const SingleChatScreen = ({route}: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
-  const {
-    cid,
-    senderAddress,
-    connectedUser,
-    combinedDID,
-    isIntentSendPage,
-  }: ChatScreenParam = route.params;
+  const {cid, senderAddress, connectedUser, isIntentSendPage}: ChatScreenParam =
+    route.params;
 
   const [isIntentReceivePage, setisIntentReceivePage] = useState<boolean>(
     route.params.isIntentReceivePage,
@@ -62,7 +57,8 @@ const SingleChatScreen = ({route}: any) => {
   const [isLoading, chatMessages] = useConversationLoader(
     cid,
     connectedUser.privateKey,
-    combinedDID,
+    connectedUser.wallets,
+    senderAddress,
   );
 
   const [isSending, sendMessage, isSendReady] = useSendMessage(
