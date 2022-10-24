@@ -45,24 +45,23 @@ const useSendMessage = (
   useEffect(() => {
     // getting receivers infos
     (async () => {
+      console.log('Quering the receiver');
       const res = await PushNodeClient.getUser(
         messageReceiver.current.ethAddress,
       );
       if (res) {
         messageReceiver.current.pgpAddress = res.publicKey;
+        console.log('Receiver addrs found');
         setIsSendingReady(true);
       } else {
-        console.log('Receiver ');
+        console.log('Receiver not found');
       }
     })();
   }, []);
 
   const sendMessage = async ({message, messageType}: MessageFormat) => {
-    console.log('sending was called');
+    console.log('sending was called', isSendingReady);
 
-    if (!isSendingReady) {
-      return;
-    }
     setIsSending(true);
     console.log('**** send message');
     const msg = await getEncryptedMessage(

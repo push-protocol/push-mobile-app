@@ -127,9 +127,17 @@ const SingleChatScreen = ({route}: any) => {
       e => {
         // Handle send gif
         const gifUrl: string = e.media.url;
+
+        // checks if url empty
         if (gifUrl.trim() === '') {
           return;
         }
+
+        // check if send msg open
+        // TODO: access state isSendReady inside this listener
+        // if (!isSendReady) {
+        //   return;
+        // }
 
         console.log('sending', gifUrl);
         sendMessage({messageType: 'GIF', message: gifUrl});
@@ -184,7 +192,7 @@ const SingleChatScreen = ({route}: any) => {
       </View>
 
       {isLoading ? (
-        <Text style={{marginTop: 150}}>Loading conversation...</Text>
+        <Text style={{marginTop: 150}}>Loading coneversation...</Text>
       ) : (
         <ScrollView
           style={styles.section}
