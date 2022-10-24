@@ -5,7 +5,12 @@ import {showSimpleToast} from 'src/components/indicators/SimpleToast';
 import {getCAIPAddress} from 'src/helpers/CAIPHelper';
 import {encryptAndSign} from 'src/helpers/w2w/pgp';
 
-type sendMessageFunc = (message: string) => Promise<void>;
+export interface MessageFormat {
+  message: string;
+  messageType: 'GIF' | 'Text';
+}
+
+type sendMessageFunc = (message: MessageFormat) => Promise<void>;
 type useSendMessageReturnType = [boolean, sendMessageFunc, boolean];
 type MessageReciver = {ethAddress: string; pgpAddress: string};
 
@@ -52,7 +57,9 @@ const useSendMessage = (
     })();
   }, []);
 
-  const sendMessage = async (message: string) => {
+  const sendMessage = async ({message, messageType}: MessageFormat) => {
+    console.log('sending was called');
+
     if (!isSendingReady) {
       return;
     }
@@ -70,7 +77,7 @@ const useSendMessage = (
       toDID: messageReceiver.current.ethAddress,
       toCAIP10: messageReceiver.current.ethAddress,
       messageContent: msg.cipherText,
-      messageType: 'Text',
+      messageType: messageType,
       signature: msg.signature,
       encType: msg.encType,
       sigType: msg.sigType,
@@ -90,7 +97,7 @@ const useSendMessage = (
     setIsSending(false);
   };
 
-  const sendIntent = async (message: string) => {
+  const sendIntent = async ({message, messageType}: MessageFormat) => {
     if (!isSendingReady) {
       return;
     }
@@ -108,7 +115,7 @@ const useSendMessage = (
       toDID: messageReceiver.current.ethAddress,
       toCAIP10: messageReceiver.current.ethAddress,
       messageContent: msg.cipherText,
-      messageType: 'Text',
+      messageType: messageType,
       signature: msg.signature,
       encType: msg.encType,
       sigType: msg.sigType,

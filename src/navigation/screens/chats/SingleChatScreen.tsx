@@ -6,8 +6,9 @@ import {
   FontAwesome5,
   Ionicons,
 } from '@expo/vector-icons';
+import {GiphyDialog, GiphyDialogEvent} from '@giphy/react-native-sdk';
 import {useNavigation} from '@react-navigation/native';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -18,6 +19,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import {Menu, MenuItem} from 'react-native-material-menu';
 import Globals from 'src/Globals';
@@ -27,6 +29,7 @@ import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import {pgpSign} from 'src/helpers/w2w/pgp';
 
 import {AcceptIntent, MessageComponent, Time} from './components';
+import './giphy/giphy.setup';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
 import {useSendMessage} from './helpers/useSendMessage';
@@ -77,7 +80,7 @@ const SingleChatScreen = ({route}: any) => {
     if (_text.trim() === '') {
       return;
     }
-    await sendMessage(_text);
+    await sendMessage({messageType: 'Text', message: _text});
   };
 
   const onAccept = async () => {
@@ -120,6 +123,26 @@ const SingleChatScreen = ({route}: any) => {
       onPress: hideMenu,
     },
   ];
+
+  // giphy listener
+  useEffect(() => {
+    const listener = GiphyDialog.addListener(
+      GiphyDialogEvent.MediaSelected,
+      e => {
+        // Handle send gif
+        const gifUrl: string = e.media.url;
+        if (gifUrl.trim() === '') {
+          return;
+        }
+
+        console.log('sending', gifUrl);
+        sendMessage({messageType: 'GIF', message: gifUrl});
+      },
+    );
+    return () => {
+      listener.remove();
+    };
+  }, []);
 
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
@@ -207,8 +230,14 @@ const SingleChatScreen = ({route}: any) => {
       {!isIntentReceivePage && (
         <View style={styles.keyboard}>
           <View style={styles.textInputContainer}>
+            {/* Open gif */}
             <View style={styles.smileyIcon}>
-              <FontAwesome5 name="smile" size={20} color="black" />
+              <TouchableOpacity
+                onPress={() => {
+                  GiphyDialog.show();
+                }}>
+                <FontAwesome5 name="smile" size={20} color="black" />
+              </TouchableOpacity>
             </View>
 
             <TextInput
