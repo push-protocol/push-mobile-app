@@ -434,7 +434,7 @@ export default class MetaStorage {
         JSON.stringify(setting),
       );
 
-      if (userLocked == false) {
+      if (userLocked === false) {
         await this.setRemainingPasscodeAttempts(
           GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS,
         );

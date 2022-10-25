@@ -54,6 +54,7 @@ const SingleChatScreen = ({route}: any) => {
 
   const navigation = useNavigation();
   const [text, setText] = React.useState('');
+
   const [isLoading, chatMessages] = useConversationLoader(
     cid,
     connectedUser.privateKey,
@@ -343,7 +344,7 @@ const styles = StyleSheet.create({
   keyboard: {
     display: 'flex',
     position: 'absolute',
-    bottom: 10,
+    bottom: 20,
     backgroundColor: Globals.COLORS.WHITE,
     borderRadius: 16,
     width: '90%',

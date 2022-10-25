@@ -87,7 +87,9 @@ const useSendMessage = (
 
     try {
       const res = await PushNodeClient.postMessage(postBody);
-      console.log(res);
+
+      await storeConversationData(messageReceiver.current.ethAddress, res);
+      console.log('Message response: ', res);
     } catch (error) {
       console.log('error', error);
     }

@@ -6,6 +6,7 @@ import * as CaipHelper from 'src/helpers/CAIPHelper';
 import {decryptWithWalletRPCMethod} from 'src/helpers/w2w/metamaskSigUtil';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
+import {getPersistedChatData, persistChatData} from './storage';
 import {
   checkIfItemInCache,
   createNewPgpPair,
@@ -24,6 +25,7 @@ export interface ChatFeedCache {
 
 const useChatLoader = (): [boolean, ChatData] => {
   const [isLoading, setIsLoading] = useState(true);
+
   const [chatData, setChatData] = useState<ChatData>({
     connectedUserData: undefined,
     feeds: [],
@@ -65,7 +67,22 @@ const useChatLoader = (): [boolean, ChatData] => {
       ...user,
       privateKey: decryptedPrivateKey,
     };
+
+    persistChatData({
+      ...chatData,
+      connectedUserData,
+    });
+
     setChatData(prev => ({...prev, connectedUserData}));
+  };
+
+  const loadCachedInbox = async () => {
+    const cachedData = await getPersistedChatData();
+
+    if (cachedData) {
+      setChatData(cachedData);
+      setIsLoading(false);
+    }
   };
 
   const loadInbox = async (ethAddress: string) => {
@@ -93,11 +110,19 @@ const useChatLoader = (): [boolean, ChatData] => {
       feeds,
     );
 
+    persistChatData({
+      ...chatData,
+      feeds: newChatFeeds,
+      requests: newRequestFeeds,
+    });
+
     setChatData(prev => ({
       ...prev,
       feeds: newChatFeeds,
       requests: newRequestFeeds,
     }));
+
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -115,20 +140,21 @@ const useChatLoader = (): [boolean, ChatData] => {
     const caipAddress = CaipHelper.walletToCAIP10(derivedAddress);
     const encryptionPublicKey = getEncryptionPublicKey(userPk);
 
-    let fetechNewMessages: NodeJS.Timer;
+    let fetchNewMessages: NodeJS.Timer;
+
     (async () => {
       await checkUserProfile(caipAddress, encryptionPublicKey, userPk);
+      await loadCachedInbox();
       await loadInbox(derivedAddress);
 
       // qeury for new threads evey 3 second
-      fetechNewMessages = setInterval(async () => {
+      fetchNewMessages = setInterval(async () => {
         console.log('Fetching new inbox');
         await loadInbox(derivedAddress);
       }, 3000);
-      setIsLoading(false);
     })();
 
-    return () => clearInterval(fetechNewMessages);
+    return () => clearInterval(fetchNewMessages);
   }, []);
 
   return [isLoading, chatData];
