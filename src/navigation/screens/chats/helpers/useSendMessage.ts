@@ -1,12 +1,16 @@
 import {useEffect, useRef, useState} from 'react';
 import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
+import {showSimpleToast} from 'src/components/indicators/SimpleToast';
 import {getCAIPAddress} from 'src/helpers/CAIPHelper';
 import {encryptAndSign} from 'src/helpers/w2w/pgp';
 
-import {storeConversationData} from './storage';
+export interface MessageFormat {
+  message: string;
+  messageType: 'GIF' | 'Text';
+}
 
-type sendMessageFunc = (message: string) => Promise<void>;
+type sendMessageFunc = (message: MessageFormat) => Promise<void>;
 type useSendMessageReturnType = [boolean, sendMessageFunc, boolean];
 type MessageReciver = {ethAddress: string; pgpAddress: string};
 
@@ -41,22 +45,23 @@ const useSendMessage = (
   useEffect(() => {
     // getting receivers infos
     (async () => {
+      console.log('Quering the receiver');
       const res = await PushNodeClient.getUser(
         messageReceiver.current.ethAddress,
       );
       if (res) {
         messageReceiver.current.pgpAddress = res.publicKey;
+        console.log('Receiver addrs found');
         setIsSendingReady(true);
       } else {
-        console.log('Receiver ');
+        console.log('Receiver not found');
       }
     })();
   }, []);
 
-  const sendMessage = async (message: string) => {
-    if (!isSendingReady) {
-      return;
-    }
+  const sendMessage = async ({message, messageType}: MessageFormat) => {
+    console.log('sending was called', isSendingReady);
+
     setIsSending(true);
     console.log('**** send message');
     const msg = await getEncryptedMessage(
@@ -71,7 +76,7 @@ const useSendMessage = (
       toDID: messageReceiver.current.ethAddress,
       toCAIP10: messageReceiver.current.ethAddress,
       messageContent: msg.cipherText,
-      messageType: 'Text',
+      messageType: messageType,
       signature: msg.signature,
       encType: msg.encType,
       sigType: msg.sigType,
@@ -93,7 +98,7 @@ const useSendMessage = (
     setIsSending(false);
   };
 
-  const sendIntent = async (message: string) => {
+  const sendIntent = async ({message, messageType}: MessageFormat) => {
     if (!isSendingReady) {
       return;
     }
@@ -111,7 +116,7 @@ const useSendMessage = (
       toDID: messageReceiver.current.ethAddress,
       toCAIP10: messageReceiver.current.ethAddress,
       messageContent: msg.cipherText,
-      messageType: 'Text',
+      messageType: messageType,
       signature: msg.signature,
       encType: msg.encType,
       sigType: msg.sigType,
@@ -122,11 +127,15 @@ const useSendMessage = (
 
     try {
       const res = await PushNodeClient.postIntent(postBody);
-      console.log(res);
+      if (res.toString().toLowerCase() === 'your wallet is not whitelisted') {
+        showSimpleToast('Your wallet is not whitelisted');
+        return;
+      }
+      console.log('intent send res', res);
+      console.log('**** intent successfully sent');
     } catch (error) {
       console.log('error', error);
     }
-    console.log('**** intent successfully sent');
     setIsIntentSendPage(false);
     setIsSending(false);
   };

@@ -7,13 +7,14 @@ import {ChatMessage, resolveCID} from './chatResolver';
 import {getStoredConversationData, storeConversationData} from './storage';
 
 const getLatestHash = async (
-  combinedDID: string,
+  userAddress: string,
+  peerAddress: string,
 ): Promise<[boolean, string]> => {
   try {
-    const address = caip10ToWallet(combinedDID.split('_')[0]);
-    const feeds = await PushNodeClient.getInbox(address);
-    const filtertedFeeds = feeds?.filter(e => e.combinedDID.includes(address));
-
+    const feeds = await PushNodeClient.getInbox(caip10ToWallet(userAddress));
+    const filtertedFeeds = feeds?.filter(e =>
+      e.combinedDID.includes(peerAddress),
+    );
     const cid = filtertedFeeds![0].threadhash;
     return [false, cid!];
   } catch (error) {
@@ -47,7 +48,8 @@ const loadMessageBatch = async (
 const useConversationLoader = (
   cid: string,
   pgpPrivateKey: string,
-  combinedDID: string,
+  userAddress: string,
+  senderAddress: string,
 ): [boolean, ChatMessage[]] => {
   const [isLoading, setIsLoading] = useState(true);
   const [chatData, setChatData] = useState<ChatMessage[]>([]);
@@ -62,15 +64,10 @@ const useConversationLoader = (
     isFetching.current = true;
     let chats: ChatMessage[] = [];
 
-    const _currentHash = await loadMessageBatch(
-      currentCid,
-      chats,
-      pgpPrivateKey,
-      stopCid,
-    );
+    await loadMessageBatch(currentCid, chats, pgpPrivateKey, stopCid);
 
     if (stopCid !== '') {
-      currentHash.current = _currentHash;
+      currentHash.current = currentCid;
     }
     isFetching.current = false;
 
@@ -96,10 +93,13 @@ const useConversationLoader = (
 
       // listen to new chats
       chatListener = setInterval(async () => {
-        console.log('looking for new conversations', combinedDID);
         if (!isFetching.current) {
-          const [error, newCid] = await getLatestHash(combinedDID);
+          const [error, newCid] = await getLatestHash(
+            userAddress,
+            senderAddress,
+          );
           if (error) {
+            console.log('got error', error);
             return;
           }
           if (newCid === currentHash.current) {

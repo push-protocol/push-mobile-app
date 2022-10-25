@@ -2,11 +2,15 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import Globals from 'src/Globals';
 
-const Sender = ({text, time}: {text: string; time: string}) => {
+import {ChatMessage} from '../helpers/chatResolver';
+
+const Sender = ({message, time, messageType}: ChatMessage) => {
+  // console.log('got message type', messageType, 'message was', message);
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.text}>{text}</Text>
+        <Text style={styles.text}>{message}</Text>
       </View>
 
       <Text style={styles.time}>{time}</Text>

@@ -6,8 +6,9 @@ import {
   FontAwesome5,
   Ionicons,
 } from '@expo/vector-icons';
+import {GiphyDialog, GiphyDialogEvent} from '@giphy/react-native-sdk';
 import {useNavigation} from '@react-navigation/native';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -18,6 +19,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import {Menu, MenuItem} from 'react-native-material-menu';
 import Globals from 'src/Globals';
@@ -26,7 +28,8 @@ import * as PushNodeClient from 'src/apis';
 import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import {pgpSign} from 'src/helpers/w2w/pgp';
 
-import {AcceptIntent, Recipient, Sender, Time} from './components';
+import {AcceptIntent, MessageComponent, Time} from './components';
+import './giphy/giphy.setup';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
 import {useSendMessage} from './helpers/useSendMessage';
@@ -42,13 +45,8 @@ interface ChatScreenParam {
 
 const SingleChatScreen = ({route}: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
-  const {
-    cid,
-    senderAddress,
-    connectedUser,
-    combinedDID,
-    isIntentSendPage,
-  }: ChatScreenParam = route.params;
+  const {cid, senderAddress, connectedUser, isIntentSendPage}: ChatScreenParam =
+    route.params;
 
   const [isIntentReceivePage, setisIntentReceivePage] = useState<boolean>(
     route.params.isIntentReceivePage,
@@ -60,7 +58,8 @@ const SingleChatScreen = ({route}: any) => {
   const [isLoading, chatMessages] = useConversationLoader(
     cid,
     connectedUser.privateKey,
-    combinedDID,
+    connectedUser.wallets,
+    senderAddress,
   );
 
   const [isSending, sendMessage, isSendReady] = useSendMessage(
@@ -78,7 +77,7 @@ const SingleChatScreen = ({route}: any) => {
     if (_text.trim() === '') {
       return;
     }
-    await sendMessage(_text);
+    await sendMessage({messageType: 'Text', message: _text});
   };
 
   const onAccept = async () => {
@@ -121,6 +120,34 @@ const SingleChatScreen = ({route}: any) => {
       onPress: hideMenu,
     },
   ];
+
+  // giphy listener
+  useEffect(() => {
+    const listener = GiphyDialog.addListener(
+      GiphyDialogEvent.MediaSelected,
+      e => {
+        // Handle send gif
+        const gifUrl: string = e.media.url;
+
+        // checks if url empty
+        if (gifUrl.trim() === '') {
+          return;
+        }
+
+        // check if send msg open
+        // TODO: access state isSendReady inside this listener
+        // if (!isSendReady) {
+        //   return;
+        // }
+
+        console.log('sending', gifUrl);
+        sendMessage({messageType: 'GIF', message: gifUrl});
+      },
+    );
+    return () => {
+      listener.remove();
+    };
+  }, []);
 
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
@@ -166,7 +193,7 @@ const SingleChatScreen = ({route}: any) => {
       </View>
 
       {isLoading ? (
-        <Text style={{marginTop: 150}}>Loading conversation...</Text>
+        <Text style={{marginTop: 150}}>Loading coneversation...</Text>
       ) : (
         <ScrollView
           style={styles.section}
@@ -183,9 +210,17 @@ const SingleChatScreen = ({route}: any) => {
 
           {chatMessages.map((msg, index) =>
             msg.to === senderAddress ? (
-              <Sender text={msg.message} time={msg.time} key={index} />
+              <MessageComponent
+                chatMessage={msg}
+                componentType="SENDER"
+                key={index}
+              />
             ) : (
-              <Recipient text={msg.message} time={msg.time} key={index} />
+              <MessageComponent
+                chatMessage={msg}
+                componentType="RECEIVER"
+                key={index}
+              />
             ),
           )}
 
@@ -200,8 +235,14 @@ const SingleChatScreen = ({route}: any) => {
       {!isIntentReceivePage && (
         <View style={styles.keyboard}>
           <View style={styles.textInputContainer}>
+            {/* Open gif */}
             <View style={styles.smileyIcon}>
-              <FontAwesome5 name="smile" size={20} color="black" />
+              <TouchableOpacity
+                onPress={() => {
+                  GiphyDialog.show();
+                }}>
+                <FontAwesome5 name="smile" size={20} color="black" />
+              </TouchableOpacity>
             </View>
 
             <TextInput
