@@ -5,6 +5,8 @@ import {showSimpleToast} from 'src/components/indicators/SimpleToast';
 import {getCAIPAddress} from 'src/helpers/CAIPHelper';
 import {encryptAndSign} from 'src/helpers/w2w/pgp';
 
+import {storeConversationData} from './storage';
+
 export interface MessageFormat {
   message: string;
   messageType: 'GIF' | 'Text';

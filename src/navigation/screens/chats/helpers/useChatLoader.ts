@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import * as PushNodeClient from 'src/apis';
 import * as CaipHelper from 'src/helpers/CAIPHelper';
+import CryptoHelper from 'src/helpers/CryptoHelper';
 import {decryptWithWalletRPCMethod} from 'src/helpers/w2w/metamaskSigUtil';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
@@ -133,10 +134,11 @@ const useChatLoader = (): [boolean, ChatData] => {
     // TODO: for debug, remove later
     // ('081698f3d1afb6285784c0a88601725e97f23a0115fd4f75651fbe25d0ec2b9a'); // my chrome
     // 'c39d17b1575c8d5e6e615767e19dc285d1f803d21882fb0c60f7f5b7edb759b2'; // my brave
-    // const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
-    // const derivedAddress = CryptoHelper.getAddressFromPublicKey(ethPublicKey);
+    userPk = '081698f3d1afb6285784c0a88601725e97f23a0115fd4f75651fbe25d0ec2b9a';
+    const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
+    const derivedAddress = CryptoHelper.getAddressFromPublicKey(ethPublicKey);
 
-    let derivedAddress = users[currentUser].wallet;
+    // let derivedAddress = users[currentUser].wallet;
     const caipAddress = CaipHelper.walletToCAIP10(derivedAddress);
     const encryptionPublicKey = getEncryptionPublicKey(userPk);
 

@@ -50,6 +50,7 @@ const useConversationLoader = (
   pgpPrivateKey: string,
   userAddress: string,
   senderAddress: string,
+  combinedDID: string,
 ): [boolean, ChatMessage[]] => {
   const [isLoading, setIsLoading] = useState(true);
   const [chatData, setChatData] = useState<ChatMessage[]>([]);

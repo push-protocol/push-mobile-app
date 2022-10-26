@@ -45,8 +45,13 @@ interface ChatScreenParam {
 
 const SingleChatScreen = ({route}: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
-  const {cid, senderAddress, connectedUser, isIntentSendPage}: ChatScreenParam =
-    route.params;
+  const {
+    cid,
+    senderAddress,
+    connectedUser,
+    isIntentSendPage,
+    combinedDID,
+  }: ChatScreenParam = route.params;
 
   const [isIntentReceivePage, setisIntentReceivePage] = useState<boolean>(
     route.params.isIntentReceivePage,
@@ -60,6 +65,7 @@ const SingleChatScreen = ({route}: any) => {
     connectedUser.privateKey,
     connectedUser.wallets,
     senderAddress,
+    combinedDID,
   );
 
   const [isSending, sendMessage, isSendReady] = useSendMessage(
@@ -142,6 +148,7 @@ const SingleChatScreen = ({route}: any) => {
 
         console.log('sending', gifUrl);
         sendMessage({messageType: 'GIF', message: gifUrl});
+        GiphyDialog.hide();
       },
     );
     return () => {
