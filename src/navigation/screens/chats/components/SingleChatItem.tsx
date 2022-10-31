@@ -23,6 +23,7 @@ const ChatItem = (props: SingleChatItemProps) => {
   }
 
   const [lastMessage, setLastMessage] = useState('decrypting....');
+  const [messageType, setMessageType] = useState('Text');
   const [timeStamp, setTimeStamp] = useState('...');
   const [isLoading, setLoading] = useState(true);
 
@@ -53,9 +54,9 @@ const ChatItem = (props: SingleChatItemProps) => {
         cid,
         appContext.connectedUser.privateKey,
       );
-
       setLastMessage(chatMessage.message);
       setTimeStamp(chatMessage.time);
+      setMessageType(chatMessage.messageType);
       setLoading(false);
     })();
   });
@@ -75,7 +76,10 @@ const ChatItem = (props: SingleChatItemProps) => {
               {getFormattedAddress(props.wallet)}
             </Text>
             <Text style={props.count ? styles.activeText : styles.text}>
-              {lastMessage}
+              {messageType === 'Text' && lastMessage}
+              {messageType === 'GIF' && 'GIF'}
+              {messageType === 'File' && 'FILE'}
+              {messageType === 'Image' && 'Image'}
             </Text>
           </View>
 
