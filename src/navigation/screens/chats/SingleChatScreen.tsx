@@ -60,7 +60,7 @@ const SingleChatScreen = ({route}: any) => {
   const navigation = useNavigation();
   const [text, setText] = React.useState('');
 
-  const [isLoading, chatMessages] = useConversationLoader(
+  const [isLoading, chatMessages, pushChatDataDirect] = useConversationLoader(
     cid,
     connectedUser.privateKey,
     connectedUser.wallets,
@@ -83,7 +83,18 @@ const SingleChatScreen = ({route}: any) => {
     if (_text.trim() === '') {
       return;
     }
-    await sendMessage({messageType: 'Text', message: _text});
+    const res = await sendMessage({
+      messageType: 'Text',
+      message: _text,
+    });
+
+    if (!res) {
+      return;
+    }
+
+    //add messages to current state
+    const [_cid, msg] = res;
+    pushChatDataDirect(_cid, msg);
   };
 
   const onAccept = async () => {

@@ -3,7 +3,7 @@ import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import {pgpDecrypt} from 'src/helpers/w2w/pgp';
 
-const parseTimeStamp = (timestamp: number) => {
+export const parseTimeStamp = (timestamp: number) => {
   const time = new Date(timestamp);
   const date =
     time.toLocaleTimeString('en-US').slice(0, -6) +

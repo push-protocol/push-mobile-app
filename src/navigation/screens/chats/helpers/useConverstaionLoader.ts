@@ -6,6 +6,8 @@ import {FETCH_ONCE} from '../constants';
 import {ChatMessage, resolveCID} from './chatResolver';
 import {getStoredConversationData, storeConversationData} from './storage';
 
+type pushChatDataDirectFunc = (cid: string, msg: ChatMessage) => void;
+
 const getLatestHash = async (
   userAddress: string,
   peerAddress: string,
@@ -51,7 +53,7 @@ const useConversationLoader = (
   userAddress: string,
   senderAddress: string,
   combinedDID: string,
-): [boolean, ChatMessage[]] => {
+): [boolean, ChatMessage[], pushChatDataDirectFunc] => {
   const [isLoading, setIsLoading] = useState(true);
   const [chatData, setChatData] = useState<ChatMessage[]>([]);
   const currentHash = useRef(cid);
@@ -73,6 +75,11 @@ const useConversationLoader = (
     isFetching.current = false;
 
     return chats;
+  };
+
+  const pushChatDataDirect = (_cid: string, msg: ChatMessage) => {
+    setChatData(prev => [...prev, msg]);
+    currentHash.current = _cid;
   };
 
   useEffect(() => {
@@ -124,6 +131,6 @@ const useConversationLoader = (
     return () => clearInterval(chatListener);
   }, []);
 
-  return [isLoading, chatData];
+  return [isLoading, chatData, pushChatDataDirect];
 };
 export {useConversationLoader};

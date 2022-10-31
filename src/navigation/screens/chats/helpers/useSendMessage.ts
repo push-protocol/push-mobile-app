@@ -2,18 +2,28 @@ import {useEffect, useRef, useState} from 'react';
 import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
 import {showSimpleToast} from 'src/components/indicators/SimpleToast';
-import {getCAIPAddress} from 'src/helpers/CAIPHelper';
+import {caip10ToWallet, getCAIPAddress} from 'src/helpers/CAIPHelper';
 import {encryptAndSign} from 'src/helpers/w2w/pgp';
 
-import {storeConversationData} from './storage';
+import {ChatMessage, parseTimeStamp} from './chatResolver';
+
+// import {storeConversationData} from './storage';
 
 export interface MessageFormat {
   message: string;
   messageType: 'GIF' | 'Text';
 }
 
-type sendMessageFunc = (message: MessageFormat) => Promise<void>;
-type useSendMessageReturnType = [boolean, sendMessageFunc, boolean];
+type sendIntentFunc = (message: MessageFormat) => Promise<void>;
+type sendMessageFunc = (
+  message: MessageFormat,
+) => Promise<[string, ChatMessage]>;
+
+type useSendMessageReturnType = [
+  boolean,
+  sendMessageFunc | sendIntentFunc,
+  boolean,
+];
 type MessageReciver = {ethAddress: string; pgpAddress: string};
 
 const getEncryptedMessage = async (
@@ -61,7 +71,10 @@ const useSendMessage = (
     })();
   }, []);
 
-  const sendMessage = async ({message, messageType}: MessageFormat) => {
+  const sendMessage = async ({
+    message,
+    messageType,
+  }: MessageFormat): Promise<[string, ChatMessage]> => {
     console.log('sending was called', isSendingReady);
 
     setIsSending(true);
@@ -85,19 +98,33 @@ const useSendMessage = (
       encryptedSecret: msg.encryptedSecret,
     };
 
-    console.log('posting', JSON.stringify(postBody));
-
     try {
       const res = await PushNodeClient.postMessage(postBody);
+      if (typeof res === 'string') {
+        throw new Error('Error posing');
+      }
 
-      await storeConversationData(messageReceiver.current.ethAddress, res);
-      console.log('Message response: ', res);
+      // TODO:fix add to cache
+      // add to cache
+      // await storeConversationData(messageReceiver.current.ethAddress, res);
+      const timeStamp = res.timestamp ? res.timestamp : 0;
+      const cid = res.cid;
+      const chatMessage: ChatMessage = {
+        to: caip10ToWallet(postBody.toCAIP10),
+        from: caip10ToWallet(postBody.fromCAIP10),
+        messageType: postBody.messageType,
+        message: message,
+        time: parseTimeStamp(timeStamp),
+      };
+
+      console.log('**** message successfully sent');
+      setIsSending(false);
+      return [cid, chatMessage];
     } catch (error) {
       console.log('error', error);
+      setIsSending(false);
     }
-    console.log('**** message successfully sent');
-
-    setIsSending(false);
+    return ['', {to: '', from: '', messageType: '', message: '', time: ''}];
   };
 
   const sendIntent = async ({message, messageType}: MessageFormat) => {
