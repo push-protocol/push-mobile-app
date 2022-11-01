@@ -23,6 +23,7 @@ type useSendMessageReturnType = [
   boolean,
   sendMessageFunc | sendIntentFunc,
   boolean,
+  ChatMessage,
 ];
 type MessageReciver = {ethAddress: string; pgpAddress: string};
 
@@ -41,6 +42,20 @@ const getEncryptedMessage = async (
   return encryptedMessage;
 };
 
+const generateNullRespose = (): [string, ChatMessage] => {
+  return ['', {to: '', from: '', messageType: '', message: '', time: ''}];
+};
+
+const generateNullChatMessage = (): ChatMessage => {
+  return {
+    from: '',
+    message: '',
+    messageType: '',
+    time: '',
+    to: '',
+  };
+};
+
 const useSendMessage = (
   connectedUser: ConnectedUser,
   receiverAddress: string,
@@ -49,6 +64,10 @@ const useSendMessage = (
   const [isSending, setIsSending] = useState(false);
   const [isIntentSendPage, setIsIntentSendPage] = useState(_isIntentSendPage);
   const [isSendingReady, setIsSendingReady] = useState(false);
+  const [tempChatMessage, setTempChatMessage] = useState<ChatMessage>(
+    generateNullChatMessage(),
+  );
+
   const messageReceiver = useRef<MessageReciver>({
     ethAddress: getCAIPAddress(receiverAddress),
     pgpAddress: '',
@@ -98,24 +117,30 @@ const useSendMessage = (
       encryptedSecret: msg.encryptedSecret,
     };
 
+    const chatMessage: ChatMessage = {
+      to: caip10ToWallet(postBody.toCAIP10),
+      from: caip10ToWallet(postBody.fromCAIP10),
+      messageType: postBody.messageType,
+      message: message,
+      time: parseTimeStamp(Date.now()),
+    };
+
     try {
+      // temporarily display temp message
+      setTempChatMessage(chatMessage);
+
       const res = await PushNodeClient.postMessage(postBody);
       if (typeof res === 'string') {
+        // TODO: show error toast
         throw new Error('Error posing');
       }
 
       // TODO:fix add to cache
       // add to cache
       // await storeConversationData(messageReceiver.current.ethAddress, res);
-      const timeStamp = res.timestamp ? res.timestamp : 0;
       const cid = res.cid;
-      const chatMessage: ChatMessage = {
-        to: caip10ToWallet(postBody.toCAIP10),
-        from: caip10ToWallet(postBody.fromCAIP10),
-        messageType: postBody.messageType,
-        message: message,
-        time: parseTimeStamp(timeStamp),
-      };
+      // const timeStamp = res.timestamp ? res.timestamp : 0;
+      // chatMessage.time = timeStamp;
 
       console.log('**** message successfully sent');
       setIsSending(false);
@@ -124,7 +149,7 @@ const useSendMessage = (
       console.log('error', error);
       setIsSending(false);
     }
-    return ['', {to: '', from: '', messageType: '', message: '', time: ''}];
+    return generateNullRespose();
   };
 
   const sendIntent = async ({message, messageType}: MessageFormat) => {
@@ -170,9 +195,9 @@ const useSendMessage = (
   };
 
   if (isIntentSendPage) {
-    return [isSending, sendIntent, isSendingReady];
+    return [isSending, sendIntent, isSendingReady, tempChatMessage];
   } else {
-    return [isSending, sendMessage, isSendingReady];
+    return [isSending, sendMessage, isSendingReady, tempChatMessage];
   }
 };
 

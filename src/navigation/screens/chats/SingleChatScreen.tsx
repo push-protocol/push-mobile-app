@@ -68,7 +68,7 @@ const SingleChatScreen = ({route}: any) => {
     combinedDID,
   );
 
-  const [isSending, sendMessage, isSendReady] = useSendMessage(
+  const [isSending, sendMessage, isSendReady, tempChatMessage] = useSendMessage(
     connectedUser,
     senderAddress,
     isIntentSendPage,
@@ -240,6 +240,13 @@ const SingleChatScreen = ({route}: any) => {
                 key={index}
               />
             ),
+          )}
+
+          {isSending && (
+            <MessageComponent
+              chatMessage={tempChatMessage}
+              componentType="SENDER"
+            />
           )}
 
           {/* Donot show intent checkbox in chat page */}
