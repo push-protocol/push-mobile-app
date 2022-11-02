@@ -158,8 +158,18 @@ const SingleChatScreen = ({route}: any) => {
         // }
 
         console.log('sending', gifUrl);
-        sendMessage({messageType: 'GIF', message: gifUrl});
         GiphyDialog.hide();
+        const res = sendMessage({messageType: 'GIF', message: gifUrl}).then(
+          _res => {
+            if (_res) {
+              const [_cid, msg] = _res;
+              pushChatDataDirect(_cid, msg);
+            }
+          },
+        );
+        if (!res) {
+          return;
+        }
       },
     );
     return () => {
