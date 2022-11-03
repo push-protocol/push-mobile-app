@@ -74,20 +74,24 @@ export const createUser = async ({
   signature: string;
   sigType: string;
 }): Promise<User> => {
-  const response = await fetch(ENV_CONFIG.EPNS_SERVER + '/v1/w2w/users', {
+  const url = BASE_URL + '/v1/w2w/users';
+  const body = JSON.stringify({
+    caip10,
+    did,
+    publicKey,
+    encryptedPrivateKey,
+    encryptionType,
+    signature,
+    sigType,
+  });
+  console.log('calling', url, '\nbody', 'body');
+
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      caip10,
-      did,
-      publicKey,
-      encryptedPrivateKey,
-      encryptionType,
-      signature,
-      sigType,
-    }),
+    body: body,
   }).catch(e => {
     console.log(e);
     throw new Error(e);

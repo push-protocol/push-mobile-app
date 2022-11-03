@@ -25,6 +25,7 @@ import {Menu, MenuItem} from 'react-native-material-menu';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
+import {Toaster, ToasterOptions} from 'src/components/indicators/Toaster';
 import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import {pgpSign} from 'src/helpers/w2w/pgp';
 
@@ -120,6 +121,9 @@ const SingleChatScreen = ({route}: any) => {
     // update state to load chats
     setisIntentReceivePage(false);
   };
+
+  const toastRef = useRef(null);
+
   const onDecline = () => {};
   const [visible, setVisible] = useState(false);
   const hideMenu = () => setVisible(false);
@@ -151,13 +155,6 @@ const SingleChatScreen = ({route}: any) => {
           return;
         }
 
-        // check if send msg open
-        // TODO: access state isSendReady inside this listener
-        // if (!isSendReady) {
-        //   return;
-        // }
-
-        console.log('sending', gifUrl);
         GiphyDialog.hide();
         const res = sendMessage({messageType: 'GIF', message: gifUrl}).then(
           _res => {
@@ -175,6 +172,16 @@ const SingleChatScreen = ({route}: any) => {
     return () => {
       listener.remove();
     };
+  }, []);
+
+  // toast
+  useEffect(() => {
+    // @ts-ignore
+    toastRef.current.showToast(
+      'Simple Toast',
+      '',
+      ToasterOptions.TYPE.GRADIENT_PRIMARY,
+    );
   }, []);
 
   return (
@@ -313,6 +320,8 @@ const SingleChatScreen = ({route}: any) => {
           </View>
         </View>
       )}
+
+      <Toaster ref={toastRef} />
     </LinearGradient>
   );
 };

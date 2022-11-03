@@ -5,15 +5,12 @@ import React, {Component} from 'react';
 import {
   ActivityIndicator,
   Animated,
-  Dimensions,
   Easing,
-  Platform,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import SafeAreaView from 'react-native-safe-area-view';
 import GLOBALS from 'src/Globals';
 
 const ToasterOptions = {
@@ -83,7 +80,7 @@ class Toaster extends Component {
 
   // Change Render
   changeRenderState = (shouldOpen, hideAfterTime) => {
-    if (shouldOpen == true) {
+    if (shouldOpen) {
       this.slideIn();
 
       let delayTime = ToasterOptions.DELAY.LONG;
@@ -257,13 +254,6 @@ class Toaster extends Component {
 
   // RENDER
   render() {
-    const {
-      onWillshowToastCB,
-      onDidshowToastCB,
-      onWillHideToastCB,
-      onDidHideToastCB,
-    } = this.props;
-
     let addedBGContainerStyles = {};
     let iconStyle = {};
     let iconFont = 14;
@@ -303,7 +293,7 @@ class Toaster extends Component {
         break;
     }
 
-    return this.state.render == false ? null : (
+    return this.state.render === false ? null : (
       <TouchableWithoutFeedback
         onPress={() => {
           this.handleOnPress();
@@ -323,7 +313,7 @@ class Toaster extends Component {
             },
           ]}>
           <View style={[styles.content, addedBGContainerStyles]}>
-            {this.state.type == ToasterOptions.TYPE.GRADIENTTEXT ? (
+            {this.state.type === ToasterOptions.TYPE.GRADIENTTEXT ? (
               <MaskedView
                 style={styles.maskedView}
                 maskElement={this.renderInner(
@@ -348,7 +338,8 @@ class Toaster extends Component {
                   ]}
                   style={[styles.fullgradient]}
                   start={[0.1, 0.3]}
-                  end={[1, 1]}></LinearGradient>
+                  end={[1, 1]}
+                />
               </MaskedView>
             ) : (
               this.renderInner(
