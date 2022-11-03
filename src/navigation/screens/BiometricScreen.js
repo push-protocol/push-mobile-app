@@ -1,4 +1,3 @@
-import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import {useFocusEffect} from '@react-navigation/native';
 import * as LocalAuthentication from 'expo-local-authentication';
@@ -47,9 +46,9 @@ function GetScreenInsets() {
   const insets = useSafeArea();
   if (insets.bottom > 0) {
     // Adjust inset by
-    return <View style={styles.insetAdjustment}></View>;
+    return <View style={styles.insetAdjustment} />;
   } else {
-    return <View style={styles.noInsetAdjustment}></View>;
+    return <View style={styles.noInsetAdjustment} />;
   }
 }
 
@@ -81,12 +80,12 @@ class BiometricScreen extends Component {
   // FUNCTIONS
   // Validate Pass Code
   validatePassCode = async value => {
-    if (value.length != 6) {
+    if (value.length !== 6) {
       // if the value isn't equal to 6, it's not complete yet
       return;
     }
 
-    if (this.state.passcodeVerifyStep == false) {
+    if (this.state.passcodeVerifyStep === false) {
       const callback = () => {
         this.setState(
           {
@@ -111,15 +110,12 @@ class BiometricScreen extends Component {
         Keyboard.dismiss();
 
         // Encrypt Private Key and Do Hashing
-        const privateKey =
-          this.props.auth.users[this.props.auth.currentUser].userPKey;
-
         let encryptedPkey;
-
-        if (!privateKey) {
+        if (!this.props.route.params) {
           // encrypted private key is empty to support wallet sign in
           encryptedPkey = '';
         } else {
+          const {privateKey} = this.props.route.params;
           encryptedPkey = CryptoHelper.encryptWithAES(
             privateKey,
             this.state.passcode,
@@ -143,7 +139,6 @@ class BiometricScreen extends Component {
           passcodeConfirmedStep: true,
           pkeyEncrypted: true,
           encryptedPKey: encryptedPkey,
-
           biometricSupported: biometricSupported,
         });
       }
@@ -164,8 +159,7 @@ class BiometricScreen extends Component {
   changePassCode = value => {
     // accept only digits
     if (/^\d+$/.test(value) || value === '') {
-      console.log('called', value);
-      if (this.state.passcodeVerifyStep == false) {
+      if (this.state.passcodeVerifyStep === false) {
         this.setState(
           {
             passcode: value,
@@ -287,12 +281,12 @@ class BiometricScreen extends Component {
       let biometricType = 'Null';
 
       if (
-        this.state.biometricSupported ==
+        this.state.biometricSupported ===
         LocalAuthentication.AuthenticationType.FINGERPRINT
       ) {
         biometricType = 'TouchID';
       } else if (
-        this.state.biometricSupported ==
+        this.state.biometricSupported ===
         LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
       ) {
         biometricType = 'FaceID';
@@ -355,7 +349,7 @@ class BiometricScreen extends Component {
     // If not, skip this step completely as user either gave permission or denied it
     const authorizationStatus = await messaging().hasPermission();
 
-    if (authorizationStatus == messaging.AuthorizationStatus.NOT_DETERMINED) {
+    if (authorizationStatus === messaging.AuthorizationStatus.NOT_DETERMINED) {
       this.props.navigation.navigate(GLOBALS.SCREENS.PUSHNOTIFY);
     } else {
       this.props.navigation.navigate(GLOBALS.SCREENS.SETUPCOMPLETE);
@@ -373,7 +367,7 @@ class BiometricScreen extends Component {
     // Pick Passcode
     let passcodeSegment;
 
-    if (this.state.passcodeVerifyStep == false) {
+    if (this.state.passcodeVerifyStep === false) {
       passcodeSegment = this.state.passcode.split('');
     } else if (!this.state.passcodeConfirmedStep) {
       passcodeSegment = this.state.passcodeMirror.split('');
@@ -384,7 +378,7 @@ class BiometricScreen extends Component {
     if (this.state.passcodeMismatched && !this.state.passcodeVerifyStep) {
       prompt = '[e:Passcode Mismatch, Please Try Again]';
     }
-    if (this.state.passcodeVerifyStep == true) {
+    if (this.state.passcodeVerifyStep === true) {
       prompt = '[t:Re-enter your Passcode to verify]';
     }
 
@@ -397,12 +391,12 @@ class BiometricScreen extends Component {
 
     if (this.state.biometricSupported) {
       if (
-        this.state.biometricSupported ==
+        this.state.biometricSupported ===
         LocalAuthentication.AuthenticationType.FINGERPRINT
       ) {
         biometricType = 'TouchID';
       } else if (
-        this.state.biometricSupported ==
+        this.state.biometricSupported ===
         LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
       ) {
         biometricType = 'FaceID';
@@ -436,7 +430,7 @@ class BiometricScreen extends Component {
               icon={require('assets/ui/biometric.png')}
               contentView={
                 <View style={styles.introContent}>
-                  {this.state.passcodeConfirmedStep == false ? (
+                  {this.state.passcodeConfirmedStep === false ? (
                     <KeyboardAvoidingView
                       style={styles.keyboardAvoid}
                       behavior={keyboardAvoidBehavior}
@@ -551,7 +545,7 @@ class BiometricScreen extends Component {
                         </View>
                       </Animated.View>
                     </KeyboardAvoidingView>
-                  ) : this.state.pkeyEncrypted == false ? (
+                  ) : this.state.pkeyEncrypted === false ? (
                     <ActivityIndicator
                       style={styles.activity}
                       size="small"
@@ -569,7 +563,7 @@ class BiometricScreen extends Component {
                         fontSize={16}
                         title="[d:Note:] Your passcode encrypts your data and even we can't recover it, Losing this means re-importing your wallet to access Push (EPNS)."
                       />
-                      {this.state.biometric == false ? null : (
+                      {this.state.biometric === false ? null : (
                         <StylishLabel
                           style={styles.para}
                           fontSize={16}
@@ -589,7 +583,7 @@ class BiometricScreen extends Component {
           </View>
 
           <Animated.View style={[styles.footer, {opacity: this.state.fader}]}>
-            {this.state.pkeyEncrypted == false ? null : (
+            {this.state.pkeyEncrypted === false ? null : (
               <View style={styles.verifyFooter}>
                 <React.Fragment>
                   <PrimaryButton

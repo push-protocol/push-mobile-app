@@ -168,16 +168,18 @@ export default props => {
     dispatch(
       setInitialSignin({
         wallet: walletAddress,
-        userPKey: privateKey,
         ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
         cns: cns,
         ens: ens,
         index: 0,
       }),
     );
-
     // Goto Next Screen
-    navigation.navigate(GLOBALS.SCREENS.BIOMETRIC);
+    navigation.navigate(GLOBALS.SCREENS.BIOMETRIC, {
+      wallet: walletAddress,
+      privateKey: walletAddress,
+      fromOnboarding: props.route.params.fromOnboarding,
+    });
   };
 
   // RETURN
