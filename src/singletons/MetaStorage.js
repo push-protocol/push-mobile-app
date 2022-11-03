@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React from 'react';
 import GLOBALS from 'src/Globals';
 
 // STATIC SINGLETON
@@ -527,5 +526,37 @@ export default class MetaStorage {
   clearStorage = async () => {
     const keys = await AsyncStorage.getAllKeys();
     await AsyncStorage.multiRemove(keys);
+  };
+
+  // W2W methods
+  setUserChatData = async userChatData => {
+    try {
+      await AsyncStorage.setItem(
+        GLOBALS.STORAGE.USER_CHAT_DATA,
+        JSON.stringify(userChatData),
+      );
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  };
+
+  getIsSignedIn = async () => {
+    try {
+      let userChatData = await AsyncStorage.getItem(
+        GLOBALS.STORAGE.USER_CHAT_DATA,
+      );
+
+      // Set Default Value
+      if (userChatData == null) {
+        return false;
+      }
+
+      return JSON.parse(userChatData);
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
   };
 }

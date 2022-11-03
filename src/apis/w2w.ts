@@ -1,4 +1,6 @@
 import ENV_CONFIG from 'src/env.config';
+import {encryptWithRPCEncryptionPublicKeyReturnRawData} from 'src/helpers/w2w/metamaskSigUtil';
+import {generateKeyPair} from 'src/helpers/w2w/pgp';
 
 import {MessageIPFS} from './ipfs';
 
@@ -298,4 +300,28 @@ export const postIntent = async ({
     data = await response.json();
   }
   return data;
+};
+
+export const createNewPgpPair = async (
+  caip10: string,
+  encryptionPublicKey: string,
+) => {
+  // Obtain pgp key
+  const keyPairs = await generateKeyPair();
+
+  const encryptedPgpKey = encryptWithRPCEncryptionPublicKeyReturnRawData(
+    keyPairs.privateKeyArmored,
+    encryptionPublicKey,
+  );
+
+  const createdUser = await PushNodeClient.createUser({
+    caip10,
+    did: caip10,
+    publicKey: keyPairs.publicKeyArmored,
+    encryptedPrivateKey: JSON.stringify(encryptedPgpKey),
+    encryptionType: 'x25519-xsalsa20-poly1305',
+    signature: 'xyz',
+    sigType: 'a',
+  });
+  console.log('create new user', createdUser);
 };

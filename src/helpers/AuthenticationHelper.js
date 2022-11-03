@@ -12,7 +12,6 @@ const AuthenticationHelper = {
   returnDecryptedPKey: async function (encryptedPKey, code, hashedCode) {
     let response = {};
     response.success = false;
-
     try {
       // Verify Hash Code
       const result = await CryptoHelper.verifyHash(code, hashedCode);
@@ -25,13 +24,9 @@ const AuthenticationHelper = {
         const walletObject = await Web3Helper.getWalletAddress(pkey);
 
         if (walletObject.success) {
-          const storedWalletObject =
-            await MetaStorage.instance.getStoredWallet();
-          if (walletObject.wallet === storedWalletObject.wallet) {
-            response.success = true;
-            response.wallet = walletObject.wallet;
-            response.pkey = pkey;
-          }
+          response.success = true;
+          response.wallet = walletObject.wallet;
+          response.pkey = pkey;
         }
       }
     } catch (e) {

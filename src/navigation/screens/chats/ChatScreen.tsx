@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
   SafeAreaView,
@@ -10,6 +11,7 @@ import {
 } from 'react-native';
 import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
+import MetaStorage from 'src/singletons/MetaStorage';
 
 import {Chat, Requests} from './components';
 import {ChatSetup} from './components/ChatSetup';
@@ -25,7 +27,10 @@ export interface AppContext {
 export const Context = React.createContext<AppContext | null>(null);
 
 const ChatScreen = () => {
+  const navigation = useNavigation();
+
   const [tab, setTab] = useState(TABS.CHATS);
+  const [isReady, setIsReady] = useState(false);
 
   const [isLoading, chatData] = useChatLoader();
 
@@ -33,11 +38,30 @@ const ChatScreen = () => {
     setTab(value);
   };
 
+  useEffect(() => {
+    console.log('this is chat screen');
+
+    (async () => {
+      const _data = await MetaStorage.instance.getIsSignedIn();
+      if (!_data) {
+        console.log('no data so creating one');
+        // @ts-ignore
+        navigation.navigate(Globals.SCREENS.PGP_FROM_PK_SCREEN, {
+          navigation: navigation,
+        });
+      } else {
+        console.log('got data');
+        console.log(_data);
+        setIsReady(true);
+      }
+    })();
+  }, []);
+
   if (!isLoading) {
     console.log('Chat data loaded', 'num threads', chatData.feeds.length);
   }
 
-  if (isLoading) {
+  if (isLoading || !isReady) {
     return (
       <SafeAreaView style={styles.container}>
         <ChatSetup />

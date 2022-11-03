@@ -4,6 +4,7 @@ import {generateKeyPair} from 'src/helpers/w2w/pgp';
 
 import {ChatFeedCache} from './useChatLoader';
 
+// TODO remove from here
 export const createNewPgpPair = async (
   caip10: string,
   encryptionPublicKey: string,

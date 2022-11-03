@@ -40,6 +40,9 @@ export default {
     PUSH_TOKEN_SERVER_SYNCED: 'PushTokenServerSynced',
     PUSH_BADGE_COUNT: 'PushBadgeCount',
     PUSH_BADGE_COUNT_PREVIOUS: 'PreviousPushBadgeCount',
+
+    // W2W chat
+    USER_CHAT_DATA: 'UserChatData',
   },
 
   CONSTANTS: {
@@ -129,6 +132,8 @@ export default {
     NEWWALLETSIGNIN: 'NewWalletSignIn',
     CHATS: 'Chats',
     SINGLE_CHAT: 'SingleChat',
+    PGP_FROM_PK_SCREEN: 'PgpFromPkScreen',
+    CHATPROFILESCREEN: 'ChatProfileScreen',
   },
   APP_AUTH_STATES: {
     INITIALIZING: 1,

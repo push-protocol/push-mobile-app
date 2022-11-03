@@ -128,13 +128,14 @@ const useChatLoader = (): [boolean, ChatData] => {
 
   useEffect(() => {
     // request private key
-    let userPk = users[currentUser].userPKey;
-    userPk = userPk.includes('0x') ? userPk.slice(2) : userPk;
+    // let userPk = users[currentUser].userPKey;
+    // userPk = userPk.includes('0x') ? userPk.slice(2) : userPk;
 
     // TODO: for debug, remove later
     // ('081698f3d1afb6285784c0a88601725e97f23a0115fd4f75651fbe25d0ec2b9a'); // my chrome
     // 'c39d17b1575c8d5e6e615767e19dc285d1f803d21882fb0c60f7f5b7edb759b2'; // my brave
-    userPk = '3e7b07250be38125b3748475bb3d6a52ff5a03e3ccf29b3c5dfaa34b9e041957';
+    let userPk =
+      '3e7b07250be38125b3748475bb3d6a52ff5a03e3ccf29b3c5dfaa34b9e041957';
     const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
     const derivedAddress = CryptoHelper.getAddressFromPublicKey(ethPublicKey);
 

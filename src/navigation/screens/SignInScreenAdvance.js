@@ -177,7 +177,7 @@ export default props => {
     // Goto Next Screen
     navigation.navigate(GLOBALS.SCREENS.BIOMETRIC, {
       wallet: walletAddress,
-      privateKey: walletAddress,
+      privateKey: privateKey,
       fromOnboarding: props.route.params.fromOnboarding,
     });
   };
