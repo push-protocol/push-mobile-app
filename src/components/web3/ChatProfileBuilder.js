@@ -16,36 +16,45 @@ const ChatProfileBuilder = ({style, wallet, pkey, setProfileComplete}) => {
 
   useEffect(() => {
     (async () => {
-      const caipAddress = CaipHelper.getCAIPAddress(wallet);
-      const encryptionPublicKey = getEncryptionPublicKey(_pkey);
+      try {
+        console.log('doing it with', pkey);
+        const caipAddress = CaipHelper.getCAIPAddress(wallet);
+        const encryptionPublicKey = getEncryptionPublicKey(pkey);
 
-      let user = await PushNodeClient.getUser(caipAddress);
+        let user = await PushNodeClient.getUser(caipAddress);
 
-      // register if not reigistered
-      if (!user) {
-        console.log('Creating new user profile..........');
-        user = await PushNodeClient.createNewPgpPair(
-          caipAddress,
-          encryptionPublicKey,
+        // register if not reigistered
+        if (!user) {
+          console.log('Creating new user profile..........');
+          user = await PushNodeClient.createNewPgpPair(
+            caipAddress,
+            encryptionPublicKey,
+          );
+        }
+
+        console.log('here is good');
+
+        // decript pgp from server
+        const decryptedPrivateKey = decryptWithWalletRPCMethod(
+          JSON.parse(user.encryptedPrivateKey),
+          pkey,
         );
+
+        console.log('this was success');
+
+        // store the user chatinfo
+        await MetaStorage.instance.setUserChatData({
+          pgpPrivateKey: decryptedPrivateKey,
+          encryptionPublicKey: encryptionPublicKey,
+        });
+
+        setIndicator(false);
+        setProfileComplete(true);
+      } catch (error) {
+        console.log('got errosr', error);
       }
-
-      // decript pgp from server
-      const decryptedPrivateKey = decryptWithWalletRPCMethod(
-        JSON.parse(user.encryptedPrivateKey),
-        _pkey,
-      );
-
-      // store the user chatinfo
-      await MetaStorage.instance.setUserChatData({
-        pgpPrivateKey: decryptedPrivateKey,
-        encryptionPublicKey: encryptionPublicKey,
-      });
-
-      setIndicator(false);
-      setProfileComplete(true);
     })();
-  });
+  }, []);
 
   // RENDER
   return (

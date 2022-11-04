@@ -26,36 +26,39 @@ export interface AppContext {
 
 export const Context = React.createContext<AppContext | null>(null);
 
+export interface UserChatCredentials {
+  pgpPrivateKey: string;
+  encryptionPublicKey: string;
+}
+
 const ChatScreen = () => {
   const navigation = useNavigation();
 
   const [tab, setTab] = useState(TABS.CHATS);
   const [isReady, setIsReady] = useState(false);
-
-  const [isLoading, chatData] = useChatLoader();
+  const [chatCredentials, setChatCredentials] = useState<UserChatCredentials>();
 
   const onPress = (value: string) => {
     setTab(value);
   };
 
   useEffect(() => {
-    console.log('this is chat screen');
-
     (async () => {
-      const _data = await MetaStorage.instance.getIsSignedIn();
+      const _data: UserChatCredentials =
+        await MetaStorage.instance.getUserChatData();
       if (!_data) {
-        console.log('no data so creating one');
         // @ts-ignore
         navigation.navigate(Globals.SCREENS.PGP_FROM_PK_SCREEN, {
           navigation: navigation,
         });
       } else {
-        console.log('got data');
-        console.log(_data);
+        setChatCredentials(_data);
         setIsReady(true);
       }
     })();
   }, []);
+
+  const [isLoading, chatData] = useChatLoader(chatCredentials);
 
   if (!isLoading) {
     console.log('Chat data loaded', 'num threads', chatData.feeds.length);

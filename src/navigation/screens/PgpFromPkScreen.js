@@ -233,7 +233,7 @@ class SplashScreen extends Component {
 
     // Check if Passcode decrypts the key
     const hashedCode = await MetaStorage.instance.getHashedPasscode();
-    const signedInType = await MetaStorage.instance.getSignedInType();
+    const signedInType = await MetaStorage.instance.getIsPrivateKeyAvailable();
 
     let response = await AuthenticationHelper.getCodeVerification(
       value,
@@ -246,6 +246,7 @@ class SplashScreen extends Component {
         hashedCode,
       );
     } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+      console.log('this was called');
       const encryptedPKey = await MetaStorage.instance.getEncryptedPkey();
       response = await AuthenticationHelper.returnDecryptedPKey(
         encryptedPKey,

@@ -6,7 +6,11 @@ import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import ChatProfileBuilder from 'src/components/web3/ChatProfileBuilder';
 
 const SignInScreen = props => {
-  const {pkey, wallet, navigation} = props.route.params;
+  let {pkey, wallet, navigation} = props.route.params;
+  pkey = pkey.includes('0x') ? pkey.slice(2) : pkey;
+
+  console.log('swwn', props.route.params);
+  console.log('ab got these', pkey, wallet);
   const [isComplete, setProfileComplete] = useState(false);
   // Load the Next Screen
   const loadNextScreen = async () => {
@@ -25,20 +29,22 @@ const SignInScreen = props => {
             setProfileComplete={setProfileComplete}
           />
         </View>
-        <PrimaryButton
-          iconFactory="Ionicons"
-          icon="ios-arrow-forward"
-          iconSize={24}
-          title="Continue"
-          fontSize={16}
-          fontColor={GLOBALS.COLORS.WHITE}
-          bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
-          onPress={() => {
-            loadNextScreen();
-          }}
-          style={styles.buttonStyle}
-          disabled={isComplete}
-        />
+        {isComplete && (
+          <PrimaryButton
+            iconFactory="Ionicons"
+            icon="ios-arrow-forward"
+            iconSize={24}
+            title="Continue"
+            fontSize={16}
+            fontColor={GLOBALS.COLORS.WHITE}
+            bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
+            onPress={() => {
+              loadNextScreen();
+            }}
+            style={styles.buttonStyle}
+            disabled={!isComplete}
+          />
+        )}
       </SafeAreaView>
     </>
   );

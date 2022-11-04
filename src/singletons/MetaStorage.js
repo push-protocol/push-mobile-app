@@ -234,7 +234,6 @@ export default class MetaStorage {
 
     if (isSignedIn) {
       const privateKey = await this.getEncryptedPkey();
-
       if (!privateKey || privateKey === GLOBALS.CONSTANTS.NULL_EXCEPTION) {
         // sign in is via wallet
         return GLOBALS.CONSTANTS.CRED_TYPE_WALLET;
@@ -243,6 +242,16 @@ export default class MetaStorage {
       }
     } else {
       return false;
+    }
+  };
+
+  getIsPrivateKeyAvailable = async () => {
+    const privateKey = await this.getEncryptedPkey();
+    if (!privateKey || privateKey === GLOBALS.CONSTANTS.NULL_EXCEPTION) {
+      // sign in is via wallet
+      return GLOBALS.CONSTANTS.CRED_TYPE_WALLET;
+    } else {
+      return GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY;
     }
   };
 
@@ -542,7 +551,7 @@ export default class MetaStorage {
     }
   };
 
-  getIsSignedIn = async () => {
+  getUserChatData = async () => {
     try {
       let userChatData = await AsyncStorage.getItem(
         GLOBALS.STORAGE.USER_CHAT_DATA,

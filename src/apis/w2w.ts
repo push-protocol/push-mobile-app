@@ -314,7 +314,7 @@ export const createNewPgpPair = async (
     encryptionPublicKey,
   );
 
-  const createdUser = await PushNodeClient.createUser({
+  const createdUser = await createUser({
     caip10,
     did: caip10,
     publicKey: keyPairs.publicKeyArmored,

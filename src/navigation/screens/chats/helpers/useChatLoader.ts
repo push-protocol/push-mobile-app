@@ -1,16 +1,13 @@
-import {getEncryptionPublicKey} from '@metamask/eth-sig-util';
 import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import * as PushNodeClient from 'src/apis';
 import * as CaipHelper from 'src/helpers/CAIPHelper';
-import CryptoHelper from 'src/helpers/CryptoHelper';
-import {decryptWithWalletRPCMethod} from 'src/helpers/w2w/metamaskSigUtil';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
+import {UserChatCredentials} from '../ChatScreen';
 import {getPersistedChatData, persistChatData} from './storage';
 import {
   checkIfItemInCache,
-  createNewPgpPair,
   filterChatAndRequestFeeds,
 } from './userChatLoaderHelper';
 
@@ -24,7 +21,9 @@ export interface ChatFeedCache {
   [key: string]: string;
 }
 
-const useChatLoader = (): [boolean, ChatData] => {
+const useChatLoader = (
+  userChatCredentials: UserChatCredentials | undefined,
+): [boolean, ChatData] => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [chatData, setChatData] = useState<ChatData>({
@@ -37,36 +36,21 @@ const useChatLoader = (): [boolean, ChatData] => {
   const users = useSelector(selectUsers);
   const currentUser = useSelector(selectCurrentUser);
 
-  const checkUserProfile = async (
+  const setUpChatProfile = async (
     caipAddress: string,
-    encryptionPublicKey: string,
-    privateKey: string,
+    pgpPrivateKey: string,
   ) => {
     console.log('check user info at push node', caipAddress);
     let user = await PushNodeClient.getUser(caipAddress);
 
-    // register if not reigistered
     if (!user) {
-      console.log('Creating new user profile..........');
-      await createNewPgpPair(caipAddress, encryptionPublicKey);
+      throw new Error('User info not found');
     }
-
-    // load keys
-    if (!user) {
-      throw new Error('Key missing');
-    }
-
-    // decript pgp from server
-    const decryptedPrivateKey = decryptWithWalletRPCMethod(
-      JSON.parse(user.encryptedPrivateKey),
-      privateKey,
-    );
-    console.log('Decrypt was success');
 
     // User info done, store to state
     const connectedUserData: PushNodeClient.ConnectedUser = {
       ...user,
-      privateKey: decryptedPrivateKey,
+      privateKey: pgpPrivateKey,
     };
 
     persistChatData({
@@ -127,26 +111,20 @@ const useChatLoader = (): [boolean, ChatData] => {
   };
 
   useEffect(() => {
-    // request private key
-    // let userPk = users[currentUser].userPKey;
-    // userPk = userPk.includes('0x') ? userPk.slice(2) : userPk;
+    console.log('wee got credentilas', userChatCredentials);
+    if (!userChatCredentials) {
+      return;
+    }
 
-    // TODO: for debug, remove later
-    // ('081698f3d1afb6285784c0a88601725e97f23a0115fd4f75651fbe25d0ec2b9a'); // my chrome
-    // 'c39d17b1575c8d5e6e615767e19dc285d1f803d21882fb0c60f7f5b7edb759b2'; // my brave
-    let userPk =
-      '3e7b07250be38125b3748475bb3d6a52ff5a03e3ccf29b3c5dfaa34b9e041957';
-    const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
-    const derivedAddress = CryptoHelper.getAddressFromPublicKey(ethPublicKey);
+    const pgpPrivateKey = userChatCredentials.pgpPrivateKey;
+    let derivedAddress = users[currentUser].wallet;
 
-    // let derivedAddress = users[currentUser].wallet;
     const caipAddress = CaipHelper.walletToCAIP10(derivedAddress);
-    const encryptionPublicKey = getEncryptionPublicKey(userPk);
 
     let fetchNewMessages: NodeJS.Timer;
 
     (async () => {
-      await checkUserProfile(caipAddress, encryptionPublicKey, userPk);
+      await setUpChatProfile(caipAddress, pgpPrivateKey);
       await loadCachedInbox();
       await loadInbox(derivedAddress);
 
@@ -158,7 +136,7 @@ const useChatLoader = (): [boolean, ChatData] => {
     })();
 
     return () => clearInterval(fetchNewMessages);
-  }, []);
+  }, [userChatCredentials]);
 
   return [isLoading, chatData];
 };
