@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
-import {showSimpleToast} from 'src/components/indicators/SimpleToast';
+import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {caip10ToWallet, getCAIPAddress} from 'src/helpers/CAIPHelper';
 import {encryptAndSign} from 'src/helpers/w2w/pgp';
 
@@ -60,6 +60,7 @@ const useSendMessage = (
   connectedUser: ConnectedUser,
   receiverAddress: string,
   _isIntentSendPage: boolean,
+  showToast: any,
 ): useSendMessageReturnType => {
   const [isSending, setIsSending] = useState(false);
   const [isIntentSendPage, setIsIntentSendPage] = useState(_isIntentSendPage);
@@ -131,8 +132,14 @@ const useSendMessage = (
 
       const res = await PushNodeClient.postMessage(postBody);
       if (typeof res === 'string') {
-        // TODO: show error toast
-        throw new Error('Error posing');
+        // show error toast
+        showToast(
+          'Error posting the message',
+          '',
+          ToasterOptions.TYPE.GRADIENT_PRIMARY,
+        );
+        setIsSending(false);
+        return generateNullRespose();
       }
 
       // TODO:fix add to cache
@@ -143,10 +150,10 @@ const useSendMessage = (
       // chatMessage.time = timeStamp;
 
       console.log('**** message successfully sent');
-      setIsSending(false);
       return [cid, chatMessage];
     } catch (error) {
       console.log('error', error);
+    } finally {
       setIsSending(false);
     }
     return generateNullRespose();
@@ -182,7 +189,13 @@ const useSendMessage = (
     try {
       const res = await PushNodeClient.postIntent(postBody);
       if (res.toString().toLowerCase() === 'your wallet is not whitelisted') {
-        showSimpleToast('Your wallet is not whitelisted');
+        console.log('Your wallet is not whitelisted');
+        showToast(
+          'Your wallet is not whitelisted',
+          '',
+          ToasterOptions.TYPE.GRADIENT_PRIMARY,
+        );
+        setIsSending(false);
         return;
       }
       console.log('intent send res', res);

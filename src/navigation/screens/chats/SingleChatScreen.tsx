@@ -25,7 +25,7 @@ import {Menu, MenuItem} from 'react-native-material-menu';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
-import {Toaster, ToasterOptions} from 'src/components/indicators/Toaster';
+import {Toaster} from 'src/components/indicators/Toaster';
 import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import {pgpSign} from 'src/helpers/w2w/pgp';
 
@@ -46,6 +46,7 @@ interface ChatScreenParam {
 
 const SingleChatScreen = ({route}: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
+  const toastRef = useRef<any>();
   const {
     cid,
     senderAddress,
@@ -73,6 +74,7 @@ const SingleChatScreen = ({route}: any) => {
     connectedUser,
     senderAddress,
     isIntentSendPage,
+    toastRef.current ? toastRef.current.showToast : null,
   );
 
   const senderAddressFormatted = getFormattedAddress(senderAddress);
@@ -122,8 +124,6 @@ const SingleChatScreen = ({route}: any) => {
     setisIntentReceivePage(false);
   };
 
-  const toastRef = useRef(null);
-
   const onDecline = () => {};
   const [visible, setVisible] = useState(false);
   const hideMenu = () => setVisible(false);
@@ -172,16 +172,6 @@ const SingleChatScreen = ({route}: any) => {
     return () => {
       listener.remove();
     };
-  }, []);
-
-  // toast
-  useEffect(() => {
-    // @ts-ignore
-    toastRef.current.showToast(
-      'Simple Toast',
-      '',
-      ToasterOptions.TYPE.GRADIENT_PRIMARY,
-    );
   }, []);
 
   return (
