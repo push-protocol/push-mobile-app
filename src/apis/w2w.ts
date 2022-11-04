@@ -1,4 +1,3 @@
-import ENV_CONFIG from 'src/env.config';
 import {encryptWithRPCEncryptionPublicKeyReturnRawData} from 'src/helpers/w2w/metamaskSigUtil';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
 

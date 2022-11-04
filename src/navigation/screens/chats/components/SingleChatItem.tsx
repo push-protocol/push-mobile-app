@@ -31,8 +31,6 @@ const ChatItem = (props: SingleChatItemProps) => {
     );
   }
 
-  console.log('here here', appContext.connectedUser);
-
   const [lastMessage, setLastMessage] = useState('decrypting....');
   const [messageType, setMessageType] = useState('Text');
   const [timeStamp, setTimeStamp] = useState('...');

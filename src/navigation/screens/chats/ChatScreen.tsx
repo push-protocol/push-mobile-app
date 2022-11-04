@@ -36,6 +36,7 @@ const ChatScreen = (props: any) => {
 
   const [tab, setTab] = useState(TABS.CHATS);
   const [isReady, setIsReady] = useState(false);
+  const [isPrivateKeyUser, setIsPrivateKeyUser] = useState(true);
   const [chatCredentials, setChatCredentials] = useState<UserChatCredentials>();
 
   const onPress = (value: string) => {
@@ -46,10 +47,17 @@ const ChatScreen = (props: any) => {
 
   useEffect(() => {
     (async () => {
-      console.log('this was called xxx');
+      const signedInType =
+        await MetaStorage.instance.getIsPrivateKeyAvailable();
 
       const _data: UserChatCredentials =
         await MetaStorage.instance.getUserChatData();
+
+      if (signedInType !== Globals.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+        setIsPrivateKeyUser(false);
+        return;
+      }
+
       if (!_data) {
         // @ts-ignore
         navigation.navigate(Globals.SCREENS.PGP_FROM_PK_SCREEN, {
@@ -62,8 +70,12 @@ const ChatScreen = (props: any) => {
     })();
   }, [props]);
 
-  if (!isLoading) {
-    console.log('Chat data loaded', 'num threads', chatData.feeds.length);
+  if (!isPrivateKeyUser) {
+    return (
+      <View>
+        <Text>You need to login with private key to access the chat.</Text>
+      </View>
+    );
   }
 
   if (isLoading || !isReady) {
@@ -77,8 +89,6 @@ const ChatScreen = (props: any) => {
   if (!chatData.connectedUserData) {
     throw new Error('No user data');
   }
-
-  console.log('we hahd connectedUser', chatData.connectedUserData);
 
   return (
     <Context.Provider

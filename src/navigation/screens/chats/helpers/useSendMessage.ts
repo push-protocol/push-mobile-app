@@ -133,11 +133,7 @@ const useSendMessage = (
       const res = await PushNodeClient.postMessage(postBody);
       if (typeof res === 'string') {
         // show error toast
-        showToast(
-          'Error posting the message',
-          '',
-          ToasterOptions.TYPE.GRADIENT_PRIMARY,
-        );
+        showToast(res, '', ToasterOptions.TYPE.GRADIENT_PRIMARY);
         setIsSending(false);
         return generateNullRespose();
       }
@@ -188,13 +184,9 @@ const useSendMessage = (
 
     try {
       const res = await PushNodeClient.postIntent(postBody);
-      if (res.toString().toLowerCase() === 'your wallet is not whitelisted') {
-        console.log('Your wallet is not whitelisted');
-        showToast(
-          'Your wallet is not whitelisted',
-          '',
-          ToasterOptions.TYPE.GRADIENT_PRIMARY,
-        );
+      if (typeof res === 'string') {
+        console.log('res');
+        showToast(res, '', ToasterOptions.TYPE.GRADIENT_PRIMARY);
         setIsSending(false);
         return;
       }
@@ -203,6 +195,13 @@ const useSendMessage = (
     } catch (error) {
       console.log('error', error);
     }
+
+    showToast(
+      'Intent sent succesfully',
+      '',
+      ToasterOptions.TYPE.GRADIENT_SECONDARY,
+    );
+
     setIsIntentSendPage(false);
     setIsSending(false);
   };

@@ -40,7 +40,6 @@ const useChatLoader = (
     caipAddress: string,
     pgpPrivateKey: string,
   ) => {
-    console.log('check user info at push node', caipAddress);
     let user = await PushNodeClient.getUser(caipAddress);
 
     if (!user) {
@@ -48,8 +47,6 @@ const useChatLoader = (
     }
 
     // User info done, store to state
-    console.log('we did this', pgpPrivateKey);
-
     const connectedUserData: PushNodeClient.ConnectedUser = {
       ...user,
       privateKey: pgpPrivateKey,
