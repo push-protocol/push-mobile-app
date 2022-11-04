@@ -22,6 +22,17 @@ const ChatItem = (props: SingleChatItemProps) => {
     throw new Error('Invalid context');
   }
 
+  if (!appContext.connectedUser) {
+    console.log('had to do this');
+    return (
+      <View>
+        <Text>This is happeing</Text>
+      </View>
+    );
+  }
+
+  console.log('here here', appContext.connectedUser);
+
   const [lastMessage, setLastMessage] = useState('decrypting....');
   const [messageType, setMessageType] = useState('Text');
   const [timeStamp, setTimeStamp] = useState('...');

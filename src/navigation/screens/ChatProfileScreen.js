@@ -9,12 +9,10 @@ const SignInScreen = props => {
   let {pkey, wallet, navigation} = props.route.params;
   pkey = pkey.includes('0x') ? pkey.slice(2) : pkey;
 
-  console.log('swwn', props.route.params);
-  console.log('ab got these', pkey, wallet);
   const [isComplete, setProfileComplete] = useState(false);
   // Load the Next Screen
   const loadNextScreen = async () => {
-    navigation.navigate(GLOBALS.SCREENS.SINGLE_CHAT, {});
+    navigation.navigate(GLOBALS.SCREENS.CHATS, {focues: 'true'});
   };
 
   return (

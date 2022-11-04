@@ -48,6 +48,8 @@ const useChatLoader = (
     }
 
     // User info done, store to state
+    console.log('we did this', pgpPrivateKey);
+
     const connectedUserData: PushNodeClient.ConnectedUser = {
       ...user,
       privateKey: pgpPrivateKey,
@@ -111,14 +113,12 @@ const useChatLoader = (
   };
 
   useEffect(() => {
-    console.log('wee got credentilas', userChatCredentials);
     if (!userChatCredentials) {
       return;
     }
 
     const pgpPrivateKey = userChatCredentials.pgpPrivateKey;
-    let derivedAddress = users[currentUser].wallet;
-
+    const derivedAddress = users[currentUser].wallet;
     const caipAddress = CaipHelper.walletToCAIP10(derivedAddress);
 
     let fetchNewMessages: NodeJS.Timer;

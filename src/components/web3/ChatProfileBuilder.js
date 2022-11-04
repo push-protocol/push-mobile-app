@@ -17,7 +17,6 @@ const ChatProfileBuilder = ({style, wallet, pkey, setProfileComplete}) => {
   useEffect(() => {
     (async () => {
       try {
-        console.log('doing it with', pkey);
         const caipAddress = CaipHelper.getCAIPAddress(wallet);
         const encryptionPublicKey = getEncryptionPublicKey(pkey);
 
@@ -25,22 +24,17 @@ const ChatProfileBuilder = ({style, wallet, pkey, setProfileComplete}) => {
 
         // register if not reigistered
         if (!user) {
-          console.log('Creating new user profile..........');
           user = await PushNodeClient.createNewPgpPair(
             caipAddress,
             encryptionPublicKey,
           );
         }
 
-        console.log('here is good');
-
         // decript pgp from server
         const decryptedPrivateKey = decryptWithWalletRPCMethod(
           JSON.parse(user.encryptedPrivateKey),
           pkey,
         );
-
-        console.log('this was success');
 
         // store the user chatinfo
         await MetaStorage.instance.setUserChatData({

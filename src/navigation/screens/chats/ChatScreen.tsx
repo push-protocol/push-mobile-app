@@ -31,7 +31,7 @@ export interface UserChatCredentials {
   encryptionPublicKey: string;
 }
 
-const ChatScreen = () => {
+const ChatScreen = (props: any) => {
   const navigation = useNavigation();
 
   const [tab, setTab] = useState(TABS.CHATS);
@@ -42,8 +42,12 @@ const ChatScreen = () => {
     setTab(value);
   };
 
+  const [isLoading, chatData] = useChatLoader(chatCredentials);
+
   useEffect(() => {
     (async () => {
+      console.log('this was called xxx');
+
       const _data: UserChatCredentials =
         await MetaStorage.instance.getUserChatData();
       if (!_data) {
@@ -56,9 +60,7 @@ const ChatScreen = () => {
         setIsReady(true);
       }
     })();
-  }, []);
-
-  const [isLoading, chatData] = useChatLoader(chatCredentials);
+  }, [props]);
 
   if (!isLoading) {
     console.log('Chat data loaded', 'num threads', chatData.feeds.length);
@@ -75,6 +77,8 @@ const ChatScreen = () => {
   if (!chatData.connectedUserData) {
     throw new Error('No user data');
   }
+
+  console.log('we hahd connectedUser', chatData.connectedUserData);
 
   return (
     <Context.Provider

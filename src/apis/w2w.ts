@@ -324,4 +324,5 @@ export const createNewPgpPair = async (
     sigType: 'a',
   });
   console.log('create new user', createdUser);
+  return createdUser;
 };
