@@ -1,11 +1,16 @@
 import {getEncryptionPublicKey} from '@metamask/eth-sig-util';
 import {useEffect, useState} from 'react';
-import {useSelector} from 'react-redux';
+import {Alert} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import GLOBALS from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
+import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
 import * as CaipHelper from 'src/helpers/CAIPHelper';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import {decryptWithWalletRPCMethod} from 'src/helpers/w2w/metamaskSigUtil';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
+import {setLogout} from 'src/redux/authSlice';
+import MetaStorage from 'src/singletons/MetaStorage';
 
 import {getPersistedChatData, persistChatData} from './storage';
 import {
@@ -125,35 +130,57 @@ const useChatLoader = (): [boolean, ChatData] => {
 
     setIsLoading(false);
   };
-
+  const dispatch = useDispatch();
   useEffect(() => {
     // request private key
     let userPk = users[currentUser].userPKey;
     userPk = userPk.includes('0x') ? userPk.slice(2) : userPk;
-
-    // TODO: for debug, remove later
-    // ('081698f3d1afb6285784c0a88601725e97f23a0115fd4f75651fbe25d0ec2b9a'); // my chrome
-    // 'c39d17b1575c8d5e6e615767e19dc285d1f803d21882fb0c60f7f5b7edb759b2'; // my brave
-    userPk = '081698f3d1afb6285784c0a88601725e97f23a0115fd4f75651fbe25d0ec2b9a';
-    const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
-    const derivedAddress = CryptoHelper.getAddressFromPublicKey(ethPublicKey);
-
-    // let derivedAddress = users[currentUser].wallet;
-    const caipAddress = CaipHelper.walletToCAIP10(derivedAddress);
-    const encryptionPublicKey = getEncryptionPublicKey(userPk);
-
     let fetchNewMessages: NodeJS.Timer;
-
     (async () => {
-      await checkUserProfile(caipAddress, encryptionPublicKey, userPk);
-      await loadCachedInbox();
-      await loadInbox(derivedAddress);
+      const signedInType = await MetaStorage.instance.getSignedInType();
 
-      // qeury for new threads evey 3 second
-      fetchNewMessages = setInterval(async () => {
-        console.log('Fetching new inbox');
+      if (signedInType !== GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+        Alert.alert(
+          'No Private Key',
+          'You are currently not logged in with your private key',
+          [
+            {
+              text: 'OK',
+              onPress: async () => {
+                await AuthenticationHelper.resetSignedInUser();
+                await MetaStorage.instance.clearStorage();
+                dispatch(setLogout(null));
+              },
+            },
+          ],
+        );
+
+        return;
+      }
+
+      // TODO: for debug, remove later
+      // ('081698f3d1afb6285784c0a88601725e97f23a0115fd4f75651fbe25d0ec2b9a'); // my chrome
+      // 'c39d17b1575c8d5e6e615767e19dc285d1f803d21882fb0c60f7f5b7edb759b2'; // my brave
+      userPk =
+        '081698f3d1afb6285784c0a88601725e97f23a0115fd4f75651fbe25d0ec2b9a';
+      const ethPublicKey = CryptoHelper.getPublicKeyFromPrivateKey(userPk);
+      const derivedAddress = CryptoHelper.getAddressFromPublicKey(ethPublicKey);
+
+      // let derivedAddress = users[currentUser].wallet;
+      const caipAddress = CaipHelper.walletToCAIP10(derivedAddress);
+      const encryptionPublicKey = getEncryptionPublicKey(userPk);
+
+      (async () => {
+        await checkUserProfile(caipAddress, encryptionPublicKey, userPk);
+        await loadCachedInbox();
         await loadInbox(derivedAddress);
-      }, 3000);
+
+        // qeury for new threads evey 3 second
+        fetchNewMessages = setInterval(async () => {
+          console.log('Fetching new inbox');
+          await loadInbox(derivedAddress);
+        }, 3000);
+      })();
     })();
 
     return () => clearInterval(fetchNewMessages);

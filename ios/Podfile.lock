@@ -23,6 +23,8 @@ PODS:
     - ExpoModulesCore
   - EXDevice (4.3.0):
     - ExpoModulesCore
+  - EXErrorRecovery (3.2.0):
+    - ExpoModulesCore
   - EXFileSystem (14.1.0):
     - ExpoModulesCore
   - EXFont (10.2.0):
@@ -534,6 +536,7 @@ DEPENDENCIES:
   - EXCamera (from `../node_modules/expo-camera/ios`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
   - EXDevice (from `../node_modules/expo-device/ios`)
+  - EXErrorRecovery (from `../node_modules/expo-error-recovery/ios`)
   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - EXFont (from `../node_modules/expo-font/ios`)
   - EXImageLoader (from `../node_modules/expo-image-loader/ios`)
@@ -642,6 +645,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-constants/ios"
   EXDevice:
     :path: "../node_modules/expo-device/ios"
+  EXErrorRecovery:
+    :path: "../node_modules/expo-error-recovery/ios"
   EXFileSystem:
     :path: "../node_modules/expo-file-system/ios"
   EXFont:
@@ -779,6 +784,7 @@ SPEC CHECKSUMS:
   EXCamera: 9f8303a52b2027e007174c2068c2ac76ff41d974
   EXConstants: 7c44785d41d8e959d527d23d29444277a4d1ee73
   EXDevice: 7647ca9b1fd8b269dfd896a7643d659343358054
+  EXErrorRecovery: 74d71ee59f6814315457b09d68e86aa95cc7d05d
   EXFileSystem: 927e0a8885aa9c49e50fc38eaba2c2389f2f1019
   EXFont: a5d80bd9b3452b2d5abbce2487da89b0150e6487
   EXImageLoader: b88e053d760f85a82405b1db2de4abf11978fc9f
@@ -824,7 +830,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 8a3d3f5dcd23a91e8c80b1bf0e96902cd1dca999
   React-logger: 1088859f145b8f6dd0d3ed051a647ef0e3e80fad
   react-native-encrypted-storage: e78d848ce0fb663c2ce306e37921d026809322e6
-  react-native-fast-openpgp: aff034a46dbf3a1286bf1c59aab9c97d977100de
+  react-native-fast-openpgp: b0d10fd2a74436313b53d18650babf3efe83d517
   react-native-hash: 17b3c3896711278eebb9e66e532c2d8e5f3b7c30
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: b456e1c40ec86f5593d58b275bd0e9603169daca

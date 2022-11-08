@@ -107,10 +107,10 @@ export default function OnboardingChannelScreen(props) {
   const validURL = str => {
     var pattern = new RegExp(
       '^(https?:\\/\\/)?' + // protocol
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
         '(\\#[-a-z\\d_]*)?$',
       'i',
     ); // fragment locator
@@ -157,14 +157,16 @@ export default function OnboardingChannelScreen(props) {
                   borderColor: '#ccc',
                   padding: 10,
                   borderRadius: 10,
-                }}>
+                }}
+              >
                 <View
                   style={{
                     flex: 0.2,
                     // justifyContent: "center",
                     alignItems: 'center',
                     marginVertical: 10,
-                  }}>
+                  }}
+                >
                   {item.icon ? (
                     <Image
                       source={{uri: item.icon}}
@@ -182,18 +184,21 @@ export default function OnboardingChannelScreen(props) {
                     flex: 0.8,
                     marginTop: 8,
                     marginHorizontal: 8,
-                  }}>
+                  }}
+                >
                   <TouchableOpacity
                     onPress={() => {
                       openURL(item.url);
-                    }}>
+                    }}
+                  >
                     <Text
                       style={{
                         color: '#E10780',
                         fontWeight: 'bold',
                         fontSize: 14,
                         flexWrap: 'wrap',
-                      }}>
+                      }}
+                    >
                       {item.name}
                     </Text>
                   </TouchableOpacity>
@@ -203,7 +208,8 @@ export default function OnboardingChannelScreen(props) {
                       flexWrap: 'wrap',
                       marginTop: 5,
                       fontSize: 10,
-                    }}>
+                    }}
+                  >
                     {item.info}
                   </Text>
                   <View
@@ -211,7 +217,8 @@ export default function OnboardingChannelScreen(props) {
                       marginTop: 10,
                       justifyContent: 'flex-end',
                       alignItems: 'flex-end',
-                    }}>
+                    }}
+                  >
                     <SubscriptionStatus
                       channel={item.channel}
                       user={props.route.params.wallet}
@@ -231,7 +238,8 @@ export default function OnboardingChannelScreen(props) {
           position: 'absolute',
           bottom: 0,
           alignSelf: 'center',
-        }}>
+        }}
+      >
         <PrimaryButton
           iconFactory="Ionicons"
           icon="ios-arrow-forward"
