@@ -11,6 +11,7 @@ import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
+  FlatList,
   Image,
   Keyboard,
   ScrollView,
@@ -29,9 +30,10 @@ import {Toaster} from 'src/components/indicators/Toaster';
 import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import {pgpSign} from 'src/helpers/w2w/pgp';
 
-import {AcceptIntent, MessageComponent, Time} from './components';
+import {AcceptIntent, MessageComponent} from './components';
 import './giphy/giphy.setup';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
+import {ChatMessage} from './helpers/chatResolver';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
 import {useSendMessage} from './helpers/useSendMessage';
 
@@ -174,6 +176,14 @@ const SingleChatScreen = ({route}: any) => {
     };
   }, []);
 
+  const renderItem = ({item}: {item: ChatMessage}) => {
+    if (item.to === senderAddress) {
+      return <MessageComponent chatMessage={item} componentType="SENDER" />;
+    } else {
+      return <MessageComponent chatMessage={item} componentType="RECEIVER" />;
+    }
+  };
+
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
       <View style={styles.header}>
@@ -220,34 +230,21 @@ const SingleChatScreen = ({route}: any) => {
       {isLoading ? (
         <Text style={{marginTop: 150}}>Loading coneversation...</Text>
       ) : (
-        <ScrollView
-          style={styles.section}
-          showsHorizontalScrollIndicator={false}
-          ref={scrollViewRef}
-          onContentSizeChange={() => {
-            if (scrollViewRef.current) {
-              scrollViewRef.current.scrollToEnd({animated: true});
-            }
-          }}>
-          <Time
-            text={chatMessages.length > 0 ? chatMessages[0].time : 'No date'}
+        <View style={styles.section}>
+          <FlatList
+            // @ts-ignore
+            ref={scrollViewRef}
+            data={chatMessages}
+            renderItem={renderItem}
+            keyExtractor={(_, index) => 'key' + index}
+            showsHorizontalScrollIndicator={false}
+            initialScrollIndex={chatMessages.length - 1}
+            onContentSizeChange={() => {
+              if (scrollViewRef.current) {
+                scrollViewRef.current.scrollToEnd({animated: true});
+              }
+            }}
           />
-
-          {chatMessages.map((msg, index) =>
-            msg.to === senderAddress ? (
-              <MessageComponent
-                chatMessage={msg}
-                componentType="SENDER"
-                key={index}
-              />
-            ) : (
-              <MessageComponent
-                chatMessage={msg}
-                componentType="RECEIVER"
-                key={index}
-              />
-            ),
-          )}
 
           {isSending && (
             <MessageComponent
@@ -260,7 +257,7 @@ const SingleChatScreen = ({route}: any) => {
           {isIntentReceivePage && (
             <AcceptIntent onAccept={onAccept} onDecline={onDecline} />
           )}
-        </ScrollView>
+        </View>
       )}
 
       {/* Donot show keyboard at intent page */}
@@ -366,7 +363,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   section: {
-    maxHeight: (windowHeight * 3) / 5,
+    maxHeight: (windowHeight * 24) / 35,
     width: windowWidth,
     paddingVertical: 10,
     paddingHorizontal: 20,

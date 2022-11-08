@@ -86,18 +86,35 @@ const useConversationLoader = (
     let chatListener: NodeJS.Timer;
     (async () => {
       // fetch conversation datas
-      console.log('fetching chats');
       setChatData([]);
-      const cachedMessages = await getStoredConversationData(combinedDID);
-      if (cachedMessages) {
-        setChatData(prev => [...prev, ...cachedMessages]);
-        setIsLoading(false);
+      console.log('***fetching chats');
+      const [cachedMessages, latestHash] = await getStoredConversationData(
+        combinedDID,
+      );
+      console.log('fetching done', latestHash);
+
+      try {
+        if (cachedMessages) {
+          console.log('got data', cachedMessages.length);
+          console.log('got latestHash', latestHash);
+          setChatData(prev => [...prev, ...cachedMessages]);
+        }
+
+        if (latestHash !== currentHash.current) {
+          console.log('calling new datas');
+
+          const msgs = await fetchChats(pgpPrivateKey, currentHash.current);
+          setChatData(prev => [...prev, ...msgs]);
+          await storeConversationData(combinedDID, currentHash.current, msgs);
+          console.log('chats loaded');
+        } else {
+          console.log('this was called');
+        }
+      } catch (error) {
+        console.log('got error sid', error);
       }
-      const msgs = await fetchChats(pgpPrivateKey, currentHash.current);
-      setChatData(prev => [...prev, ...msgs]);
-      await storeConversationData(combinedDID, msgs);
+
       setIsLoading(false);
-      console.log('chats loaded');
 
       // listen to new chats
       chatListener = setInterval(async () => {
@@ -121,7 +138,7 @@ const useConversationLoader = (
               currentHash.current,
             );
             console.log('new message palced');
-            await storeConversationData(combinedDID, newMsgs);
+            await storeConversationData(combinedDID, newCid, newMsgs);
             setChatData(prev => [...prev, ...newMsgs]);
           }
         }

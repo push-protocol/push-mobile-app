@@ -137,7 +137,6 @@ const ChatScreen = (props: any) => {
               </View>
             </TouchableWithoutFeedback>
           </View>
-
           <ScrollView
             style={styles.content}
             showsHorizontalScrollIndicator={false}>

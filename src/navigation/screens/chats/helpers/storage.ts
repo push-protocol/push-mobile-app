@@ -30,34 +30,52 @@ export const getPersistedChatData = async (): Promise<ChatData | null> => {
   }
 };
 
-export const getStoredConversationData = async (
-  userAddress: string,
-): Promise<any | null> => {
+const LATEST_HASH = 'LATEST_HASH';
+export const getStoredConversationData = async (userAddress: string) => {
   try {
+    console.log('this one passed');
+
     const cachedData = await EncryptedStorage.getItem(
       `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
     );
 
-    if (cachedData == null) {
-      return null;
+    console.log('chelsea', cachedData?.length);
+
+    const latestHash = await EncryptedStorage.getItem(
+      `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${LATEST_HASH}`,
+    );
+
+    if (!cachedData) {
+      return [null, null];
     }
 
-    return JSON.parse(cachedData);
+    if (!latestHash) {
+      return [null, null];
+    }
+
+    return [JSON.parse(cachedData), latestHash];
   } catch (error) {
     console.error(error);
 
-    return null;
+    return [null, null];
   }
 };
 
 export const storeConversationData = async (
   userAddress: string,
+  latestHash: string,
   payload: any | any[],
 ): Promise<void> => {
   try {
-    const cachedData = await getStoredConversationData(userAddress);
+    const [cachedData, lastHash] = await getStoredConversationData(userAddress);
 
-    if (cachedData == null) {
+    // when cache is empty
+    if (cachedData === null || lastHash === null) {
+      await EncryptedStorage.setItem(
+        `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${LATEST_HASH}`,
+        latestHash,
+      );
+
       if (Array.isArray(payload)) {
         await EncryptedStorage.setItem(
           `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
@@ -73,17 +91,27 @@ export const storeConversationData = async (
       return;
     }
 
-    let parsedData = JSON.parse(cachedData);
+    // if data is on the cache no need to store
+    if (latestHash === lastHash) {
+      return;
+    }
+    console.log('storing to cache');
 
+    // store new chats
+    let parsedData = JSON.parse(cachedData);
     if (Array.isArray(payload)) {
       parsedData = parsedData.concat(payload);
     } else {
       parsedData.push(payload);
     }
-
     await EncryptedStorage.setItem(
       `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
       JSON.stringify(parsedData.slice(-CACHE_LIMIT)),
+    );
+
+    await EncryptedStorage.setItem(
+      `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${LATEST_HASH}`,
+      lastHash,
     );
   } catch (error) {
     console.error(error);
