@@ -91,6 +91,7 @@ const SingleChatScreen = ({route}: any) => {
     const res = await sendMessage({
       messageType: 'Text',
       message: _text,
+      combinedDID: combinedDID,
     });
 
     if (!res) {
@@ -158,14 +159,16 @@ const SingleChatScreen = ({route}: any) => {
         }
 
         GiphyDialog.hide();
-        const res = sendMessage({messageType: 'GIF', message: gifUrl}).then(
-          _res => {
-            if (_res) {
-              const [_cid, msg] = _res;
-              pushChatDataDirect(_cid, msg);
-            }
-          },
-        );
+        const res = sendMessage({
+          messageType: 'GIF',
+          message: gifUrl,
+          combinedDID: combinedDID,
+        }).then(_res => {
+          if (_res) {
+            const [_cid, msg] = _res;
+            pushChatDataDirect(_cid, msg);
+          }
+        });
         if (!res) {
           return;
         }

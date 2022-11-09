@@ -6,12 +6,14 @@ import {caip10ToWallet, getCAIPAddress} from 'src/helpers/CAIPHelper';
 import {encryptAndSign} from 'src/helpers/w2w/pgp';
 
 import {ChatMessage, parseTimeStamp} from './chatResolver';
+import {storeConversationData} from './storage';
 
 // import {storeConversationData} from './storage';
 
 export interface MessageFormat {
   message: string;
   messageType: 'GIF' | 'Text';
+  combinedDID: string;
 }
 
 type sendIntentFunc = (message: MessageFormat) => Promise<void>;
@@ -94,6 +96,7 @@ const useSendMessage = (
   const sendMessage = async ({
     message,
     messageType,
+    combinedDID,
   }: MessageFormat): Promise<[string, ChatMessage]> => {
     console.log('sending was called', isSendingReady);
 
@@ -140,10 +143,8 @@ const useSendMessage = (
 
       // TODO:fix add to cache
       // add to cache
-      // await storeConversationData(messageReceiver.current.ethAddress, res);
       const cid = res.cid;
-      // const timeStamp = res.timestamp ? res.timestamp : 0;
-      // chatMessage.time = timeStamp;
+      await storeConversationData(combinedDID, cid, [chatMessage]);
 
       console.log('**** message successfully sent');
       return [cid, chatMessage];

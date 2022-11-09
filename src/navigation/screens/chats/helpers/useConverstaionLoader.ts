@@ -87,7 +87,6 @@ const useConversationLoader = (
     (async () => {
       // fetch conversation datas
       setChatData([]);
-      console.log('***fetching chats');
       const [cachedMessages, latestHash] = await getStoredConversationData(
         combinedDID,
       );
@@ -95,23 +94,22 @@ const useConversationLoader = (
 
       try {
         if (cachedMessages) {
-          console.log('got data', cachedMessages.length);
           console.log('got latestHash', latestHash);
           setChatData(prev => [...prev, ...cachedMessages]);
+          setIsLoading(false);
         }
 
         if (latestHash !== currentHash.current) {
-          console.log('calling new datas');
-
+          console.log('********calling new datas');
           const msgs = await fetchChats(pgpPrivateKey, currentHash.current);
           setChatData(prev => [...prev, ...msgs]);
           await storeConversationData(combinedDID, currentHash.current, msgs);
           console.log('chats loaded');
         } else {
-          console.log('this was called');
+          console.log('*****no new chats to be called');
         }
       } catch (error) {
-        console.log('got error sid', error);
+        console.log('got error', error);
       }
 
       setIsLoading(false);

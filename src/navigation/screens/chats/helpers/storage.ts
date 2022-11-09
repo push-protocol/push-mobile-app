@@ -1,6 +1,6 @@
 import EncryptedStorage from 'react-native-encrypted-storage';
 
-import {CACHE_LIMIT, STORAGE_CONSTANTS} from '../constants';
+import {STORAGE_CONSTANTS} from '../constants';
 import {ChatData} from './useChatLoader';
 
 export const persistChatData = async (payload: ChatData): Promise<void> => {
@@ -33,16 +33,12 @@ export const getPersistedChatData = async (): Promise<ChatData | null> => {
 const LATEST_HASH = 'LATEST_HASH';
 export const getStoredConversationData = async (userAddress: string) => {
   try {
-    console.log('this one passed');
-
     const cachedData = await EncryptedStorage.getItem(
       `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
     );
 
-    console.log('chelsea', cachedData?.length);
-
     const latestHash = await EncryptedStorage.getItem(
-      `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${LATEST_HASH}`,
+      `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}-${LATEST_HASH}`,
     );
 
     if (!cachedData) {
@@ -69,10 +65,10 @@ export const storeConversationData = async (
   try {
     const [cachedData, lastHash] = await getStoredConversationData(userAddress);
 
-    // when cache is empty
+    // when cache is empty store all and return
     if (cachedData === null || lastHash === null) {
       await EncryptedStorage.setItem(
-        `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${LATEST_HASH}`,
+        `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}-${LATEST_HASH}`,
         latestHash,
       );
 
@@ -95,23 +91,19 @@ export const storeConversationData = async (
     if (latestHash === lastHash) {
       return;
     }
-    console.log('storing to cache');
 
-    // store new chats
-    let parsedData = JSON.parse(cachedData);
-    if (Array.isArray(payload)) {
-      parsedData = parsedData.concat(payload);
-    } else {
-      parsedData.push(payload);
-    }
+    // append new chats
+    let parsedData = cachedData;
+    parsedData = parsedData.concat(payload);
+
     await EncryptedStorage.setItem(
       `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
-      JSON.stringify(parsedData.slice(-CACHE_LIMIT)),
+      JSON.stringify(parsedData),
     );
 
     await EncryptedStorage.setItem(
-      `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${LATEST_HASH}`,
-      lastHash,
+      `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}-${LATEST_HASH}`,
+      latestHash,
     );
   } catch (error) {
     console.error(error);
