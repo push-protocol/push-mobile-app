@@ -83,6 +83,7 @@ const useSendMessage = (
       const res = await PushNodeClient.getUser(
         messageReceiver.current.ethAddress,
       );
+
       if (res) {
         messageReceiver.current.pgpAddress = res.publicKey;
         console.log('Receiver addrs found');
@@ -99,6 +100,15 @@ const useSendMessage = (
     combinedDID,
   }: MessageFormat): Promise<[string, ChatMessage]> => {
     console.log('sending was called', isSendingReady);
+
+    if (messageReceiver.current.pgpAddress === '') {
+      showToast(
+        'PGP address of the user not available',
+        '',
+        ToasterOptions.TYPE.GRADIENT_PRIMARY,
+      );
+      return generateNullRespose();
+    }
 
     setIsSending(true);
     console.log('**** send message');
@@ -140,6 +150,8 @@ const useSendMessage = (
         setIsSending(false);
         return generateNullRespose();
       }
+
+      console.log('got res', res);
 
       // TODO:fix add to cache
       // add to cache

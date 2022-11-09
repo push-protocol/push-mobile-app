@@ -98,9 +98,10 @@ const SingleChatScreen = ({route}: any) => {
       return;
     }
 
-    //add messages to current state
     const [_cid, msg] = res;
-    pushChatDataDirect(_cid, msg);
+    if (_cid && msg) {
+      pushChatDataDirect(_cid, msg);
+    }
   };
 
   const onAccept = async () => {
@@ -166,7 +167,9 @@ const SingleChatScreen = ({route}: any) => {
         }).then(_res => {
           if (_res) {
             const [_cid, msg] = _res;
-            pushChatDataDirect(_cid, msg);
+            if (_cid && msg) {
+              pushChatDataDirect(_cid, msg);
+            }
           }
         });
         if (!res) {
