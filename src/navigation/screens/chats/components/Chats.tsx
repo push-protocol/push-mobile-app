@@ -23,25 +23,25 @@ const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
   const appContext = useContext(Context);
 
   const handleSearch = async () => {
-    setIsSearching(true);
     const query = ethAddress.trim();
-    if (Web3Helper.isHex(query)) {
-      try {
+    if (query === '') {
+      return;
+    }
+    try {
+      setIsSearching(true);
+      if (Web3Helper.isHex(query)) {
         Web3Helper.getAddressChecksum(query.toLowerCase());
-      } catch {
-        console.log('Error invalid address');
-        return;
-      }
-    } else {
-      try {
+      } else if (query.includes('.eth')) {
         const address = await Web3Helper.resolveBlockchainDomain(query, 'eth');
         setEthAddress(address);
-      } catch {
         console.log('Invalid ens name');
       }
+      setIsSearchEnabled(true);
+    } catch (error) {
+      console.log('bad address', error);
+    } finally {
+      setIsSearching(false);
     }
-    setIsSearchEnabled(true);
-    setIsSearching(false);
   };
 
   const handleClearSearch = () => {
@@ -57,7 +57,7 @@ const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
           style={styles.input}
           onChangeText={setEthAddress}
           value={ethAddress}
-          placeholder="Search name.eth or 0x123.."
+          placeholder="Search name.eth or 0x1123..."
           editable={!isSearching}
           selectTextOnFocus={!isSearching}
         />
@@ -132,7 +132,6 @@ const styles = StyleSheet.create({
   },
   content: {padding: 10, width: '100%'},
   input: {
-    margin: 12,
     borderRadius: 20,
     padding: 20,
     color: Globals.COLORS.BLACK,
@@ -142,6 +141,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     textAlignVertical: 'top',
     width: '70%',
+    flex: 2,
     minWidth: '70%',
   },
   searchView: {
@@ -149,7 +149,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: 50,
-    margin: 12,
+    marginVertical: 12,
+    marginLeft: 5,
     backgroundColor: Globals.COLORS.LIGHT_BLUE,
     borderRadius: 20,
     padding: 4,
@@ -159,6 +160,7 @@ const styles = StyleSheet.create({
 
   searchImage: {
     marginRight: 20,
+    flex: 1,
   },
 
   walletImage: {
