@@ -1,15 +1,12 @@
 import {getEncryptionPublicKey} from '@metamask/eth-sig-util';
 import {useEffect, useState} from 'react';
-import {Alert} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
-import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
 import * as CaipHelper from 'src/helpers/CAIPHelper';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import {decryptWithWalletRPCMethod} from 'src/helpers/w2w/metamaskSigUtil';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
-import {setLogout} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 import {getPersistedChatData, persistChatData} from './storage';
@@ -29,8 +26,9 @@ export interface ChatFeedCache {
   [key: string]: string;
 }
 
-const useChatLoader = (): [boolean, ChatData] => {
+const useChatLoader = (): [boolean, ChatData, boolean] => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isLogged, setIsLogged] = useState(false);
 
   const [chatData, setChatData] = useState<ChatData>({
     connectedUserData: undefined,
@@ -130,7 +128,7 @@ const useChatLoader = (): [boolean, ChatData] => {
 
     setIsLoading(false);
   };
-  const dispatch = useDispatch();
+
   useEffect(() => {
     // request private key
     let userPk = users[currentUser].userPKey;
@@ -140,23 +138,12 @@ const useChatLoader = (): [boolean, ChatData] => {
       const signedInType = await MetaStorage.instance.getSignedInType();
 
       if (signedInType !== GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
-        Alert.alert(
-          'No Private Key',
-          'You are currently not logged in with your private key',
-          [
-            {
-              text: 'OK',
-              onPress: async () => {
-                await AuthenticationHelper.resetSignedInUser();
-                await MetaStorage.instance.clearStorage();
-                dispatch(setLogout(null));
-              },
-            },
-          ],
-        );
+        setIsLogged(false);
 
         return;
       }
+
+      setIsLogged(true);
 
       // TODO: for debug, remove later
       // ('081698f3d1afb6285784c0a88601725e97f23a0115fd4f75651fbe25d0ec2b9a'); // my chrome
@@ -186,6 +173,6 @@ const useChatLoader = (): [boolean, ChatData] => {
     return () => clearInterval(fetchNewMessages);
   }, []);
 
-  return [isLoading, chatData];
+  return [isLoading, chatData, isLogged];
 };
 export {useChatLoader};
