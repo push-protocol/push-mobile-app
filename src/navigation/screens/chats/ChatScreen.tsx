@@ -8,15 +8,10 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {useDispatch} from 'react-redux';
 import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
-import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
-import {setLogout} from 'src/redux/authSlice';
-import MetaStorage from 'src/singletons/MetaStorage';
 
 import {Chat, Requests} from './components';
-import AlertPrompt from './components/Alert';
 import {ChatSetup} from './components/ChatSetup';
 import {TABS} from './constants';
 import {useChatLoader} from './helpers/useChatLoader';
@@ -30,32 +25,13 @@ export interface AppContext {
 export const Context = React.createContext<AppContext | null>(null);
 
 const ChatScreen = () => {
-  const dispatch = useDispatch();
-
   const [tab, setTab] = useState(TABS.CHATS);
 
-  const [isLoading, chatData, isLogged] = useChatLoader();
+  const [isLoading, chatData] = useChatLoader();
 
   const onPress = (value: string) => {
     setTab(value);
   };
-
-  if (!isLogged) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <AlertPrompt
-          title="No Private Key"
-          subtitle="You are currently not logged in with your private key"
-          closeTitle="OK"
-          closeFunc={async () => {
-            await AuthenticationHelper.resetSignedInUser();
-            await MetaStorage.instance.clearStorage();
-            dispatch(setLogout(null));
-          }}
-        />
-      </SafeAreaView>
-    );
-  }
 
   if (!isLoading) {
     console.log('Chat data loaded', 'num threads', chatData.feeds.length);
