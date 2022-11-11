@@ -391,9 +391,8 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 35,
-    margin: 15,
+    margin: 12,
     paddingHorizontal: 10,
-    paddingTop: 6,
     color: Globals.COLORS.BLACK,
     fontSize: 16,
   },
