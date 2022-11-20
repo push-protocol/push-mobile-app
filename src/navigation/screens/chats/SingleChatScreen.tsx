@@ -58,7 +58,8 @@ const SingleChatScreen = ({route}: any) => {
   }: ChatScreenParam = route.params;
 
   const [isIntentReceivePage, setisIntentReceivePage] = useState<boolean>(
-    route.params.isIntentReceivePage,
+    // route.params.isIntentReceivePage,
+    true,
   );
 
   const navigation = useNavigation();
@@ -88,6 +89,7 @@ const SingleChatScreen = ({route}: any) => {
     if (_text.trim() === '') {
       return;
     }
+
     const res = await sendMessage({
       messageType: 'Text',
       message: _text,
@@ -99,7 +101,9 @@ const SingleChatScreen = ({route}: any) => {
     }
 
     const [_cid, msg] = res;
+
     if (_cid && msg) {
+      console.log('_after sending got', _cid);
       pushChatDataDirect(_cid, msg);
     }
   };
@@ -113,7 +117,7 @@ const SingleChatScreen = ({route}: any) => {
       connectedUser.privateKey,
     );
 
-    // post to the
+    // post to the intent
     const updatedIntent: string = await PushNodeClient.approveIntent(
       walletToCAIP10(senderAddress),
       connectedUser.wallets,
@@ -123,9 +127,11 @@ const SingleChatScreen = ({route}: any) => {
     );
 
     console.log('approved intent', updatedIntent);
-
-    // update state to load chats
     setisIntentReceivePage(false);
+
+    // @ts-ignore
+    // reset the current screen
+    navigation.goBack(null);
   };
 
   const onDecline = () => {};
@@ -183,6 +189,8 @@ const SingleChatScreen = ({route}: any) => {
   }, []);
 
   const renderItem = ({item}: {item: ChatMessage}) => {
+    console.log('***this was callled', item.message);
+
     if (item.to === senderAddress) {
       return <MessageComponent chatMessage={item} componentType="SENDER" />;
     } else {
@@ -207,7 +215,9 @@ const SingleChatScreen = ({route}: any) => {
               source={require('assets/chat/wallet1.png')}
             />
 
-            <Text style={styles.wallet}>{senderAddressFormatted}</Text>
+            <Text style={styles.wallet}>
+              {senderAddressFormatted} {chatMessages.length}
+            </Text>
           </View>
 
           <Menu
@@ -250,6 +260,7 @@ const SingleChatScreen = ({route}: any) => {
                 scrollViewRef.current.scrollToEnd({animated: true});
               }
             }}
+            extraData={chatMessages.length}
           />
 
           {isSending && (

@@ -151,13 +151,9 @@ const useSendMessage = (
         setIsSending(false);
         return generateNullRespose();
       }
-
-      console.log('got res', res);
-
       // add to cache
       const cid = res.cid;
       await storeConversationData(combinedDID, cid, [chatMessage]);
-
       console.log('**** message successfully sent');
       return [cid, chatMessage];
     } catch (error) {
@@ -208,7 +204,7 @@ const useSendMessage = (
     try {
       const res = await PushNodeClient.postIntent(postBody);
       if (typeof res === 'string') {
-        console.log('res');
+        console.log('error posting intent', res);
         showToast(res, '', ToasterOptions.TYPE.GRADIENT_PRIMARY);
         setIsSending(false);
         return;

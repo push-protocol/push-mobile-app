@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {Feeds} from 'src/apis';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
@@ -25,6 +25,14 @@ const Requests = ({requests, isIntentReceivePage}: RequestProps) => {
             isIntentSendPage={false}
           />
         ))}
+
+        {requests.length === 0 && (
+          <View style={styles.emptyRequests}>
+            <Text style={styles.emptyRequestsText}>
+              No pending requests at the movement
+            </Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -39,16 +47,23 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   content: {padding: 10, width: '100%'},
-
   walletImage: {
     width: 24,
     height: 24,
     marginRight: 5,
     resizeMode: 'contain',
   },
-
   header: {
     marginBottom: 5,
     padding: 10,
+  },
+  emptyRequests: {
+    width: '100%',
+    textAlign: 'center',
+    marginTop: 100,
+  },
+  emptyRequestsText: {
+    textAlign: 'center',
+    fontSize: 16,
   },
 });
