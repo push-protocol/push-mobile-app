@@ -83,14 +83,15 @@ const useSendMessage = (
       const res = await PushNodeClient.getUser(
         messageReceiver.current.ethAddress,
       );
+      console.log('we got res', res);
 
-      if (res) {
+      if (res && res !== null) {
         messageReceiver.current.pgpAddress = res.publicKey;
         console.log('Receiver addrs found');
-        setIsSendingReady(true);
       } else {
         console.log('Receiver not found');
       }
+      setIsSendingReady(true);
     })();
   }, []);
 
@@ -153,7 +154,6 @@ const useSendMessage = (
 
       console.log('got res', res);
 
-      // TODO:fix add to cache
       // add to cache
       const cid = res.cid;
       await storeConversationData(combinedDID, cid, [chatMessage]);
@@ -172,6 +172,16 @@ const useSendMessage = (
     if (!isSendingReady) {
       return;
     }
+
+    if (messageReceiver.current.pgpAddress === '') {
+      showToast(
+        'PGP address of the user not available',
+        '',
+        ToasterOptions.TYPE.GRADIENT_PRIMARY,
+      );
+      return;
+    }
+
     setIsSending(true);
     console.log('**** send intent');
     const msg = await getEncryptedMessage(

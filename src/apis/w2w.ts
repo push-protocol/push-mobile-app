@@ -122,6 +122,7 @@ export const getUser = async (caip10: string): Promise<User | undefined> => {
         },
       });
       const data: User = await response.json();
+
       return data;
     } catch (err) {
       if (retry > 1) {

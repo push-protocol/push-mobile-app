@@ -90,6 +90,7 @@ const useConversationLoader = (
       const [cachedMessages, latestHash] = await getStoredConversationData(
         combinedDID,
       );
+
       console.log('fetching done', latestHash);
 
       try {

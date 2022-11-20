@@ -190,6 +190,7 @@ class SplashScreen extends Component {
               hashedCode,
             );
           } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+            // here
             authResponse = await AuthenticationHelper.returnDecryptedPKey(
               credentials.password,
               credentials.username,
@@ -201,6 +202,14 @@ class SplashScreen extends Component {
             response.success = true;
             response.wallet = authResponse.wallet;
             response.pkey = authResponse.pkey;
+
+            // Move to the next page
+            const {navigation} = this.props.route.params;
+            navigation.navigate(GLOBALS.SCREENS.CHATPROFILESCREEN, {
+              navigation: navigation,
+              pkey: response.pkey,
+              wallet: response.wallet,
+            });
           } else {
             response.success = false;
             response.info = pkey;
@@ -246,7 +255,6 @@ class SplashScreen extends Component {
         hashedCode,
       );
     } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
-      console.log('this was called');
       const encryptedPKey = await MetaStorage.instance.getEncryptedPkey();
       response = await AuthenticationHelper.returnDecryptedPKey(
         encryptedPKey,
