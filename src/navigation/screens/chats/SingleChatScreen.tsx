@@ -58,8 +58,7 @@ const SingleChatScreen = ({route}: any) => {
   }: ChatScreenParam = route.params;
 
   const [isIntentReceivePage, setisIntentReceivePage] = useState<boolean>(
-    // route.params.isIntentReceivePage,
-    true,
+    route.params.isIntentReceivePage,
   );
 
   const navigation = useNavigation();

@@ -1,6 +1,6 @@
 import {EvilIcons} from '@expo/vector-icons';
 import React, {useContext, useState} from 'react';
-import {StyleSheet, TextInput, View} from 'react-native';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
 import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
 import {caip10ToWallet, getCombinedDID} from 'src/helpers/CAIPHelper';
@@ -118,6 +118,12 @@ const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
           ))}
         </View>
       )}
+
+      {feeds.length === 0 && (
+        <View style={styles.emptyFeeds}>
+          <Text style={styles.emptyFeedsText}>No conversations found</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -190,5 +196,14 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     padding: 30,
+  },
+  emptyFeeds: {
+    width: '100%',
+    textAlign: 'center',
+    marginTop: 100,
+  },
+  emptyFeedsText: {
+    textAlign: 'center',
+    fontSize: 16,
   },
 });
