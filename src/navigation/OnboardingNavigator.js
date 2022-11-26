@@ -6,6 +6,7 @@ import BiometricScreen from './screens/BiometricScreen';
 import NewWalletSignInScreen from './screens/NewWalletSignInScreen';
 import PushNotifyScreen from './screens/PushNotifyScreen';
 import SetupCompleteScreen from './screens/SetupCompleteScreen';
+import SignInFromDapp from './screens/SignInFromDapp';
 import SignInScreen from './screens/SignInScreen';
 import SignInAdvanceScreen from './screens/SignInScreenAdvance';
 import WelcomeScreen from './screens/WelcomeScreen';
@@ -58,6 +59,15 @@ const OnboardingNavigator = () => {
       <Stack.Screen
         name={GLOBALS.SCREENS.SIGNINADVANCE}
         component={SignInAdvanceScreen}
+        options={{
+          headerShown: false,
+          headerTintColor: GLOBALS.COLORS.MID_GRAY,
+        }}
+      />
+
+      <Stack.Screen
+        name={GLOBALS.SCREENS.SIGNINFROMDAPP}
+        component={SignInFromDapp}
         options={{
           headerShown: false,
           headerTintColor: GLOBALS.COLORS.MID_GRAY,

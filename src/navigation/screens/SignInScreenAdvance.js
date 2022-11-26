@@ -126,6 +126,10 @@ export default props => {
     setPrivateKey(code);
   };
 
+  const handleQRCodeFromDapp = code => {
+    loadLoginFromDapp(code);
+  };
+
   // Reset PK Code
   const resetPrivateKey = () => {
     setPrivateKey('');
@@ -179,6 +183,13 @@ export default props => {
       wallet: walletAddress,
       privateKey: privateKey,
       fromOnboarding: props.route.params.fromOnboarding,
+    });
+  };
+
+  const loadLoginFromDapp = async code => {
+    // Goto Next Screen
+    navigation.navigate(GLOBALS.SCREENS.SIGNINFROMDAPP, {
+      code: code,
     });
   };
 
@@ -336,7 +347,7 @@ export default props => {
         navigation={navigation}
         title="[wb:Please scan your] [d:wallet's private Key] [wb:to connect it to EPNS.]"
         doneFunc={code => {
-          onPrivateKeyDetect(code);
+          handleQRCodeFromDapp(code);
         }}
         closeFunc={() => toggleQRScanner(false, navigation)}
       />

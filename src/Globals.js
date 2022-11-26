@@ -134,6 +134,7 @@ export default {
     SINGLE_CHAT: 'SingleChat',
     PGP_FROM_PK_SCREEN: 'PgpFromPkScreen',
     CHATPROFILESCREEN: 'ChatProfileScreen',
+    SIGNINFROMDAPP: 'SignInFromDapp',
   },
   APP_AUTH_STATES: {
     INITIALIZING: 1,
