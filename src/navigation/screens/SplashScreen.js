@@ -235,7 +235,6 @@ class SplashScreen extends Component {
       return;
     }
 
-    console.log('i was called', value);
     // Check if Passcode decrypts the key
     const hashedCode = await MetaStorage.instance.getHashedPasscode();
     // const signedInType = await MetaStorage.instance.getSignedInType();

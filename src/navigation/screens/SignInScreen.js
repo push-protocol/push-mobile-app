@@ -368,7 +368,7 @@ const SignInScreen = ({route, navigation}) => {
         <QRScanner
           ref={QRScannerRef}
           navigation={navigation}
-          title="[wb:AAA scan your] [d:wallet's address] [wb:to connect it to Push (EPNS).]"
+          title="[wb: scan your] [d:wallet's address] [wb:to connect it to Push (EPNS).]"
           doneFunc={code => {
             onWalletDetect(code);
           }}
