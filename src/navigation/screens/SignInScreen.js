@@ -217,7 +217,7 @@ const SignInScreen = ({route, navigation}) => {
           }}
         />
 
-        <Text style={styles.header}>Wallet Address</Text>
+        <Text style={styles.header}>Wallet Address!</Text>
         <View style={styles.inner}>
           {walletAddress === '' ? (
             <DetailedInfoPresenter
@@ -327,7 +327,7 @@ const SignInScreen = ({route, navigation}) => {
             </View>
           ) : (
             <View style={styles.verifyFooter}>
-              {walletAddressVerified === false ? null : (
+              {walletAddressVerified == false ? null : (
                 <>
                   <PrimaryButton
                     iconFactory="Ionicons"
@@ -368,7 +368,7 @@ const SignInScreen = ({route, navigation}) => {
         <QRScanner
           ref={QRScannerRef}
           navigation={navigation}
-          title="[wb:AAA scan your] [d:wallet's address] [wb:to connect it to Push (EPNS).]"
+          title="[wb: scan your] [d:wallet's address] [wb:to connect it to Push (EPNS).]"
           doneFunc={code => {
             onWalletDetect(code);
           }}

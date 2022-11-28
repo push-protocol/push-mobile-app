@@ -81,8 +81,10 @@ const Web3Helper = {
       const ens = Web3Helper.getENS(provider);
       const name = await ens.reverse(wallet).name();
 
-      if (wallet != (await ens.resolver(name).addr())) {
-        name = null;
+      // console.log("Fetched Name... Forward Checking now: " + name);
+
+      if (wallet !== (await ens.resolver(name).addr())) {
+        // name = null;
         throw "Name Didn't Match";
       } else {
         const response = {
@@ -230,11 +232,11 @@ const Web3Helper = {
   },
   // Check if the entry is non hex
   isHex: str => {
-    if (str.length == 0) {
+    if (str.length === 0) {
       return true;
-    } else if (str.length == 1 && str.substring(0, 1) === '0') {
+    } else if (str.length === 1 && str.substring(0, 1) === '0') {
       return true;
-    } else if (str.length == 2 && str.substring(0, 2) === '0x') {
+    } else if (str.length === 2 && str.substring(0, 2) === '0x') {
       return true;
     } else {
       let modStr = str;
@@ -252,6 +254,7 @@ const Web3Helper = {
       resolution
         .addr(domain, currency)
         .then(address => {
+          console.log(address);
           resolve(address);
         })
         .catch(err => {

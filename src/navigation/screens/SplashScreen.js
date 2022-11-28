@@ -101,7 +101,7 @@ class SplashScreen extends Component {
     console.log('handling authentication flow...');
     // Check for Account Lock First
     const userLocked = await MetaStorage.instance.getUserLocked();
-    console.log('user locked... ', userLocked);
+    console.log('user locked... ', userLocked, 'user signined in', signedIn);
     if (!userLocked) {
       // Present Secuity Details
       this.handleAuthentication(signedIn);
@@ -153,11 +153,12 @@ class SplashScreen extends Component {
       let biometricType = 'Null';
 
       if (
-        biometricSupported == LocalAuthentication.AuthenticationType.FINGERPRINT
+        biometricSupported ===
+        LocalAuthentication.AuthenticationType.FINGERPRINT
       ) {
         biometricType = 'TouchID';
       } else if (
-        biometricSupported ==
+        biometricSupported ===
         LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
       ) {
         biometricType = 'FaceID';
@@ -179,21 +180,26 @@ class SplashScreen extends Component {
 
         if (credentials) {
           const hashedCode = await MetaStorage.instance.getHashedPasscode();
-          const signedInType = await MetaStorage.instance.getSignedInType();
+          // const signedInType = await MetaStorage.instance.getSignedInType();
 
-          let authResponse;
-          if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
-            authResponse = await AuthenticationHelper.getCodeVerification(
-              credentials.username,
-              hashedCode,
-            );
-          } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
-            authResponse = await AuthenticationHelper.returnDecryptedPKey(
-              credentials.password,
-              credentials.username,
-              hashedCode,
-            );
-          }
+          const authResponse = await AuthenticationHelper.getCodeVerification(
+            credentials.username,
+            hashedCode,
+          );
+          console.log('got auth res', authResponse);
+          // TODO: fix this
+          // if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
+          //   authResponse = await AuthenticationHelper.getCodeVerification(
+          //     credentials.username,
+          //     hashedCode,
+          //   );
+          // } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+          //   authResponse = await AuthenticationHelper.returnDecryptedPKey(
+          //     credentials.password,
+          //     credentials.username,
+          //     hashedCode,
+          //   );
+          // }
 
           if (authResponse.success) {
             response.success = true;
@@ -224,30 +230,36 @@ class SplashScreen extends Component {
 
   // To Handle Authentication via passcode
   authenticateViaPasscode = async value => {
-    if (value.length != 6) {
+    if (value.length !== 6) {
       // if the value isn't equal to 6, it's not complete yet
       return;
     }
 
     // Check if Passcode decrypts the key
     const hashedCode = await MetaStorage.instance.getHashedPasscode();
-    const signedInType = await MetaStorage.instance.getSignedInType();
+    // const signedInType = await MetaStorage.instance.getSignedInType();
 
-    let response;
-    if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
-      response = await AuthenticationHelper.getCodeVerification(
-        value,
-        hashedCode,
-      );
-    } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
-      const encryptedPKey = await MetaStorage.instance.getEncryptedPkey();
+    const response = await AuthenticationHelper.getCodeVerification(
+      value,
+      hashedCode,
+    );
 
-      response = await AuthenticationHelper.returnDecryptedPKey(
-        encryptedPKey,
-        value,
-        hashedCode,
-      );
-    }
+    // TODO: fixt this
+    // let response;
+    // if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
+    //   response = await AuthenticationHelper.getCodeVerification(
+    //     value,
+    //     hashedCode,
+    //   );
+    // } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+    //   const encryptedPKey = await MetaStorage.instance.getEncryptedPkey();
+
+    //   response = await AuthenticationHelper.returnDecryptedPKey(
+    //     encryptedPKey,
+    //     value,
+    //     hashedCode,
+    //   );
+    // }
 
     if (response.success) {
       await this.setNewState();
@@ -255,12 +267,11 @@ class SplashScreen extends Component {
       this.props.dispatch(setAuthState(GLOBALS.AUTH_STATE.AUTHENTICATED));
     } else {
       // Passcode Attempt Failed
-
       // Vibrate to indicate incorrect attempt
       Vibration.vibrate();
 
       // decrement the remaining attempts
-      const remainingAttempts = this.state.remainingAttempts - 1;
+      const remainingAttempts = GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS;
 
       await MetaStorage.instance.setRemainingPasscodeAttempts(
         remainingAttempts,
@@ -455,9 +466,7 @@ class SplashScreen extends Component {
     // Customize Prompt
     let prompt = '[d:Please enter your Passcode]';
     const maxAttempts = GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS;
-    if (
-      this.state.remainingAttempts < GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
-    ) {
+    if (this.state.remainingAttempts < maxAttempts) {
       prompt = `[t:Incorrect Password, ${this.state.remainingAttempts} attempts pending]`;
     }
 

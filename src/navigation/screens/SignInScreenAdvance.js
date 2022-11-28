@@ -1,6 +1,5 @@
 import {useFocusEffect} from '@react-navigation/native';
 import {Camera} from 'expo-camera';
-import * as Permissions from 'expo-permissions';
 import React, {useEffect, useState} from 'react';
 import {
   Animated,
@@ -169,16 +168,18 @@ export default props => {
     dispatch(
       setInitialSignin({
         wallet: walletAddress,
-        userPKey: '',
         ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
         cns: cns,
         ens: ens,
         index: 0,
       }),
     );
-
     // Goto Next Screen
-    navigation.navigate(GLOBALS.SCREENS.BIOMETRIC);
+    navigation.navigate(GLOBALS.SCREENS.BIOMETRIC, {
+      wallet: walletAddress,
+      privateKey: privateKey,
+      fromOnboarding: props.route.params.fromOnboarding,
+    });
   };
 
   // RETURN

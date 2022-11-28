@@ -7,14 +7,12 @@ import {Platform} from 'react-native';
 const AppBadgeHelper = {
   // To Get App Badge Count
   getAppBadgeCount: async () => {
-    return 0;
-    // return await PushNotificationIOS.getApplicationIconBadgeNumber()
+    return await PushNotificationIOS.getApplicationIconBadgeNumber();
   },
   // To Set App Badge Count
   setAppBadgeCount: async badgeNumber => {
     if (Platform.OS === 'ios') {
-      return 0;
-      // await PushNotificationIOS.setApplicationIconBadgeNumber(badgeNumber)
+      await PushNotificationIOS.setApplicationIconBadgeNumber(badgeNumber);
     }
   },
 };

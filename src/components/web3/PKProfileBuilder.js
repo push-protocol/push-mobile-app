@@ -112,7 +112,7 @@ const PKProfileBuilder = ({
   // RENDER
   return (
     <SafeAreaView style={[styles.container, style]}>
-      {indicator == true ? (
+      {indicator === true ? (
         <ActivityIndicator
           style={styles.activity}
           size="small"
@@ -120,7 +120,7 @@ const PKProfileBuilder = ({
         />
       ) : null}
       <View style={styles.profile}>
-        {errored == true ? (
+        {errored === true ? (
           <View style={styles.profileErr}>
             <View style={styles.profileErrMsg}>
               <StylishLabel

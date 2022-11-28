@@ -1,12 +1,12 @@
 export default {
   LINKS: {
     APPBOT_NAME: 'App Bot',
-    APP_WEBSITE: 'https://epns.io',
+    APP_WEBSITE: 'https://push.org',
     DEV_EPNS_SERVER: 'https://backend-prod.epns.io/apis',
     PROD_EPNS_SERVER: 'https://backend-prod.epns.io/apis',
-    METAMASK_LINK_STAGING: 'https://metamask.app.link/dapp/staging-app.epns.io',
-    METAMASK_LINK_PROD: 'https://metamask.app.link/dapp/app.epns.io',
-    DEEPLINK_URL: 'https://metamask.app.link/dapp/app.epns.io',
+    METAMASK_LINK_STAGING: 'https://metamask.app.link/dapp/staging.push.org',
+    METAMASK_LINK_PROD: 'https://metamask.app.link/dapp/app.push.org',
+    DEEPLINK_URL: 'https://metamask.app.link/dapp/app.push.org',
     CNS_ENDPOINT:
       'https://unstoppabledomains.com/api/v1/resellers/udtesting/domains',
 
@@ -40,6 +40,9 @@ export default {
     PUSH_TOKEN_SERVER_SYNCED: 'PushTokenServerSynced',
     PUSH_BADGE_COUNT: 'PushBadgeCount',
     PUSH_BADGE_COUNT_PREVIOUS: 'PreviousPushBadgeCount',
+
+    // W2W chat
+    USER_CHAT_DATA: 'UserChatData',
   },
 
   CONSTANTS: {
@@ -105,6 +108,12 @@ export default {
     BADGE_RED: 'rgba(208.0, 44.0, 30.0, 1.0)',
     LIGHT_MAROON: 'rgba(159.0, 0.0, 0.0, 1.0)',
     LIGHTER_MAROON: 'rgba(129.0, 0.0, 0.0, 1.0)',
+
+    // Chats
+    PINK: '#D53A94',
+    LIGHT_BLUE: '#F4F5FA',
+    CHAT_BLACK: '#1E1E1E',
+    CHAT_LIGHT_DARK: '#657795',
   },
   SCREENS: {
     WELCOME: 'Welcome',
@@ -121,6 +130,10 @@ export default {
     SPAM: 'Spam',
     SAMPLEFEED: 'SampleFeed',
     NEWWALLETSIGNIN: 'NewWalletSignIn',
+    CHATS: 'Chats',
+    SINGLE_CHAT: 'SingleChat',
+    PGP_FROM_PK_SCREEN: 'PgpFromPkScreen',
+    CHATPROFILESCREEN: 'ChatProfileScreen',
   },
   APP_AUTH_STATES: {
     INITIALIZING: 1,

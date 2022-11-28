@@ -344,7 +344,7 @@ const SignInScreen = ({route, navigation}) => {
                     iconFactory="Ionicons"
                     icon="ios-refresh"
                     iconSize={24}
-                    title="Reset / Use Different Wallest"
+                    title="Reset / Use Different Wallet"
                     fontSize={16}
                     fontColor={GLOBALS.COLORS.WHITE}
                     bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
