@@ -1,6 +1,6 @@
 import {EvilIcons} from '@expo/vector-icons';
 import React, {useContext, useState} from 'react';
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {Dimensions, StyleSheet, Text, TextInput, View} from 'react-native';
 import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
 import {caip10ToWallet, getCombinedDID} from 'src/helpers/CAIPHelper';
@@ -139,10 +139,10 @@ const styles = StyleSheet.create({
   content: {padding: 10, width: '100%'},
   input: {
     borderRadius: 20,
-    padding: 20,
+    // padding: 20,
     color: Globals.COLORS.BLACK,
     fontSize: 16,
-    height: 70,
+    height: Dimensions.get('window').height / 16,
     paddingLeft: 15,
     paddingRight: 10,
     textAlignVertical: 'top',

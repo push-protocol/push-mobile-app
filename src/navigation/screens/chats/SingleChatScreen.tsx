@@ -14,6 +14,7 @@ import {
   FlatList,
   Image,
   Keyboard,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -296,6 +297,7 @@ const SingleChatScreen = ({route}: any) => {
               value={text}
               placeholder="Type your message here..."
               placeholderTextColor="#494D5F"
+              multiline={Platform.OS === 'ios'}
             />
           </View>
 
@@ -400,11 +402,17 @@ const styles = StyleSheet.create({
     paddingTop: 2,
   },
   input: {
-    height: 35,
     margin: 12,
-    paddingHorizontal: 10,
+    paddingLeft: 10,
+    marginRight: 0,
     color: Globals.COLORS.BLACK,
     fontSize: 16,
+    minWidth: '70%',
+    maxWidth: '70%',
+    height:
+      Platform.OS === 'android'
+        ? Dimensions.get('window').height / 19
+        : Dimensions.get('window').height / 26,
   },
   smileyIcon: {
     marginTop: 20,
@@ -417,8 +425,9 @@ const styles = StyleSheet.create({
   textButtonContainer: {
     display: 'flex',
     flexDirection: 'row',
-    marginTop: 20,
+    marginTop: Dimensions.get('window').height / 40,
     marginRight: 20,
+    minWidth: '30%',
   },
   fileIcon: {},
   sendIcon: {
