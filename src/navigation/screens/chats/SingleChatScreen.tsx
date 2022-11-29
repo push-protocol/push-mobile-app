@@ -131,7 +131,8 @@ const SingleChatScreen = ({route}: any) => {
 
     // @ts-ignore
     // reset the current screen
-    navigation.goBack(null);
+    navigation.navigate(Globals.SCREENS.CHATS, {focues: 'true'});
+    
   };
 
   const onDecline = () => {};

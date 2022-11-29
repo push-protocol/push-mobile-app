@@ -70,6 +70,7 @@ const ChatScreen = (props: any) => {
         });
       } else {
         setChatCredentials(_data);
+        setTab(TABS.CHATS);
         setIsReady(true);
       }
     })();
