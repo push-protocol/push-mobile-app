@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Linking, Platform, StyleSheet, Text, View} from 'react-native';
+import Markdown from 'react-native-markdown-display';
 import ParsedText from 'react-native-parsed-text';
 import GLOBALS from 'src/Globals';
 
@@ -59,6 +60,27 @@ export default class CalendarEvents extends Component {
     return midText;
   }
 
+  handleAnchorRender(matchingString, matches) {
+    let renderString = matchingString;
+    renderString = renderString.replace(/<a[^>]*>/, '');
+    renderString = renderString.replace('</a>', '');
+    return renderString;
+  }
+
+  handelAnchorClick(matchingString, matches) {
+    let url = matchingString;
+    url = url.match(/<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1/)[0];
+    url = url.replace('<a href=', '');
+    url = url.replace(/"/g, '');
+    url = url.replace(/'/g, '');
+
+    Linking.openURL(url);
+  }
+
+  handelUrlPress(matchingString, matches) {
+    Linking.openURL(matchingString);
+  }
+
   // RENDER
   render() {
     const {style, title, fontSize, textStyle} = this.props;
@@ -95,6 +117,17 @@ export default class CalendarEvents extends Component {
         style: [styles.third, styles.bold, styles.italics, styles.underline],
         onPress: this.handleUrlPress,
         renderText: this.renderThreeStyles,
+      },
+      {
+        pattern: /<a[^>]*>([^<]+)<\/a>/, // for anchor tage
+        style: [styles.third, styles.bold, styles.italics, styles.underline],
+        onPress: this.handelAnchorClick,
+        renderText: this.handleAnchorRender,
+      },
+      {
+        type: 'url',
+        style: [styles.link, styles.underline],
+        onPress: this.handelUrlPress,
       },
       {
         pattern: /\[(up):([^\]]+)\]/i, // url
