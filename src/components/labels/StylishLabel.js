@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Linking, Platform, StyleSheet, Text, View} from 'react-native';
-import Markdown from 'react-native-markdown-display';
 import ParsedText from 'react-native-parsed-text';
 import GLOBALS from 'src/Globals';
 
@@ -102,7 +101,7 @@ export default class CalendarEvents extends Component {
         renderText: this.renderThreeStyles,
       },
       {
-        pattern: /\[(ub):([^\]]+)\]/i, // url
+        pattern: /\[(ub):([^\]]+)\]/i, // urli
         style: [
           styles.secondary,
           styles.bold,
