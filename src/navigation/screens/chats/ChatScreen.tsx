@@ -55,10 +55,17 @@ const ChatScreen = (props: any) => {
       const signedInType =
         await MetaStorage.instance.getIsPrivateKeyAvailable();
 
+      const isLoginFromDapp = await MetaStorage.instance.isUserLoginFromDapp();
+
       const _data: UserChatCredentials =
         await MetaStorage.instance.getUserChatData();
 
-      if (signedInType !== Globals.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+      console.log('we had data', _data);
+
+      if (
+        !isLoginFromDapp && // not from dapp
+        signedInType !== Globals.CONSTANTS.CRED_TYPE_PRIVATE_KEY // no manual private key
+      ) {
         setIsPrivateKeyUser(false);
         return;
       }

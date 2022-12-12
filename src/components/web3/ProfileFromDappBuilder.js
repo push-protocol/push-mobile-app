@@ -1,38 +1,57 @@
-import {getEncryptionPublicKey} from '@metamask/eth-sig-util';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import Peer from 'react-native-peerjs';
 import SafeAreaView from 'react-native-safe-area-view';
-import {RTCPeerConnection} from 'react-native-webrtc';
 import GLOBALS from 'src/Globals';
-import * as PushNodeClient from 'src/apis';
 import ENSButton from 'src/components/buttons/ENSButton';
 import Blockies from 'src/components/web3/Blockies';
-import * as CaipHelper from 'src/helpers/CAIPHelper';
-import {decryptWithWalletRPCMethod} from 'src/helpers/w2w/metamaskSigUtil';
-import MetaStorage from 'src/singletons/MetaStorage';
 
-const ProfileFromDappBuilder = ({style, wallet, peerId, aes}) => {
+import CryptoHelper from '../../helpers/CryptoHelper';
+
+const ProfileFromDappBuilder = ({
+  style,
+  wallet,
+  peerId,
+  aes,
+  setProfileComplete,
+  setPgpPk,
+}) => {
   // Setup state
   const [indicator, setIndicator] = useState(true);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const localPeer = new Peer();
-        // localPeer.on('error', console.log);
-        // localPeer.on('open', localPeerId => {
-        //   console.log('Local peer open with ID', localPeerId);
-        // });
-        const configuration = {
-          iceServers: [{url: 'stun:stun.l.google.com:19302'}],
-        };
-        const pc = new RTCPeerConnection(configuration);
-        console.log(pc);
-      } catch (error) {
-        console.log('got errosr', error);
-      }
-    })();
+  const peer = new Peer();
+
+  React.useEffect(() => {
+    console.log('Doing peer jsx');
+    peer.on('open', function (id) {
+      // connection done
+      console.log('My peer ID is: ' + id);
+
+      // connect to dapp
+      console.log('communicating with dapp ', peerId);
+      const conn = peer.connect(peerId);
+      conn.on('open', function () {
+        // send data to dapp
+        conn.send({peerID: id});
+      });
+    });
+
+    // handle data from dapp
+    peer.on('connection', function (conn) {
+      console.log('got connection from the dapp');
+      conn.on('data', function (data) {
+        console.log('got data from dapp');
+        const {encryptedPgpKey} = data;
+        const decryptedPgpKey = CryptoHelper.decryptWithAES(
+          encryptedPgpKey,
+          aes,
+        );
+
+        setPgpPk(decryptedPgpKey);
+        setIndicator(false);
+        setProfileComplete(true);
+      });
+    });
   }, []);
 
   // RENDER
@@ -42,14 +61,14 @@ const ProfileFromDappBuilder = ({style, wallet, peerId, aes}) => {
         <View style={styles.profile}>
           <Blockies
             style={styles.blockies}
-            seed={'wallet'.toLowerCase()} //string content to generate icon
+            seed={wallet.toLowerCase()} //string content to generate icon
             dimension={128} // blocky icon size
           />
           <ENSButton
             style={styles.ensbox}
             loading={indicator}
             cns={''}
-            ens={'Profile Created'}
+            ens={'Profile Synced'}
             wallet={wallet}
             fontSize={16}
           />

@@ -1,20 +1,50 @@
-import React, {useEffect, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useDispatch} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import ProfileFromDappBuilder from 'src/components/web3/ProfileFromDappBuilder';
+import {setInitialSignin} from 'src/redux/authSlice';
+import MetaStorage from 'src/singletons/MetaStorage';
 
 const SignInScreen = props => {
-  let {code} = props.route.params;
-  console.log('got code', code);
-
-  const [AES_KEY, PeerId, Wallet] = code.split('+');
+  const dispatch = useDispatch();
+  const {code, navigation} = props.route.params;
+  const {peerId, aesSecret, account} = JSON.parse(code);
 
   const [isComplete, setProfileComplete] = useState(false);
+  const pgpSecret = useRef('');
+
+  const setPgpPk = pgpPk => {
+    pgpSecret.current = pgpPk;
+  };
+
   // Load the Next Screen
   const loadNextScreen = async () => {
-    // navigation.navigate(GLOBALS.SCREENS.CHATS, {focues: 'true'});
+    // Store that user login fromdapp
+    await MetaStorage.instance.setUserLoginFromDapp();
+
+    // store chat data
+    await MetaStorage.instance.setUserChatData({
+      pgpPrivateKey: pgpSecret.current,
+      encryptionPublicKey: '',
+    });
+
+    // navigate to bimetrics screen
+    dispatch(
+      setInitialSignin({
+        wallet: account,
+        userPKey: '',
+        ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
+        cns: '',
+        ens: '',
+        index: 0,
+      }),
+    );
+
+    // Goto Next Screen
+    navigation.navigate(GLOBALS.SCREENS.BIOMETRIC);
   };
 
   return (
@@ -23,10 +53,11 @@ const SignInScreen = props => {
         <Text style={styles.header}>Loading From Dapp</Text>
         <View style={styles.inner}>
           <ProfileFromDappBuilder
-            aes={AES_KEY}
-            peerId={PeerId}
-            wallet={Wallet}
+            aes={aesSecret}
+            peerId={peerId}
+            wallet={account}
             setProfileComplete={setProfileComplete}
+            setPgpPk={setPgpPk}
             style={styles.profile}
           />
         </View>

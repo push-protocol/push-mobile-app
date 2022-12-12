@@ -190,6 +190,7 @@ export default props => {
     // Goto Next Screen
     navigation.navigate(GLOBALS.SCREENS.SIGNINFROMDAPP, {
       code: code,
+      navigation: navigation,
     });
   };
 

@@ -568,4 +568,25 @@ export default class MetaStorage {
       return false;
     }
   };
+
+  setUserLoginFromDapp = async () => {
+    try {
+      await AsyncStorage.setItem(GLOBALS.STORAGE.IS_FROM_DAPP, 'true');
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  };
+
+  isUserLoginFromDapp = async () => {
+    try {
+      const res = await AsyncStorage.getItem(GLOBALS.STORAGE.IS_FROM_DAPP);
+      return res !== null;
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  };
 }

@@ -26,6 +26,7 @@ export default {
   STORAGE: {
     IS_SIGNED_IN: 'IsUserSignedIn',
     SIGNED_IN_TYPE: 'SignedInType',
+    IS_FROM_DAPP: 'IsFromDapp',
     FIRST_SIGN_IN: 'FirstSignInByUser',
     USER_LOCKED: 'UserLocked',
     PASSCODE_ATTEMPTS: 'MaxPasscodeAttempts',
