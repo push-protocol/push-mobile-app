@@ -258,7 +258,7 @@ export default props => {
                 iconFactory="MaterialIcons"
                 icon="qr-code-scanner"
                 iconSize={24}
-                title="Scan via QR Code"
+                title="Scan QR Code from Dapp"
                 fontSize={16}
                 fontColor={GLOBALS.COLORS.WHITE}
                 bgColor={GLOBALS.COLORS.GRADIENT_SECONDARY}
@@ -346,7 +346,7 @@ export default props => {
       <QRScanner
         ref={QRScannerRef}
         navigation={navigation}
-        title="[wb:Please scan your] [d:wallet's private Key] [wb:to connect it to EPNS.]"
+        title="[wb:Please scan your] [d:PGP Key from dapp] [wb:to connect it to PUSH chat.]"
         doneFunc={code => {
           handleQRCodeFromDapp(code);
         }}

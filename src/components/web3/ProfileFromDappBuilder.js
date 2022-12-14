@@ -4,6 +4,7 @@ import Peer from 'react-native-peerjs';
 import SafeAreaView from 'react-native-safe-area-view';
 import GLOBALS from 'src/Globals';
 import ENSButton from 'src/components/buttons/ENSButton';
+import {ToasterOptions} from 'src/components/indicators/Toaster';
 import Blockies from 'src/components/web3/Blockies';
 
 import CryptoHelper from '../../helpers/CryptoHelper';
@@ -15,32 +16,49 @@ const ProfileFromDappBuilder = ({
   aes,
   setProfileComplete,
   setPgpPk,
+  navigation,
+  toastRef,
 }) => {
   // Setup state
   const [indicator, setIndicator] = useState(true);
 
   const peer = new Peer();
 
-  React.useEffect(() => {
-    console.log('Doing peer jsx');
-    peer.on('open', function (id) {
-      // connection done
-      console.log('My peer ID is: ' + id);
+  const handleError = error => {
+    console.log('got error', error);
+    if (!toastRef.current) {
+      return;
+    }
+    // show toast the error
+    toastRef.current.showToast(
+      'Error syncing with dapp',
+      '',
+      ToasterOptions.TYPE.GRADIENT_PRIMARY,
+    );
+    // navigate back
+    setTimeout(() => {
+      navigation.goBack();
+    }, 1500);
+  };
 
+  React.useEffect(() => {
+    // connection done
+    peer.on('open', function (id) {
       // connect to dapp
-      console.log('communicating with dapp ', peerId);
       const conn = peer.connect(peerId);
       conn.on('open', function () {
         // send data to dapp
         conn.send({peerID: id});
       });
+
+      conn.on('error', handleError);
     });
+
+    peer.on('error', handleError);
 
     // handle data from dapp
     peer.on('connection', function (conn) {
-      console.log('got connection from the dapp');
       conn.on('data', function (data) {
-        console.log('got data from dapp');
         const {encryptedPgpKey} = data;
         const decryptedPgpKey = CryptoHelper.decryptWithAES(
           encryptedPgpKey,
@@ -51,6 +69,8 @@ const ProfileFromDappBuilder = ({
         setIndicator(false);
         setProfileComplete(true);
       });
+
+      conn.on('error', handleError);
     });
   }, []);
 
@@ -73,6 +93,7 @@ const ProfileFromDappBuilder = ({
             fontSize={16}
           />
         </View>
+        <View style={{width: '100%', height: 50, backgroundColor: 'red'}} />
       </View>
     </SafeAreaView>
   );

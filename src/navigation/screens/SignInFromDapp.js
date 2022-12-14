@@ -4,12 +4,14 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import {Toaster} from 'src/components/indicators/Toaster';
 import ProfileFromDappBuilder from 'src/components/web3/ProfileFromDappBuilder';
 import {setInitialSignin} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 const SignInScreen = props => {
   const dispatch = useDispatch();
+  const toastRef = useRef();
   const {code, navigation} = props.route.params;
   const {peerId, aesSecret, account} = JSON.parse(code);
 
@@ -58,6 +60,8 @@ const SignInScreen = props => {
             wallet={account}
             setProfileComplete={setProfileComplete}
             setPgpPk={setPgpPk}
+            navigation={navigation}
+            toastRef={toastRef}
             style={styles.profile}
           />
         </View>
@@ -77,6 +81,7 @@ const SignInScreen = props => {
             disabled={!isComplete}
           />
         )}
+        <Toaster ref={toastRef} />
       </SafeAreaView>
     </>
   );
