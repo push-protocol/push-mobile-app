@@ -124,11 +124,6 @@ export default class CalendarEvents extends Component {
         renderText: this.handleAnchorRender,
       },
       {
-        type: 'url',
-        style: [styles.link, styles.underline],
-        onPress: this.handelUrlPress,
-      },
-      {
         pattern: /\[(up):([^\]]+)\]/i, // url
         style: [styles.primary, styles.italics, styles.underline],
         onPress: this.handleUrlPress,
@@ -193,6 +188,11 @@ export default class CalendarEvents extends Component {
         pattern: /\[(ddg):([^\]]+)\]/i, // darker gray
         style: [styles.darkergray],
         renderText: this.renderStyles,
+      },
+      {
+        type: 'url',
+        style: [styles.link, styles.underline],
+        onPress: this.handelUrlPress,
       },
     ];
 

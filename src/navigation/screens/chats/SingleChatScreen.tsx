@@ -215,9 +215,7 @@ const SingleChatScreen = ({route}: any) => {
               source={require('assets/chat/wallet1.png')}
             />
 
-            <Text style={styles.wallet}>
-              {senderAddressFormatted} {chatMessages.length}
-            </Text>
+            <Text style={styles.wallet}>{senderAddressFormatted}</Text>
           </View>
 
           <Menu
