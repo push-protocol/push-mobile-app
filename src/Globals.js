@@ -10,6 +10,7 @@ export default {
     CNS_ENDPOINT:
       'https://unstoppabledomains.com/api/v1/resellers/udtesting/domains',
 
+    // TODO: /v1/
     ENDPOINT_AUTHTOKEN: '/pushtokens/authtoken',
     ENDPOINT_REGISTER_NO_AUTH: '/pushtokens/register_no_auth',
     ENDPOINT_REGISTER: '/pushtokens/register',

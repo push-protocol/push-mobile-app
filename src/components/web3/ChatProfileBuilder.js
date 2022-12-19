@@ -23,7 +23,7 @@ const ChatProfileBuilder = ({style, wallet, pkey, setProfileComplete}) => {
         let user = await PushNodeClient.getUser(caipAddress);
 
         // register if not reigistered
-        if (!user) {
+        if (!user || user.encryptedPrivateKey === '') {
           user = await PushNodeClient.createNewPgpPair(
             caipAddress,
             encryptionPublicKey,

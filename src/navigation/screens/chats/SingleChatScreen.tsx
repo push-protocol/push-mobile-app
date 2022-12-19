@@ -189,8 +189,6 @@ const SingleChatScreen = ({route}: any) => {
   }, []);
 
   const renderItem = ({item}: {item: ChatMessage}) => {
-    console.log('***this was callled', item.message);
-
     if (item.to === senderAddress) {
       return <MessageComponent chatMessage={item} componentType="SENDER" />;
     } else {

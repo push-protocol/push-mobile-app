@@ -104,6 +104,7 @@ const ServerHelper = {
   // Register device token to server
   registerDeviceTokenToServer: async (server_token, secret) => {
     const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_REGISTER;
+    console.log('** calling', apiURL);
 
     // prepare payloads
     const token = await MetaStorage.instance.getPushToken();
@@ -113,7 +114,7 @@ const ServerHelper = {
     const device_token_aes = CryptoHelper.encryptWithAES(token, secret);
     const platform_aes = CryptoHelper.encryptWithAES(platform, secret);
 
-    return await fetch(apiURL, {
+    const res = await fetch(apiURL, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -134,6 +135,9 @@ const ServerHelper = {
         console.warn(error);
         return error;
       });
+
+    console.log('got res', res);
+    return res;
   },
   // Disassociate Generated Token from server, should not be talking to server, this
   // should be handled from the device itself

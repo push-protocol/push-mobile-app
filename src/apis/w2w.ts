@@ -56,6 +56,8 @@ export interface ConnectedUser extends User {
   privateKey: string;
 }
 
+// const BASE_URL = 'https://backend-staging.epns.io/apis';
+// const BASE_URL = 'https://backend.epns.io/apis';
 const BASE_URL = 'https://backend-dev.epns.io/apis';
 
 export const createUser = async ({
@@ -85,7 +87,6 @@ export const createUser = async ({
     signature,
     sigType,
   });
-  console.log('calling', url, '\nbody', 'body');
 
   const response = await fetch(url, {
     method: 'POST',

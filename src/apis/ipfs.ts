@@ -1,4 +1,5 @@
 const BASE_URL = 'https://backend-dev.epns.io/apis';
+// const BASE_URL = 'https://backend-staging.epns.io/apis';
 
 export interface MessageIPFSWithCID extends MessageIPFS {
   cid: string;
