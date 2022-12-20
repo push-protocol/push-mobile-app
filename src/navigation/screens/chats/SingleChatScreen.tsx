@@ -256,6 +256,9 @@ const SingleChatScreen = ({route}: any) => {
                 scrollViewRef.current.scrollToEnd({animated: true});
               }
             }}
+            onScrollToIndexFailed={() => {
+              console.log('err scorlling ');
+            }}
             extraData={chatMessages.length}
           />
 
@@ -292,7 +295,7 @@ const SingleChatScreen = ({route}: any) => {
               onChangeText={setText}
               value={text}
               placeholder="Type your message here..."
-              placeholderTextColor="#494D5F"
+              placeholderTextColor="#d2d1d1"
               multiline={Platform.OS === 'ios'}
             />
           </View>

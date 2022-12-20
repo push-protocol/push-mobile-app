@@ -60,6 +60,7 @@ const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
           placeholder="Search name.eth or 0x1123..."
           editable={!isSearching}
           selectTextOnFocus={!isSearching}
+          placeholderTextColor="#000"
         />
         {isSearching ? (
           <EvilIcons
@@ -139,7 +140,6 @@ const styles = StyleSheet.create({
   content: {padding: 10, width: '100%'},
   input: {
     borderRadius: 20,
-    // padding: 20,
     color: Globals.COLORS.BLACK,
     fontSize: 16,
     height: Dimensions.get('window').height / 16,
