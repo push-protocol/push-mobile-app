@@ -48,6 +48,10 @@ interface ChatScreenParam {
   isIntentReceivePage: boolean;
 }
 
+const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get('window').width;
+const SectionHeight = (windowHeight * 24) / 35;
+
 const SingleChatScreen = ({route}: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const toastRef = useRef<any>();
@@ -241,7 +245,9 @@ const SingleChatScreen = ({route}: any) => {
       </View>
 
       {isLoading ? (
-        <Text style={{marginTop: 150}}>Loading coneversation...</Text>
+        <View style={{height: SectionHeight}}>
+          <Text style={{marginTop: 150}}>Loading coneversation...</Text>
+        </View>
       ) : (
         <View style={styles.section}>
           <FlatList
@@ -279,53 +285,56 @@ const SingleChatScreen = ({route}: any) => {
 
       {/* Donot show keyboard at intent page */}
       {!isIntentReceivePage && (
-        // <KeyboardAvoidingView>
-        <View style={styles.keyboard}>
-          <View style={styles.textInputContainer}>
-            {/* Open gif */}
-            <View style={styles.smileyIcon}>
-              <TouchableOpacity
-                onPress={() => {
-                  GiphyDialog.show();
-                }}>
-                <FontAwesome5 name="smile" size={20} color="black" />
-              </TouchableOpacity>
+        <KeyboardAvoidingView
+          style={styles.keyboardAvoid}
+          behavior="position"
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 80}
+          enabled={true}>
+          <View style={styles.keyboard}>
+            <View style={styles.textInputContainer}>
+              {/* Open gif */}
+              <View style={styles.smileyIcon}>
+                <TouchableOpacity
+                  onPress={() => {
+                    GiphyDialog.show();
+                  }}>
+                  <FontAwesome5 name="smile" size={20} color="black" />
+                </TouchableOpacity>
+              </View>
+              <TextInput
+                style={styles.input}
+                onChangeText={setText}
+                value={text}
+                placeholder="Type your message here..."
+                placeholderTextColor="#d2d1d1"
+                multiline={Platform.OS === 'ios'}
+              />
             </View>
 
-            <TextInput
-              style={styles.input}
-              onChangeText={setText}
-              value={text}
-              placeholder="Type your message here..."
-              placeholderTextColor="#d2d1d1"
-              multiline={Platform.OS === 'ios'}
-            />
+            <View style={styles.textButtonContainer}>
+              <View>
+                <Feather name="paperclip" size={20} color="black" />
+              </View>
+
+              <View style={styles.sendIcon}>
+                {isSending || !isSendReady ? (
+                  <FontAwesome
+                    name="spinner"
+                    size={24}
+                    color={Globals.COLORS.MID_GRAY}
+                  />
+                ) : (
+                  <FontAwesome
+                    name="send"
+                    size={24}
+                    color={Globals.COLORS.PINK}
+                    onPress={handleSend}
+                  />
+                )}
+              </View>
+            </View>
           </View>
-
-          <View style={styles.textButtonContainer}>
-            <View>
-              <Feather name="paperclip" size={20} color="black" />
-            </View>
-
-            <View style={styles.sendIcon}>
-              {isSending || !isSendReady ? (
-                <FontAwesome
-                  name="spinner"
-                  size={24}
-                  color={Globals.COLORS.MID_GRAY}
-                />
-              ) : (
-                <FontAwesome
-                  name="send"
-                  size={24}
-                  color={Globals.COLORS.PINK}
-                  onPress={handleSend}
-                />
-              )}
-            </View>
-          </View>
-        </View>
-        // </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
       )}
 
       <Toaster ref={toastRef} />
@@ -335,10 +344,11 @@ const SingleChatScreen = ({route}: any) => {
 
 export default SingleChatScreen;
 
-const windowHeight = Dimensions.get('window').height;
-const windowWidth = Dimensions.get('window').width;
-
 const styles = StyleSheet.create({
+  keyboardAvoid: {
+    justifyContent: 'center',
+    paddingHorizontal: 42,
+  },
   container: {
     height: windowHeight,
     flex: 1,
@@ -383,7 +393,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   section: {
-    maxHeight: (windowHeight * 24) / 35,
+    maxHeight: SectionHeight,
+    minHeight: SectionHeight,
     width: windowWidth,
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -394,11 +405,10 @@ const styles = StyleSheet.create({
   },
   keyboard: {
     display: 'flex',
-    position: 'absolute',
     bottom: 20,
     backgroundColor: Globals.COLORS.WHITE,
     borderRadius: 16,
-    width: '90%',
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingTop: 2,
