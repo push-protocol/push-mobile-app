@@ -4,16 +4,16 @@ export default {
     APP_WEBSITE: 'https://push.org',
     DEV_EPNS_SERVER: 'https://backend-staging.epns.io/apis',
     PROD_EPNS_SERVER: 'https://backend.epns.io/apis',
+    W2W_EPNS_SERVER: 'https://backend-staging.epns.io/apis',
     METAMASK_LINK_STAGING: 'https://metamask.app.link/dapp/staging.epns.io',
     METAMASK_LINK_PROD: 'https://metamask.app.link/dapp/epns.io',
     DEEPLINK_URL: 'https://metamask.app.link/dapp/staging.epns.io',
     CNS_ENDPOINT:
       'https://unstoppabledomains.com/api/v1/resellers/udtesting/domains',
 
-    // TODO: /v1/
     ENDPOINT_AUTHTOKEN: '/pushtokens/authtoken',
     ENDPOINT_REGISTER_NO_AUTH: '/pushtokens/register_no_auth',
-    ENDPOINT_REGISTER: '/pushtokens/register',
+    ENDPOINT_REGISTER: '/v1/pushtokens/register',
     ENDPOINT_GET_FEEDS: '/feeds/get_feeds',
     ENDPOINT_GET_SPAM_FEEDS: '/feeds/get_spam_feeds',
     ENDPOINT_FETCH_CHANNELS: '/v1/channels',

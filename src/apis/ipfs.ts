@@ -1,4 +1,8 @@
-const BASE_URL = 'https://backend-dev.epns.io/apis';
+import GLOBALS from 'src/Globals';
+
+const BASE_URL = GLOBALS.LINKS.W2W_EPNS_SERVER;
+
+// const BASE_URL = 'https://backend-dev.epns.io/apis';
 // const BASE_URL = 'https://backend-staging.epns.io/apis';
 
 export interface MessageIPFSWithCID extends MessageIPFS {

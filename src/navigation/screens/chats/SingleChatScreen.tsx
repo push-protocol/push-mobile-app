@@ -14,6 +14,7 @@ import {
   FlatList,
   Image,
   Keyboard,
+  KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
@@ -278,6 +279,7 @@ const SingleChatScreen = ({route}: any) => {
 
       {/* Donot show keyboard at intent page */}
       {!isIntentReceivePage && (
+        // <KeyboardAvoidingView>
         <View style={styles.keyboard}>
           <View style={styles.textInputContainer}>
             {/* Open gif */}
@@ -323,6 +325,7 @@ const SingleChatScreen = ({route}: any) => {
             </View>
           </View>
         </View>
+        // </KeyboardAvoidingView>
       )}
 
       <Toaster ref={toastRef} />
