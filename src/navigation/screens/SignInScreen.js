@@ -20,6 +20,7 @@ import OverlayBlur from 'src/components/modals/OverlayBlur';
 import PKEntryPrompt from 'src/components/modals/PKEntryPrompt';
 import QRScanner from 'src/components/modals/QRScanner';
 import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
+import {QR_TYPES} from 'src/enums';
 import {setInitialSignin} from 'src/redux/authSlice';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
@@ -327,7 +328,7 @@ const SignInScreen = ({route, navigation}) => {
             </View>
           ) : (
             <View style={styles.verifyFooter}>
-              {walletAddressVerified == false ? null : (
+              {walletAddressVerified === false ? null : (
                 <>
                   <PrimaryButton
                     iconFactory="Ionicons"
@@ -368,7 +369,10 @@ const SignInScreen = ({route, navigation}) => {
         <QRScanner
           ref={QRScannerRef}
           navigation={navigation}
-          title="[wb: scan your] [d:wallet's address] [wb:to connect it to Push (EPNS).]"
+          navHeader="Link Wallet Address"
+          errorMessage="Ensure that it is a valid Eth address QR"
+          title="Scan the your Eth wallet address to link your device to the push app"
+          qrType={QR_TYPES.ETH_ADDRESS_SCAN}
           doneFunc={code => {
             onWalletDetect(code);
           }}

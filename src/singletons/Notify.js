@@ -25,12 +25,16 @@ export default class Notify {
       }
     }
 
+    console.log('***we are calling this');
     // FIREBASE
     const status = await messaging().hasPermission();
+    console.log(status);
     if (status === messaging.AuthorizationStatus.AUTHORIZED) {
+      console.log('called######');
       messaging()
         .getToken()
         .then(token => {
+          console.log(token);
           this.saveDeviceToken(token);
         });
     }

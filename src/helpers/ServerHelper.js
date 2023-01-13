@@ -25,6 +25,8 @@ const ServerHelper = {
       platform: platform,
     });
 
+    console.log('body is', body, apiURL);
+
     try {
       const res = await fetch(apiURL, {
         method: 'POST',
@@ -36,7 +38,7 @@ const ServerHelper = {
       });
 
       const rr = res.json();
-      console.log('reg got the res', rr);
+      console.log('reg got the res 	✅', rr);
 
       await MetaStorage.instance.setTokenServerSynced(true);
     } catch (error) {

@@ -28,6 +28,7 @@ const App = () => {
 
     // Listen to whether the token changes
     const onTokenRefresh = messaging().onTokenRefresh(token => {
+      console.log('got token', onTokenRefresh);
       Notify.instance.saveDeviceToken(token, true); // true means it's a refresh
     });
 

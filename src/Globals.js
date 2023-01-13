@@ -4,8 +4,8 @@ export default {
     APP_WEBSITE: 'https://push.org',
     DEV_EPNS_SERVER: 'https://backend-staging.epns.io/apis',
     PROD_EPNS_SERVER: 'https://backend.epns.io/apis',
-    W2W_EPNS_SERVER: 'https://backend-dev.epns.io/apis',
-    // W2W_EPNS_SERVER: 'https://backend-staging.epns.io/apis',
+    // W2W_EPNS_SERVER: 'https://backend-dev.epns.io/apis',
+    W2W_EPNS_SERVER: 'https://backend-staging.epns.io/apis',
     METAMASK_LINK_STAGING: 'https://metamask.app.link/dapp/staging.epns.io',
     METAMASK_LINK_PROD: 'https://metamask.app.link/dapp/epns.io',
     DEEPLINK_URL: 'https://metamask.app.link/dapp/staging.epns.io',
@@ -81,6 +81,7 @@ export default {
     GRADIENT_PRIMARY: 'rgba(226.0, 8.0, 128.0, 1.0)',
     GRADIENT_SECONDARY: 'rgba(53.0, 197.0, 243.0, 1.0)',
     GRADIENT_THIRD: 'rgba(103.0, 76.0, 159.0, 1.0)',
+    QR_SCAN_COLOR: '#D53893',
 
     TRANSPARENT: 'transparent',
 
