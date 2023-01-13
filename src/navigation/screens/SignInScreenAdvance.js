@@ -19,6 +19,7 @@ import OverlayBlur from 'src/components/modals/OverlayBlur';
 import PKEntryPrompt from 'src/components/modals/PKEntryPrompt';
 import QRScanner from 'src/components/modals/QRScanner';
 import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
+import {QR_TYPES} from 'src/enums';
 import {setInitialSignin} from 'src/redux/authSlice';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
@@ -258,7 +259,7 @@ export default props => {
                 iconFactory="MaterialIcons"
                 icon="qr-code-scanner"
                 iconSize={24}
-                title="Scan QR Code from Dapp"
+                title="Scan QR Code for privatekey"
                 fontSize={16}
                 fontColor={GLOBALS.COLORS.WHITE}
                 bgColor={GLOBALS.COLORS.GRADIENT_SECONDARY}
@@ -346,10 +347,16 @@ export default props => {
       <QRScanner
         ref={QRScannerRef}
         navigation={navigation}
-        title="[wb:Please scan your] [d:PGP Key from dapp] [wb:to connect it to PUSH chat.]"
+        navHeader="Link Wallet Address"
+        errorMessage="Ensure that it is a valid Eth address QR"
+        title="Scan the your Eth wallet address to link your device to the push app"
+        qrType={QR_TYPES.ETH_PK_SCAN}
         doneFunc={code => {
-          handleQRCodeFromDapp(code);
+          onPrivateKeyDetect(code);
         }}
+        // doneFunc={code => {
+        //   handleQRCodeFromDapp(code);
+        // }}
         closeFunc={() => toggleQRScanner(false, navigation)}
       />
 
