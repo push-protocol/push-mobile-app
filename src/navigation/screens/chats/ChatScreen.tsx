@@ -12,6 +12,7 @@ import {
 import {useDispatch} from 'react-redux';
 import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
+import {DappScanPage} from 'src/components/ui/DappScanPage';
 import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
 import {setLogout} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
@@ -85,18 +86,19 @@ const ChatScreen = (props: any) => {
 
   if (!isPrivateKeyUser) {
     return (
-      <View style={styles.container}>
-        <AlertPrompt
-          title="No Private Key"
-          subtitle="You are currently not logged in with your private key. By procceding your credentials will be reset and you need to login in with Advanced SignIn."
-          closeTitle="Procced"
-          closeFunc={async () => {
-            await AuthenticationHelper.resetSignedInUser();
-            await MetaStorage.instance.clearStorage();
-            dispatch(setLogout(null));
-          }}
-        />
-      </View>
+      // <View style={styles.container}>
+      //   <AlertPrompt
+      //     title="No Private Key"
+      //     subtitle="You are currently not logged in with your private key. By procceding your credentials will be reset and you need to login in with Advanced SignIn."
+      //     closeTitle="Procced"
+      //     closeFunc={async () => {
+      //       await AuthenticationHelper.resetSignedInUser();
+      //       await MetaStorage.instance.clearStorage();
+      //       dispatch(setLogout(null));
+      //     }}
+      //   />
+      // </View>
+      <DappScanPage />
     );
   }
 
