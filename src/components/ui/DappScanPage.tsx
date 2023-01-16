@@ -1,10 +1,15 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import GLOBALS from 'src/Globals';
+import {QR_TYPES} from 'src/enums';
 
 const DappScanPage = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
-      <Image source={require('assets/ui/push.png')} style={styles.image} />
+      <Image source={require('assets/ui/pgp_dapp.png')} style={styles.image} />
       <View style={styles.textContainer}>
         <Text style={styles.textHeader}>To use Push Chat on mobile</Text>
         <View style={{marginTop: 10, paddingHorizontal: 4}}>
@@ -35,11 +40,27 @@ const DappScanPage = () => {
         <Text
           style={styles.button}
           onPress={() => {
-            console.log('add');
+            // toggleQRScanner(true);
+            // @ts-ignore
+            navigation.navigate(GLOBALS.SCREENS.QRScanScreen, {
+              navHeader: 'Link Wallet Address',
+              errorMessage: 'Ensure that it is a valid Eth address QR',
+              title:
+                'Scan the your Eth wallet address to link your device to the push app',
+              qrType: QR_TYPES.DAPP_PGP_SCAN,
+            });
           }}>
           Link Push chat
         </Text>
       </TouchableOpacity>
+
+      {/* <QRScanner
+        ref={QRScannerRef}
+        navigation={navigation}
+        qrType={QR_TYPES.ETH_ADDRESS_SCAN}
+        doneFunc={doneFunc}
+        closeFunc={() => toggleQRScanner(false)}
+      /> */}
     </View>
   );
 };
@@ -58,6 +79,8 @@ const styles = StyleSheet.create({
     paddingVertical: 17,
   },
   textHeader: {
+    textAlign: 'center',
+    width: '100%',
     fontSize: 18,
     fontWeight: '500',
     color: '#333333',
@@ -68,11 +91,11 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   image: {
-    backgroundColor: 'gray',
     width: 250,
     height: 250,
     aspectRatio: 1,
-    padding: 20,
+    resizeMode: 'contain',
+    paddingVertical: 20,
   },
   button: {
     marginTop: 18,

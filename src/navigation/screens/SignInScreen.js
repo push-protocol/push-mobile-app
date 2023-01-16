@@ -294,7 +294,7 @@ const SignInScreen = ({route, navigation}) => {
                 setHeight={55}
                 disabled={false}
                 onPress={() => {
-                  getCameraPermissionAsync(navigation);
+                  navigation.navigate(GLOBALS.SCREENS.LOG_IN_DAPP_INFO);
                 }}
                 iconFirst
               />

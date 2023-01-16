@@ -139,6 +139,8 @@ export default {
     PGP_FROM_PK_SCREEN: 'PgpFromPkScreen',
     CHATPROFILESCREEN: 'ChatProfileScreen',
     SIGNINFROMDAPP: 'SignInFromDapp',
+    LOG_IN_DAPP_INFO: 'LOG_IN_DAPP_INFO',
+    QRScanScreen: 'QRScanScreen',
   },
   APP_AUTH_STATES: {
     INITIALIZING: 1,

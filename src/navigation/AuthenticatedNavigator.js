@@ -4,6 +4,7 @@ import React from 'react';
 import GLOBALS from 'src/Globals';
 import Header from 'src/components/ui/Header';
 import Tabs from 'src/components/ui/Tabs';
+import QRScanScreen from 'src/navigation/screens/dapp/QRScanScreen';
 
 import ChatProfileScreen from './screens/ChatProfileScreen';
 import PgpFromPkScreen from './screens/PgpFromPkScreen';
@@ -100,6 +101,14 @@ export default function AuthenticatedNavigator() {
             height:
               Constants.statusBarHeight + GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
           },
+          headerTintColor: GLOBALS.COLORS.MID_GRAY,
+        }}
+      />
+      <Stack.Screen
+        name={GLOBALS.SCREENS.QRScanScreen}
+        component={QRScanScreen}
+        options={{
+          headerShown: false,
           headerTintColor: GLOBALS.COLORS.MID_GRAY,
         }}
       />
