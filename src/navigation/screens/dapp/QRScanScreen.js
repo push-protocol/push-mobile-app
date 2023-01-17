@@ -4,6 +4,7 @@ import {Camera} from 'expo-camera';
 import React, {Component} from 'react';
 import {
   Animated,
+  Dimensions,
   Platform,
   StatusBar,
   StyleSheet,
@@ -15,7 +16,10 @@ import {
 import SafeAreaView from 'react-native-safe-area-view';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import GLOBALS from 'src/Globals';
+import {QR_TYPES} from 'src/enums';
 import {QRCodeVerification} from 'src/helpers/QRCodeValidator';
+
+const windowHeight = Dimensions.get('window').height;
 
 export default class QRScanScreen extends Component {
   // CONSTRUCTOR
@@ -28,7 +32,7 @@ export default class QRScanScreen extends Component {
       camrender: true,
       fader: new Animated.Value(100),
       isHeaderEnabled: false,
-      showError: true,
+      showError: false,
     };
   }
 
@@ -43,27 +47,40 @@ export default class QRScanScreen extends Component {
         require('assets/sounds/scanned.mp3'),
       );
       await sound.playAsync();
-    } catch (err) {
-      console.log('err on song', err);
-    }
+    } catch (err) {}
   };
 
   // Handle barcode scanning
   handleBarCodeScanned = async (scanned, navigation, doneFunc) => {
     let code = scanned.data;
 
-    const isValid = QRCodeVerification(code, this.props.qrType);
+    const isValid = QRCodeVerification(code, QR_TYPES.DAPP_PGP_SCAN);
+
     // show error and stop
     if (!isValid) {
       this.setState({showError: true});
       return;
     }
 
-    // Close this
-    this.changeRenderState(false, navigation);
-
     // Call done function
-    doneFunc(code);
+    this.handleQRCodeFromDapp(code, navigation);
+  };
+
+  handleQRCodeFromDapp = (code, navigation) => {
+    this.loadLoginFromDapp(code, navigation);
+  };
+
+  loadLoginFromDapp = async (code, navigation) => {
+    const qrScreen =
+      this.props.authState === GLOBALS.AUTH_STATE.AUTHENTICATED
+        ? GLOBALS.SCREENS.SIGNINFROMDAPP
+        : GLOBALS.SCREENS.SIGNINFROMDAPP_LOGIN;
+
+    // Goto Next Screen
+    navigation.navigate(qrScreen, {
+      code: code,
+      navigation: navigation,
+    });
   };
 
   // RENDER
@@ -253,7 +270,7 @@ const translucentStyles = StyleSheet.create({
     right: '17%',
     backgroundColor: GLOBALS.COLORS.MID_BLACK_TRANS,
     width: '66%',
-    height: '38%',
+    height: windowHeight * 0.38,
     zIndex: -1,
   },
   b4: {
@@ -263,7 +280,7 @@ const translucentStyles = StyleSheet.create({
     right: '17%',
     backgroundColor: GLOBALS.COLORS.MID_BLACK_TRANS,
     width: '66%',
-    height: '24%',
+    height: windowHeight * 0.24,
     zIndex: -1,
   },
 });

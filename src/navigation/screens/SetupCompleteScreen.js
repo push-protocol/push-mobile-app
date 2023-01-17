@@ -13,8 +13,6 @@ import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
-import CryptoHelper from 'src/helpers/CryptoHelper';
-import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import {setAuthState} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
@@ -97,6 +95,7 @@ class SetupCompleteScreen extends Component {
     await MetaStorage.instance.setCurrentAndPreviousBadgeCount(0, 0);
     const {users} = this.props.auth;
     await MetaStorage.instance.setStoredWallets(users);
+
     this.props.setAuthState(GLOBALS.AUTH_STATE.AUTHENTICATED);
   };
 

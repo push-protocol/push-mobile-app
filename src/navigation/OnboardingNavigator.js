@@ -68,7 +68,7 @@ const OnboardingNavigator = () => {
       />
 
       <Stack.Screen
-        name={GLOBALS.SCREENS.SIGNINFROMDAPP}
+        name={GLOBALS.SCREENS.SIGNINFROMDAPP_LOGIN}
         component={SignInFromDapp}
         options={{
           headerShown: false,

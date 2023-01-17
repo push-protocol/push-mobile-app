@@ -4,6 +4,7 @@ import {Camera} from 'expo-camera';
 import React, {Component} from 'react';
 import {
   Animated,
+  Dimensions,
   Platform,
   StatusBar,
   StyleSheet,
@@ -17,6 +18,7 @@ import {getStatusBarHeight} from 'react-native-status-bar-height';
 import GLOBALS from 'src/Globals';
 import {QRCodeVerification} from 'src/helpers/QRCodeValidator';
 
+const windowHeight = Dimensions.get('window').height;
 export default class QRScanner extends Component {
   // CONSTRUCTOR
   constructor(props) {
@@ -28,7 +30,7 @@ export default class QRScanner extends Component {
       camrender: false,
       fader: new Animated.Value(0),
       isHeaderEnabled: false,
-      showError: true,
+      showError: false,
     };
   }
 
@@ -125,6 +127,7 @@ export default class QRScanner extends Component {
     let code = scanned.data;
 
     const isValid = QRCodeVerification(code, this.props.qrType);
+    console.log('******', isValid, code);
     // show error and stop
     if (!isValid) {
       this.setState({showError: true});
@@ -324,7 +327,7 @@ const translucentStyles = StyleSheet.create({
     right: '17%',
     backgroundColor: GLOBALS.COLORS.MID_BLACK_TRANS,
     width: '66%',
-    height: '38%',
+    height: windowHeight * 0.38,
     zIndex: -1,
   },
   b4: {
@@ -334,7 +337,7 @@ const translucentStyles = StyleSheet.create({
     right: '17%',
     backgroundColor: GLOBALS.COLORS.MID_BLACK_TRANS,
     width: '66%',
-    height: '24%',
+    height: windowHeight * 0.24,
     zIndex: -1,
   },
 });

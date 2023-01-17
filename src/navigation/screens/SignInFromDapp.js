@@ -1,17 +1,20 @@
 import React, {useRef, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import {Toaster} from 'src/components/indicators/Toaster';
 import ProfileFromDappBuilder from 'src/components/web3/ProfileFromDappBuilder';
+import {selectAuthState} from 'src/redux/authSlice';
 import {setInitialSignin} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 const SignInScreen = props => {
   const dispatch = useDispatch();
   const toastRef = useRef();
+  const authState = useSelector(selectAuthState);
+
   const {code, navigation} = props.route.params;
   const {peerId, aesSecret, account} = JSON.parse(code);
 
@@ -24,29 +27,38 @@ const SignInScreen = props => {
 
   // Load the Next Screen
   const loadNextScreen = async () => {
-    // Store that user login fromdapp
-    await MetaStorage.instance.setUserLoginFromDapp();
+    console.log('go next');
+    try {
+      // Store that user login fromdapp
+      await MetaStorage.instance.setUserLoginFromDapp();
 
-    // store chat data
-    await MetaStorage.instance.setUserChatData({
-      pgpPrivateKey: pgpSecret.current,
-      encryptionPublicKey: '',
-    });
+      // store chat data
+      await MetaStorage.instance.setUserChatData({
+        pgpPrivateKey: pgpSecret.current,
+        encryptionPublicKey: '',
+      });
 
-    // navigate to bimetrics screen
-    dispatch(
-      setInitialSignin({
-        wallet: account,
-        userPKey: '',
-        ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
-        cns: '',
-        ens: '',
-        index: 0,
-      }),
-    );
+      // navigate to bimetrics screen
+      dispatch(
+        setInitialSignin({
+          wallet: account,
+          userPKey: '',
+          ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
+          cns: '',
+          ens: '',
+          index: 0,
+        }),
+      );
 
-    // Goto Next Screen
-    navigation.navigate(GLOBALS.SCREENS.BIOMETRIC);
+      // Goto Next
+      if (authState === GLOBALS.AUTH_STATE.AUTHENTICATED) {
+        navigation.navigate(GLOBALS.SCREENS.CHATS, {focues: 'true'});
+      } else {
+        navigation.navigate(GLOBALS.SCREENS.BIOMETRIC);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

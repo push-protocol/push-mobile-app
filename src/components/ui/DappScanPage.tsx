@@ -1,11 +1,17 @@
 import {useNavigation} from '@react-navigation/native';
+import {Camera} from 'expo-camera';
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {QR_TYPES} from 'src/enums';
+import {selectAuthState} from 'src/redux/authSlice';
 
 const DappScanPage = () => {
   const navigation = useNavigation();
+  const authState = useSelector(selectAuthState);
+
+  const [permission, requestPermission] = Camera.useCameraPermissions();
 
   return (
     <View style={styles.container}>
@@ -39,28 +45,31 @@ const DappScanPage = () => {
       <TouchableOpacity style={{width: '100%', alignItems: 'center'}}>
         <Text
           style={styles.button}
-          onPress={() => {
+          onPress={async () => {
+            if (!permission?.granted) {
+              let {granted} = await requestPermission();
+              if (!granted) {
+                return;
+              }
+            }
             // toggleQRScanner(true);
+            const qrScreen =
+              authState === GLOBALS.AUTH_STATE.AUTHENTICATED
+                ? GLOBALS.SCREENS.QRScanScreenFromLogin
+                : GLOBALS.SCREENS.QRScanScreen;
             // @ts-ignore
-            navigation.navigate(GLOBALS.SCREENS.QRScanScreen, {
+            navigation.navigate(qrScreen, {
               navHeader: 'Link Wallet Address',
               errorMessage: 'Ensure that it is a valid Eth address QR',
               title:
                 'Scan the your Eth wallet address to link your device to the push app',
               qrType: QR_TYPES.DAPP_PGP_SCAN,
+              authState: authState,
             });
           }}>
           Link Push chat
         </Text>
       </TouchableOpacity>
-
-      {/* <QRScanner
-        ref={QRScannerRef}
-        navigation={navigation}
-        qrType={QR_TYPES.ETH_ADDRESS_SCAN}
-        doneFunc={doneFunc}
-        closeFunc={() => toggleQRScanner(false)}
-      /> */}
     </View>
   );
 };

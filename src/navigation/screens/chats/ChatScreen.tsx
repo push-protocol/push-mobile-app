@@ -56,8 +56,6 @@ const ChatScreen = (props: any) => {
       const _data: UserChatCredentials =
         await MetaStorage.instance.getUserChatData();
 
-      console.log('we had data', _data);
-
       if (
         !isLoginFromDapp && // not from dapp
         signedInType !== Globals.CONSTANTS.CRED_TYPE_PRIVATE_KEY // no manual private key
@@ -79,7 +77,7 @@ const ChatScreen = (props: any) => {
     })();
   }, [props]);
 
-  if (!isPrivateKeyUser) {
+  if (!isPrivateKeyUser && !isReady) {
     return <DappScanPage />;
   }
 
