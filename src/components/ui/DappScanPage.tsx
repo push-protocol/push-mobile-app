@@ -26,7 +26,11 @@ const DappScanPage = () => {
             </Text>
           </View>
           <View
-            style={{marginVertical: 4, display: 'flex', flexDirection: 'row'}}>
+            style={{
+              marginVertical: 12,
+              display: 'flex',
+              flexDirection: 'row',
+            }}>
             <Text style={styles.lowerTextContainer}>2.</Text>
             <Text style={styles.lowerTextContainer}>
               Open Push Chat and click on ⋮ next to your user profile
@@ -59,10 +63,10 @@ const DappScanPage = () => {
                 : GLOBALS.SCREENS.QRScanScreen;
             // @ts-ignore
             navigation.navigate(qrScreen, {
-              navHeader: 'Link Wallet Address',
-              errorMessage: 'Ensure that it is a valid Eth address QR',
+              navHeader: 'Link Push Chat',
+              errorMessage: 'Ensure that it is a valid code from app.push.org',
               title:
-                'Scan the your Eth wallet address to link your device to the push app',
+                'Scan the form app.push.org to link your device to push chat',
               qrType: QR_TYPES.DAPP_PGP_SCAN,
               authState: authState,
             });
@@ -76,6 +80,7 @@ const DappScanPage = () => {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: '10%',
     paddingHorizontal: 25,
     paddingVertical: 48,
     alignItems: 'center',
@@ -93,6 +98,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '500',
     color: '#333333',
+    marginBottom: 20,
   },
   lowerTextContainer: {
     fontSize: 15,

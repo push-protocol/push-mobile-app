@@ -27,7 +27,6 @@ const SignInScreen = props => {
 
   // Load the Next Screen
   const loadNextScreen = async () => {
-    console.log('go next');
     try {
       // Store that user login fromdapp
       await MetaStorage.instance.setUserLoginFromDapp();

@@ -37,7 +37,7 @@ const ProfileFromDappBuilder = ({
     );
     // navigate back
     setTimeout(() => {
-      navigation.goBack();
+      navigation.pop(2);
     }, 1500);
   };
 

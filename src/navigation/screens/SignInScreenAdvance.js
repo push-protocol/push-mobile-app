@@ -348,8 +348,8 @@ export default props => {
         ref={QRScannerRef}
         navigation={navigation}
         navHeader="Link Wallet Address"
-        errorMessage="Ensure that it is a valid Eth address QR"
-        title="Scan the your Eth wallet address to link your device to the push app"
+        errorMessage="Ensure that it is a valid Eth private key QR"
+        title="Scan your Eth private key to link your device to the push app"
         qrType={QR_TYPES.ETH_PK_SCAN}
         doneFunc={code => {
           onPrivateKeyDetect(code);

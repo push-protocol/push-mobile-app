@@ -14,7 +14,11 @@ import {NotifeeDisplayNotification} from 'src/notifee';
 import store from 'src/redux';
 import Notify from 'src/singletons/Notify';
 
+import appConfig from './app.json';
+
 let persistor = persistStore(store);
+
+console.log('Abisssek', appConfig.expo.scheme);
 
 const App = () => {
   const handleAppNotificationBadge = async () => {
@@ -49,7 +53,11 @@ const App = () => {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <WalletConnectProvider
-            redirectUrl={`${ENV_CONFIG.DEEPLINK_URL}`}
+            redirectUrl={
+              Platform.OS === 'web'
+                ? window.location.origin
+                : `${appConfig.expo.scheme}://`
+            }
             bridge="https://bridge.walletconnect.org"
             clientMeta={{
               description: 'Connect with WalletConnect',

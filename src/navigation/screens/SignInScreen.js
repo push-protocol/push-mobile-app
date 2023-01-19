@@ -406,7 +406,7 @@ const SignInScreen = ({route, navigation}) => {
           navigation={navigation}
           navHeader="Link Wallet Address"
           errorMessage="Ensure that it is a valid Eth address QR"
-          title="Scan the your Eth wallet address to link your device to the push app"
+          title="Scan your Eth wallet address to link your device to the push app"
           qrType={QR_TYPES.ETH_ADDRESS_SCAN}
           doneFunc={code => {
             onWalletDetect(code);
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    top: windowHeight * 0.112,
+    top: windowHeight * 0.14,
     padding: 20,
     maxWidth: 540,
   },

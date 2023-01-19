@@ -19,7 +19,7 @@ import GLOBALS from 'src/Globals';
 import {QR_TYPES} from 'src/enums';
 import {QRCodeVerification} from 'src/helpers/QRCodeValidator';
 
-const windowHeight = Dimensions.get('window').height;
+const windowHeight = Dimensions.get('screen').height;
 
 export default class QRScanScreen extends Component {
   // CONSTRUCTOR
@@ -72,7 +72,7 @@ export default class QRScanScreen extends Component {
 
   loadLoginFromDapp = async (code, navigation) => {
     const qrScreen =
-      this.props.authState === GLOBALS.AUTH_STATE.AUTHENTICATED
+      this.props.route.params.authState === GLOBALS.AUTH_STATE.AUTHENTICATED
         ? GLOBALS.SCREENS.SIGNINFROMDAPP
         : GLOBALS.SCREENS.SIGNINFROMDAPP_LOGIN;
 
@@ -115,18 +115,18 @@ export default class QRScanScreen extends Component {
 
         <SafeAreaView forceInset={{top: 'never', bottom: 'always'}}>
           <View style={styles.focusContainer}>
-            <View style={styles.focusView}>
-              <View style={[styles.borderView, styles.leftTopBorder]} />
-              <View style={[styles.borderView, styles.rightTopBorder]} />
-              <View style={[styles.borderView, styles.leftBottomBorder]} />
-              <View style={[styles.borderView, styles.rightBottomBorder]} />
-            </View>
+            {/* <View style={styles.focusView}> */}
+            <View style={[styles.borderView, styles.leftTopBorder]} />
+            <View style={[styles.borderView, styles.rightTopBorder]} />
+            <View style={[styles.borderView, styles.leftBottomBorder]} />
+            <View style={[styles.borderView, styles.rightBottomBorder]} />
+            {/* </View> */}
+            {/* make region outside the focus dimmer */}
+            <View style={translucentStyles.b1} />
+            <View style={translucentStyles.b2} />
+            <View style={translucentStyles.b3} />
+            <View style={translucentStyles.b4} />
           </View>
-          {/* make region outside the focus dimmer */}
-          <View style={translucentStyles.b1} />
-          <View style={translucentStyles.b2} />
-          <View style={translucentStyles.b3} />
-          <View style={translucentStyles.b4} />
         </SafeAreaView>
 
         <View style={scanLabel.view}>
@@ -181,7 +181,9 @@ export default class QRScanScreen extends Component {
   }
 }
 
-const BORDER_GAP = 4;
+const BORDER_HORIZONTAL = '17%';
+const BORDER_TOP = windowHeight * 0.335;
+const BORDER_BOTTOM = windowHeight * 0.275;
 
 // Styling
 const errorModal = StyleSheet.create({
@@ -247,9 +249,9 @@ const translucentStyles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     left: 0,
-    right: '-17%',
+    right: BORDER_HORIZONTAL,
     backgroundColor: GLOBALS.COLORS.MID_BLACK_TRANS,
-    width: '17%',
+    width: BORDER_HORIZONTAL,
     height: '100%',
     zIndex: -1,
   },
@@ -259,28 +261,29 @@ const translucentStyles = StyleSheet.create({
     left: '83%',
     right: 0,
     backgroundColor: GLOBALS.COLORS.MID_BLACK_TRANS,
-    width: '17%',
+    width: BORDER_HORIZONTAL,
     height: '100%',
     zIndex: -1,
   },
   b3: {
     position: 'absolute',
     top: 0,
-    left: '17%',
-    right: '17%',
+    left: BORDER_HORIZONTAL,
+    right: BORDER_HORIZONTAL,
     backgroundColor: GLOBALS.COLORS.MID_BLACK_TRANS,
     width: '66%',
-    height: windowHeight * 0.38,
+    height: BORDER_TOP,
+    bottom: 440,
     zIndex: -1,
   },
   b4: {
     position: 'absolute',
-    bottom: 0,
-    left: '17%',
-    right: '17%',
+    left: BORDER_HORIZONTAL,
+    right: BORDER_HORIZONTAL,
     backgroundColor: GLOBALS.COLORS.MID_BLACK_TRANS,
     width: '66%',
-    height: windowHeight * 0.24,
+    bottom: 0,
+    height: BORDER_BOTTOM,
     zIndex: -1,
   },
 });
@@ -320,37 +323,38 @@ const styles = StyleSheet.create({
   focusView: {
     width: '66%',
     aspectRatio: 1,
+    // position: 'absolute',
   },
   borderView: {
     position: 'absolute',
-    width: '25%',
+    width: '15%',
     aspectRatio: 1,
-    borderWidth: 5,
+    borderWidth: 6,
   },
   leftTopBorder: {
-    top: 50,
-    left: -BORDER_GAP,
+    top: BORDER_TOP,
+    left: BORDER_HORIZONTAL,
     borderRightWidth: 0,
     borderBottomWidth: 0,
     borderColor: GLOBALS.COLORS.QR_SCAN_COLOR,
   },
   rightTopBorder: {
-    top: 50,
-    right: -BORDER_GAP,
+    top: BORDER_TOP,
+    right: BORDER_HORIZONTAL,
     borderLeftWidth: 0,
     borderBottomWidth: 0,
     borderColor: GLOBALS.COLORS.QR_SCAN_COLOR,
   },
   leftBottomBorder: {
-    bottom: -50,
-    right: -BORDER_GAP,
+    bottom: BORDER_BOTTOM,
+    right: BORDER_HORIZONTAL,
     borderLeftWidth: 0,
     borderTopWidth: 0,
     borderColor: GLOBALS.COLORS.QR_SCAN_COLOR,
   },
   rightBottomBorder: {
-    bottom: -50,
-    left: -BORDER_GAP,
+    bottom: BORDER_BOTTOM,
+    left: BORDER_HORIZONTAL,
     borderRightWidth: 0,
     borderTopWidth: 0,
     borderColor: GLOBALS.COLORS.QR_SCAN_COLOR,

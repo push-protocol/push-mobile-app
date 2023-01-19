@@ -172,18 +172,18 @@ export default class QRScanner extends Component {
 
         <SafeAreaView forceInset={{top: 'never', bottom: 'always'}}>
           <View style={styles.focusContainer}>
-            <View style={styles.focusView}>
-              <View style={[styles.borderView, styles.leftTopBorder]} />
-              <View style={[styles.borderView, styles.rightTopBorder]} />
-              <View style={[styles.borderView, styles.leftBottomBorder]} />
-              <View style={[styles.borderView, styles.rightBottomBorder]} />
-            </View>
+            {/* <View style={styles.focusView}> */}
+            <View style={[styles.borderView, styles.leftTopBorder]} />
+            <View style={[styles.borderView, styles.rightTopBorder]} />
+            <View style={[styles.borderView, styles.leftBottomBorder]} />
+            <View style={[styles.borderView, styles.rightBottomBorder]} />
+            {/* </View> */}
+            {/* make region outside the focus dimmer */}
+            <View style={translucentStyles.b1} />
+            <View style={translucentStyles.b2} />
+            <View style={translucentStyles.b3} />
+            <View style={translucentStyles.b4} />
           </View>
-          {/* make region outside the focus dimmer */}
-          <View style={translucentStyles.b1} />
-          <View style={translucentStyles.b2} />
-          <View style={translucentStyles.b3} />
-          <View style={translucentStyles.b4} />
         </SafeAreaView>
 
         <View style={scanLabel.view}>
@@ -238,7 +238,9 @@ export default class QRScanner extends Component {
   }
 }
 
-const BORDER_GAP = 4;
+const BORDER_HORIZONTAL = '17%';
+const BORDER_TOP = windowHeight * 0.365;
+const BORDER_BOTTOM = windowHeight * 0.3;
 
 // Styling
 const errorModal = StyleSheet.create({
@@ -323,21 +325,22 @@ const translucentStyles = StyleSheet.create({
   b3: {
     position: 'absolute',
     top: 0,
-    left: '17%',
-    right: '17%',
+    left: BORDER_HORIZONTAL,
+    right: BORDER_HORIZONTAL,
     backgroundColor: GLOBALS.COLORS.MID_BLACK_TRANS,
     width: '66%',
-    height: windowHeight * 0.38,
+    height: BORDER_TOP,
+    bottom: 440,
     zIndex: -1,
   },
   b4: {
     position: 'absolute',
-    bottom: 0,
-    left: '17%',
-    right: '17%',
+    left: BORDER_HORIZONTAL,
+    right: BORDER_HORIZONTAL,
     backgroundColor: GLOBALS.COLORS.MID_BLACK_TRANS,
     width: '66%',
-    height: windowHeight * 0.24,
+    bottom: 0,
+    height: BORDER_BOTTOM,
     zIndex: -1,
   },
 });
@@ -377,37 +380,38 @@ const styles = StyleSheet.create({
   focusView: {
     width: '66%',
     aspectRatio: 1,
+    // position: 'absolute',
   },
   borderView: {
     position: 'absolute',
-    width: '25%',
+    width: '15%',
     aspectRatio: 1,
-    borderWidth: 5,
+    borderWidth: 6,
   },
   leftTopBorder: {
-    top: 50,
-    left: -BORDER_GAP,
+    top: BORDER_TOP,
+    left: BORDER_HORIZONTAL,
     borderRightWidth: 0,
     borderBottomWidth: 0,
     borderColor: GLOBALS.COLORS.QR_SCAN_COLOR,
   },
   rightTopBorder: {
-    top: 50,
-    right: -BORDER_GAP,
+    top: BORDER_TOP,
+    right: BORDER_HORIZONTAL,
     borderLeftWidth: 0,
     borderBottomWidth: 0,
     borderColor: GLOBALS.COLORS.QR_SCAN_COLOR,
   },
   leftBottomBorder: {
-    bottom: -50,
-    right: -BORDER_GAP,
+    bottom: BORDER_BOTTOM,
+    right: BORDER_HORIZONTAL,
     borderLeftWidth: 0,
     borderTopWidth: 0,
     borderColor: GLOBALS.COLORS.QR_SCAN_COLOR,
   },
   rightBottomBorder: {
-    bottom: -50,
-    left: -BORDER_GAP,
+    bottom: BORDER_BOTTOM,
+    left: BORDER_HORIZONTAL,
     borderRightWidth: 0,
     borderTopWidth: 0,
     borderColor: GLOBALS.COLORS.QR_SCAN_COLOR,
