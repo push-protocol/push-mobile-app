@@ -114,7 +114,7 @@ const useSendMessage = (
 
     if (messageReceiver.current.pgpAddress === '') {
       showToast(
-        'PGP address of the user not available',
+        'Wait for the user to accpet the intent',
         '',
         ToasterOptions.TYPE.GRADIENT_PRIMARY,
       );

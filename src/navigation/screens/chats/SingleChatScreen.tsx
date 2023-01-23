@@ -8,10 +8,10 @@ import {
 } from '@expo/vector-icons';
 import {GiphyDialog, GiphyDialogEvent} from '@giphy/react-native-sdk';
 import {useNavigation} from '@react-navigation/native';
+import {FlashList} from '@shopify/flash-list';
 import React, {useEffect, useRef, useState} from 'react';
 import {
-  Dimensions,
-  FlatList,
+  Dimensions, // FlatList,
   Image,
   Keyboard,
   KeyboardAvoidingView,
@@ -87,6 +87,7 @@ const SingleChatScreen = ({route}: any) => {
 
   const senderAddressFormatted = getFormattedAddress(senderAddress);
 
+  // const []
   const handleSend = async () => {
     const _text = text;
     setText('');
@@ -133,10 +134,6 @@ const SingleChatScreen = ({route}: any) => {
 
     console.log('approved intent', updatedIntent);
     setisIntentReceivePage(false);
-
-    // @ts-ignore
-    // reset the current screen
-    navigation.navigate(Globals.SCREENS.CHATS, {focues: 'true'});
   };
 
   const onDecline = () => {};
@@ -250,14 +247,16 @@ const SingleChatScreen = ({route}: any) => {
         </View>
       ) : (
         <View style={styles.section}>
-          <FlatList
+          <FlashList
             // @ts-ignore
             ref={scrollViewRef}
             data={chatMessages}
             renderItem={renderItem}
-            keyExtractor={(_, index) => 'key' + index}
+            keyExtractor={(msg, index) => msg.time + index}
             showsHorizontalScrollIndicator={false}
-            initialScrollIndex={chatMessages.length - 1}
+            initialScrollIndex={
+              chatMessages.length === 0 ? 0 : chatMessages.length - 1
+            }
             onContentSizeChange={() => {
               if (scrollViewRef.current) {
                 scrollViewRef.current.scrollToEnd({animated: true});
@@ -266,8 +265,21 @@ const SingleChatScreen = ({route}: any) => {
             onScrollToIndexFailed={() => {
               console.log('err scorlling ');
             }}
-            extraData={chatMessages.length}
+            style={{backgroundColor: 'pink'}}
+            extraData={chatMessages}
+            estimatedItemSize={15}
+            ListFooterComponent={
+              isIntentReceivePage ? (
+                <AcceptIntent onAccept={onAccept} onDecline={onDecline} />
+              ) : null
+            }
           />
+
+          {/* <ScrollView>
+            {chatMessages.map(msg => {
+              return renderItem({item: msg});
+            })}
+          </ScrollView> */}
 
           {isSending && (
             <MessageComponent
@@ -277,9 +289,9 @@ const SingleChatScreen = ({route}: any) => {
           )}
 
           {/* Donot show intent checkbox in chat page */}
-          {isIntentReceivePage && (
-            <AcceptIntent onAccept={onAccept} onDecline={onDecline} />
-          )}
+          {/* {!isIntentReceivePage && (
+            //  />
+          )} */}
         </View>
       )}
 
@@ -393,8 +405,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   section: {
-    maxHeight: SectionHeight,
-    minHeight: SectionHeight,
+    height: SectionHeight,
+    // minHeight: SectionHeight,
     width: windowWidth,
     paddingVertical: 10,
     paddingHorizontal: 20,

@@ -24,6 +24,7 @@
     "@react-navigation/native": "^6.0.12",
     "@react-navigation/stack": "^6.2.3",
     "@reduxjs/toolkit": "^1.8.5",
+    "@shopify/flash-list": "^1.4.0",
     "@tradle/react-native-http": "^2.0.1",
     "@types/dotenv": "^8.2.0",
     "@unstoppabledomains/resolution": "2.1.1",

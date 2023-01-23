@@ -326,6 +326,7 @@ export const createNewPgpPair = async (
     signature: 'xyz',
     sigType: 'a',
   });
+
   console.log('create new user', createdUser);
   return createdUser;
 };
