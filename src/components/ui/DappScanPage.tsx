@@ -1,7 +1,14 @@
 import {useNavigation} from '@react-navigation/native';
 import {Camera} from 'expo-camera';
 import React from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {QR_TYPES} from 'src/enums';
@@ -13,8 +20,19 @@ const DappScanPage = () => {
 
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
+  // toggleQRScanner(true);
+  const qrScreen =
+    authState === GLOBALS.AUTH_STATE.AUTHENTICATED
+      ? GLOBALS.SCREENS.QRScanScreenFromLogin
+      : GLOBALS.SCREENS.QRScanScreen;
+
   return (
-    <View style={styles.container}>
+    <View
+      style={
+        authState === GLOBALS.AUTH_STATE.AUTHENTICATED
+          ? styles.container
+          : styles.containerNoLogin
+      }>
       <Image source={require('assets/ui/pgp_dapp.png')} style={styles.image} />
       <View style={styles.textContainer}>
         <Text style={styles.textHeader}>To use Push Chat on mobile</Text>
@@ -56,11 +74,7 @@ const DappScanPage = () => {
                 return;
               }
             }
-            // toggleQRScanner(true);
-            const qrScreen =
-              authState === GLOBALS.AUTH_STATE.AUTHENTICATED
-                ? GLOBALS.SCREENS.QRScanScreenFromLogin
-                : GLOBALS.SCREENS.QRScanScreen;
+
             // @ts-ignore
             navigation.navigate(qrScreen, {
               navHeader: 'Link Push Chat',
@@ -78,11 +92,18 @@ const DappScanPage = () => {
   );
 };
 
+const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
   container: {
+    marginTop: '4%',
+    paddingHorizontal: 25,
+    paddingVertical: windowHeight * 0.01,
+    alignItems: 'center',
+  },
+  containerNoLogin: {
     marginTop: '10%',
     paddingHorizontal: 25,
-    paddingVertical: 48,
+    paddingVertical: windowHeight * 0.04,
     alignItems: 'center',
   },
   textContainer: {

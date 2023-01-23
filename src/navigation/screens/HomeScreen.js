@@ -110,7 +110,6 @@ class HomeScreen extends Component {
     // Get signed type and register device for push
     // TODO: working on this
     const cc = this.props.auth.users[this.props.auth.currentUser].wallet;
-    console.log('abishek its', cc);
     ServerHelper.associateTokenToServerNoAuth(
       this.props.auth.users[this.props.auth.currentUser].wallet,
     );

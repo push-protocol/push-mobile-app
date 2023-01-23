@@ -20,6 +20,7 @@ const getLatestHash = async (
     const cid = filtertedFeeds![0].threadhash;
     return [false, cid!];
   } catch (error) {
+    // console.log(error);
     return [true, ''];
   }
 };
@@ -110,7 +111,7 @@ const useConversationLoader = (
           console.log('*****no new chats to be called');
         }
       } catch (error) {
-        console.log('got error', error);
+        console.log('got error 1', error);
       }
 
       setIsLoading(false);
@@ -123,7 +124,7 @@ const useConversationLoader = (
             senderAddress,
           );
           if (error) {
-            console.log('got error', error);
+            console.log('got error2', error);
             return;
           }
           if (newCid === currentHash.current) {

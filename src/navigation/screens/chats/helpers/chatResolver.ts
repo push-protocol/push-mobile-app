@@ -37,24 +37,50 @@ const resolveCID = async (
   const timeStamp = res.timestamp ? res.timestamp : 0;
   const formatedTime = parseTimeStamp(timeStamp);
 
-  const AES_KEY = await getAES(res.encryptedSecret, pgpPrivateKey);
-  const messageToDecrypt = res.messageContent;
-  const encryptedMessage: string = CryptoHelper.decryptWithAES(
-    messageToDecrypt,
-    AES_KEY,
+  const message = await getMessage(
+    res.messageContent,
+    res.encryptedSecret,
+    pgpPrivateKey,
   );
 
   const nextHash = res.link;
-
   const chatMessage: ChatMessage = {
     to: caip10ToWallet(res.toCAIP10),
     from: caip10ToWallet(res.fromCAIP10),
     messageType: res.messageType,
-    message: encryptedMessage,
+    message: message,
     time: formatedTime,
   };
 
   return [chatMessage, nextHash];
+};
+
+const getMessage = async (
+  messageToDecrypt: string,
+  encryptedSecret: string,
+  pgpPrivateKey: string,
+) => {
+  if (encryptedSecret === '') {
+    return messageToDecrypt;
+  }
+
+  const decryptedMessage = await getDecryptedMessage(
+    messageToDecrypt,
+    encryptedSecret,
+    pgpPrivateKey,
+  );
+
+  return decryptedMessage;
+};
+
+const getDecryptedMessage = async (
+  messageToDecrypt: string,
+  encryptedSecret: string,
+  pgpPrivateKey: string,
+) => {
+  const AES_KEY = await getAES(encryptedSecret, pgpPrivateKey);
+  const msg: string = CryptoHelper.decryptWithAES(messageToDecrypt, AES_KEY);
+  return msg;
 };
 
 export {resolveCID};

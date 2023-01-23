@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {ConnectedUser} from 'src/apis';
+import {ConnectedUser, createUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {caip10ToWallet, getCAIPAddress} from 'src/helpers/CAIPHelper';
@@ -34,6 +34,16 @@ const getEncryptedMessage = async (
   messageReceiver: MessageReciver,
   message: string,
 ) => {
+  // if pgpAddress null then no need to encrypt
+  if (messageReceiver.pgpAddress === '') {
+    return {
+      cipherText: message,
+      encryptedSecret: '',
+      signature: '',
+      sigType: 'pgp',
+      encType: 'PlainText',
+    };
+  }
   const encryptedMessage = await encryptAndSign({
     plainText: message,
     fromPublicKeyArmored: connectedUser.publicKey,
@@ -89,7 +99,7 @@ const useSendMessage = (
         messageReceiver.current.pgpAddress = res.publicKey;
         console.log('Receiver addrs found');
       } else {
-        console.log('Receiver not found');
+        console.log('Receiver not found', res);
       }
       setIsSendingReady(true);
     })();
@@ -164,19 +174,43 @@ const useSendMessage = (
     return generateNullRespose();
   };
 
+  const checkIsUserNew = (rec: MessageReciver) => {
+    return rec.pgpAddress === '';
+  };
+
+  const createEmptyUser = async (rec: MessageReciver) => {
+    await createUser({
+      caip10: rec.ethAddress,
+      did: rec.ethAddress,
+      publicKey: '',
+      encryptedPrivateKey: '',
+      encryptionType: '',
+      signature: 'pgp',
+      sigType: 'pgp',
+    });
+  };
+
   const sendIntent = async ({message, messageType}: MessageFormat) => {
     if (!isSendingReady) {
       return;
     }
 
-    if (messageReceiver.current.pgpAddress === '') {
-      showToast(
-        'PGP address of the user not available',
-        '',
-        ToasterOptions.TYPE.GRADIENT_PRIMARY,
-      );
-      return;
+    console.log('***receiver was', messageReceiver.current);
+    const receiver = messageReceiver.current;
+    const isUserNew = checkIsUserNew(receiver);
+    if (isUserNew) {
+      await createEmptyUser(receiver);
     }
+
+    // if (messageReceiver.current.pgpAddress === '') {
+    //   showToast(
+    //     'PGP address of the user not available',
+    //     '',
+    //     ToasterOptions.TYPE.GRADIENT_PRIMARY,
+    //   );
+
+    //   return;
+    // }
 
     setIsSending(true);
     console.log('**** send intent');
