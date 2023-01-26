@@ -1,22 +1,20 @@
 import {
-  AntDesign,
-  Entypo,
-  Feather,
   FontAwesome,
-  FontAwesome5,
   Ionicons,
+  MaterialCommunityIcons,
 } from '@expo/vector-icons';
 import {GiphyDialog, GiphyDialogEvent} from '@giphy/react-native-sdk';
 import {useNavigation} from '@react-navigation/native';
 import {FlashList} from '@shopify/flash-list';
 import React, {useEffect, useRef, useState} from 'react';
 import {
-  Dimensions, // FlatList,
+  Dimensions,
   Image,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -24,7 +22,6 @@ import {
 } from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
-import {Menu, MenuItem} from 'react-native-material-menu';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
@@ -137,22 +134,22 @@ const SingleChatScreen = ({route}: any) => {
   };
 
   const onDecline = () => {};
-  const [visible, setVisible] = useState(false);
-  const hideMenu = () => setVisible(false);
-  const showMenu = () => setVisible(true);
+  // const [visible, setVisible] = useState(false);
+  // const hideMenu = () => setVisible(false);
+  // const showMenu = () => setVisible(true);
 
-  const MENU_ITEMS = [
-    {
-      text: 'Give Nickname',
-      icon: <AntDesign name="user" size={24} color="black" />,
-      onPress: hideMenu,
-    },
-    {
-      text: 'Block User',
-      icon: <Entypo name="block" size={24} color="black" />,
-      onPress: hideMenu,
-    },
-  ];
+  // const MENU_ITEMS = [
+  //   {
+  //     text: 'Give Nickname',
+  //     icon: <AntDesign name="user" size={24} color="black" />,
+  //     onPress: hideMenu,
+  //   },
+  //   {
+  //     text: 'Block User',
+  //     icon: <Entypo name="block" size={24} color="black" />,
+  //     onPress: hideMenu,
+  //   },
+  // ];
 
   // giphy listener
   useEffect(() => {
@@ -218,7 +215,7 @@ const SingleChatScreen = ({route}: any) => {
             <Text style={styles.wallet}>{senderAddressFormatted}</Text>
           </View>
 
-          <Menu
+          {/* <Menu
             visible={visible}
             anchor={
               <Feather
@@ -237,7 +234,7 @@ const SingleChatScreen = ({route}: any) => {
                 </View>
               </MenuItem>
             ))}
-          </Menu>
+          </Menu> */}
         </View>
       </View>
 
@@ -247,39 +244,34 @@ const SingleChatScreen = ({route}: any) => {
         </View>
       ) : (
         <View style={styles.section}>
-          <FlashList
-            // @ts-ignore
-            ref={scrollViewRef}
-            data={chatMessages}
-            renderItem={renderItem}
-            keyExtractor={(msg, index) => msg.time + index}
-            showsHorizontalScrollIndicator={false}
-            initialScrollIndex={
-              chatMessages.length === 0 ? 0 : chatMessages.length - 1
-            }
-            onContentSizeChange={() => {
-              if (scrollViewRef.current) {
-                scrollViewRef.current.scrollToEnd({animated: true});
+          {chatMessages.length > 0 && (
+            <FlashList
+              // @ts-ignore
+              ref={scrollViewRef}
+              data={chatMessages}
+              renderItem={renderItem}
+              keyExtractor={(msg, index) => msg.time + index}
+              showsHorizontalScrollIndicator={false}
+              initialScrollIndex={
+                chatMessages.length === 0 ? null : chatMessages.length - 1
               }
-            }}
-            onScrollToIndexFailed={() => {
-              console.log('err scorlling ');
-            }}
-            style={{backgroundColor: 'pink'}}
-            extraData={chatMessages}
-            estimatedItemSize={15}
-            ListFooterComponent={
-              isIntentReceivePage ? (
-                <AcceptIntent onAccept={onAccept} onDecline={onDecline} />
-              ) : null
-            }
-          />
-
-          {/* <ScrollView>
-            {chatMessages.map(msg => {
-              return renderItem({item: msg});
-            })}
-          </ScrollView> */}
+              onContentSizeChange={() => {
+                if (scrollViewRef.current) {
+                  scrollViewRef.current.scrollToEnd({animated: true});
+                }
+              }}
+              onScrollToIndexFailed={() => {
+                console.log('err scorlling ');
+              }}
+              extraData={chatMessages}
+              estimatedItemSize={15}
+              ListFooterComponent={
+                isIntentReceivePage ? (
+                  <AcceptIntent onAccept={onAccept} onDecline={onDecline} />
+                ) : null
+              }
+            />
+          )}
 
           {isSending && (
             <MessageComponent
@@ -300,7 +292,7 @@ const SingleChatScreen = ({route}: any) => {
         <KeyboardAvoidingView
           style={styles.keyboardAvoid}
           behavior="position"
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 80}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : -350}
           enabled={true}>
           <View style={styles.keyboard}>
             <View style={styles.textInputContainer}>
@@ -310,9 +302,15 @@ const SingleChatScreen = ({route}: any) => {
                   onPress={() => {
                     GiphyDialog.show();
                   }}>
-                  <FontAwesome5 name="smile" size={20} color="black" />
+                  <MaterialCommunityIcons
+                    name="sticker-emoji"
+                    size={28}
+                    color="#898686"
+                  />
+                  {/* <FontAwesome5 name="smile" size={20} color="black" /> */}
                 </TouchableOpacity>
               </View>
+
               <TextInput
                 style={styles.input}
                 onChangeText={setText}
@@ -324,10 +322,6 @@ const SingleChatScreen = ({route}: any) => {
             </View>
 
             <View style={styles.textButtonContainer}>
-              <View>
-                <Feather name="paperclip" size={20} color="black" />
-              </View>
-
               <View style={styles.sendIcon}>
                 {isSending || !isSendReady ? (
                   <FontAwesome
@@ -359,7 +353,10 @@ export default SingleChatScreen;
 const styles = StyleSheet.create({
   keyboardAvoid: {
     justifyContent: 'center',
-    paddingHorizontal: 42,
+    paddingHorizontal: Platform.OS === 'ios' ? 12 : 20,
+    position: 'absolute',
+    bottom: Platform.OS === 'android' ? 20 : 40,
+    zIndex: 100,
   },
   container: {
     height: windowHeight,
@@ -373,17 +370,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     display: 'flex',
     alignItems: 'center',
-    padding: 15,
+    backgroundColor: 'white',
+    paddingVertical: 10,
+    paddingTop:
+      Platform.OS === 'android'
+        ? StatusBar.currentHeight
+          ? StatusBar.currentHeight + 10
+          : 30
+        : 50,
+    paddingHorizontal: 17,
+    marginBottom: 20,
   },
   info: {
     flexDirection: 'row',
     display: 'flex',
     alignItems: 'center',
-    marginLeft: 10,
-    borderRadius: 20,
-    backgroundColor: 'white',
-    height: 50,
-    padding: 15,
+    marginLeft: 20,
     width: '85%',
     justifyContent: 'space-between',
   },
@@ -406,7 +408,6 @@ const styles = StyleSheet.create({
   },
   section: {
     height: SectionHeight,
-    // minHeight: SectionHeight,
     width: windowWidth,
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -417,7 +418,6 @@ const styles = StyleSheet.create({
   },
   keyboard: {
     display: 'flex',
-    bottom: 20,
     backgroundColor: Globals.COLORS.WHITE,
     borderRadius: 16,
     width: '100%',
@@ -439,8 +439,12 @@ const styles = StyleSheet.create({
         : Dimensions.get('window').height / 26,
   },
   smileyIcon: {
-    marginTop: 20,
-    marginLeft: 20,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginLeft: 15,
   },
   textInputContainer: {
     display: 'flex',
@@ -449,18 +453,19 @@ const styles = StyleSheet.create({
   textButtonContainer: {
     display: 'flex',
     flexDirection: 'row',
-    marginTop: Dimensions.get('window').height / 40,
-    marginRight: 20,
-    minWidth: '30%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   fileIcon: {},
   sendIcon: {
-    marginLeft: 10,
+    paddingHorizontal: 8,
+    paddingRight: 15,
   },
   menuItem: {
     display: 'flex',
     flexDirection: 'row',
-    padding: 10,
+    padding: 12,
   },
   menuItemText: {
     marginLeft: 10,

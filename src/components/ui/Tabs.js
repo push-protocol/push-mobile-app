@@ -1,12 +1,10 @@
-import {FontAwesome5, MaterialCommunityIcons} from '@expo/vector-icons';
-import {Entypo} from '@expo/vector-icons';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import React from 'react';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
+import {TabIcon} from 'src/components/custom/TabIcons';
 import ChannelsScreen from 'src/navigation/screens/ChannelsScreen';
 import HomeScreen from 'src/navigation/screens/HomeScreen';
-import SampleFeedScreen from 'src/navigation/screens/SampleFeedScreen';
 import SpamBoxScreen from 'src/navigation/screens/SpamBoxScreen';
 import {ChatScreen} from 'src/navigation/screens/chats';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
@@ -26,42 +24,18 @@ export default function Tabs() {
       inactiveColor="#ccc"
       barStyle={{backgroundColor: '#fefefe'}}
       shifting={true}
-      labeled={true}>
+      labeled={false}>
       <Tab.Screen
         name={GLOBALS.SCREENS.FEED}
         component={HomeScreen}
         options={{
           tabBarLabel: 'Inbox',
-          tabBarIcon: ({color}) => (
-            <FontAwesome5 name="list-alt" color={color} size={20} />
+          tabBarIcon: ({focused}) => (
+            <TabIcon active={focused} icon={'INBOX'} />
           ),
         }}
         initialParams={{
           wallet,
-        }}
-      />
-
-      <Tab.Screen
-        name={GLOBALS.SCREENS.CHANNELS}
-        component={ChannelsScreen}
-        options={{
-          tabBarLabel: 'Channels',
-          tabBarIcon: ({color}) => (
-            <FontAwesome5
-              name="wifi"
-              color={color}
-              size={20}
-              style={{
-                transform: [{rotate: '90deg'}],
-                position: 'absolute',
-                left: 0,
-              }}
-            />
-          ),
-        }}
-        initialParams={{
-          wallet,
-          pkey,
         }}
       />
 
@@ -70,9 +44,7 @@ export default function Tabs() {
         component={SpamBoxScreen}
         options={{
           tabBarLabel: 'Spam',
-          tabBarIcon: ({color}) => (
-            <FontAwesome5 name="trash" size={24} color={color} />
-          ),
+          tabBarIcon: ({focused}) => <TabIcon active={focused} icon={'SPAM'} />,
         }}
         initialParams={{
           wallet,
@@ -81,12 +53,12 @@ export default function Tabs() {
       />
 
       <Tab.Screen
-        name={GLOBALS.SCREENS.SAMPLEFEED}
-        component={SampleFeedScreen}
+        name={GLOBALS.SCREENS.CHANNELS}
+        component={ChannelsScreen}
         options={{
-          tabBarLabel: 'Sample Feed',
-          tabBarIcon: ({color}) => (
-            <MaterialCommunityIcons name="help-box" color={color} size={24} />
+          tabBarLabel: 'Channels',
+          tabBarIcon: ({focused}) => (
+            <TabIcon active={focused} icon={'CHANNELS'} />
           ),
         }}
         initialParams={{
@@ -99,10 +71,7 @@ export default function Tabs() {
         name={GLOBALS.SCREENS.CHATS}
         component={ChatScreen}
         options={{
-          tabBarLabel: 'Chats',
-          tabBarIcon: ({color}) => (
-            <Entypo name="chat" color={color} size={24} />
-          ),
+          tabBarIcon: ({focused}) => <TabIcon active={focused} icon={'CHAT'} />,
         }}
         initialParams={{
           wallet,
