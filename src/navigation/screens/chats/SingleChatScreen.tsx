@@ -28,6 +28,7 @@ import * as PushNodeClient from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
 import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import {pgpSign} from 'src/helpers/w2w/pgp';
+import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
 
 import {AcceptIntent, MessageComponent} from './components';
 import './giphy/giphy.setup';
@@ -270,6 +271,7 @@ const SingleChatScreen = ({route}: any) => {
                   <AcceptIntent onAccept={onAccept} onDecline={onDecline} />
                 ) : null
               }
+              ListHeaderComponent={<EncryptionInfo addrs={senderAddress} />}
             />
           )}
 

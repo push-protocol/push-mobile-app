@@ -1,4 +1,5 @@
 import GLOBALS from 'src/Globals';
+import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import {encryptWithRPCEncryptionPublicKeyReturnRawData} from 'src/helpers/w2w/metamaskSigUtil';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
 
@@ -329,4 +330,18 @@ export const createNewPgpPair = async (
 
   console.log('create new user', createdUser);
   return createdUser;
+};
+
+export const isIntentAccepted = async (addrs: string) => {
+  const caipAddress = walletToCAIP10(addrs);
+  const uri = `${BASE_URL}/v1/w2w/users/${caipAddress}/messages`;
+  const res = await fetch(uri).then(r => r.json());
+  console.log(res[0]);
+
+  const intent = res[0].intent;
+  console.log('combi@@@@', intent);
+
+  const count = (intent.match(/eip155/g) || []).length;
+
+  return count >= 2;
 };

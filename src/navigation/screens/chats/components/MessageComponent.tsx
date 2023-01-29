@@ -48,13 +48,13 @@ export default MessageComponent;
 const RecipientStyle = StyleSheet.create({
   container: {
     alignSelf: 'flex-start',
-    marginBottom: 25,
+    marginBottom: 17,
   },
 });
 
 const SenderStyle = StyleSheet.create({
   container: {
     alignSelf: 'flex-end',
-    marginBottom: 25,
+    marginBottom: 17,
   },
 });

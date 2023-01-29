@@ -35,13 +35,13 @@ const TabIcon = ({icon, active}: TabIconProps) => {
       if (active) {
         return (
           <ImageComponent
-            src={require('assets/icons/nav_icon_filled/ic_outline-info.png')}
+            src={require('assets/icons/nav_icon_filled/spam-icon.png')}
           />
         );
       } else {
         return (
           <ImageComponent
-            src={require('assets/icons/nav_icons/ic_outline-info.png')}
+            src={require('assets/icons/nav_icons/spam-icon.png')}
           />
         );
       }
@@ -79,7 +79,7 @@ const TabIcon = ({icon, active}: TabIconProps) => {
 };
 
 const ImageComponent = ({src}: {src: any}) => {
-  return <Image source={src} />;
+  return <Image source={src} style={{width: 28, height: 28}} />;
 };
 
 export {ICONS, TabIcon};

@@ -15,7 +15,7 @@ export const TextMessage = ({
   const styles = TextStyle(componentType);
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
+      <View>
         <Text style={styles.text}>{chatMessage.message}</Text>
         <Text style={styles.time}>{chatMessage.time}</Text>
       </View>
@@ -30,10 +30,8 @@ const TextStyle = (componentType: MessageComponentType) =>
     container: {
       backgroundColor:
         componentType === 'RECEIVER' ? 'white' : Globals.COLORS.PINK,
-      minWidth: '75%',
+      minWidth: '35%',
       maxWidth: '75%',
-      paddingHorizontal: 20,
-      paddingVertical: 10,
       borderTopLeftRadius: componentType === 'RECEIVER' ? 0 : 15,
       borderTopRightRadius: componentType === 'RECEIVER' ? 15 : 0,
       borderBottomRightRadius: 15,
@@ -41,15 +39,20 @@ const TextStyle = (componentType: MessageComponentType) =>
       color: Globals.COLORS.BLACK,
     },
     text: {
-      paddingTop: 12,
+      paddingHorizontal: 20,
+      paddingTop: 16,
       fontSize: 14,
       fontWeight: '400',
-      marginBottom: 5,
+      marginBottom: 8,
+      lineHeight: 20,
+      textAlign: 'left',
       color: componentType === 'RECEIVER' ? 'black' : 'white',
     },
     time: {
-      fontSize: 13,
+      fontSize: 11,
       textAlign: 'right',
-      color: componentType === 'RECEIVER' ? 'black' : 'white',
+      color: componentType === 'RECEIVER' ? '#657795' : 'white',
+      paddingBottom: 8,
+      paddingHorizontal: 10,
     },
   });
