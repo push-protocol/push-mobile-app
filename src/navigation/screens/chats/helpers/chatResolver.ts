@@ -23,7 +23,7 @@ export interface ChatMessage {
   from: string;
   messageType: string;
   message: string;
-  time: string;
+  time: number;
 }
 
 type NextHash = string | null;
@@ -35,7 +35,6 @@ const resolveCID = async (
   const res = await PushNodeClient.getFromIPFS(cid);
 
   const timeStamp = res.timestamp ? res.timestamp : 0;
-  const formatedTime = parseTimeStamp(timeStamp);
 
   const message = await getMessage(
     res.messageContent,
@@ -49,7 +48,7 @@ const resolveCID = async (
     from: caip10ToWallet(res.fromCAIP10),
     messageType: res.messageType,
     message: message,
-    time: formatedTime,
+    time: timeStamp,
   };
 
   return [chatMessage, nextHash];

@@ -8,16 +8,18 @@ import {MessageComponentType} from '../MessageComponent';
 export const TextMessage = ({
   chatMessage,
   componentType,
+  time,
 }: {
   chatMessage: ChatMessage;
   componentType: MessageComponentType;
+  time: string;
 }) => {
   const styles = TextStyle(componentType);
   return (
     <View style={styles.container}>
       <View>
         <Text style={styles.text}>{chatMessage.message}</Text>
-        <Text style={styles.time}>{chatMessage.time}</Text>
+        <Text style={styles.time}>{time}</Text>
       </View>
     </View>
   );

@@ -135,6 +135,23 @@ export default class MetaStorage {
     }
   };
 
+  getNotifeeBadgeCount = async () => {
+    try {
+      let badge = await AsyncStorage.getItem(
+        'NOTIFIEE' + GLOBALS.STORAGE.PUSH_BADGE_COUNT,
+      );
+      if (badge == null) {
+        badge = 0;
+        badge = JSON.stringify(badge);
+      }
+
+      return JSON.parse(badge);
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
+  };
+
   getPreviousBadgeCount = async () => {
     try {
       let badge = await AsyncStorage.getItem(
@@ -161,6 +178,24 @@ export default class MetaStorage {
 
       await AsyncStorage.setItem(
         GLOBALS.STORAGE.PUSH_BADGE_COUNT,
+        JSON.stringify(count),
+      );
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  };
+
+  setNotifeeCount = async badge => {
+    try {
+      let count = badge;
+      if (count == null) {
+        count = 0;
+      }
+
+      await AsyncStorage.setItem(
+        'NOTIFIEE' + GLOBALS.STORAGE.PUSH_BADGE_COUNT,
         JSON.stringify(count),
       );
     } catch (error) {

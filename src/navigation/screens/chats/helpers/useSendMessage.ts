@@ -5,7 +5,7 @@ import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {caip10ToWallet, getCAIPAddress} from 'src/helpers/CAIPHelper';
 import {encryptAndSign} from 'src/helpers/w2w/pgp';
 
-import {ChatMessage, parseTimeStamp} from './chatResolver';
+import {ChatMessage} from './chatResolver';
 import {storeConversationData} from './storage';
 
 // import {storeConversationData} from './storage';
@@ -55,7 +55,10 @@ const getEncryptedMessage = async (
 };
 
 const generateNullRespose = (): [string, ChatMessage] => {
-  return ['', {to: '', from: '', messageType: '', message: '', time: ''}];
+  return [
+    '',
+    {to: '', from: '', messageType: '', message: '', time: Date.now()},
+  ];
 };
 
 const generateNullChatMessage = (): ChatMessage => {
@@ -63,7 +66,7 @@ const generateNullChatMessage = (): ChatMessage => {
     from: '',
     message: '',
     messageType: '',
-    time: '',
+    time: Date.now(),
     to: '',
   };
 };
@@ -147,7 +150,7 @@ const useSendMessage = (
       from: caip10ToWallet(postBody.fromCAIP10),
       messageType: postBody.messageType,
       message: message,
-      time: parseTimeStamp(Date.now()),
+      time: Date.now(),
     };
 
     try {

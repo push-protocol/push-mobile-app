@@ -188,12 +188,31 @@ const SingleChatScreen = ({route}: any) => {
     };
   }, []);
 
-  const renderItem = ({item}: {item: ChatMessage}) => {
-    if (item.to === senderAddress) {
-      return <MessageComponent chatMessage={item} componentType="SENDER" />;
-    } else {
-      return <MessageComponent chatMessage={item} componentType="RECEIVER" />;
+  const includeDate = (index: number) => {
+    if (index <= 0) {
+      return true;
     }
+
+    try {
+      const prevDate = new Date(chatMessages[index - 1].time).getDate();
+      const thisDate = new Date(chatMessages[index].time).getDate();
+
+      return prevDate !== thisDate;
+    } catch (error) {
+      console.log('error', error);
+      return false;
+    }
+  };
+
+  const renderItem = ({item, index}: {item: ChatMessage; index: number}) => {
+    const componentType = item.to === senderAddress ? 'SENDER' : 'RECEIVER';
+    return (
+      <MessageComponent
+        chatMessage={item}
+        componentType={componentType}
+        includeDate={includeDate(index)}
+      />
+    );
   };
 
   return (
@@ -250,8 +269,9 @@ const SingleChatScreen = ({route}: any) => {
               // @ts-ignore
               ref={scrollViewRef}
               data={chatMessages}
-              renderItem={renderItem}
-              keyExtractor={(msg, index) => msg.time + index}
+              // renderItem={renderItem}
+              renderItem={({item, index}) => renderItem({item, index})}
+              keyExtractor={(msg, index) => msg.time.toString() + index}
               showsHorizontalScrollIndicator={false}
               initialScrollIndex={
                 chatMessages.length === 0 ? null : chatMessages.length - 1
@@ -279,6 +299,7 @@ const SingleChatScreen = ({route}: any) => {
             <MessageComponent
               chatMessage={tempChatMessage}
               componentType="SENDER"
+              includeDate={false}
             />
           )}
 

@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import Globals from 'src/Globals';
+import {formatAMPM} from 'src/helpers/DateTimeHelper';
 import {Context} from 'src/navigation/screens/chats/ChatScreen';
 
 import {getFormattedAddress} from '../helpers/chatAddressFormatter';
@@ -64,7 +65,7 @@ const ChatItem = (props: SingleChatItemProps) => {
         appContext.connectedUser.privateKey,
       );
       setLastMessage(chatMessage.message);
-      setTimeStamp(chatMessage.time);
+      setTimeStamp(formatAMPM(chatMessage.time));
       setMessageType(chatMessage.messageType);
       setLoading(false);
     })();
