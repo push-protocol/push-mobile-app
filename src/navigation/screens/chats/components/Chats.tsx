@@ -3,6 +3,7 @@ import React, {useContext, useState} from 'react';
 import {Dimensions, StyleSheet, Text, TextInput, View} from 'react-native';
 import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
+import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {caip10ToWallet, getCombinedDID} from 'src/helpers/CAIPHelper';
 import Web3Helper from 'src/helpers/Web3Helper';
 import {Context} from 'src/navigation/screens/chats/ChatScreen';
@@ -13,14 +14,25 @@ import SingleChatItem from './SingleChatItem';
 type ChatsProps = {
   feeds: PushNodeClient.Feeds[];
   isIntentReceivePage: boolean;
+  toastRef: any;
 };
 
-const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
+const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
   const [ethAddress, setEthAddress] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchEnabled, setIsSearchEnabled] = useState(false);
 
   const appContext = useContext(Context);
+
+  const showError = (q: string) => {
+    if (toastRef) {
+      toastRef.showToast(
+        `${q} is not a valid ens name or eth address`,
+        '',
+        ToasterOptions.TYPE.GRADIENT_PRIMARY,
+      );
+    }
+  };
 
   const handleSearch = async () => {
     const query = ethAddress.trim();
@@ -34,11 +46,15 @@ const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
       } else if (query.includes('.eth')) {
         const address = await Web3Helper.resolveBlockchainDomain(query, 'eth');
         setEthAddress(address);
-        console.log('Invalid ens name');
+      } else {
+        showError(query);
+        setEthAddress('');
+        return;
       }
       setIsSearchEnabled(true);
     } catch (error) {
-      console.log('bad address', error);
+      showError(query);
+      setEthAddress('');
     } finally {
       setIsSearching(false);
     }
@@ -61,6 +77,8 @@ const Chats = ({feeds, isIntentReceivePage}: ChatsProps) => {
           editable={!isSearching}
           selectTextOnFocus={!isSearching}
           placeholderTextColor="#000"
+          autoCapitalize="none"
+          onSubmitEditing={handleSearch}
         />
         {isSearching ? (
           <EvilIcons
@@ -146,9 +164,9 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 10,
     textAlignVertical: 'top',
-    width: '70%',
+    width: '65%',
     flex: 2,
-    minWidth: '70%',
+    minWidth: '65%',
   },
   searchView: {
     flexDirection: 'row',
@@ -165,8 +183,12 @@ const styles = StyleSheet.create({
   },
 
   searchImage: {
-    marginRight: 20,
+    marginRight: 10,
     flex: 1,
+    paddingHorizontal: 10,
+    // paddingVertical: 8,
+    // backgroundColor: 'pink',
+    width: '20%',
   },
 
   walletImage: {

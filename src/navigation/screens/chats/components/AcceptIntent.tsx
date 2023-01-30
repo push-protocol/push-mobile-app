@@ -57,13 +57,15 @@ const styles = StyleSheet.create({
   buttons: {
     flexDirection: 'row',
     display: 'flex',
-    marginRight: 10,
-    marginTop: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   closeButton: {
     marginRight: 10,
   },
-  acceptButton: {},
+  acceptButton: {
+    borderBottomColor: 'pink',
+  },
   textView: {
     width: '70%',
   },

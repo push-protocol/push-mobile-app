@@ -339,8 +339,6 @@ export const isIntentAccepted = async (addrs: string) => {
   console.log(res[0]);
 
   const intent = res[0].intent;
-  console.log('combi@@@@', intent);
-
   const count = (intent.match(/eip155/g) || []).length;
 
   return count >= 2;

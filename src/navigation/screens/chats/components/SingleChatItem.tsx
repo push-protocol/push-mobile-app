@@ -15,6 +15,16 @@ import {getFormattedAddress} from '../helpers/chatAddressFormatter';
 import {resolveCID} from '../helpers/chatResolver';
 import {SingleChatItemProps} from '../types';
 
+const formatTextData = (rawText: string) => {
+  rawText = rawText.split('\n')[0];
+
+  const MAX_TEXT_LEN = 25;
+  if (rawText.length < MAX_TEXT_LEN) {
+    return rawText;
+  }
+  return rawText.slice(0, MAX_TEXT_LEN).trim() + ' ...';
+};
+
 const ChatItem = (props: SingleChatItemProps) => {
   const navigation = useNavigation();
   const appContext = useContext(Context);
@@ -86,7 +96,7 @@ const ChatItem = (props: SingleChatItemProps) => {
               {getFormattedAddress(props.wallet)}
             </Text>
             <Text style={props.count ? styles.activeText : styles.text}>
-              {messageType === 'Text' && lastMessage}
+              {messageType === 'Text' && formatTextData(lastMessage)}
               {messageType === 'GIF' && 'GIF'}
               {messageType === 'File' && 'FILE'}
               {messageType === 'Image' && 'Image'}

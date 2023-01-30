@@ -96,7 +96,7 @@ const useSendMessage = (
       const res = await PushNodeClient.getUser(
         messageReceiver.current.ethAddress,
       );
-      console.log('we got res', res);
+      console.log('we got res', res ? Object.keys(res) : '');
 
       if (res && res !== null) {
         messageReceiver.current.pgpAddress = res.publicKey;

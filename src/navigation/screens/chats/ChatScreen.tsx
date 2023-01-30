@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   SafeAreaView,
@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
+import {Toaster} from 'src/components/indicators/Toaster';
 import {DappScanPage} from 'src/components/ui/DappScanPage';
 import MetaStorage from 'src/singletons/MetaStorage';
 
@@ -34,6 +35,7 @@ export interface UserChatCredentials {
 
 const ChatScreen = (props: any) => {
   const navigation = useNavigation();
+  const toastRef = useRef<any>();
 
   const [tab, setTab] = useState(TABS.CHATS);
   const [isReady, setIsReady] = useState(false);
@@ -144,7 +146,11 @@ const ChatScreen = (props: any) => {
             style={styles.content}
             showsHorizontalScrollIndicator={false}>
             {tab === TABS.CHATS ? (
-              <Chat feeds={chatData.feeds} isIntentReceivePage={false} />
+              <Chat
+                feeds={chatData.feeds}
+                isIntentReceivePage={false}
+                toastRef={toastRef.current}
+              />
             ) : (
               <Requests
                 requests={chatData.requests}
@@ -153,6 +159,7 @@ const ChatScreen = (props: any) => {
             )}
           </ScrollView>
         </View>
+        <Toaster ref={toastRef} />
       </SafeAreaView>
     </Context.Provider>
   );
