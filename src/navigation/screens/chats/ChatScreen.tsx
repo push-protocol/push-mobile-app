@@ -46,38 +46,54 @@ const ChatScreen = (props: any) => {
     setTab(value);
   };
 
-  const [isLoading, chatData] = useChatLoader(chatCredentials);
+  const [isLoading, chatData, refresh] = useChatLoader(chatCredentials);
+
+  const initalizate = async () => {
+    const signedInType = await MetaStorage.instance.getIsPrivateKeyAvailable();
+
+    const isLoginFromDapp = await MetaStorage.instance.isUserLoginFromDapp();
+
+    const _data: UserChatCredentials =
+      await MetaStorage.instance.getUserChatData();
+
+    if (
+      !isLoginFromDapp && // not from dapp
+      signedInType !== Globals.CONSTANTS.CRED_TYPE_PRIVATE_KEY // no manual private key
+    ) {
+      setIsPrivateKeyUser(false);
+      return;
+    }
+
+    if (!_data) {
+      // @ts-ignore
+      navigation.navigate(Globals.SCREENS.PGP_FROM_PK_SCREEN, {
+        navigation: navigation,
+      });
+    } else {
+      console.log('doing...');
+
+      setChatCredentials({..._data});
+      setTab(TABS.CHATS);
+      setIsReady(true);
+    }
+  };
 
   useEffect(() => {
+    let lis: any;
     (async () => {
-      const signedInType =
-        await MetaStorage.instance.getIsPrivateKeyAvailable();
-
-      const isLoginFromDapp = await MetaStorage.instance.isUserLoginFromDapp();
-
-      const _data: UserChatCredentials =
-        await MetaStorage.instance.getUserChatData();
-
-      if (
-        !isLoginFromDapp && // not from dapp
-        signedInType !== Globals.CONSTANTS.CRED_TYPE_PRIVATE_KEY // no manual private key
-      ) {
-        setIsPrivateKeyUser(false);
-        return;
-      }
-
-      if (!_data) {
-        // @ts-ignore
-        navigation.navigate(Globals.SCREENS.PGP_FROM_PK_SCREEN, {
-          navigation: navigation,
-        });
-      } else {
-        setChatCredentials(_data);
-        setTab(TABS.CHATS);
-        setIsReady(true);
-      }
+      lis = props.navigation.addListener('focus', () => {
+        console.log('####focusing');
+        if (chatData.connectedUserData) {
+          console.log('***focus');
+          refresh();
+        } else {
+          console.log(chatData.connectedUserData);
+          initalizate();
+        }
+      });
     })();
-  }, [props]);
+    return lis;
+  }, [props, props.navigation]);
 
   if (!isPrivateKeyUser && !isReady) {
     return <DappScanPage />;

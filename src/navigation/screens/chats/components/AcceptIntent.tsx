@@ -1,10 +1,11 @@
 import {AntDesign} from '@expo/vector-icons';
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 
 interface Props {
   onAccept: () => void;
   onDecline: () => void;
+  isAccepting: boolean;
 }
 
 const AcceptIntent = (props: Props) => {
@@ -22,14 +23,22 @@ const AcceptIntent = (props: Props) => {
           style={styles.closeButton}
           onPress={props.onDecline}
         /> */}
-
-        <AntDesign
-          name="checkcircle"
-          size={38}
-          color="#30CC8B"
-          style={styles.acceptButton}
-          onPress={props.onAccept}
-        />
+        {props.isAccepting ? (
+          <View>
+            <Image
+              source={require('assets/chat/loading.gif')}
+              style={{width: 35, height: 35}}
+            />
+          </View>
+        ) : (
+          <AntDesign
+            name="checkcircle"
+            size={38}
+            color="#30CC8B"
+            style={styles.acceptButton}
+            onPress={props.onAccept}
+          />
+        )}
       </View>
     </View>
   );

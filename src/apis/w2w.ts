@@ -103,8 +103,6 @@ export const createUser = async ({
     throw new Error(e);
   });
 
-  console.log(response);
-
   const data: User = await response.json();
   return data;
 };
@@ -329,7 +327,7 @@ export const createNewPgpPair = async (
     sigType: 'a',
   });
 
-  console.log('create new user', createdUser);
+  console.log('create new user');
   return createdUser;
 };
 
@@ -337,7 +335,6 @@ export const isIntentAccepted = async (addrs: string) => {
   const caipAddress = walletToCAIP10(addrs);
   const uri = `${BASE_URL}/v1/w2w/users/${caipAddress}/messages`;
   const res = await fetch(uri).then(r => r.json());
-  console.log(res[0]);
 
   const intent = res[0].intent;
   const count = (intent.match(/eip155/g) || []).length;

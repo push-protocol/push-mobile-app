@@ -1,5 +1,6 @@
 import {EVENTS, createSocketConnection} from '@pushprotocol/socket';
 import {useEffect, useState} from 'react';
+import {useRef} from 'react';
 import {useSelector} from 'react-redux';
 import {Socket} from 'socket.io-client';
 import * as PushNodeClient from 'src/apis';
@@ -24,9 +25,11 @@ export interface ChatFeedCache {
   [key: string]: string;
 }
 
+type chatLoaderReturnType = [boolean, ChatData, () => void];
+
 const useChatLoader = (
   userChatCredentials: UserChatCredentials | undefined,
-): [boolean, ChatData] => {
+): chatLoaderReturnType => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [chatData, setChatData] = useState<ChatData>({
@@ -38,6 +41,7 @@ const useChatLoader = (
   const feedCache: ChatFeedCache = {};
   const users = useSelector(selectUsers);
   const currentUser = useSelector(selectCurrentUser);
+  const pushSDKSocket = useRef<Socket | null>(null);
 
   const setUpChatProfile = async (
     caipAddress: string,
@@ -73,6 +77,8 @@ const useChatLoader = (
   };
 
   const loadInbox = async (ethAddress: string) => {
+    console.log('loading inbox @');
+
     const feeds = await PushNodeClient.getInbox(ethAddress);
 
     if (!feeds) {
@@ -125,7 +131,6 @@ const useChatLoader = (
     const caipAddress = CaipHelper.walletToCAIP10(derivedAddress);
 
     let fetchNewMessages: NodeJS.Timer;
-    let pushSDKSocket: Socket | null;
 
     (async () => {
       await setUpChatProfile(caipAddress, pgpPrivateKey);
@@ -134,55 +139,37 @@ const useChatLoader = (
 
       // qeury for new threads evey 3 second
       if (SocketConfig.useSocket) {
-        pushSDKSocket = createSocketConnection({
-          user: derivedAddress,
-          env: SocketConfig.url,
-          apiKey: SocketConfig.key,
-          socketType: 'chat',
-          socketOptions: {autoConnect: true, reconnectionAttempts: 3},
-        });
+        if (!pushSDKSocket.current) {
+          pushSDKSocket.current = createSocketConnection({
+            user: derivedAddress,
+            env: SocketConfig.url,
+            apiKey: SocketConfig.key,
+            socketType: 'chat',
+            socketOptions: {autoConnect: true, reconnectionAttempts: 3},
+          });
 
-        if (!pushSDKSocket) {
-          console.log('got push sdk null');
-          return;
+          if (!pushSDKSocket.current) {
+            console.log('got push sdk null');
+            return;
+          }
+
+          pushSDKSocket.current.on(EVENTS.CONNECT, () => {
+            console.log('connection all good');
+          });
+
+          pushSDKSocket.current.on(EVENTS.DISCONNECT, () => {
+            console.log('disconnected :(');
+          });
+          pushSDKSocket.current.on(EVENTS.CHAT_RECEIVED_MESSAGE, _ => {
+            console.log('@@@@ works');
+            loadInbox(derivedAddress);
+          });
+
+          pushSDKSocket.current.on(EVENTS.CHAT_UPDATE_INTENT, _ => {
+            console.log('###called this one');
+            loadInbox(derivedAddress);
+          });
         }
-
-        pushSDKSocket.on(EVENTS.CONNECT, () => {
-          console.log('connection all good');
-        });
-
-        pushSDKSocket.on(EVENTS.DISCONNECT, () => {
-          console.log('disconnected :(');
-        });
-        pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, _ => {
-          loadInbox(derivedAddress);
-          // try {
-          //   // const data: PushNodeClient.Feeds = chat;
-          //   // Object.keys(JSON.parse(chat));
-          //   // setIboxData([data], derivedAddress);
-          //   // console.log(data);
-          //   const inboxChat: PushNodeClient.InboxChat = {
-          //     name: '',
-          //     profilePicture: '',
-          //     encType: chat.encType,
-          //     encryptedSecret: chat.encryptedSecret,
-          //     fromCAIP10: chat.fromCAIP10,
-          //     fromDID: chat.fromDID,
-          //     toCAIP10: chat.toCAIP10,
-          //     toDID: chat.toDID,
-          //     timestamp: chat.timestamp,
-          //     lastMessage: chat.link,
-          //     messageType: chat.messageType,
-          //     signature: chat.signature,
-          //     signatureType: chat.sigType,
-          //   };
-          //   console.log('got', Object.keys(inboxChat));
-          //   console.log(inboxChat.encType);
-          //   console.log(inboxChat);
-          // } catch (error) {
-          //   console.log('err', error);
-          // }
-        });
       } else {
         fetchNewMessages = setInterval(async () => {
           console.log('Fetching new inbox');
@@ -192,8 +179,8 @@ const useChatLoader = (
     })();
     return () => {
       if (SocketConfig.useSocket) {
-        if (pushSDKSocket) {
-          pushSDKSocket.disconnect();
+        if (pushSDKSocket.current) {
+          pushSDKSocket.current.disconnect();
         }
       } else {
         clearInterval(fetchNewMessages);
@@ -201,6 +188,10 @@ const useChatLoader = (
     };
   }, [userChatCredentials]);
 
-  return [isLoading, chatData];
+  const refresh = async () => {
+    await loadInbox(users[currentUser].wallet);
+  };
+
+  return [isLoading, chatData, refresh];
 };
 export {useChatLoader};

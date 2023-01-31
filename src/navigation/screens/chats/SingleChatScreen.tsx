@@ -69,7 +69,8 @@ const SingleChatScreen = ({route}: any) => {
 
   const navigation = useNavigation();
   const [text, setText] = React.useState('');
-  const [textInputHeight, setTextInputHeight] = useState(0);
+  const [textInputHeight, setTextInputHeight] = useState(10);
+  const [isAccepting, setIsAccepting] = useState(false);
 
   const [isLoading, chatMessages, pushChatDataDirect] = useConversationLoader(
     cid,
@@ -92,6 +93,7 @@ const SingleChatScreen = ({route}: any) => {
   const handleSend = async () => {
     const _text = text;
     setText('');
+    setTextInputHeight(0);
     Keyboard.dismiss();
     if (_text.trim() === '') {
       return;
@@ -116,6 +118,7 @@ const SingleChatScreen = ({route}: any) => {
   };
 
   const onAccept = async () => {
+    setIsAccepting(true);
     // user approves with signature
     const APPROVED_INTENT = 'Approved';
     const signature = await pgpSign(
@@ -135,6 +138,7 @@ const SingleChatScreen = ({route}: any) => {
 
     console.log('approved intent', updatedIntent);
     setisIntentReceivePage(false);
+    setIsAccepting(false);
   };
 
   const onDecline = () => {};
@@ -278,18 +282,15 @@ const SingleChatScreen = ({route}: any) => {
         </View>
       ) : (
         <View style={styles.section}>
-          {chatMessages.length > 0 && (
+          {chatMessages.length > 0 ? (
             <FlashList
               // @ts-ignore
               ref={scrollViewRef}
               data={chatMessages}
-              // renderItem={renderItem}
               renderItem={({item, index}) => renderItem({item, index})}
               keyExtractor={(msg, index) => msg.time.toString() + index}
               showsHorizontalScrollIndicator={false}
-              // initialScrollIndex={
-              //   chatMessages.length === 0 ? null : chatMessages.length - 1
-              // }
+              showsVerticalScrollIndicator={false}
               onContentSizeChange={() => {
                 if (scrollViewRef.current) {
                   scrollViewRef.current.scrollToEnd({animated: false});
@@ -302,7 +303,11 @@ const SingleChatScreen = ({route}: any) => {
               estimatedItemSize={15}
               ListFooterComponent={
                 isIntentReceivePage ? (
-                  <AcceptIntent onAccept={onAccept} onDecline={onDecline} />
+                  <AcceptIntent
+                    onAccept={onAccept}
+                    onDecline={onDecline}
+                    isAccepting={isAccepting}
+                  />
                 ) : isSending ? (
                   <MessageComponent
                     chatMessage={tempChatMessage}
@@ -313,6 +318,20 @@ const SingleChatScreen = ({route}: any) => {
               }
               ListHeaderComponent={<EncryptionInfo addrs={senderAddress} />}
             />
+          ) : (
+            <View style={{marginTop: 10}}>
+              <EncryptionInfo addrs={senderAddress} />
+              <Text
+                style={{
+                  marginTop: 20,
+                  paddingHorizontal: 40,
+                  lineHeight: 22,
+                  color: '#657795',
+                }}>
+                This is your first conversation with recipient. Start the
+                conversation by sending a message.
+              </Text>
+            </View>
           )}
 
           {/* Donot show intent checkbox in chat page */}
@@ -351,6 +370,7 @@ const SingleChatScreen = ({route}: any) => {
                   styles.input,
                   {
                     height: Math.min(Math.max(5, textInputHeight), 100),
+                    minHeight: 40,
                   },
                 ]}
                 onChangeText={setText}
@@ -359,7 +379,9 @@ const SingleChatScreen = ({route}: any) => {
                 placeholderTextColor="#d2d1d1"
                 multiline={true}
                 onContentSizeChange={event => {
-                  setTextInputHeight(event.nativeEvent.contentSize.height);
+                  setTextInputHeight(
+                    Math.max(event.nativeEvent.contentSize.height, 10),
+                  );
                 }}
               />
 
