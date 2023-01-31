@@ -35,6 +35,7 @@ export interface InboxChat {
   signature: string;
   signatureType: string;
   encryptedSecret: string;
+  messageContent?: string;
 }
 
 export interface Feeds {

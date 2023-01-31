@@ -24,6 +24,10 @@ export default {
     ENDPOINT_UNSUBSCRIBE_OFFCHAIN: '/channels/unsubscribe_offchain',
   },
 
+  SOCKETS: {
+    USE_SOCKETS: true,
+  },
+
   // For Async Storage --> Represents Key and some Constants
   STORAGE: {
     IS_SIGNED_IN: 'IsUserSignedIn',

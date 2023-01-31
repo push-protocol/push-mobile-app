@@ -50,7 +50,7 @@ interface ChatScreenParam {
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
-const SectionHeight = (windowHeight * 24) / 31.25;
+const SectionHeight = (windowHeight * 24) / 31.125;
 
 const SingleChatScreen = ({route}: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
@@ -350,7 +350,7 @@ const SingleChatScreen = ({route}: any) => {
                 style={[
                   styles.input,
                   {
-                    height: Math.min(Math.max(10, textInputHeight), 100),
+                    height: Math.min(Math.max(5, textInputHeight), 100),
                   },
                 ]}
                 onChangeText={setText}

@@ -54,6 +54,27 @@ const resolveCID = async (
   return [chatMessage, nextHash];
 };
 
+const resolveSocketMsg = async (
+  msg: PushNodeClient.InboxChat,
+  pgpPrivateKey: string,
+) => {
+  const message = await getMessage(
+    msg.messageContent!,
+    msg.encryptedSecret,
+    pgpPrivateKey,
+  );
+
+  const chatMessage: ChatMessage = {
+    to: caip10ToWallet(msg.toCAIP10),
+    from: caip10ToWallet(msg.fromCAIP10),
+    messageType: msg.messageType,
+    message: message,
+    time: msg.timestamp,
+  };
+
+  return [chatMessage];
+};
+
 const getMessage = async (
   messageToDecrypt: string,
   encryptedSecret: string,
@@ -82,4 +103,4 @@ const getDecryptedMessage = async (
   return msg;
 };
 
-export {resolveCID};
+export {resolveCID, resolveSocketMsg};

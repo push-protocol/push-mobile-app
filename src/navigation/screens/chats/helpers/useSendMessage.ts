@@ -96,13 +96,12 @@ const useSendMessage = (
       const res = await PushNodeClient.getUser(
         messageReceiver.current.ethAddress,
       );
-      console.log('we got res', res ? Object.keys(res) : '');
 
       if (res && res !== null) {
         messageReceiver.current.pgpAddress = res.publicKey;
         console.log('Receiver addrs found');
       } else {
-        console.log('Receiver not found', res);
+        console.log('Receiver not found');
       }
       setIsSendingReady(true);
     })();
@@ -113,8 +112,6 @@ const useSendMessage = (
     messageType,
     combinedDID,
   }: MessageFormat): Promise<[string, ChatMessage]> => {
-    console.log('sending was called', isSendingReady);
-
     if (messageReceiver.current.pgpAddress === '') {
       showToast(
         'Wait for the user to accpet the intent',
@@ -193,12 +190,14 @@ const useSendMessage = (
     });
   };
 
-  const sendIntent = async ({message, messageType}: MessageFormat) => {
+  const sendIntent = async ({
+    message,
+    messageType,
+  }: MessageFormat): Promise<[string, ChatMessage]> => {
     if (!isSendingReady) {
-      return;
+      return generateNullRespose();
     }
 
-    console.log('***receiver was', messageReceiver.current);
     const receiver = messageReceiver.current;
     const isUserNew = checkIsUserNew(receiver);
     if (isUserNew) {
@@ -236,21 +235,14 @@ const useSendMessage = (
       encryptedSecret: msg.encryptedSecret,
     };
 
-    console.log('posting intent', JSON.stringify(postBody));
-
-    try {
-      const res = await PushNodeClient.postIntent(postBody);
-      if (typeof res === 'string') {
-        console.log('error posting intent', res);
-        showToast(res, '', ToasterOptions.TYPE.GRADIENT_PRIMARY);
-        setIsSending(false);
-        return;
-      }
-      console.log('intent send res', res);
-      console.log('**** intent successfully sent');
-    } catch (error) {
-      console.log('error', error);
+    const res = await PushNodeClient.postIntent(postBody);
+    if (typeof res === 'string') {
+      console.log('error posting intent');
+      showToast(res, '', ToasterOptions.TYPE.GRADIENT_PRIMARY);
+      setIsSending(false);
+      return generateNullRespose();
     }
+    console.log('**** intent successfully sent');
 
     showToast(
       'Intent sent succesfully',
@@ -258,8 +250,18 @@ const useSendMessage = (
       ToasterOptions.TYPE.GRADIENT_SECONDARY,
     );
 
+    const chatMessage: ChatMessage = {
+      to: caip10ToWallet(postBody.toCAIP10),
+      from: caip10ToWallet(postBody.fromCAIP10),
+      messageType: postBody.messageType,
+      message: message,
+      time: res.timestamp!,
+    };
+
     setIsIntentSendPage(false);
     setIsSending(false);
+
+    return [res.cid, chatMessage];
   };
 
   if (isIntentSendPage) {

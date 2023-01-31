@@ -1,12 +1,36 @@
+import {EVENTS, createSocketConnection} from '@pushprotocol/socket';
 import {useEffect, useRef, useState} from 'react';
+import {Socket} from 'socket.io-client';
 import * as PushNodeClient from 'src/apis';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
 import {FETCH_ONCE} from '../constants';
-import {ChatMessage, resolveCID} from './chatResolver';
+import {ChatMessage, resolveCID, resolveSocketMsg} from './chatResolver';
+import {SocketConfig} from './socketHelper';
 import {getStoredConversationData, storeConversationData} from './storage';
 
 type pushChatDataDirectFunc = (cid: string, msg: ChatMessage) => void;
+
+const socketResponseToInbox = (chat: any) => {
+  const inboxChat: PushNodeClient.InboxChat = {
+    name: '',
+    profilePicture: '',
+    encType: chat.encType,
+    encryptedSecret: chat.encryptedSecret,
+    fromCAIP10: chat.fromCAIP10,
+    fromDID: chat.fromDID,
+    toCAIP10: chat.toCAIP10,
+    toDID: chat.toDID,
+    timestamp: chat.timestamp,
+    lastMessage: chat.link,
+    messageType: chat.messageType,
+    messageContent: chat.messageContent,
+    signature: chat.signature,
+    signatureType: chat.sigType,
+  };
+
+  return inboxChat;
+};
 
 const getLatestHash = async (
   userAddress: string,
@@ -85,6 +109,8 @@ const useConversationLoader = (
 
   useEffect(() => {
     let chatListener: NodeJS.Timer;
+    let pushSDKSocket: Socket | null;
+
     (async () => {
       // fetch conversation datas
       setChatData([]);
@@ -92,23 +118,17 @@ const useConversationLoader = (
         combinedDID,
       );
 
-      console.log('fetching done', latestHash);
-
       try {
         if (cachedMessages) {
-          console.log('got latestHash', latestHash);
           setChatData(prev => [...prev, ...cachedMessages]);
           setIsLoading(false);
         }
 
         if (latestHash !== currentHash.current) {
-          console.log('********calling new datas');
           const msgs = await fetchChats(pgpPrivateKey, currentHash.current);
           setChatData(prev => [...prev, ...msgs]);
           await storeConversationData(combinedDID, currentHash.current, msgs);
-          console.log('chats loaded');
         } else {
-          console.log('*****no new chats to be called');
         }
       } catch (error) {
         console.log('got error 1', error);
@@ -117,36 +137,75 @@ const useConversationLoader = (
       setIsLoading(false);
 
       // listen to new chats
-      chatListener = setInterval(async () => {
-        if (!isFetching.current) {
-          const [error, newCid] = await getLatestHash(
-            userAddress,
-            senderAddress,
-          );
-          if (error) {
-            console.log('got error2', error);
-            return;
-          }
-          if (newCid === currentHash.current) {
-            console.log('no new conversation');
-          } else {
-            // got new message
-            console.log('got new conversation');
-            const newMsgs = await fetchChats(
-              pgpPrivateKey,
-              newCid,
-              currentHash.current,
-            );
-            console.log('new message palced');
-            await storeConversationData(combinedDID, newCid, newMsgs);
-            setChatData(prev => [...prev, ...newMsgs]);
-          }
+      if (SocketConfig.useSocket) {
+        // use socket connection
+        pushSDKSocket = createSocketConnection({
+          user: userAddress,
+          env: SocketConfig.url,
+          apiKey: SocketConfig.key,
+          socketType: 'chat',
+          socketOptions: {autoConnect: true, reconnectionAttempts: 3},
+        });
+
+        if (!pushSDKSocket) {
+          console.log('got push sdk null');
+          return;
         }
-      }, 3000);
+
+        pushSDKSocket.on(EVENTS.CONNECT, () => {
+          console.log('socket connection success');
+        });
+
+        pushSDKSocket.on(EVENTS.DISCONNECT, () => {
+          console.log('disconnected :(');
+        });
+
+        pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, chat => {
+          if (chat.cid === currentHash.current) {
+            console.log('no new conversation');
+          }
+          const inboxChat = socketResponseToInbox(chat);
+          (async () => {
+            const newMsgs = await resolveSocketMsg(inboxChat, pgpPrivateKey);
+            await storeConversationData(combinedDID, chat.cid, newMsgs);
+            setChatData(prev => [...prev, ...newMsgs]);
+          })();
+        });
+      } else {
+        chatListener = fetchNewChatUsingTimer();
+      }
     })();
 
     return () => clearInterval(chatListener);
   }, []);
+
+  const fetchNewChatUsingTimer = () => {
+    let chatListener = setInterval(async () => {
+      if (!isFetching.current) {
+        const [error, newCid] = await getLatestHash(userAddress, senderAddress);
+        if (error) {
+          console.log('got error2', error);
+          return;
+        }
+        if (newCid === currentHash.current) {
+          console.log('no new conversation');
+        } else {
+          // got new message
+          console.log('got new conversation');
+          const newMsgs = await fetchChats(
+            pgpPrivateKey,
+            newCid,
+            currentHash.current,
+          );
+          console.log('new message palced');
+          await storeConversationData(combinedDID, newCid, newMsgs);
+          setChatData(prev => [...prev, ...newMsgs]);
+        }
+      }
+    }, 3000);
+
+    return chatListener;
+  };
 
   return [isLoading, chatData, pushChatDataDirect];
 };
