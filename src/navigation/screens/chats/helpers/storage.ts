@@ -31,14 +31,14 @@ export const getPersistedChatData = async (): Promise<ChatData | null> => {
 };
 
 const LATEST_HASH = 'LATEST_HASH';
-export const getStoredConversationData = async (userAddress: string) => {
+export const getStoredConversationData = async (combined_did: string) => {
   try {
     const cachedData = await EncryptedStorage.getItem(
-      `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
+      `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${combined_did}`,
     );
 
     const latestHash = await EncryptedStorage.getItem(
-      `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}-${LATEST_HASH}`,
+      `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${combined_did}-${LATEST_HASH}`,
     );
 
     if (!cachedData) {
@@ -58,28 +58,30 @@ export const getStoredConversationData = async (userAddress: string) => {
 };
 
 export const storeConversationData = async (
-  userAddress: string,
+  combined_did: string,
   latestHash: string,
   payload: any | any[],
 ): Promise<void> => {
   try {
-    const [cachedData, lastHash] = await getStoredConversationData(userAddress);
+    const [cachedData, lastHash] = await getStoredConversationData(
+      combined_did,
+    );
 
     // when cache is empty store all and return
     if (cachedData === null || lastHash === null) {
       await EncryptedStorage.setItem(
-        `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}-${LATEST_HASH}`,
+        `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${combined_did}-${LATEST_HASH}`,
         latestHash,
       );
 
       if (Array.isArray(payload)) {
         await EncryptedStorage.setItem(
-          `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
+          `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${combined_did}`,
           JSON.stringify(payload),
         );
       } else {
         await EncryptedStorage.setItem(
-          `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
+          `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${combined_did}`,
           JSON.stringify([payload]),
         );
       }
@@ -91,22 +93,23 @@ export const storeConversationData = async (
     if (latestHash === lastHash) {
       return;
     }
+    console.log('caching....', latestHash);
 
     // append new chats
     let parsedData = cachedData;
     parsedData = parsedData.concat(payload);
 
     await EncryptedStorage.setItem(
-      `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}`,
+      `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${combined_did}`,
       JSON.stringify(parsedData),
     );
 
     await EncryptedStorage.setItem(
-      `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${userAddress}-${LATEST_HASH}`,
+      `${STORAGE_CONSTANTS.PRIVATE_CHAT}-${combined_did}-${LATEST_HASH}`,
       latestHash,
     );
   } catch (error) {
-    console.error(error);
+    console.error('Error storing to cache', error);
   }
 };
 

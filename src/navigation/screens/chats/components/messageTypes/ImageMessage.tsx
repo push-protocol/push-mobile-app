@@ -12,7 +12,7 @@ export const ImageMessage = ({
 
   const [aspectRatio, setAspectRatio] = useState(1);
   const [ready, setIsReady] = useState(false);
-  const MAX_WIDTH = Platform.OS === 'android' ? 240 : 300;
+  const MAX_WIDTH = Platform.OS === 'android' ? 240 : 280;
 
   const getWidth = (_width: number) => {
     return Math.min(_width, MAX_WIDTH);

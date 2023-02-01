@@ -18,8 +18,6 @@ import appConfig from './app.json';
 
 let persistor = persistStore(store);
 
-console.log('Abisssek', appConfig.expo.scheme);
-
 const App = () => {
   const handleAppNotificationBadge = async () => {
     await AppBadgeHelper.setAppBadgeCount(0);

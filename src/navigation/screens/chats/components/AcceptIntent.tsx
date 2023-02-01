@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: 20,
     paddingBottom: 20,
+    marginHorizontal: 22,
   },
   buttons: {
     flexDirection: 'row',

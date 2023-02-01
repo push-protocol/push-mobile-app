@@ -19,9 +19,9 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
@@ -71,8 +71,16 @@ const SingleChatScreen = ({route}: any) => {
   const [text, setText] = React.useState('');
   const [textInputHeight, setTextInputHeight] = useState(10);
   const [isAccepting, setIsAccepting] = useState(false);
+  const [showScrollDown, setShowScrollDown] = useState(false);
+  const SCORLL_OFF_SET = 250;
 
-  const [isLoading, chatMessages, pushChatDataDirect] = useConversationLoader(
+  const [
+    isLoading,
+    chatMessages,
+    pushChatDataDirect,
+    loadMoreData,
+    isLoadingMore,
+  ] = useConversationLoader(
     cid,
     connectedUser.privateKey,
     connectedUser.wallets,
@@ -206,16 +214,20 @@ const SingleChatScreen = ({route}: any) => {
 
   const includeDate = (index: number) => {
     if (index <= 0) {
+      return false;
+    }
+
+    if (index >= chatMessages.length - 1) {
       return true;
     }
 
     try {
-      const prevDate = new Date(chatMessages[index - 1].time).getDate();
+      const prevDate = new Date(chatMessages[index + 1].time).getDate();
       const thisDate = new Date(chatMessages[index].time).getDate();
 
       return prevDate !== thisDate;
     } catch (error) {
-      console.log('error', error);
+      console.log('err getting the date');
       return false;
     }
   };
@@ -278,7 +290,10 @@ const SingleChatScreen = ({route}: any) => {
 
       {isLoading ? (
         <View style={{height: SectionHeight}}>
-          <Text style={{marginTop: 150}}>Loading coneversation...</Text>
+          <Image
+            style={{marginTop: 50, width: 50, height: 50}}
+            source={require('assets/chat/loading.gif')}
+          />
         </View>
       ) : (
         <View style={styles.section}>
@@ -290,33 +305,57 @@ const SingleChatScreen = ({route}: any) => {
               renderItem={({item, index}) => renderItem({item, index})}
               keyExtractor={(msg, index) => msg.time.toString() + index}
               showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={false}
-              onContentSizeChange={() => {
-                if (scrollViewRef.current) {
-                  scrollViewRef.current.scrollToEnd({animated: false});
+              showsVerticalScrollIndicator={true}
+              onScroll={event => {
+                if (event.nativeEvent.contentOffset.y > SCORLL_OFF_SET) {
+                  setShowScrollDown(true);
+                } else {
+                  setShowScrollDown(false);
                 }
               }}
               onScrollToIndexFailed={() => {
                 console.log('err scorlling ');
               }}
+              onEndReachedThreshold={0.6}
+              onEndReached={async () => {
+                console.log('loading more data');
+                await loadMoreData();
+                // }
+              }}
+              inverted={true}
               extraData={chatMessages}
-              estimatedItemSize={15}
-              ListFooterComponent={
-                isIntentReceivePage ? (
-                  <AcceptIntent
-                    onAccept={onAccept}
-                    onDecline={onDecline}
-                    isAccepting={isAccepting}
-                  />
-                ) : isSending ? (
-                  <MessageComponent
-                    chatMessage={tempChatMessage}
-                    componentType="SENDER"
-                    includeDate={false}
-                  />
-                ) : null
+              estimatedItemSize={25}
+              ListHeaderComponent={
+                <>
+                  {isIntentReceivePage ? (
+                    <AcceptIntent
+                      onAccept={onAccept}
+                      onDecline={onDecline}
+                      isAccepting={isAccepting}
+                    />
+                  ) : isSending ? (
+                    <MessageComponent
+                      chatMessage={tempChatMessage}
+                      componentType="SENDER"
+                      includeDate={false}
+                    />
+                  ) : null}
+                </>
               }
-              ListHeaderComponent={<EncryptionInfo addrs={senderAddress} />}
+              ListFooterComponent={
+                <>
+                  <EncryptionInfo addrs={senderAddress} />
+                  {isLoadingMore && (
+                    <View
+                      style={{alignItems: 'center', justifyContent: 'center'}}>
+                      <Image
+                        style={{marginBottom: 22, width: 40, height: 40}}
+                        source={require('assets/chat/loading.gif')}
+                      />
+                    </View>
+                  )}
+                </>
+              }
             />
           ) : (
             <View style={{marginTop: 10}}>
@@ -348,6 +387,28 @@ const SingleChatScreen = ({route}: any) => {
           behavior="position"
           keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : -350}
           enabled={true}>
+          {/* scroll */}
+          {showScrollDown && (
+            <TouchableOpacity
+              onPress={() => {
+                console.log('doing');
+                // @ts-ignore
+                scrollViewRef.current.scrollToIndex({index: 0, animated: true});
+              }}>
+              <View
+                style={{
+                  position: 'absolute',
+                  width: 30,
+                  height: 30,
+                  bottom: 80,
+                  borderRadius: 20,
+                  right: 0,
+                  backgroundColor: '#00000033',
+                  zIndex: 200,
+                }}
+              />
+            </TouchableOpacity>
+          )}
           <View style={styles.keyboard}>
             <View style={styles.textInputContainer}>
               {/* Open gif */}
@@ -474,7 +535,6 @@ const styles = StyleSheet.create({
   section: {
     height: SectionHeight,
     width: windowWidth,
-    paddingHorizontal: 20,
     overflow: 'scroll',
   },
   moreIcon: {
@@ -483,20 +543,26 @@ const styles = StyleSheet.create({
   keyboard: {
     display: 'flex',
     backgroundColor: Globals.COLORS.WHITE,
+    // backgroundColor: 'yellow',
     borderRadius: 16,
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    // paddingTop: 2,
+    paddingVertical: Platform.OS === 'ios' ? 8 : 4,
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   input: {
-    marginVertical: Platform.OS === 'android' ? 6 : 16,
+    // marginVertical: Platform.OS === 'android' ? 6 : 16,
     paddingLeft: 12,
     marginRight: 0,
     color: Globals.COLORS.BLACK,
     fontSize: 16,
     minWidth: '75%',
     maxWidth: '75%',
+    // backgroundColor: 'pink',
+    alignSelf: 'center',
+    paddingTop: 10,
   },
   smileyIcon: {
     display: 'flex',

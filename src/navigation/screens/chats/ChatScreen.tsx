@@ -81,16 +81,20 @@ const ChatScreen = (props: any) => {
   useEffect(() => {
     let lis: any;
     (async () => {
-      lis = props.navigation.addListener('focus', () => {
-        console.log('####focusing');
-        if (chatData.connectedUserData) {
-          console.log('***focus');
-          refresh();
-        } else {
-          console.log(chatData.connectedUserData);
-          initalizate();
-        }
-      });
+      try {
+        lis = props.navigation.addListener('focus', () => {
+          console.log('####focusing');
+          if (chatData.connectedUserData) {
+            console.log('***focus');
+            refresh();
+          } else {
+            console.log(chatData.connectedUserData);
+            initalizate();
+          }
+        });
+      } catch (error) {
+        console.log('error fetching the chats');
+      }
     })();
     return lis;
   }, [props, props.navigation]);

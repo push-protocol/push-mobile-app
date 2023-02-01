@@ -7,10 +7,10 @@ import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import {FETCH_ONCE} from '../constants';
 import {ChatMessage, resolveCID, resolveSocketMsg} from './chatResolver';
 import {SocketConfig} from './socketHelper';
-import {getStoredConversationData, storeConversationData} from './storage';
+import {getStoredConversationData} from './storage';
 
 type pushChatDataDirectFunc = (cid: string, msg: ChatMessage) => void;
-
+type loadMoreDataFunc = () => Promise<void>;
 const socketResponseToInbox = (chat: any) => {
   const inboxChat: PushNodeClient.InboxChat = {
     name: '',
@@ -78,11 +78,37 @@ const useConversationLoader = (
   userAddress: string,
   senderAddress: string,
   combinedDID: string,
-): [boolean, ChatMessage[], pushChatDataDirectFunc] => {
+): [
+  boolean,
+  ChatMessage[],
+  pushChatDataDirectFunc,
+  loadMoreDataFunc,
+  boolean,
+] => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [chatData, setChatData] = useState<ChatMessage[]>([]);
   const currentHash = useRef(cid);
+  const fetchedTill = useRef('');
   const isFetching = useRef(false);
+
+  const loadMoreData = async () => {
+    if (isLoadingMore) {
+      return;
+    }
+
+    if (!fetchedTill.current) {
+      return;
+    }
+
+    console.log('geetting more msg', fetchedTill.current);
+    setIsLoadingMore(true);
+    const olderMsgs = await fetchChats(pgpPrivateKey, fetchedTill.current);
+    console.log('got older msgs', olderMsgs.length);
+    setChatData(prev => [...prev, ...olderMsgs.reverse()]);
+    setIsLoadingMore(false);
+    console.log('new message palced');
+  };
 
   const fetchChats = async (
     _pgpPrivateKey: string,
@@ -92,7 +118,13 @@ const useConversationLoader = (
     isFetching.current = true;
     let chats: ChatMessage[] = [];
 
-    await loadMessageBatch(currentCid, chats, pgpPrivateKey, stopCid);
+    // record till last hash chat fetched
+    fetchedTill.current = await loadMessageBatch(
+      currentCid,
+      chats,
+      pgpPrivateKey,
+      stopCid,
+    );
 
     if (stopCid !== '') {
       currentHash.current = currentCid;
@@ -103,7 +135,7 @@ const useConversationLoader = (
   };
 
   const pushChatDataDirect = (_cid: string, msg: ChatMessage) => {
-    setChatData(prev => [...prev, msg]);
+    setChatData(prev => [msg, ...prev]);
     currentHash.current = _cid;
   };
 
@@ -120,15 +152,16 @@ const useConversationLoader = (
 
       try {
         if (cachedMessages) {
-          setChatData(prev => [...prev, ...cachedMessages]);
+          setChatData(prev => [...prev, ...cachedMessages].reverse());
           setIsLoading(false);
         }
 
         if (latestHash !== currentHash.current) {
           const msgs = await fetchChats(pgpPrivateKey, currentHash.current);
-          setChatData(prev => [...prev, ...msgs]);
-          await storeConversationData(combinedDID, currentHash.current, msgs);
+          setChatData(prev => [...prev, ...msgs].reverse());
+          // await storeConversationData(combinedDID, currentHash.current, msgs);
         } else {
+          console.log('*** only loadend from cache');
         }
       } catch (error) {
         console.log('got error 1', error);
@@ -153,7 +186,7 @@ const useConversationLoader = (
         }
 
         pushSDKSocket.on(EVENTS.CONNECT, () => {
-          console.log('socket connection success');
+          console.log('***$$$****socket connection success');
         });
 
         pushSDKSocket.on(EVENTS.DISCONNECT, () => {
@@ -161,14 +194,17 @@ const useConversationLoader = (
         });
 
         pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, chat => {
-          if (chat.cid === currentHash.current) {
+          console.log('socket new message');
+
+          if (chat.cid && chat.cid === currentHash.current) {
             console.log('no new conversation');
+            return;
           }
           const inboxChat = socketResponseToInbox(chat);
           (async () => {
             const newMsgs = await resolveSocketMsg(inboxChat, pgpPrivateKey);
-            await storeConversationData(combinedDID, chat.cid, newMsgs);
-            setChatData(prev => [...prev, ...newMsgs]);
+            // await storeConversationData(combinedDID, chat.cid, newMsgs);
+            setChatData(prev => [...newMsgs.reverse(), ...prev]);
           })();
         });
       } else {
@@ -198,8 +234,8 @@ const useConversationLoader = (
             currentHash.current,
           );
           console.log('new message palced');
-          await storeConversationData(combinedDID, newCid, newMsgs);
-          setChatData(prev => [...prev, ...newMsgs]);
+          // await storeConversationData(combinedDID, newCid, newMsgs);
+          setChatData(prev => [...prev, ...newMsgs].reverse());
         }
       }
     }, 3000);
@@ -207,6 +243,6 @@ const useConversationLoader = (
     return chatListener;
   };
 
-  return [isLoading, chatData, pushChatDataDirect];
+  return [isLoading, chatData, pushChatDataDirect, loadMoreData, isLoadingMore];
 };
 export {useConversationLoader};

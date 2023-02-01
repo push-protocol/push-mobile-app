@@ -6,7 +6,6 @@ import {caip10ToWallet, getCAIPAddress} from 'src/helpers/CAIPHelper';
 import {encryptAndSign} from 'src/helpers/w2w/pgp';
 
 import {ChatMessage} from './chatResolver';
-import {storeConversationData} from './storage';
 
 // import {storeConversationData} from './storage';
 
@@ -122,7 +121,7 @@ const useSendMessage = (
     }
 
     setIsSending(true);
-    console.log('**** send message');
+    console.log('**** send message to', combinedDID);
     const msg = await getEncryptedMessage(
       connectedUser,
       messageReceiver.current,
@@ -163,11 +162,12 @@ const useSendMessage = (
       }
       // add to cache
       const cid = res.cid;
-      await storeConversationData(combinedDID, cid, [chatMessage]);
+      // await storeConversationData(combinedDID, cid, [chatMessage]);
       console.log('**** message successfully sent');
       return [cid, chatMessage];
     } catch (error) {
       console.log('error', error);
+      showToast(error, '', ToasterOptions.TYPE.GRADIENT_PRIMARY);
     } finally {
       setIsSending(false);
     }

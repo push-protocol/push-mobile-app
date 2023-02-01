@@ -26,7 +26,7 @@ const MessageComponent = ({
   const {message, messageType} = chatMessage;
 
   return (
-    <View>
+    <View style={{marginHorizontal: 22}}>
       {includeDate && (
         <View style={{paddingBottom: 18, paddingVertical: 4}}>
           <Text
