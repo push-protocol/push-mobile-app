@@ -2,10 +2,12 @@ import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
+  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
@@ -24,6 +26,7 @@ export interface AppContext {
   connectedUser: PushNodeClient.ConnectedUser;
   feeds: PushNodeClient.Feeds[];
   requests: PushNodeClient.Feeds[];
+  chatCredentials: UserChatCredentials | undefined;
 }
 
 export const Context = React.createContext<AppContext | null>(null);
@@ -121,6 +124,7 @@ const ChatScreen = (props: any) => {
         connectedUser: chatData.connectedUserData,
         feeds: chatData.feeds,
         requests: chatData.requests,
+        chatCredentials: chatCredentials,
       }}>
       <SafeAreaView style={styles.container}>
         <View>
@@ -181,6 +185,29 @@ const ChatScreen = (props: any) => {
         </View>
         <Toaster ref={toastRef} />
       </SafeAreaView>
+
+      <TouchableOpacity
+        onPress={() => {
+          // @ts-ignore
+          navigation.navigate(Globals.SCREENS.NewChatScreen, {
+            chatCredentials: chatCredentials,
+          });
+        }}>
+        <View
+          style={{
+            bottom: 15,
+            position: 'absolute',
+            right: 15,
+          }}>
+          <Image
+            source={require('assets/icons/compose-chat-icon.png')}
+            style={{
+              width: 55,
+              height: 55,
+            }}
+          />
+        </View>
+      </TouchableOpacity>
     </Context.Provider>
   );
 };
@@ -197,7 +224,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     width: windowWidth,
-    padding: 20,
   },
   header: {
     width: '100%',
@@ -205,6 +231,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     display: 'flex',
     alignItems: 'center',
+    padding: 20,
   },
   activeTab: {
     width: '50%',
@@ -239,7 +266,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: Globals.COLORS.BLACK,
   },
-  content: {marginTop: 5},
+  content: {marginTop: 0},
   count: {
     backgroundColor: Globals.COLORS.PINK,
     borderRadius: 50,

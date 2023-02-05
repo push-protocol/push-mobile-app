@@ -1,12 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useContext, useEffect, useState} from 'react';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Globals from 'src/Globals';
 import {formatAMPM} from 'src/helpers/DateTimeHelper';
 import {Context} from 'src/navigation/screens/chats/ChatScreen';
@@ -37,7 +31,7 @@ const ChatItem = (props: SingleChatItemProps) => {
     console.log('had to do this');
     return (
       <View>
-        <Text>This is happeing</Text>
+        <Text>Err!! couldnot find user info</Text>
       </View>
     );
   }
@@ -52,14 +46,19 @@ const ChatItem = (props: SingleChatItemProps) => {
       return;
     }
 
+    let isIntentSendPage = props.isIntentSendPage;
+    let isIntenReceivePage = props.isIntentReceivePage;
+
+    props.clearSearch();
+
     // @ts-ignore
     navigation.navigate(Globals.SCREENS.SINGLE_CHAT, {
       cid: cid,
       senderAddress: props.wallet,
       connectedUser: appContext.connectedUser,
       combinedDID: props.combinedDID,
-      isIntentReceivePage: props.isIntentReceivePage,
-      isIntentSendPage: props.isIntentSendPage,
+      isIntentReceivePage: isIntenReceivePage,
+      isIntentSendPage: isIntentSendPage,
     });
   };
 
@@ -74,6 +73,7 @@ const ChatItem = (props: SingleChatItemProps) => {
         cid,
         appContext.connectedUser.privateKey,
       );
+
       setLastMessage(chatMessage.message);
       setTimeStamp(formatAMPM(chatMessage.time));
       setMessageType(chatMessage.messageType);
@@ -82,7 +82,7 @@ const ChatItem = (props: SingleChatItemProps) => {
   });
 
   return (
-    <TouchableWithoutFeedback onPress={handleChatDetail}>
+    <TouchableOpacity onPress={handleChatDetail}>
       <View style={styles.container}>
         <Image
           source={{uri: props.image}}
@@ -115,7 +115,7 @@ const ChatItem = (props: SingleChatItemProps) => {
           </View>
         </View>
       </View>
-    </TouchableWithoutFeedback>
+    </TouchableOpacity>
   );
 };
 
@@ -124,19 +124,20 @@ export default ChatItem;
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingLeft: 30,
-    paddingRight: 10,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 12,
+    paddingHorizontal: 28,
+    paddingVertical: 4,
+    // backgroundColor: 'red',
   },
 
   chatContainer: {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 5,
+    paddingVertical: 5,
     marginLeft: 10,
   },
   chatDetails: {

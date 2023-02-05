@@ -131,7 +131,7 @@ export default function OnboardingChannelScreen(props) {
             <StylishLabel
               style={styles.para}
               fontSize={16}
-              title="Have a look at these [d:dApp] channels and [b:Subscribe] to those whom you wish to recieve notifications from."
+              title="Have a look at these [d:dApp] channels and [b:Subscribe] to those whom you wish to receive notifications from."
             />
           </View>
         }

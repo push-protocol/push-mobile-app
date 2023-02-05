@@ -93,16 +93,21 @@ export default function InboxFeed(props) {
     setStartFromIndex(fileIndex);
   };
 
-  const fetchFeed = async rewrite => {
+  const fetchFeed = async (rewrite, refresh = false) => {
     if (!endReached || rewrite === true) {
       if (!loading) {
         setloading(true);
         const apiURL = `${ENV_CONFIG.EPNS_SERVER}/v1/users/${getCAIPAddress(
           wallet,
-        )}/feeds?page=${page}&limit=10&spam=false`;
+        )}/feeds?page=${refresh ? 1 : page}&limit=10&spam=false`;
+        console.log('calling api', apiURL);
         const resJson = await fetch(apiURL).then(response => response.json());
 
         if (resJson.itemcount !== 0 && resJson.feeds !== []) {
+          const oldMsg = feed.length > 0 ? feed[0].epoch : '';
+          const newMsg = resJson.feeds[0].epoch;
+          const isMsgNew = oldMsg !== newMsg;
+
           // clear the notifs if present
           AppBadgeHelper.setAppBadgeCount(0);
 
@@ -113,12 +118,18 @@ export default function InboxFeed(props) {
             setFeed(prev => [...prev, ...resJson.feeds]);
           }
 
-          setPage(prev => prev + 1);
-          props.ToasterFunc(
-            'New Notifications Loaded!',
-            '',
-            ToasterOptions.TYPE.GRADIENT_PRIMARY,
-          );
+          if (!refresh) {
+            setPage(prev => prev + 1);
+          }
+
+          //show tost is msg is new
+          if (isMsgNew) {
+            props.ToasterFunc(
+              'New Notifications Loaded!',
+              '',
+              ToasterOptions.TYPE.GRADIENT_PRIMARY,
+            );
+          }
         } else {
           setEndReached(true);
           props.ToasterFunc(
@@ -158,7 +169,7 @@ export default function InboxFeed(props) {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={() => {
-                  setInitialized(false);
+                  fetchFeed(true, true);
                 }}
               />
             }

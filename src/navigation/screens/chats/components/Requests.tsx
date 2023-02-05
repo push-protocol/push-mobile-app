@@ -23,6 +23,7 @@ const Requests = ({requests, isIntentReceivePage}: RequestProps) => {
             combinedDID={item.combinedDID}
             isIntentReceivePage={isIntentReceivePage}
             isIntentSendPage={false}
+            clearSearch={() => {}}
           />
         ))}
 
@@ -42,9 +43,8 @@ export default Requests;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
-    width: '95%',
-    height: '100%',
+    width: '100%',
+    paddingHorizontal: 16,
   },
   content: {padding: 10, width: '100%'},
   walletImage: {

@@ -5,12 +5,13 @@ import * as PushNodeClient from 'src/apis';
 
 interface EncryptionInfoProps {
   addrs: string;
+  senderAddrs: string;
 }
 
 const DOC_URL =
   'https://docs.push.org/developers/concepts/push-chat-for-web3#encryption';
 
-const EncryptionInfo = ({addrs}: EncryptionInfoProps) => {
+const EncryptionInfo = ({addrs, senderAddrs}: EncryptionInfoProps) => {
   const [isAccepted, setIsAccepted] = useState(false);
   const openUrl = async () => {
     await Linking.openURL(DOC_URL);
@@ -18,7 +19,10 @@ const EncryptionInfo = ({addrs}: EncryptionInfoProps) => {
 
   useEffect(() => {
     (async () => {
-      const _isAccepted = await PushNodeClient.isIntentAccepted(addrs);
+      const _isAccepted = await PushNodeClient.isIntentAccepted(
+        addrs,
+        senderAddrs,
+      );
       console.log(_isAccepted);
 
       setIsAccepted(_isAccepted);
@@ -30,7 +34,9 @@ const EncryptionInfo = ({addrs}: EncryptionInfoProps) => {
       <View style={styles.container}>
         {isAccepted ? (
           <View style={styles.iconText}>
-            <FontAwesome5 name="lock" size={15} color="#657795" />
+            <View style={styles.icon}>
+              <FontAwesome5 name="lock" size={15} color="#657795" />
+            </View>
             <Text style={styles.text}>
               Messages are end-to-end encrypted. Only users in this chat can
               view or listen to them. Click to learn more.
@@ -38,12 +44,9 @@ const EncryptionInfo = ({addrs}: EncryptionInfoProps) => {
           </View>
         ) : (
           <View style={styles.iconText}>
-            <FontAwesome5
-              name="unlock"
-              size={15}
-              color="#657795"
-              style={styles.icon}
-            />
+            <View style={styles.iconUnlock}>
+              <FontAwesome5 name="unlock" size={15} color="#657795" />
+            </View>
             <Text style={styles.text}>
               Messages are not encrypted till the user accepts the chat request.
             </Text>
@@ -67,6 +70,10 @@ const styles = StyleSheet.create({
   },
   icon: {
     paddingRight: 4,
+    // backgroundColor: 'red',
+  },
+  iconUnlock: {
+    paddingRight: 2,
   },
   iconText: {
     flexDirection: 'row',

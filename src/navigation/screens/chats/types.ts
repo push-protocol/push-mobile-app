@@ -6,4 +6,5 @@ export interface SingleChatItemProps {
   combinedDID: string;
   isIntentReceivePage: boolean;
   isIntentSendPage: boolean;
+  clearSearch: () => void;
 }

@@ -11,6 +11,7 @@ import PgpFromPkScreen from './screens/PgpFromPkScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SignInFromDapp from './screens/SignInFromDapp';
 import {SingleChatScreen} from './screens/chats';
+import {NewChatScreen} from './screens/chats/NewChatScreen';
 
 const Stack = createStackNavigator();
 
@@ -120,6 +121,15 @@ export default function AuthenticatedNavigator() {
       <Stack.Screen
         name={GLOBALS.SCREENS.SIGNINFROMDAPP}
         component={SignInFromDapp}
+        options={{
+          headerShown: false,
+          headerTintColor: GLOBALS.COLORS.MID_GRAY,
+        }}
+      />
+
+      <Stack.Screen
+        name={GLOBALS.SCREENS.NewChatScreen}
+        component={NewChatScreen}
         options={{
           headerShown: false,
           headerTintColor: GLOBALS.COLORS.MID_GRAY,

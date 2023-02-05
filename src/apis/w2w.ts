@@ -1,5 +1,4 @@
 import GLOBALS from 'src/Globals';
-import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import {encryptWithRPCEncryptionPublicKeyReturnRawData} from 'src/helpers/w2w/metamaskSigUtil';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
 
@@ -331,13 +330,40 @@ export const createNewPgpPair = async (
   return createdUser;
 };
 
-export const isIntentAccepted = async (addrs: string) => {
-  const caipAddress = walletToCAIP10(addrs);
-  const uri = `${BASE_URL}/v1/w2w/users/${caipAddress}/messages`;
-  const res = await fetch(uri).then(r => r.json());
+export const isIntentAccepted = async (addrs: string, senderAddrs: string) => {
+  const uri = `${BASE_URL}/v1/w2w/users/${addrs}/messages`;
+  const res = await fetch(uri)
+    .then(r => r.json())
+    .then(arr =>
+      arr.filter((e: any) => {
+        console.log(e.combinedDID);
+        return e.combinedDID.indexOf(senderAddrs) !== -1;
+      }),
+    );
 
   const intent = res[0].intent;
   const count = (intent.match(/eip155/g) || []).length;
 
   return count >= 2;
+};
+
+export const getIntentStatus = async (addrs: string, senderAddrs: string) => {
+  const uri = `${BASE_URL}/v1/w2w/users/${addrs}/messages`;
+  const res = await fetch(uri)
+    .then(r => r.json())
+    .then(arr =>
+      arr.filter((e: any) => {
+        console.log(e.combinedDID);
+        return e.combinedDID.indexOf(senderAddrs) !== -1;
+      }),
+    );
+
+  const intent: string = res[0].intent;
+  const isIntentSent = intent.indexOf(addrs) !== -1;
+  const isIntentReceived = intent.indexOf(senderAddrs) !== -1;
+  const isAccepted = isIntentSent && isIntentReceived;
+  if (isAccepted) {
+    return [false, false];
+  }
+  return [isIntentSent, isIntentReceived]; // isIntentSent isIntentAccepted
 };

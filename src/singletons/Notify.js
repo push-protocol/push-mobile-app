@@ -42,7 +42,7 @@ export default class Notify {
   saveDeviceToken = async (token, isRefreshToken) => {
     // For Test sending
     console.log(
-      'Token Recieved:' + token + '  |---| is Refresh Token: ' + isRefreshToken,
+      'Token Receive:' + token + '  |---| is Refresh Token: ' + isRefreshToken,
     );
 
     // Get previous token

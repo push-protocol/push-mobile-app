@@ -50,7 +50,8 @@ interface ChatScreenParam {
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
-const SectionHeight = (windowHeight * 24) / 31.125;
+const SectionHeight =
+  Platform.OS === 'android' ? windowHeight - 126 : windowHeight - 195;
 
 const SingleChatScreen = ({route}: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
@@ -72,6 +73,7 @@ const SingleChatScreen = ({route}: any) => {
   const [textInputHeight, setTextInputHeight] = useState(10);
   const [isAccepting, setIsAccepting] = useState(false);
   const [showScrollDown, setShowScrollDown] = useState(false);
+  const [listHeight, setListHeight] = useState(0);
   const SCORLL_OFF_SET = 250;
 
   const [
@@ -96,8 +98,6 @@ const SingleChatScreen = ({route}: any) => {
   );
 
   const senderAddressFormatted = getFormattedAddress(senderAddress);
-
-  // const []
   const handleSend = async () => {
     const _text = text;
     setText('');
@@ -296,7 +296,14 @@ const SingleChatScreen = ({route}: any) => {
           />
         </View>
       ) : (
-        <View style={styles.section}>
+        <View
+          style={[
+            styles.section,
+            {
+              height: Math.min(SectionHeight, listHeight),
+              minHeight: 200,
+            },
+          ]}>
           {chatMessages.length > 0 ? (
             <FlashList
               // @ts-ignore
@@ -318,13 +325,18 @@ const SingleChatScreen = ({route}: any) => {
               }}
               onEndReachedThreshold={0.6}
               onEndReached={async () => {
-                console.log('loading more data');
-                await loadMoreData();
+                // console.log('loading more data');
+                if (!isLoadingMore) {
+                  await loadMoreData();
+                }
                 // }
               }}
               inverted={true}
               extraData={chatMessages}
-              estimatedItemSize={25}
+              estimatedItemSize={15}
+              onContentSizeChange={(_, h) => {
+                setListHeight(h);
+              }}
               ListHeaderComponent={
                 <>
                   {isIntentReceivePage ? (
@@ -343,29 +355,39 @@ const SingleChatScreen = ({route}: any) => {
                 </>
               }
               ListFooterComponent={
-                <>
-                  <EncryptionInfo addrs={senderAddress} />
+                <View>
+                  <EncryptionInfo
+                    addrs={connectedUser.wallets}
+                    senderAddrs={senderAddress}
+                  />
                   {isLoadingMore && (
                     <View
-                      style={{alignItems: 'center', justifyContent: 'center'}}>
+                      style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
                       <Image
                         style={{marginBottom: 22, width: 40, height: 40}}
                         source={require('assets/chat/loading.gif')}
                       />
                     </View>
                   )}
-                </>
+                </View>
               }
             />
           ) : (
             <View style={{marginTop: 10}}>
-              <EncryptionInfo addrs={senderAddress} />
+              <EncryptionInfo
+                addrs={connectedUser.wallets}
+                senderAddrs={senderAddress}
+              />
               <Text
                 style={{
                   marginTop: 20,
                   paddingHorizontal: 40,
                   lineHeight: 22,
                   color: '#657795',
+                  textAlign: 'center',
                 }}>
                 This is your first conversation with recipient. Start the
                 conversation by sending a message.
@@ -391,7 +413,7 @@ const SingleChatScreen = ({route}: any) => {
           {showScrollDown && (
             <TouchableOpacity
               onPress={() => {
-                console.log('doing');
+                setShowScrollDown(false);
                 // @ts-ignore
                 scrollViewRef.current.scrollToIndex({index: 0, animated: true});
               }}>
@@ -533,7 +555,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   section: {
-    height: SectionHeight,
     width: windowWidth,
     overflow: 'scroll',
   },

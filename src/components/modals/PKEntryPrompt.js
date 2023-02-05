@@ -94,7 +94,7 @@ export default class PKEntryPrompt extends Component {
       },
     );
 
-    value = '0d09c3de416866b5a31dfb903a01236bbf00e8d7f912a07daa25df6b1d93b6c6';
+    // value = '56077fdcf2d8e4428e6beb79c1770d72e14d20289cd4b75e5048de1b9399ad92';
 
     this.setState({
       PKEntry: value,
@@ -134,7 +134,7 @@ export default class PKEntryPrompt extends Component {
 
   // Set Render
   changeRenderState = (shouldOpen, animate) => {
-    if (shouldOpen == true) {
+    if (shouldOpen === true) {
       this.animateFadeIn(animate);
     } else {
       this.animateFadeOut(animate);

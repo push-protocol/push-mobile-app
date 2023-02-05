@@ -59,8 +59,11 @@ const loadMessageBatch = async (
     try {
       const [chatMessage, next_hash] = await resolveCID(hash, pgpPrivateKey);
       chats.unshift(chatMessage);
-      if (!next_hash || next_hash === stopCid) {
-        break;
+      if (!next_hash) {
+        return null;
+      }
+      if (next_hash === stopCid) {
+        stopCid;
       }
       hash = next_hash;
     } catch (error) {
@@ -89,10 +92,11 @@ const useConversationLoader = (
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [chatData, setChatData] = useState<ChatMessage[]>([]);
   const currentHash = useRef(cid);
-  const fetchedTill = useRef('');
+  const fetchedTill = useRef<string | null>('');
   const isFetching = useRef(false);
 
   const loadMoreData = async () => {
+    console.log('geetting more msg', fetchedTill.current);
     if (isLoadingMore) {
       return;
     }
@@ -101,10 +105,9 @@ const useConversationLoader = (
       return;
     }
 
-    console.log('geetting more msg', fetchedTill.current);
     setIsLoadingMore(true);
     const olderMsgs = await fetchChats(pgpPrivateKey, fetchedTill.current);
-    console.log('got older msgs', olderMsgs.length);
+    console.log('got older msgs', olderMsgs.length, olderMsgs);
     setChatData(prev => [...prev, ...olderMsgs.reverse()]);
     setIsLoadingMore(false);
     console.log('new message palced');
@@ -125,6 +128,8 @@ const useConversationLoader = (
       pgpPrivateKey,
       stopCid,
     );
+
+    console.log('new fetchedtill', fetchedTill.current);
 
     if (stopCid !== '') {
       currentHash.current = currentCid;

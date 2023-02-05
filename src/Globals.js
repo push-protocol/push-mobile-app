@@ -147,6 +147,7 @@ export default {
     LOG_IN_DAPP_INFO: 'LOG_IN_DAPP_INFO',
     QRScanScreen: 'QRScanScreen',
     QRScanScreenFromLogin: 'QRScanScreenFromLogin',
+    NewChatScreen: 'NewChatScreen',
   },
   APP_AUTH_STATES: {
     INITIALIZING: 1,

@@ -21,6 +21,9 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
   const [ethAddress, setEthAddress] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchEnabled, setIsSearchEnabled] = useState(false);
+  const [matchedItem, setMatchedItem] = useState<PushNodeClient.Feeds | null>(
+    null,
+  );
 
   const appContext = useContext(Context);
 
@@ -34,6 +37,17 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
     }
   };
 
+  const checkIfAddressPresetInFeed = (
+    addrs: string,
+  ): [PushNodeClient.Feeds | null, boolean] => {
+    for (let i = 0; i < feeds.length; i++) {
+      if (feeds[i].wallets.indexOf(addrs) !== -1) {
+        return [feeds[i], true];
+      }
+    }
+    return [null, false];
+  };
+
   const handleSearch = async () => {
     const query = ethAddress.trim();
     if (query === '') {
@@ -41,15 +55,22 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
     }
     try {
       setIsSearching(true);
+      let address = '';
       if (Web3Helper.isHex(query)) {
-        Web3Helper.getAddressChecksum(query.toLowerCase());
+        address = Web3Helper.getAddressChecksum(query.toLowerCase());
       } else if (query.includes('.eth')) {
-        const address = await Web3Helper.resolveBlockchainDomain(query, 'eth');
+        address = await Web3Helper.resolveBlockchainDomain(query, 'eth');
         setEthAddress(address);
       } else {
         showError(query);
         setEthAddress('');
         return;
+      }
+      const [matchedFeed, isAddressPreset] =
+        checkIfAddressPresetInFeed(address);
+      if (isAddressPreset) {
+        console.log('weee were called');
+        setMatchedItem(matchedFeed);
       }
       setIsSearchEnabled(true);
     } catch (error) {
@@ -63,6 +84,7 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
   const handleClearSearch = () => {
     setIsSearchEnabled(false);
     setIsSearching(false);
+    setMatchedItem(null);
     setEthAddress('');
   };
 
@@ -73,12 +95,13 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
           style={styles.input}
           onChangeText={setEthAddress}
           value={ethAddress}
-          placeholder="Search name.eth or 0x1123..."
+          placeholder="Search name.eth or 0x123.."
           editable={!isSearching}
           selectTextOnFocus={!isSearching}
           placeholderTextColor="#000"
           autoCapitalize="none"
           onSubmitEditing={handleSearch}
+          multiline={false}
         />
         {isSearching ? (
           <EvilIcons
@@ -106,21 +129,35 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
         )}
       </View>
 
-      {isSearchEnabled && (
-        <View style={styles.content}>
-          <SingleChatItem
-            image={DEFAULT_AVATAR}
-            wallet={ethAddress}
-            text={null}
-            combinedDID={getCombinedDID(
-              ethAddress,
-              appContext?.connectedUser.wallets!,
-            )}
-            isIntentReceivePage={isIntentReceivePage}
-            isIntentSendPage={true}
-          />
-        </View>
-      )}
+      {isSearchEnabled &&
+        (matchedItem ? (
+          <View style={styles.content}>
+            <SingleChatItem
+              image={matchedItem.profilePicture}
+              wallet={ethAddress}
+              text={matchedItem.threadhash ? matchedItem.threadhash : ''}
+              combinedDID={matchedItem.combinedDID}
+              isIntentReceivePage={isIntentReceivePage}
+              isIntentSendPage={false}
+              clearSearch={handleClearSearch}
+            />
+          </View>
+        ) : (
+          <View style={styles.content}>
+            <SingleChatItem
+              image={DEFAULT_AVATAR}
+              wallet={ethAddress}
+              text={null}
+              combinedDID={getCombinedDID(
+                ethAddress,
+                appContext?.connectedUser.wallets!,
+              )}
+              isIntentReceivePage={isIntentReceivePage}
+              isIntentSendPage={true}
+              clearSearch={handleClearSearch}
+            />
+          </View>
+        ))}
 
       {!isSearchEnabled && (
         <View style={styles.content}>
@@ -133,6 +170,7 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
               combinedDID={item.combinedDID}
               isIntentReceivePage={isIntentReceivePage}
               isIntentSendPage={false}
+              clearSearch={handleClearSearch}
             />
           ))}
         </View>
@@ -151,9 +189,8 @@ export default Chats;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
-    width: '95%',
-    height: '100%',
+    width: '100%',
+    paddingHorizontal: 16,
   },
   content: {padding: 10, width: '100%'},
   input: {
@@ -163,10 +200,11 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height / 16,
     paddingLeft: 15,
     paddingRight: 10,
-    textAlignVertical: 'top',
     width: '65%',
     flex: 2,
     minWidth: '65%',
+    alignSelf: 'center',
+    textAlignVertical: 'center',
   },
   searchView: {
     flexDirection: 'row',
