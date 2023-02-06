@@ -147,7 +147,7 @@ const NewChatScreen = ({route, navigation}: any) => {
     setEthAddress('');
   };
 
-  if (isLoading) {
+  if (isLoading || !chatData.connectedUserData) {
     return (
       <View
         style={{
@@ -162,6 +162,10 @@ const NewChatScreen = ({route, navigation}: any) => {
         />
       </View>
     );
+  }
+
+  if (!chatData.connectedUserData) {
+    return <></>;
   }
 
   return (
@@ -250,7 +254,7 @@ const NewChatScreen = ({route, navigation}: any) => {
                 text={null}
                 combinedDID={getCombinedDID(
                   ethAddress,
-                  chatData.connectedUserData!.wallets,
+                  chatData.connectedUserData.wallets,
                 )}
                 isIntentReceivePage={false}
                 isIntentSendPage={true}

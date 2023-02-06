@@ -9,7 +9,6 @@ import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 import {UserChatCredentials} from '../ChatScreen';
 import {SocketConfig} from './socketHelper';
-import {getPersistedChatData, persistChatData} from './storage';
 import {
   checkIfItemInCache,
   filterChatAndRequestFeeds,
@@ -47,7 +46,10 @@ const useChatLoader = (
     caipAddress: string,
     pgpPrivateKey: string,
   ) => {
+    console.log('aai was called');
+
     let user = await PushNodeClient.getUser(caipAddress);
+    console.log('got user');
 
     if (!user) {
       throw new Error('User info not found');
@@ -59,21 +61,7 @@ const useChatLoader = (
       privateKey: pgpPrivateKey,
     };
 
-    persistChatData({
-      ...chatData,
-      connectedUserData,
-    });
-
     setChatData(prev => ({...prev, connectedUserData}));
-  };
-
-  const loadCachedInbox = async () => {
-    const cachedData = await getPersistedChatData();
-
-    if (cachedData) {
-      setChatData(cachedData);
-      setIsLoading(false);
-    }
   };
 
   const loadInbox = async (ethAddress: string) => {
@@ -106,12 +94,6 @@ const useChatLoader = (
       feeds,
     );
 
-    persistChatData({
-      ...chatData,
-      feeds: newChatFeeds,
-      requests: newRequestFeeds,
-    });
-
     setChatData(prev => ({
       ...prev,
       feeds: newChatFeeds,
@@ -132,14 +114,16 @@ const useChatLoader = (
 
     let fetchNewMessages: NodeJS.Timer;
 
+    let time = Date.now();
     (async () => {
       await setUpChatProfile(caipAddress, pgpPrivateKey);
-      await loadCachedInbox();
+      // await loadCachedInbox();
       await loadInbox(derivedAddress);
 
       // qeury for new threads evey 3 second
       if (SocketConfig.useSocket) {
         if (!pushSDKSocket.current) {
+          console.log('new socket created');
           pushSDKSocket.current = createSocketConnection({
             user: derivedAddress,
             env: SocketConfig.url,
@@ -154,11 +138,11 @@ const useChatLoader = (
           }
 
           pushSDKSocket.current.on(EVENTS.CONNECT, () => {
-            console.log('connection all good');
+            console.log('connection all good', time);
           });
 
           pushSDKSocket.current.on(EVENTS.DISCONNECT, () => {
-            console.log('disconnected :(');
+            console.log('disconnected :(', time);
           });
           pushSDKSocket.current.on(EVENTS.CHAT_RECEIVED_MESSAGE, _ => {
             console.log('@@@@ works');
@@ -180,7 +164,8 @@ const useChatLoader = (
     return () => {
       if (SocketConfig.useSocket) {
         if (pushSDKSocket.current) {
-          pushSDKSocket.current.disconnect();
+          console.log('clearning socket');
+          // pushSDKSocket.current.disconnect();
         }
       } else {
         clearInterval(fetchNewMessages);

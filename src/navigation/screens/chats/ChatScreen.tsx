@@ -7,7 +7,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
@@ -91,7 +90,7 @@ const ChatScreen = (props: any) => {
             console.log('***focus');
             refresh();
           } else {
-            console.log(chatData.connectedUserData);
+            console.log('intitalize');
             initalizate();
           }
         });
@@ -186,8 +185,10 @@ const ChatScreen = (props: any) => {
         <Toaster ref={toastRef} />
       </SafeAreaView>
 
-      <TouchableOpacity
+      <TouchableWithoutFeedback
         onPress={() => {
+          console.log('dadda', Date.now());
+
           // @ts-ignore
           navigation.navigate(Globals.SCREENS.NewChatScreen, {
             chatCredentials: chatCredentials,
@@ -207,7 +208,7 @@ const ChatScreen = (props: any) => {
             }}
           />
         </View>
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
     </Context.Provider>
   );
 };
