@@ -296,208 +296,225 @@ const SingleChatScreen = ({route}: any) => {
         </View>
       </View>
 
-      {isLoading ? (
-        <View style={{height: SectionHeight}}>
-          <Image
-            style={{marginTop: 50, width: 50, height: 50}}
-            source={require('assets/chat/loading.gif')}
-          />
-        </View>
-      ) : (
+      <KeyboardAvoidingView
+        behavior="position"
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 60}
+        enabled={true}
+        style={{
+          width: '100%',
+          height: SectionHeight,
+          position: 'relative',
+        }}>
         <View
-          style={[
-            styles.section,
-            {
-              height: Math.min(SectionHeight, listHeight),
-              minHeight: 200,
-            },
-          ]}>
-          {chatMessages.length > 0 ? (
-            <FlashList
-              // @ts-ignore
-              ref={scrollViewRef}
-              data={chatMessages}
-              renderItem={({item, index}) => renderItem({item, index})}
-              keyExtractor={(msg, index) => msg.time.toString() + index}
-              showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={true}
-              onScroll={event => {
-                if (event.nativeEvent.contentOffset.y > SCORLL_OFF_SET) {
-                  setShowScrollDown(true);
-                } else {
-                  setShowScrollDown(false);
-                }
-              }}
-              onScrollToIndexFailed={() => {
-                console.log('err scorlling ');
-              }}
-              onEndReachedThreshold={0.6}
-              onEndReached={async () => {
-                // console.log('loading more data');
-                if (!isLoadingMore) {
-                  await loadMoreData();
-                }
-                // }
-              }}
-              inverted={true}
-              extraData={chatMessages}
-              estimatedItemSize={15}
-              onContentSizeChange={(_, h) => {
-                setListHeight(h);
-              }}
-              ListHeaderComponent={
-                <>
-                  {isIntentReceivePage ? (
-                    <AcceptIntent
-                      onAccept={onAccept}
-                      onDecline={onDecline}
-                      isAccepting={isAccepting}
-                    />
-                  ) : isSending ? (
-                    <MessageComponent
-                      chatMessage={tempChatMessage}
-                      componentType="SENDER"
-                      includeDate={false}
-                    />
-                  ) : null}
-                </>
-              }
-              ListFooterComponent={
-                <View>
+          style={{
+            height: windowHeight,
+            width: '100%',
+            alignItems: 'center',
+            position: 'relative',
+          }}>
+          {isLoading ? (
+            <View style={{height: SectionHeight}}>
+              <Image
+                style={{marginTop: 50, width: 50, height: 50}}
+                source={require('assets/chat/loading.gif')}
+              />
+            </View>
+          ) : (
+            <View
+              style={[
+                styles.section,
+                {
+                  height: Math.min(SectionHeight, listHeight),
+                  minHeight: 200,
+                },
+              ]}>
+              {chatMessages.length > 0 ? (
+                <FlashList
+                  // @ts-ignore
+                  ref={scrollViewRef}
+                  data={chatMessages}
+                  renderItem={({item, index}) => renderItem({item, index})}
+                  keyExtractor={(msg, index) => msg.time.toString() + index}
+                  showsHorizontalScrollIndicator={false}
+                  showsVerticalScrollIndicator={true}
+                  onScroll={event => {
+                    if (event.nativeEvent.contentOffset.y > SCORLL_OFF_SET) {
+                      setShowScrollDown(true);
+                    } else {
+                      setShowScrollDown(false);
+                    }
+                  }}
+                  onScrollToIndexFailed={() => {
+                    console.log('err scorlling ');
+                  }}
+                  onEndReachedThreshold={0.6}
+                  onEndReached={async () => {
+                    // console.log('loading more data');
+                    if (!isLoadingMore) {
+                      await loadMoreData();
+                    }
+                    // }
+                  }}
+                  inverted={true}
+                  extraData={chatMessages}
+                  estimatedItemSize={15}
+                  onContentSizeChange={(_, h) => {
+                    setListHeight(h);
+                  }}
+                  ListHeaderComponent={
+                    <>
+                      {isIntentReceivePage ? (
+                        <AcceptIntent
+                          onAccept={onAccept}
+                          onDecline={onDecline}
+                          isAccepting={isAccepting}
+                        />
+                      ) : isSending ? (
+                        <MessageComponent
+                          chatMessage={tempChatMessage}
+                          componentType="SENDER"
+                          includeDate={false}
+                        />
+                      ) : null}
+                    </>
+                  }
+                  ListFooterComponent={
+                    <View>
+                      <EncryptionInfo
+                        addrs={connectedUser.wallets}
+                        senderAddrs={senderAddress}
+                      />
+                      {isLoadingMore && (
+                        <View
+                          style={{
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Image
+                            style={{marginBottom: 22, width: 40, height: 40}}
+                            source={require('assets/chat/loading.gif')}
+                          />
+                        </View>
+                      )}
+                    </View>
+                  }
+                />
+              ) : (
+                <View style={{marginTop: 10}}>
                   <EncryptionInfo
                     addrs={connectedUser.wallets}
                     senderAddrs={senderAddress}
                   />
-                  {isLoadingMore && (
-                    <View
-                      style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <Image
-                        style={{marginBottom: 22, width: 40, height: 40}}
-                        source={require('assets/chat/loading.gif')}
-                      />
-                    </View>
-                  )}
+                  <Text
+                    style={{
+                      marginTop: 20,
+                      paddingHorizontal: 40,
+                      lineHeight: 22,
+                      color: '#657795',
+                      textAlign: 'center',
+                    }}>
+                    This is your first conversation with recipient. Start the
+                    conversation by sending a message.
+                  </Text>
                 </View>
-              }
-            />
-          ) : (
-            <View style={{marginTop: 10}}>
-              <EncryptionInfo
-                addrs={connectedUser.wallets}
-                senderAddrs={senderAddress}
-              />
-              <Text
-                style={{
-                  marginTop: 20,
-                  paddingHorizontal: 40,
-                  lineHeight: 22,
-                  color: '#657795',
-                  textAlign: 'center',
-                }}>
-                This is your first conversation with recipient. Start the
-                conversation by sending a message.
-              </Text>
-            </View>
-          )}
+              )}
 
-          {/* Donot show intent checkbox in chat page */}
-          {/* {!isIntentReceivePage && (
+              {/* Donot show intent checkbox in chat page */}
+              {/* {!isIntentReceivePage && (
             //  />
           )} */}
-        </View>
-      )}
-
-      {/* Donot show keyboard at intent page */}
-      {!isIntentReceivePage && (
-        <KeyboardAvoidingView
-          style={styles.keyboardAvoid}
-          behavior="position"
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : -350}
-          enabled={true}>
-          {/* scroll */}
-          {showScrollDown && (
-            <TouchableOpacity
-              onPress={() => {
-                setShowScrollDown(false);
-                // @ts-ignore
-                scrollViewRef.current.scrollToIndex({index: 0, animated: true});
-              }}>
-              <View
-                style={{
-                  position: 'absolute',
-                  width: 30,
-                  height: 30,
-                  bottom: 80,
-                  borderRadius: 20,
-                  right: 0,
-                  backgroundColor: '#00000033',
-                  zIndex: 200,
-                }}
-              />
-            </TouchableOpacity>
+            </View>
           )}
-          <View style={styles.keyboard}>
-            <View style={styles.textInputContainer}>
-              {/* Open gif */}
-              <View style={styles.smileyIcon}>
+
+          {/* Donot show keyboard at intent page */}
+          {!isLoading && !isIntentReceivePage && (
+            <View style={styles.keyboardAvoid}>
+              {/* scroll */}
+              {showScrollDown && (
                 <TouchableOpacity
                   onPress={() => {
-                    GiphyDialog.show();
+                    setShowScrollDown(false);
+                    // @ts-ignore
+                    scrollViewRef.current.scrollToIndex({
+                      index: 0,
+                      animated: true,
+                    });
                   }}>
-                  <MaterialCommunityIcons
-                    name="sticker-emoji"
-                    size={28}
-                    color="#898686"
+                  <View
+                    style={{
+                      position: 'absolute',
+                      width: 30,
+                      height: 30,
+                      bottom: 80,
+                      borderRadius: 20,
+                      right: 0,
+                      backgroundColor: '#00000033',
+                      zIndex: 200,
+                    }}
                   />
-                  {/* <FontAwesome5 name="smile" size={20} color="black" /> */}
                 </TouchableOpacity>
-              </View>
+              )}
+              <View style={styles.keyboard}>
+                <View style={styles.textInputContainer}>
+                  {/* Open gif */}
+                  <View style={styles.smileyIcon}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        GiphyDialog.show();
+                      }}>
+                      <MaterialCommunityIcons
+                        name="sticker-emoji"
+                        size={28}
+                        color="#898686"
+                      />
+                      {/* <FontAwesome5 name="smile" size={20} color="black" /> */}
+                    </TouchableOpacity>
+                  </View>
 
-              <TextInput
-                style={[
-                  styles.input,
-                  {
-                    height: Math.min(Math.max(5, textInputHeight), 100),
-                    minHeight: 40,
-                  },
-                ]}
-                onChangeText={setText}
-                value={text}
-                placeholder="Type your message here..."
-                placeholderTextColor="#d2d1d1"
-                multiline={true}
-                onContentSizeChange={event => {
-                  setTextInputHeight(
-                    Math.max(event.nativeEvent.contentSize.height, 10),
-                  );
-                }}
-              />
+                  <TextInput
+                    style={[
+                      styles.input,
+                      {
+                        height: Math.min(Math.max(5, textInputHeight), 100),
+                        minHeight: 40,
+                      },
+                    ]}
+                    onChangeText={setText}
+                    value={text}
+                    placeholder="Type your message here..."
+                    placeholderTextColor="#d2d1d1"
+                    multiline={true}
+                    onContentSizeChange={event => {
+                      setTextInputHeight(
+                        Math.max(event.nativeEvent.contentSize.height, 10),
+                      );
+                    }}
+                  />
 
-              <View style={styles.textButtonContainer}>
-                <View style={styles.sendIcon}>
-                  {isSending || !isSendReady ? (
-                    <FontAwesome
-                      name="spinner"
-                      size={24}
-                      color={Globals.COLORS.MID_GRAY}
-                    />
-                  ) : (
-                    <FontAwesome
-                      name="send"
-                      size={24}
-                      color={Globals.COLORS.PINK}
-                      onPress={handleSend}
-                    />
-                  )}
+                  <View style={styles.textButtonContainer}>
+                    <View style={styles.sendIcon}>
+                      {isSending || !isSendReady ? (
+                        <FontAwesome
+                          name="spinner"
+                          size={24}
+                          color={Globals.COLORS.MID_GRAY}
+                        />
+                      ) : (
+                        <FontAwesome
+                          name="send"
+                          size={24}
+                          color={Globals.COLORS.PINK}
+                          onPress={handleSend}
+                        />
+                      )}
+                    </View>
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
-        </KeyboardAvoidingView>
-      )}
+          )}
+        </View>
+      </KeyboardAvoidingView>
 
       <Toaster ref={toastRef} />
     </LinearGradient>
@@ -508,18 +525,19 @@ export default SingleChatScreen;
 
 const styles = StyleSheet.create({
   keyboardAvoid: {
+    width: '100%',
     justifyContent: 'center',
     paddingHorizontal: Platform.OS === 'ios' ? 12 : 18,
     position: 'absolute',
-    bottom: Platform.OS === 'android' ? 20 : 40,
+    bottom: Platform.OS === 'android' ? 75 : 135,
     zIndex: 100,
   },
   container: {
     height: windowHeight,
     flex: 1,
     alignItems: 'center',
-    width: windowWidth,
     position: 'relative',
+    width: '100%',
   },
   header: {
     width: '100%',
@@ -536,6 +554,7 @@ const styles = StyleSheet.create({
         : 50,
     paddingHorizontal: 17,
     marginBottom: 0,
+    zIndex: 1000,
   },
   info: {
     flexDirection: 'row',
@@ -573,7 +592,6 @@ const styles = StyleSheet.create({
   keyboard: {
     display: 'flex',
     backgroundColor: Globals.COLORS.WHITE,
-    // backgroundColor: 'yellow',
     borderRadius: 16,
     width: '100%',
     flexDirection: 'row',
@@ -590,7 +608,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     minWidth: '75%',
     maxWidth: '75%',
-    // backgroundColor: 'pink',
     alignSelf: 'center',
     paddingTop: 10,
   },
