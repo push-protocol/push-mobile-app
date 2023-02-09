@@ -213,11 +213,15 @@ const SingleChatScreen = ({route}: any) => {
   }, []);
 
   const includeDate = (index: number) => {
-    if (index <= 0) {
+    if (chatMessages.length === 1) {
+      return true;
+    }
+    if (index < 0) {
       return false;
     }
 
-    if (index >= chatMessages.length - 1) {
+    // first message
+    if (index === chatMessages.length - 1) {
       return true;
     }
 
@@ -257,7 +261,11 @@ const SingleChatScreen = ({route}: any) => {
           <View style={styles.user}>
             <Image
               style={styles.image}
-              source={require('assets/chat/wallet1.png')}
+              source={
+                route.params?.image
+                  ? {uri: route.params.image}
+                  : require('assets/chat/wallet1.png')
+              }
             />
 
             <TouchableOpacity onPress={handleAddressCopy}>
@@ -542,6 +550,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     resizeMode: 'contain',
+    borderRadius: 40,
   },
   user: {
     flexDirection: 'row',

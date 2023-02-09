@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   time: {
-    fontSize: 13,
+    fontSize: 11,
     textAlign: 'right',
     position: 'absolute',
     right: 8,
