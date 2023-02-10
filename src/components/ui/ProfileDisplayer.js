@@ -1,10 +1,10 @@
 import React from 'react';
-import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
+import GLOBALS from 'src/Globals';
 import ENSButton from 'src/components/buttons/ENSButton';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 import Blockies from 'src/components/web3/Blockies';
-import GLOBALS from 'src/Globals';
 
 const MARGIN_RIGHT = 120;
 const ProfileDisplayer = props => {

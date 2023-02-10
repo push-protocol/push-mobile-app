@@ -1,14 +1,20 @@
-import CryptoJS from 'crypto-js';
 import {decrypt, encrypt} from 'eccrypto';
 import EthCrypto from 'eth-crypto';
 import {CONSTANTS, JSHash} from 'react-native-hash';
 import {publicKeyConvert, publicKeyVerify} from 'secp256k1-v4';
 
+const CryptoJS = require('crypto-js');
+
 // Crypographic Helper Function
 const CryptoHelper = {
   // To Encrypt with AES
   encryptWithAES: function (message, key) {
-    return CryptoJS.AES.encrypt(message, key).toString();
+    try {
+      var ciphertext = CryptoJS.AES.encrypt(message, key.toString()).toString();
+    } catch (e) {
+      return '';
+    }
+    return ciphertext;
   },
   // To Decrypt with AES
   decryptWithAES: function (message, key) {
@@ -257,6 +263,9 @@ const CryptoHelper = {
   // Get Public Key from Private Key
   getPublicKeyFromPrivateKey: privateKey => {
     return EthCrypto.publicKeyByPrivateKey(privateKey);
+  },
+  getAddressFromPublicKey: publicKey => {
+    return EthCrypto.publicKey.toAddress(publicKey);
   },
   // To generate a random secret
   generateRandomSecret: length => {

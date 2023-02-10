@@ -33,9 +33,6 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
     ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_SUBSCRIPTION;
 
   var wallet = '';
-  if (pKey !== '') {
-    wallet = new ethers.Wallet(pKey);
-  }
 
   const EPNS_DOMAIN = {
     name: 'EPNS COMM V1',
@@ -93,8 +90,6 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   const offChainSubscribe = async signature => {
     const apiUrl =
       ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_SUBSCRIBE_OFFCHAIN;
-
-    console.log('subscribe', apiUrl);
 
     const body = {
       signature: signature,

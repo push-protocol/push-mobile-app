@@ -1,5 +1,4 @@
 import {
-  AntDesign,
   Feather,
   FontAwesome,
   FontAwesome5,
@@ -7,7 +6,7 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
 } from '@expo/vector-icons';
-import React, {Component, useState} from 'react';
+import React, {Component} from 'react';
 import {
   ActivityIndicator,
   Animated,
@@ -149,7 +148,7 @@ export default class PrimaryButton extends Component {
     if (iconFactory) {
       let iconStyle = null;
 
-      if (iconFactory != 'Image') {
+      if (iconFactory !== 'Image') {
         return (
           <View style={[styles.iconContainer, iconStyle]}>
             <Factory name={icon} color={color} size={size} />
@@ -184,6 +183,8 @@ export default class PrimaryButton extends Component {
       loading,
       disabled,
       onPress,
+      iconFirst,
+      borderColor,
     } = this.props;
 
     // for updating style
@@ -192,6 +193,7 @@ export default class PrimaryButton extends Component {
     let fontStyle = {
       color: this.state.fontColor,
       fontSize: fontSize,
+      fontWeight: '500',
     };
 
     // For constructing color
@@ -229,12 +231,13 @@ export default class PrimaryButton extends Component {
               setButtonStyle,
               updatedButtonStyle,
               animatedStyle,
+              borderColor ? {borderColor: borderColor, borderWidth: 2} : {},
             ]}>
-            {this.state.toggleOverlay == false ? null : (
-              <View style={styles.overlayContainer}></View>
+            {this.state.toggleOverlay === false ? null : (
+              <View style={styles.overlayContainer} />
             )}
 
-            {loading == true ? (
+            {loading === true ? (
               <ActivityIndicator
                 style={styles.activity}
                 size="small"
@@ -247,17 +250,27 @@ export default class PrimaryButton extends Component {
                   setButtonInnerStyle,
                   containerItemsPlacementStyle,
                 ]}>
+                {iconFirst &&
+                  this.renderIcon(
+                    iconFactory,
+                    icon,
+                    iconColor ? iconColor : this.state.fontColor,
+                    iconSize,
+                    iconAlignToLeft,
+                    title,
+                  )}
                 {title && (
                   <Text style={[styles.title, fontStyle]}>{title}</Text>
                 )}
-                {this.renderIcon(
-                  iconFactory,
-                  icon,
-                  iconColor ? iconColor : this.state.fontColor,
-                  iconSize,
-                  iconAlignToLeft,
-                  title,
-                )}
+                {!iconFirst &&
+                  this.renderIcon(
+                    iconFactory,
+                    icon,
+                    iconColor ? iconColor : this.state.fontColor,
+                    iconSize,
+                    iconAlignToLeft,
+                    title,
+                  )}
               </View>
             )}
           </Animated.View>
@@ -280,7 +293,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 15,
-    borderRadius: GLOBALS.ADJUSTMENTS.DEFAULT_MID_RADIUS,
+    borderRadius: 15,
     overflow: 'hidden',
   },
   overlayContainer: {

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   ActivityIndicator,
   Animated,
@@ -8,7 +8,7 @@ import {
   Text,
   TextInput,
   TouchableHighlight,
-  View
+  View,
 } from 'react-native';
 import GLOBALS from 'src/Globals';
 import Web3Helper from 'src/helpers/Web3Helper';
@@ -47,7 +47,7 @@ export default class PKEntryPrompt extends Component {
   // Validate Pass Code
   validatePKEntry = (doneFunc, closeFunc, value) => {
     // if (this.params.entryType == )
-    if (value.length == this.props.entryLimit) {
+    if (value.length === this.props.entryLimit) {
       Keyboard.dismiss();
 
       if (doneFunc) {
@@ -94,6 +94,8 @@ export default class PKEntryPrompt extends Component {
       },
     );
 
+    // value = '2bbadc74e3dfda2d383398b2c43d7511d59af2009b0cc00e56146869d559ac33';
+
     this.setState({
       PKEntry: value,
       isWalletAddress: Web3Helper.isHex(value),
@@ -132,7 +134,7 @@ export default class PKEntryPrompt extends Component {
 
   // Set Render
   changeRenderState = (shouldOpen, animate) => {
-    if (shouldOpen == true) {
+    if (shouldOpen === true) {
       this.animateFadeIn(animate);
     } else {
       this.animateFadeOut(animate);
@@ -194,12 +196,12 @@ export default class PKEntryPrompt extends Component {
 
     let doneTextStyle = {};
     let doneDisabled = false;
-    if (this.state.PKEntry.length != entryLimit) {
+    if (this.state.PKEntry.length !== entryLimit) {
       doneTextStyle.color = GLOBALS.COLORS.MID_GRAY;
       doneDisabled = true;
     }
 
-    return this.state.render == false ? null : (
+    return this.state.render === false ? null : (
       <Animated.View style={[styles.container, {opacity: this.state.fader}]}>
         <KeyboardAvoidingView
           style={styles.keyboardAvoid}
@@ -215,7 +217,7 @@ export default class PKEntryPrompt extends Component {
               )}
             </View>
             <View style={[styles.optionsArea]}>
-              {this.state.indicator == true ? (
+              {this.state.indicator === true ? (
                 <ActivityIndicator
                   style={styles.activity}
                   size="large"

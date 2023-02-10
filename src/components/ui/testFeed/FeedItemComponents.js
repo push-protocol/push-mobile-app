@@ -370,7 +370,7 @@ const FeedItem = props => {
                       {moment
                         .utc(parseInt(timestamp) * 1000)
                         .local()
-                        .format('DD MMM YYYY | hh:mm A')}
+                        .format('DD MMM YYYY | hh:mm A')}{' '}
                     </Text>
                   </View>
                 )}

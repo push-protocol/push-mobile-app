@@ -1,6 +1,5 @@
 import {useFocusEffect} from '@react-navigation/native';
 import {Camera} from 'expo-camera';
-import * as Permissions from 'expo-permissions';
 import React, {useEffect, useState} from 'react';
 import {
   Animated,
@@ -20,6 +19,7 @@ import OverlayBlur from 'src/components/modals/OverlayBlur';
 import PKEntryPrompt from 'src/components/modals/PKEntryPrompt';
 import QRScanner from 'src/components/modals/QRScanner';
 import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
+import {QR_TYPES} from 'src/enums';
 import {setInitialSignin} from 'src/redux/authSlice';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
@@ -127,6 +127,10 @@ export default props => {
     setPrivateKey(code);
   };
 
+  const handleQRCodeFromDapp = code => {
+    loadLoginFromDapp(code);
+  };
+
   // Reset PK Code
   const resetPrivateKey = () => {
     setPrivateKey('');
@@ -169,16 +173,26 @@ export default props => {
     dispatch(
       setInitialSignin({
         wallet: walletAddress,
-        userPKey: '',
         ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
         cns: cns,
         ens: ens,
         index: 0,
       }),
     );
-
     // Goto Next Screen
-    navigation.navigate(GLOBALS.SCREENS.BIOMETRIC);
+    navigation.navigate(GLOBALS.SCREENS.BIOMETRIC, {
+      wallet: walletAddress,
+      privateKey: privateKey,
+      fromOnboarding: props.route.params.fromOnboarding,
+    });
+  };
+
+  const loadLoginFromDapp = async code => {
+    // Goto Next Screen
+    navigation.navigate(GLOBALS.SCREENS.SIGNINFROMDAPP, {
+      code: code,
+      navigation: navigation,
+    });
   };
 
   // RETURN
@@ -245,7 +259,7 @@ export default props => {
                 iconFactory="MaterialIcons"
                 icon="qr-code-scanner"
                 iconSize={24}
-                title="Scan via QR Code"
+                title="Scan QR Code for Private Key"
                 fontSize={16}
                 fontColor={GLOBALS.COLORS.WHITE}
                 bgColor={GLOBALS.COLORS.GRADIENT_SECONDARY}
@@ -333,10 +347,16 @@ export default props => {
       <QRScanner
         ref={QRScannerRef}
         navigation={navigation}
-        title="[wb:Please scan your] [d:wallet's private Key] [wb:to connect it to EPNS.]"
+        navHeader="Link Wallet Address"
+        errorMessage="Ensure that it is a valid Eth private key QR"
+        title="Scan your Eth private key to link your device to the push app"
+        qrType={QR_TYPES.ETH_PK_SCAN}
         doneFunc={code => {
           onPrivateKeyDetect(code);
         }}
+        // doneFunc={code => {
+        //   handleQRCodeFromDapp(code);
+        // }}
         closeFunc={() => toggleQRScanner(false, navigation)}
       />
 

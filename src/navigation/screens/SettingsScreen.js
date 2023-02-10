@@ -1,5 +1,5 @@
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {FlatList, Image, StatusBar, StyleSheet, Text, View} from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import {useDispatch, useSelector} from 'react-redux';
@@ -8,9 +8,11 @@ import ImageTitleButton from 'src/components/buttons/ImageTitleButton';
 import ImageTitleSwitchButton from 'src/components/buttons/ImageTitleSwitchButton';
 import Dropdown from 'src/components/custom/Dropdown';
 import {Toaster} from 'src/components/indicators/Toaster';
+import ConfirmResetWallet from 'src/components/modals/ConfirmResetWallet';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 import ENV_CONFIG from 'src/env.config';
 import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
+import {clearStorage} from 'src/navigation/screens/chats/helpers/storage';
 import {selectUsers, setLogout} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
@@ -24,6 +26,10 @@ const SettingsScreen = ({}) => {
   // Setup Refs
   const OverlayBlurRef = useRef(null);
   const ToasterRef = useRef(null);
+
+  // To Reset Wallet
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // FUNCTIONS
   // // ADD HEADER COMPONENET
@@ -82,9 +88,18 @@ const SettingsScreen = ({}) => {
 
   // To Reset Wallet
   const resetWallet = async () => {
+    setIsModalOpen(true);
+  };
+
+  const clearUserData = async () => {
     await AuthenticationHelper.resetSignedInUser();
     await MetaStorage.instance.clearStorage();
+    await clearStorage();
     dispatch(setLogout(null));
+    setIsModalOpen(false);
+  };
+  const onCancel = () => {
+    setIsModalOpen(false);
   };
 
   // CONSTANTS
@@ -137,6 +152,30 @@ const SettingsScreen = ({}) => {
       },
       type: 'button',
     });
+  }
+
+  if (isModalOpen) {
+    return (
+      <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+          <StatusBar
+            barStyle={'dark-content'}
+            translucent
+            backgroundColor="transparent"
+          />
+          <View style={styles.modalContainer}>
+            <ConfirmResetWallet
+              title="Swipe / Reset Wallet"
+              subtitle="Resetting your wallet means all your data will be cleared from this device and you will be logged out. Are you sure you want to proceed?"
+              closeTitle="Yes"
+              closeFunc={clearUserData}
+              cancelTitle="No"
+              cancelFunc={onCancel}
+            />
+          </View>
+        </SafeAreaView>
+      </View>
+    );
   }
 
   // RENDER

@@ -1,4 +1,3 @@
-import notifee from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import WalletConnectProvider from '@walletconnect/react-native-dapp';
@@ -15,7 +14,7 @@ import {NotifeeDisplayNotification} from 'src/notifee';
 import store from 'src/redux';
 import Notify from 'src/singletons/Notify';
 
-import './shim.js';
+import appConfig from './app.json';
 
 let persistor = persistStore(store);
 
@@ -31,12 +30,12 @@ const App = () => {
 
     // Listen to whether the token changes
     const onTokenRefresh = messaging().onTokenRefresh(token => {
+      console.log('got token', onTokenRefresh);
       Notify.instance.saveDeviceToken(token, true); // true means it's a refresh
     });
 
     const handleBackgroundMessageHandler =
       messaging().setBackgroundMessageHandler(async remoteMessage => {
-        console.log('i was called with', remoteMessage);
         await NotifeeDisplayNotification(remoteMessage);
       });
 
@@ -52,7 +51,11 @@ const App = () => {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <WalletConnectProvider
-            redirectUrl={`${ENV_CONFIG.DEEPLINK_URL}`}
+            redirectUrl={
+              Platform.OS === 'web'
+                ? window.location.origin
+                : `${appConfig.expo.scheme}://`
+            }
             bridge="https://bridge.walletconnect.org"
             clientMeta={{
               description: 'Connect with WalletConnect',
