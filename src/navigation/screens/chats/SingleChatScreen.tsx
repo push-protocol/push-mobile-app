@@ -9,6 +9,7 @@ import {useNavigation} from '@react-navigation/native';
 import {FlashList} from '@shopify/flash-list';
 import React, {useEffect, useRef, useState} from 'react';
 import {
+  Animated,
   Dimensions,
   Image,
   Keyboard,
@@ -74,6 +75,9 @@ const SingleChatScreen = ({route}: any) => {
   const [isAccepting, setIsAccepting] = useState(false);
   const [showScrollDown, setShowScrollDown] = useState(false);
   const [listHeight, setListHeight] = useState(0);
+  const [indicatorPos, setIndicatorPos] = useState(new Animated.Value(0));
+  const [indicatorSize, setIndicatorSize] = useState(0);
+  const [indicatorDiff, setIndicatorDiff] = useState(0);
   const SCORLL_OFF_SET = 250;
 
   const [
@@ -150,22 +154,6 @@ const SingleChatScreen = ({route}: any) => {
   };
 
   const onDecline = () => {};
-  // const [visible, setVisible] = useState(false);
-  // const hideMenu = () => setVisible(false);
-  // const showMenu = () => setVisible(true);
-
-  // const MENU_ITEMS = [
-  //   {
-  //     text: 'Give Nickname',
-  //     icon: <AntDesign name="user" size={24} color="black" />,
-  //     onPress: hideMenu,
-  //   },
-  //   {
-  //     text: 'Block User',
-  //     icon: <Entypo name="block" size={24} color="black" />,
-  //     onPress: hideMenu,
-  //   },
-  // ];
 
   const handleAddressCopy = () => {
     Clipboard.setString(senderAddress);
@@ -211,6 +199,21 @@ const SingleChatScreen = ({route}: any) => {
       listener.remove();
     };
   }, []);
+
+  // scroll bar indicator
+  useEffect(() => {
+    const visibleHeight = Math.min(SectionHeight, listHeight);
+
+    const _indicatorSize =
+      listHeight > visibleHeight
+        ? (visibleHeight * visibleHeight) / listHeight
+        : visibleHeight;
+    const difference =
+      visibleHeight > _indicatorSize ? visibleHeight - _indicatorSize : 1;
+
+    setIndicatorSize(_indicatorSize);
+    setIndicatorDiff(difference);
+  }, [listHeight, indicatorPos]);
 
   const includeDate = (index: number) => {
     if (chatMessages.length === 1) {
@@ -336,13 +339,15 @@ const SingleChatScreen = ({route}: any) => {
                   renderItem={({item, index}) => renderItem({item, index})}
                   keyExtractor={(msg, index) => msg.time.toString() + index}
                   showsHorizontalScrollIndicator={false}
-                  showsVerticalScrollIndicator={true}
+                  showsVerticalScrollIndicator={false}
                   onScroll={event => {
-                    if (event.nativeEvent.contentOffset.y > SCORLL_OFF_SET) {
+                    const y = event.nativeEvent.contentOffset.y;
+                    if (y > SCORLL_OFF_SET) {
                       setShowScrollDown(true);
                     } else {
                       setShowScrollDown(false);
                     }
+                    setIndicatorPos(y);
                   }}
                   onScrollToIndexFailed={() => {
                     console.log('err scorlling ');
@@ -419,10 +424,33 @@ const SingleChatScreen = ({route}: any) => {
                 </View>
               )}
 
-              {/* Donot show intent checkbox in chat page */}
-              {/* {!isIntentReceivePage && (
-            //  />
-          )} */}
+              <Animated.View
+                style={[
+                  {
+                    position: 'absolute',
+                    width: 6,
+                    backgroundColor: Globals.COLORS.PINK,
+                    height: indicatorSize,
+                    right: 5,
+                    borderRadius: 6,
+                  },
+                  {
+                    transform: [
+                      {
+                        translateY: Animated.multiply(
+                          indicatorPos,
+                          Math.min(SectionHeight, listHeight) /
+                            (listHeight + 0.001),
+                        ).interpolate({
+                          inputRange: [0, indicatorDiff],
+                          outputRange: [0, indicatorDiff],
+                          extrapolate: 'clamp',
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              />
             </View>
           )}
 
