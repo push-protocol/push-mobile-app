@@ -62,10 +62,10 @@ export default props => {
   const [walletAddressVerified, setWalletAddressVerified] = useState(false);
   const dispatch = useDispatch();
 
-  const NoticePromptRef = React.createRef();
-  const QRScannerRef = React.createRef();
-  const OverlayBlurRef = React.createRef();
-  const TextEntryPromptRef = React.createRef();
+  const NoticePromptRef = React.useRef();
+  const QRScannerRef = React.useRef();
+  const OverlayBlurRef = React.useRef();
+  const TextEntryPromptRef = React.useRef();
 
   useEffect(() => {}, [walletAddressVerified]);
 
@@ -79,6 +79,7 @@ export default props => {
     notice,
     showIndicator,
   ) => {
+    console.log('its', NoticePromptRef.current);
     // Set Notice First
     NoticePromptRef.current.changeTitle(title);
     NoticePromptRef.current.changeSubtitle(subtitle);
@@ -103,23 +104,26 @@ export default props => {
 
   // Users Permissions
   const getCameraPermissionAsync = async navigation => {
-    if (!permission.granted) {
-      let {granted} = await requestPermission();
-      if (granted) {
-        // show message
-        toggleNoticePrompt(
-          true,
-          true,
-          'Camera Access',
-          'Need Camera Permissions for scanning QR Code',
-          'Please enable Camera Permissions from [appsettings:App Settings] to continue',
-          false,
-        );
-        return;
-      }
+    // if permisson granted then proceed
+    if (permission.granted) {
+      toggleQRScanner(true, navigation);
     }
 
-    toggleQRScanner(true, navigation);
+    // ask for the permission
+    let {granted} = await requestPermission();
+    if (granted) {
+      toggleQRScanner(true, navigation);
+    }
+
+    // ask user explicitly to enable the camera
+    toggleNoticePrompt(
+      true,
+      true,
+      'Camera Access',
+      'Need Camera Permissions for scanning QR Code',
+      'Please enable Camera Permissions from [appsettings:App Settings] to continue',
+      false,
+    );
   };
 
   // Detect PK Code
@@ -362,7 +366,6 @@ export default props => {
 
       {/* Overlay Blur and Notice to show in case permissions for camera aren't given */}
       <OverlayBlur ref={OverlayBlurRef} />
-
       <NoticePrompt
         ref={NoticePromptRef}
         closeTitle="OK"
