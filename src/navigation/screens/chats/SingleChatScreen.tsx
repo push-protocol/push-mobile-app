@@ -34,6 +34,7 @@ import {pgpSign} from 'src/helpers/w2w/pgp';
 import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
 
 import {AcceptIntent, MessageComponent} from './components';
+import {CustomScroll} from './components/CustomScroll';
 import './giphy/giphy.setup';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {ChatMessage} from './helpers/chatResolver';
@@ -75,9 +76,9 @@ const SingleChatScreen = ({route}: any) => {
   const [isAccepting, setIsAccepting] = useState(false);
   const [showScrollDown, setShowScrollDown] = useState(false);
   const [listHeight, setListHeight] = useState(0);
-  const [indicatorPos, setIndicatorPos] = useState(new Animated.Value(0));
+  const [indicatorPos] = useState(() => new Animated.Value(0));
   const [indicatorSize, setIndicatorSize] = useState(0);
-  const [indicatorDiff, setIndicatorDiff] = useState(0);
+  // const [indicatorDiff, setIndicatorDiff] = useState(0);
   const SCORLL_OFF_SET = 250;
 
   const [
@@ -208,11 +209,11 @@ const SingleChatScreen = ({route}: any) => {
       listHeight > visibleHeight
         ? (visibleHeight * visibleHeight) / listHeight
         : visibleHeight;
-    const difference =
-      visibleHeight > _indicatorSize ? visibleHeight - _indicatorSize : 1;
+    // const difference =
+    //   visibleHeight > _indicatorSize ? visibleHeight - _indicatorSize : 1;
 
     setIndicatorSize(_indicatorSize);
-    setIndicatorDiff(difference);
+    // setIndicatorDiff(difference);
   }, [listHeight, indicatorPos]);
 
   const includeDate = (index: number) => {
@@ -323,14 +324,7 @@ const SingleChatScreen = ({route}: any) => {
               />
             </View>
           ) : (
-            <View
-              style={[
-                styles.section,
-                {
-                  height: Math.min(SectionHeight, listHeight),
-                  minHeight: 200,
-                },
-              ]}>
+            <View style={getSectionStyles(listHeight)}>
               {chatMessages.length > 0 ? (
                 <FlashList
                   // @ts-ignore
@@ -340,6 +334,7 @@ const SingleChatScreen = ({route}: any) => {
                   keyExtractor={(msg, index) => msg.time.toString() + index}
                   showsHorizontalScrollIndicator={false}
                   showsVerticalScrollIndicator={false}
+                  overScrollMode={'never'}
                   onScroll={event => {
                     const y = event.nativeEvent.contentOffset.y;
                     if (y > SCORLL_OFF_SET) {
@@ -347,7 +342,8 @@ const SingleChatScreen = ({route}: any) => {
                     } else {
                       setShowScrollDown(false);
                     }
-                    setIndicatorPos(y);
+                    // setIndicatorPos(y);
+                    indicatorPos.setValue(y);
                   }}
                   onScrollToIndexFailed={() => {
                     console.log('err scorlling ');
@@ -424,32 +420,11 @@ const SingleChatScreen = ({route}: any) => {
                 </View>
               )}
 
-              <Animated.View
-                style={[
-                  {
-                    position: 'absolute',
-                    width: 6,
-                    backgroundColor: Globals.COLORS.PINK,
-                    height: indicatorSize,
-                    right: 5,
-                    borderRadius: 6,
-                  },
-                  {
-                    transform: [
-                      {
-                        translateY: Animated.multiply(
-                          indicatorPos,
-                          Math.min(SectionHeight, listHeight) /
-                            (listHeight + 0.001),
-                        ).interpolate({
-                          inputRange: [0, indicatorDiff],
-                          outputRange: [0, indicatorDiff],
-                          extrapolate: 'clamp',
-                        }),
-                      },
-                    ],
-                  },
-                ]}
+              <CustomScroll
+                sectionHeight={SectionHeight}
+                indicatorPos={indicatorPos}
+                indicatorSize={indicatorSize}
+                listHeight={listHeight}
               />
             </View>
           )}
@@ -551,6 +526,16 @@ const SingleChatScreen = ({route}: any) => {
 
 export default SingleChatScreen;
 
+const getSectionStyles = (listHeight: number) =>
+  StyleSheet.create({
+    section: {
+      width: windowWidth,
+      overflow: 'scroll',
+      height: Math.min(SectionHeight, listHeight),
+      minHeight: 200,
+    },
+  }).section;
+
 const styles = StyleSheet.create({
   keyboardAvoid: {
     width: '100%',
@@ -610,10 +595,7 @@ const styles = StyleSheet.create({
     color: Globals.COLORS.BLACK,
     fontWeight: '500',
   },
-  section: {
-    width: windowWidth,
-    overflow: 'scroll',
-  },
+
   moreIcon: {
     marginTop: -3,
   },
