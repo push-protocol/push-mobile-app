@@ -9,10 +9,7 @@ import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 import {UserChatCredentials} from '../ChatScreen';
 import {SocketConfig} from './socketHelper';
-import {
-  checkIfItemInCache,
-  filterChatAndRequestFeeds,
-} from './userChatLoaderHelper';
+import {filterChatAndRequestFeeds} from './userChatLoaderHelper';
 
 export interface ChatData {
   connectedUserData: PushNodeClient.ConnectedUser | undefined;
@@ -37,7 +34,6 @@ const useChatLoader = (
     requests: [],
   });
 
-  const feedCache: ChatFeedCache = {};
   const users = useSelector(selectUsers);
   const currentUser = useSelector(selectCurrentUser);
   const pushSDKSocket = useRef<Socket | null>(null);
@@ -73,11 +69,6 @@ const useChatLoader = (
       return;
     }
 
-    // check if message is already contained in cached
-    // donot update if cache is same
-    if (checkIfItemInCache(feedCache, feeds)) {
-      return;
-    }
     setIboxData(feeds, ethAddress);
   };
 

@@ -1,6 +1,7 @@
 import {Ionicons} from '@expo/vector-icons';
 import {Audio} from 'expo-av';
 import {Camera} from 'expo-camera';
+import Constants from 'expo-constants';
 import React, {Component} from 'react';
 import {
   Animated,
@@ -147,6 +148,9 @@ export default class QRScanner extends Component {
       this.props;
 
     let paddingTop = getStatusBarHeight();
+    if (Platform.OS === 'ios') {
+      paddingTop = Constants.statusBarHeight;
+    }
     let backicon = 'ios-arrow-back';
     if (Platform.OS === 'android') {
       backicon = 'md-arrow-back';
@@ -287,7 +291,7 @@ const scanLabel = StyleSheet.create({
     position: 'absolute',
     width: '90%',
     left: '5%',
-    top: 100,
+    top: 120,
     backgroundColor: '#2F313799',
     borderRadius: 16,
     paddingHorizontal: 21,

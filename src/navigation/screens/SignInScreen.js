@@ -110,23 +110,26 @@ const SignInScreen = ({route, navigation}) => {
 
   // Users Permissions
   const getCameraPermissionAsync = async _navigation => {
-    if (!permission.granted) {
-      let {granted} = await requestPermission();
-      if (granted) {
-        // show message
-        toggleNoticePrompt(
-          true,
-          true,
-          'Camera Access',
-          'Need Camera Permissions for scanning QR Code',
-          'Please enable Camera Permissions from [appsettings:App Settings] to continue',
-          false,
-        );
-        return;
-      }
+    // if permisson granted then proceed
+    if (permission.granted) {
+      toggleQRScanner(true, _navigation);
     }
 
-    toggleQRScanner(true, _navigation);
+    // ask for the permission
+    let {granted} = await requestPermission();
+    if (granted) {
+      toggleQRScanner(true, _navigation);
+    }
+
+    // ask user explicitly to enable the camera
+    toggleNoticePrompt(
+      true,
+      true,
+      'Camera Access',
+      'Need Camera Permissions for scanning QR Code',
+      'Please enable Camera Permissions from [appsettings:App Settings] to continue',
+      false,
+    );
   };
 
   // Detect PK Code

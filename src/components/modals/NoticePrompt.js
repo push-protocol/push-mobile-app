@@ -56,7 +56,7 @@ export default class NoticePrompt extends Component {
 
   // Set Render
   changeRenderState = (shouldOpen, animate) => {
-    if (shouldOpen == true) {
+    if (shouldOpen) {
       this.animateFadeIn(animate);
     } else {
       this.animateFadeOut(animate);
@@ -106,7 +106,7 @@ export default class NoticePrompt extends Component {
   render() {
     const {closeTitle, closeFunc} = this.props;
 
-    return this.state.render == false ? null : (
+    return this.state.render === false ? null : (
       <Animated.View style={[styles.container, {opacity: this.state.fader}]}>
         <View style={styles.modal}>
           <View style={[styles.titleArea]}>
@@ -118,7 +118,8 @@ export default class NoticePrompt extends Component {
             )}
           </View>
           <View style={[styles.noticeArea]}>
-            {this.state.notice == null ? null : this.state.indicator == true ? (
+            {this.state.notice == null ? null : this.state.indicator ===
+              true ? (
               <ActivityIndicator
                 style={styles.activity}
                 size="large"
@@ -133,7 +134,7 @@ export default class NoticePrompt extends Component {
               />
             )}
           </View>
-          {this.state.indicator == true ? null : (
+          {this.state.indicator === true ? null : (
             <View style={[styles.cancelArea]}>
               <TouchableHighlight
                 style={[styles.cancel]}

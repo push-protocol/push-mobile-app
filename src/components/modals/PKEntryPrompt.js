@@ -94,7 +94,7 @@ export default class PKEntryPrompt extends Component {
       },
     );
 
-    // value = '2bbadc74e3dfda2d383398b2c43d7511d59af2009b0cc00e56146869d559ac33';
+    // value = '5801e9f9b7d98b62156c99fa5b8f9e51c54feae7045b54e4d1c23946d3078eda';
 
     this.setState({
       PKEntry: value,

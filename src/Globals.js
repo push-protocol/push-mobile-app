@@ -22,6 +22,11 @@ export default {
     ENDPOINT_FETCH_SUBSCRIPTION: '/channels/_is_user_subscribed',
     ENDPOINT_SUBSCRIBE_OFFCHAIN: '/channels/subscribe_offchain',
     ENDPOINT_UNSUBSCRIBE_OFFCHAIN: '/channels/unsubscribe_offchain',
+
+    DAPP_LINK: {
+      PROD: 'app.push.org',
+      STAGING: 'staging.push.org',
+    },
   },
 
   SOCKETS: {
