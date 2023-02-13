@@ -59,6 +59,7 @@ const ChatItem = (props: SingleChatItemProps) => {
       combinedDID: props.combinedDID,
       isIntentReceivePage: isIntenReceivePage,
       isIntentSendPage: isIntentSendPage,
+      image: props.image,
     });
   };
 
