@@ -167,7 +167,11 @@ const useSendMessage = (
       return [cid, chatMessage];
     } catch (error) {
       console.log('error', error);
-      showToast(error, '', ToasterOptions.TYPE.GRADIENT_PRIMARY);
+      showToast(
+        'Intent already sent',
+        '',
+        ToasterOptions.TYPE.GRADIENT_PRIMARY,
+      );
     } finally {
       setIsSending(false);
     }

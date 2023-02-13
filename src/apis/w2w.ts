@@ -149,7 +149,11 @@ export const getInbox = async (did: string): Promise<Feeds[] | undefined> => {
       if (response.status >= 500) {
         continue;
       }
-      const data: Feeds[] = await response.json();
+      // const data: Feeds[] = await response.json();
+      const raw_data: any = await response.json();
+      const data: Feeds[] = raw_data.filter(
+        (el: any) => !('groupInformation' in el),
+      );
       return data;
     } catch (err) {
       if (retry > 1) {

@@ -216,6 +216,25 @@ const SingleChatScreen = ({route}: any) => {
     // setIndicatorDiff(difference);
   }, [listHeight, indicatorPos]);
 
+  const [keyboardStatus, setKeyboardStatus] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', e => {
+      setKeyboardStatus(true);
+      console.log('aaaaa \n\nset', e.endCoordinates.height);
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardStatus(false);
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
   const includeDate = (index: number) => {
     if (chatMessages.length === 1) {
       return true;
@@ -276,27 +295,6 @@ const SingleChatScreen = ({route}: any) => {
               <Text style={styles.wallet}>{senderAddressFormatted}</Text>
             </TouchableOpacity>
           </View>
-
-          {/* <Menu
-            visible={visible}
-            anchor={
-              <Feather
-                name="more-vertical"
-                onPress={showMenu}
-                size={24}
-                color="black"
-              />
-            }
-            onRequestClose={hideMenu}>
-            {MENU_ITEMS.map((item, index) => (
-              <MenuItem onPress={item.onPress} key={index}>
-                <View style={styles.menuItem}>
-                  {item.icon}
-                  <Text style={styles.menuItemText}>{item.text}</Text>
-                </View>
-              </MenuItem>
-            ))}
-          </Menu> */}
         </View>
       </View>
 
@@ -324,7 +322,13 @@ const SingleChatScreen = ({route}: any) => {
               />
             </View>
           ) : (
-            <View style={getSectionStyles(listHeight)}>
+            <View
+              style={[
+                getSectionStyles(listHeight),
+                keyboardStatus && {
+                  height: Math.min(listHeight + keyboardHeight, SectionHeight),
+                },
+              ]}>
               {chatMessages.length > 0 ? (
                 <FlashList
                   // @ts-ignore
@@ -402,6 +406,7 @@ const SingleChatScreen = ({route}: any) => {
                 />
               ) : (
                 <View style={{marginTop: 10}}>
+                  {keyboardStatus && <View style={{height: keyboardHeight}} />}
                   <EncryptionInfo
                     addrs={connectedUser.wallets}
                     senderAddrs={senderAddress}
