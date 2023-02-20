@@ -1,6 +1,5 @@
 import {useFocusEffect} from '@react-navigation/native';
 import {Camera} from 'expo-camera';
-import * as Permissions from 'expo-permissions';
 import React, {useEffect, useState} from 'react';
 import {
   Animated,
@@ -20,6 +19,7 @@ import OverlayBlur from 'src/components/modals/OverlayBlur';
 import PKEntryPrompt from 'src/components/modals/PKEntryPrompt';
 import QRScanner from 'src/components/modals/QRScanner';
 import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
+import {QR_TYPES} from 'src/enums';
 import {setInitialSignin} from 'src/redux/authSlice';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
@@ -62,10 +62,10 @@ export default props => {
   const [walletAddressVerified, setWalletAddressVerified] = useState(false);
   const dispatch = useDispatch();
 
-  const NoticePromptRef = React.createRef();
-  const QRScannerRef = React.createRef();
-  const OverlayBlurRef = React.createRef();
-  const TextEntryPromptRef = React.createRef();
+  const NoticePromptRef = React.useRef();
+  const QRScannerRef = React.useRef();
+  const OverlayBlurRef = React.useRef();
+  const TextEntryPromptRef = React.useRef();
 
   useEffect(() => {}, [walletAddressVerified]);
 
@@ -103,28 +103,37 @@ export default props => {
 
   // Users Permissions
   const getCameraPermissionAsync = async navigation => {
-    if (!permission.granted) {
-      let {granted} = await requestPermission();
-      if (granted) {
-        // show message
-        toggleNoticePrompt(
-          true,
-          true,
-          'Camera Access',
-          'Need Camera Permissions for scanning QR Code',
-          'Please enable Camera Permissions from [appsettings:App Settings] to continue',
-          false,
-        );
-        return;
-      }
+    // if permisson granted then proceed
+    if (permission.granted) {
+      toggleQRScanner(true, navigation);
+      return;
     }
 
-    toggleQRScanner(true, navigation);
+    // ask for the permission
+    let {granted} = await requestPermission();
+    if (granted) {
+      toggleQRScanner(true, navigation);
+      return;
+    }
+
+    // ask user explicitly to enable the camera
+    toggleNoticePrompt(
+      true,
+      true,
+      'Camera Access',
+      'Need Camera Permissions for scanning QR Code',
+      'Please enable Camera Permissions from [appsettings:App Settings] to continue',
+      false,
+    );
   };
 
   // Detect PK Code
   const onPrivateKeyDetect = code => {
     setPrivateKey(code);
+  };
+
+  const handleQRCodeFromDapp = code => {
+    loadLoginFromDapp(code);
   };
 
   // Reset PK Code
@@ -169,16 +178,26 @@ export default props => {
     dispatch(
       setInitialSignin({
         wallet: walletAddress,
-        userPKey: '',
         ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
         cns: cns,
         ens: ens,
         index: 0,
       }),
     );
-
     // Goto Next Screen
-    navigation.navigate(GLOBALS.SCREENS.BIOMETRIC);
+    navigation.navigate(GLOBALS.SCREENS.BIOMETRIC, {
+      wallet: walletAddress,
+      privateKey: privateKey,
+      fromOnboarding: props.route.params.fromOnboarding,
+    });
+  };
+
+  const loadLoginFromDapp = async code => {
+    // Goto Next Screen
+    navigation.navigate(GLOBALS.SCREENS.SIGNINFROMDAPP, {
+      code: code,
+      navigation: navigation,
+    });
   };
 
   // RETURN
@@ -245,7 +264,7 @@ export default props => {
                 iconFactory="MaterialIcons"
                 icon="qr-code-scanner"
                 iconSize={24}
-                title="Scan via QR Code"
+                title="Scan QR Code for Private Key"
                 fontSize={16}
                 fontColor={GLOBALS.COLORS.WHITE}
                 bgColor={GLOBALS.COLORS.GRADIENT_SECONDARY}
@@ -333,16 +352,21 @@ export default props => {
       <QRScanner
         ref={QRScannerRef}
         navigation={navigation}
-        title="[wb:Please scan your] [d:wallet's private Key] [wb:to connect it to EPNS.]"
+        navHeader="Link Wallet Address"
+        errorMessage="Ensure that it is a valid Eth private key QR"
+        title="Scan your Eth private key to link your device to the push app"
+        qrType={QR_TYPES.ETH_PK_SCAN}
         doneFunc={code => {
           onPrivateKeyDetect(code);
         }}
+        // doneFunc={code => {
+        //   handleQRCodeFromDapp(code);
+        // }}
         closeFunc={() => toggleQRScanner(false, navigation)}
       />
 
       {/* Overlay Blur and Notice to show in case permissions for camera aren't given */}
       <OverlayBlur ref={OverlayBlurRef} />
-
       <NoticePrompt
         ref={NoticePromptRef}
         closeTitle="OK"
@@ -385,7 +409,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
-    top: 0,
+    top: -25,
     bottom: 0,
     padding: 20,
     maxWidth: 540,

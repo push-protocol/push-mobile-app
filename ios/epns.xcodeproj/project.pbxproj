@@ -210,6 +210,7 @@
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
 				A3E150CDD36C23E4423D0E83 /* [CP] Copy Pods Resources */,
+				8846877DF69C3039A7BE73A9 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -234,6 +235,7 @@
 				1EA8E1C428D77AA600268DAD /* Embed App Extensions */,
 				1E022C3F8D8C4739E22DCD98 /* [CP] Copy Pods Resources */,
 				D3BA2CB21D4C198BCB62DC01 /* [CP-User] [RNFB] Core Configuration */,
+				91D2F20B7B099A251AD22E8B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -354,6 +356,40 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-epns/Pods-epns-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8846877DF69C3039A7BE73A9 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-epns-epnsTests/Pods-epns-epnsTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-epns-epnsTests/Pods-epns-epnsTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-epns-epnsTests/Pods-epns-epnsTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		91D2F20B7B099A251AD22E8B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-epns/Pods-epns-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-epns/Pods-epns-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-epns/Pods-epns-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A3E150CDD36C23E4423D0E83 /* [CP] Copy Pods Resources */ = {
@@ -526,7 +562,7 @@
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = epns/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = EPNS;
+				INFOPLIST_KEY_CFBundleDisplayName = "Push (EPNS)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -561,7 +597,7 @@
 				CURRENT_PROJECT_VERSION = 82;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				INFOPLIST_FILE = epns/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = EPNS;
+				INFOPLIST_KEY_CFBundleDisplayName = "Push (EPNS)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

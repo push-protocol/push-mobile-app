@@ -4,6 +4,7 @@ import {Camera} from 'expo-camera';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   Animated,
+  Dimensions,
   InteractionManager,
   StyleSheet,
   Text,
@@ -14,12 +15,13 @@ import {useDispatch} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import StylishLabel from 'src/components/labels/StylishLabel';
-import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
+import DetailedInfoSignIn from 'src/components/misc/DetailedInfoSignIn';
 import NoticePrompt from 'src/components/modals/NoticePrompt';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 import PKEntryPrompt from 'src/components/modals/PKEntryPrompt';
 import QRScanner from 'src/components/modals/QRScanner';
 import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
+import {QR_TYPES} from 'src/enums';
 import {setInitialSignin} from 'src/redux/authSlice';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
@@ -46,6 +48,8 @@ function GetScreenInsets() {
     return <View style={styles.noInsetAdjustment} />;
   }
 }
+
+const windowHeight = Dimensions.get('window').height;
 
 const SignInScreen = ({route, navigation}) => {
   // Camera
@@ -106,23 +110,26 @@ const SignInScreen = ({route, navigation}) => {
 
   // Users Permissions
   const getCameraPermissionAsync = async _navigation => {
-    if (!permission.granted) {
-      let {granted} = await requestPermission();
-      if (granted) {
-        // show message
-        toggleNoticePrompt(
-          true,
-          true,
-          'Camera Access',
-          'Need Camera Permissions for scanning QR Code',
-          'Please enable Camera Permissions from [appsettings:App Settings] to continue',
-          false,
-        );
-        return;
-      }
+    // if permisson granted then proceed
+    if (permission.granted) {
+      toggleQRScanner(true, _navigation);
     }
 
-    toggleQRScanner(true, _navigation);
+    // ask for the permission
+    let {granted} = await requestPermission();
+    if (granted) {
+      toggleQRScanner(true, _navigation);
+    }
+
+    // ask user explicitly to enable the camera
+    toggleNoticePrompt(
+      true,
+      true,
+      'Camera Access',
+      'Need Camera Permissions for scanning QR Code',
+      'Please enable Camera Permissions from [appsettings:App Settings] to continue',
+      false,
+    );
   };
 
   // Detect PK Code
@@ -220,7 +227,7 @@ const SignInScreen = ({route, navigation}) => {
         <Text style={styles.header}>Wallet Address</Text>
         <View style={styles.inner}>
           {walletAddress === '' ? (
-            <DetailedInfoPresenter
+            <DetailedInfoSignIn
               style={styles.intro}
               icon={require('assets/ui/wallet.png')}
               contentView={
@@ -229,6 +236,7 @@ const SignInScreen = ({route, navigation}) => {
                     style={styles.para}
                     fontSize={16}
                     title="[b:Push (EPNS)] requires your wallet address to deliver [d:notifications] meant for you!"
+                    textStyle={{lineHeight: 26, textAlign: 'center'}}
                   />
                 </View>
               }
@@ -261,10 +269,10 @@ const SignInScreen = ({route, navigation}) => {
                 icon={require('assets/ui/walletConnect.png')}
                 iconSize={24}
                 title={!connector.connected ? 'WalletConnect' : 'Disconnect'}
-                fontSize={16}
+                fontSize={18}
                 fontColor={GLOBALS.COLORS.WHITE}
-                bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
-                setHeight={60}
+                bgColor={GLOBALS.COLORS.BLACK}
+                setHeight={55}
                 disabled={false}
                 onPress={() => {
                   if (connector.connected) {
@@ -273,6 +281,7 @@ const SignInScreen = ({route, navigation}) => {
                     connector.connect();
                   }
                 }}
+                iconFirst
               />
 
               <View style={styles.divider} />
@@ -281,44 +290,74 @@ const SignInScreen = ({route, navigation}) => {
                 iconFactory="MaterialIcons"
                 icon="qr-code-scanner"
                 iconSize={24}
-                title="Scan via QR Code"
+                title="Login With Push Chat"
                 fontSize={16}
                 fontColor={GLOBALS.COLORS.WHITE}
-                bgColor={GLOBALS.COLORS.GRADIENT_SECONDARY}
+                bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
+                setHeight={55}
                 disabled={false}
                 onPress={() => {
-                  getCameraPermissionAsync(navigation);
+                  navigation.navigate(GLOBALS.SCREENS.LOG_IN_DAPP_INFO);
                 }}
+                iconFirst
               />
 
               <View style={styles.divider} />
 
+              <PrimaryButton
+                iconFactory="MaterialIcons"
+                icon="qr-code-scanner"
+                iconSize={24}
+                title="Scan Wallet Address"
+                setHeight={55}
+                fontSize={16}
+                fontColor={GLOBALS.COLORS.BLACK}
+                bgColor={GLOBALS.COLORS.WHITE}
+                iconColor={GLOBALS.COLORS.MID_GRAY}
+                borderColor={GLOBALS.COLORS.MID_GRAY}
+                disabled={false}
+                onPress={() => {
+                  getCameraPermissionAsync(navigation);
+                }}
+                iconFirst={true}
+              />
+
+              <View
+                style={{width: '100%', height: windowHeight > 700 ? 60 : 10}}
+              />
+
               <View style={styles.columnizer}>
                 <PrimaryButton
-                  iconFactory="Ionicons"
-                  icon="ios-code-working"
+                  iconFactory="Image"
+                  icon={require('assets/ui/pencil_logo.png')}
                   iconSize={24}
                   title="Enter Manually"
-                  fontSize={16}
-                  fontColor={GLOBALS.COLORS.WHITE}
-                  bgColor={GLOBALS.COLORS.GRADIENT_THIRD}
+                  fontSize={14}
+                  fontColor={GLOBALS.COLORS.BLACK}
+                  bgColor={'#EDEDEE'}
                   disabled={false}
+                  iconFirst={true}
                   onPress={() => {
                     toggleTextEntryPrompt(true, true);
                   }}
+                  iconColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
+                  setHeight={54}
                 />
 
                 <View style={styles.colDivider} />
 
                 <PrimaryButton
-                  iconFactory="Ionicons"
-                  icon="ios-menu"
+                  iconFactory="Image"
+                  icon={require('assets/ui/advanced_logo.png')}
                   iconSize={24}
-                  title="Advance"
-                  fontSize={16}
-                  fontColor={GLOBALS.COLORS.WHITE}
-                  bgColor={GLOBALS.COLORS.BLACK}
+                  title="Advanced"
+                  fontSize={14}
+                  fontColor={GLOBALS.COLORS.BLACK}
+                  bgColor={'#EDEDEE'}
                   disabled={false}
+                  iconFirst={true}
+                  iconColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
+                  setHeight={54}
                   onPress={() => {
                     loadAdvanceScreen();
                   }}
@@ -368,7 +407,10 @@ const SignInScreen = ({route, navigation}) => {
         <QRScanner
           ref={QRScannerRef}
           navigation={navigation}
-          title="[wb:AAA scan your] [d:wallet's address] [wb:to connect it to Push (EPNS).]"
+          navHeader="Link Wallet Address"
+          errorMessage="Ensure that it is a valid Eth address QR"
+          title="Scan your Eth wallet address to link your device to the push app"
+          qrType={QR_TYPES.ETH_ADDRESS_SCAN}
           doneFunc={code => {
             onWalletDetect(code);
           }}
@@ -411,8 +453,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   header: {
-    fontSize: 32,
-    fontWeight: 'bold',
+    fontSize: 28,
+    fontWeight: '700',
     paddingTop: 40,
     alignSelf: 'center',
     paddingHorizontal: 20,
@@ -422,8 +464,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    top: 0,
-    bottom: 0,
+    top: windowHeight * 0.14,
     padding: 20,
     maxWidth: 540,
   },
@@ -435,17 +476,18 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   para: {
-    marginBottom: 20,
+    paddingHorizontal: '3%',
   },
+
   paraend: {
     marginBottom: 0,
   },
   profile: {},
   footer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 34,
   },
   divider: {
-    marginVertical: 10,
+    marginVertical: 6,
     width: '100%',
   },
   columnizer: {

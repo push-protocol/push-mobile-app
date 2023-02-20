@@ -1,6 +1,6 @@
 {
   "name": "epns",
-  "displayName": "EPNS",
+  "displayName": "Push (EPNS)",
   "expo": {
     "name": "epns",
     "slug": "epns",

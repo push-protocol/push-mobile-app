@@ -13,6 +13,8 @@ import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ChannelItem from 'src/components/ui/ChannelItem';
 import ENV_CONFIG from 'src/env.config';
 
+import Globals from '../../Globals';
+
 const ChannelsDisplayer = ({style, wallet, pKey}) => {
   const [channels, setChannels] = useState([]);
   const [page, setPage] = useState(1);
@@ -191,6 +193,7 @@ const styles = StyleSheet.create({
     height: 55,
     paddingLeft: 35,
     paddingRight: 30,
+    color: Globals.COLORS.DARKER_GRAY,
   },
   imageLogoStyle: {
     padding: 15,

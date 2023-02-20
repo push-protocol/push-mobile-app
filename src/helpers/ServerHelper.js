@@ -2,6 +2,7 @@ import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import {Platform} from 'react-native';
 import ENV_CONFIG from 'src/env.config';
+import {getCAIPAddress} from 'src/helpers/CAIPHelper';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 import Notify from 'src/singletons/Notify';
@@ -11,38 +12,40 @@ const ServerHelper = {
   // Associate a device token to server
   associateTokenToServerNoAuth: async wallet => {
     // Associate token with server
-    const apiURL =
-      ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_REGISTER_NO_AUTH;
+    const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_REGISTER;
 
     // prepare payloads
     const token = await MetaStorage.instance.getPushToken();
     const platform = Platform.OS;
+    console.log('doing logs', token);
 
-    return await fetch(apiURL, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        op: 'register',
-        device_token: token,
-        wallet: wallet,
-        platform: platform,
-      }),
-    })
-      .then(response => response.json())
-      .then(async authResponse => {
-        console.log(authResponse);
-        if (authResponse.success) {
-          await MetaStorage.instance.setTokenServerSynced(true);
-        }
-      })
-      .catch(error => {
-        console.warn(error);
-        return error;
+    const body = JSON.stringify({
+      device_token: token,
+      wallet: getCAIPAddress(wallet),
+      platform: platform,
+    });
+
+    console.log('body is', body, apiURL);
+
+    try {
+      const res = await fetch(apiURL, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: body,
       });
+
+      const rr = res.json();
+      console.log('reg got the res 	✅', rr);
+
+      await MetaStorage.instance.setTokenServerSynced(true);
+    } catch (error) {
+      console.warn(error);
+    }
   },
+
   // Associate a device token to server
   associateTokenToServer: async (publicKey, privateKey) => {
     // Associate token with server
@@ -104,6 +107,7 @@ const ServerHelper = {
   // Register device token to server
   registerDeviceTokenToServer: async (server_token, secret) => {
     const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_REGISTER;
+    console.log('** calling', apiURL);
 
     // prepare payloads
     const token = await MetaStorage.instance.getPushToken();
@@ -113,7 +117,7 @@ const ServerHelper = {
     const device_token_aes = CryptoHelper.encryptWithAES(token, secret);
     const platform_aes = CryptoHelper.encryptWithAES(platform, secret);
 
-    return await fetch(apiURL, {
+    const res = await fetch(apiURL, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -134,6 +138,9 @@ const ServerHelper = {
         console.warn(error);
         return error;
       });
+
+    console.log('got res', res);
+    return res;
   },
   // Disassociate Generated Token from server, should not be talking to server, this
   // should be handled from the device itself

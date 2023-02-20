@@ -105,7 +105,7 @@ class WelcomeScreen extends Component {
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title="[b:Push (EPNS)] is a an innovative way to recieve notifications from different [bi:dApps] or [bi:Smart Contracts]. Think notifications but coming from blockchain ecosystem."
+                  title="[b:Push (EPNS)] is a an innovative way to receive notifications from different [bi:dApps] or [bi:Smart Contracts]. Think notifications but coming from blockchain ecosystem."
                 />
                 <StylishLabel
                   style={styles.paraend}

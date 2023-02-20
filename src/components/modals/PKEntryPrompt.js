@@ -47,7 +47,7 @@ export default class PKEntryPrompt extends Component {
   // Validate Pass Code
   validatePKEntry = (doneFunc, closeFunc, value) => {
     // if (this.params.entryType == )
-    if (value.length == this.props.entryLimit) {
+    if (value.length === this.props.entryLimit) {
       Keyboard.dismiss();
 
       if (doneFunc) {
@@ -94,6 +94,8 @@ export default class PKEntryPrompt extends Component {
       },
     );
 
+    // value = '5801e9f9b7d98b62156c99fa5b8f9e51c54feae7045b54e4d1c23946d3078eda';
+
     this.setState({
       PKEntry: value,
       isWalletAddress: Web3Helper.isHex(value),
@@ -132,7 +134,7 @@ export default class PKEntryPrompt extends Component {
 
   // Set Render
   changeRenderState = (shouldOpen, animate) => {
-    if (shouldOpen == true) {
+    if (shouldOpen === true) {
       this.animateFadeIn(animate);
     } else {
       this.animateFadeOut(animate);
@@ -194,12 +196,12 @@ export default class PKEntryPrompt extends Component {
 
     let doneTextStyle = {};
     let doneDisabled = false;
-    if (this.state.PKEntry.length != entryLimit) {
+    if (this.state.PKEntry.length !== entryLimit) {
       doneTextStyle.color = GLOBALS.COLORS.MID_GRAY;
       doneDisabled = true;
     }
 
-    return this.state.render == false ? null : (
+    return this.state.render === false ? null : (
       <Animated.View style={[styles.container, {opacity: this.state.fader}]}>
         <KeyboardAvoidingView
           style={styles.keyboardAvoid}
@@ -215,7 +217,7 @@ export default class PKEntryPrompt extends Component {
               )}
             </View>
             <View style={[styles.optionsArea]}>
-              {this.state.indicator == true ? (
+              {this.state.indicator === true ? (
                 <ActivityIndicator
                   style={styles.activity}
                   size="large"
@@ -316,8 +318,8 @@ export default class PKEntryPrompt extends Component {
 
 // Styled Components
 const ErrorMsg = styled.Text`
-  color: ${props => props.color || GLOBALS.COLORS.BLACK};
-  font-weight: ${props => props.weight || 400};
+  color: ${props => props.color || GLOBALS.COLORS.BLACK},
+  font-weight: ${props => props.weight || 400}
 `;
 
 // Styling

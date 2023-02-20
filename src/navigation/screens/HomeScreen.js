@@ -60,7 +60,7 @@ class HomeScreen extends Component {
     if (
       prevProps.route.params.refreshNotifFeed !==
         this.props.route.params.refreshNotifFeed &&
-      this.props.route.params.refreshNotifFeed == true
+      this.props.route.params.refreshNotifFeed === true
     ) {
       this.refreshFeeds();
     }
@@ -108,21 +108,27 @@ class HomeScreen extends Component {
     // await this.refreshFeeds();
 
     // Get signed type and register device for push
-    let signedInType = await MetaStorage.instance.getSignedInType();
-    if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
-      ServerHelper.associateTokenToServerNoAuth(
-        this.props.auth.users[this.props.auth.currentUser].wallet,
-      );
-    } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
-      const privateKey =
-        this.props.auth.users[this.props.auth.currentUser].userPKey;
+    // TODO: working on this
+    const cc = this.props.auth.users[this.props.auth.currentUser].wallet;
+    ServerHelper.associateTokenToServerNoAuth(
+      this.props.auth.users[this.props.auth.currentUser].wallet,
+    );
+    console.log('all done here');
+    // let signedInType = await MetaStorage.instance.getSignedInType();
+    // if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
+    //   ServerHelper.associateTokenToServerNoAuth(
+    //     this.props.auth.users[this.props.auth.currentUser].wallet,
+    //   );
+    // } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+    //   const privateKey =
+    //     this.props.auth.users[this.props.auth.currentUser].userPKey;
 
-      // Finally associate token to server if not done
-      const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(privateKey);
+    //   // Finally associate token to server if not done
+    //   const publicKey = CryptoHelper.getPublicKeyFromPrivateKey(privateKey);
 
-      // While an async function, there is no need to wait
-      ServerHelper.associateTokenToServer(publicKey, privateKey);
-    }
+    //   // While an async function, there is no need to wait
+    //   ServerHelper.associateTokenToServer(publicKey, privateKey);
+    // }
   };
 
   // To refresh the Feeds\\
@@ -132,7 +138,7 @@ class HomeScreen extends Component {
     this.props.navigation.setParams({refreshNotifFeed: false});
 
     this.setState({refresh: !this.state.refresh}, () => {
-      if (this.state.refresh == true) {
+      if (this.state.refresh === true) {
         this.setState({refresh: false});
       }
     });

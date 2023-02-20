@@ -5,7 +5,6 @@ import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import ServerHelper from 'src/helpers/ServerHelper';
 import Web3Helper from 'src/helpers/Web3Helper';
 import MetaStorage from 'src/singletons/MetaStorage';
-import Notify from 'src/singletons/Notify';
 
 // Authentication Helper Function
 const AuthenticationHelper = {
@@ -13,7 +12,6 @@ const AuthenticationHelper = {
   returnDecryptedPKey: async function (encryptedPKey, code, hashedCode) {
     let response = {};
     response.success = false;
-
     try {
       // Verify Hash Code
       const result = await CryptoHelper.verifyHash(code, hashedCode);
@@ -26,13 +24,9 @@ const AuthenticationHelper = {
         const walletObject = await Web3Helper.getWalletAddress(pkey);
 
         if (walletObject.success) {
-          const storedWalletObject =
-            await MetaStorage.instance.getStoredWallet();
-          if (walletObject.wallet === storedWalletObject.wallet) {
-            response.success = true;
-            response.wallet = walletObject.wallet;
-            response.pkey = pkey;
-          }
+          response.success = true;
+          response.wallet = walletObject.wallet;
+          response.pkey = pkey;
         }
       }
     } catch (e) {

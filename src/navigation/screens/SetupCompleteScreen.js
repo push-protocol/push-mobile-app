@@ -13,8 +13,7 @@ import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
-import CryptoHelper from 'src/helpers/CryptoHelper';
-import FeedDBHelper from 'src/helpers/FeedDBHelper';
+import envConfig from 'src/env.config';
 import {setAuthState} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
@@ -97,6 +96,7 @@ class SetupCompleteScreen extends Component {
     await MetaStorage.instance.setCurrentAndPreviousBadgeCount(0, 0);
     const {users} = this.props.auth;
     await MetaStorage.instance.setStoredWallets(users);
+
     this.props.setAuthState(GLOBALS.AUTH_STATE.AUTHENTICATED);
   };
 
@@ -133,7 +133,7 @@ class SetupCompleteScreen extends Component {
                 <StylishLabel
                   style={styles.para}
                   fontSize={16}
-                  title="Visit [u:app.push.org||https://app.push.org] from a [b:Web3 Enabled Browser] to subscribe to your favorite [d:dApp channels] and start recieving [b:messages!]"
+                  title={`Visit [u:${envConfig.DAPP_URL}||https://${envConfig.DAPP_URL}] from a [b:Web3 Enabled Browser] to subscribe to your favorite [d:dApp channels] and start recieving [b:messages!]`}
                 />
               </View>
             }

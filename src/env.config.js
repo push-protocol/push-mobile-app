@@ -1,17 +1,20 @@
 import {
   APP_VERSION,
   MAINNET_INFURA_API,
+  SOCKET_KEY_PROD,
+  SOCKET_KEY_STAGING,
   TESTNET_INFURA_API,
   YOUTUBE_API_KEY,
 } from '@env';
 import GLOBALS from 'src/Globals';
 
-const IS_PROD_ENV = 1; // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work
+const IS_PROD_ENV = true; // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work
 const SHOW_CONSOLE = 1; // Show or disable console
 
 const {
   DEV_EPNS_SERVER,
   PROD_EPNS_SERVER,
+  W2W_EPNS_SERVER,
   METAMASK_LINK_STAGING,
   METAMASK_LINK_PROD,
   DEEPLINK_URL,
@@ -26,17 +29,19 @@ const {
   ENDPOINT_SUBSCRIBE_OFFCHAIN,
   ENDPOINT_UNSUBSCRIBE_OFFCHAIN,
   ENDPOINT_SEARCH_CHANNELS,
+  DAPP_LINK,
 } = GLOBALS.LINKS;
 
 export default {
   PROD_ENV: IS_PROD_ENV,
   SHOW_CONSOLE: SHOW_CONSOLE,
 
-  INFURA_API: MAINNET_INFURA_API,
+  INFURA_API: IS_PROD_ENV ? MAINNET_INFURA_API : TESTNET_INFURA_API,
 
   // All Server related endpoints
   EPNS_SERVER: IS_PROD_ENV ? PROD_EPNS_SERVER : DEV_EPNS_SERVER,
   METAMASK_LINK: IS_PROD_ENV ? METAMASK_LINK_PROD : METAMASK_LINK_STAGING,
+  W2W_EPNS_SERVER: W2W_EPNS_SERVER,
 
   // all the server endponts
   ENDPOINT_AUTHTOKEN,
@@ -59,4 +64,8 @@ export default {
 
   // App Version
   APP_VERSION: APP_VERSION,
+
+  SOCKET_KEY: IS_PROD_ENV ? SOCKET_KEY_PROD : SOCKET_KEY_STAGING,
+
+  DAPP_URL: IS_PROD_ENV ? DAPP_LINK.PROD : DAPP_LINK.STAGING,
 };

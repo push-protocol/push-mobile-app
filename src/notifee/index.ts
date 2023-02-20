@@ -1,4 +1,5 @@
 import notifee, {AndroidStyle} from '@notifee/react-native';
+import MetaStorage from 'src/singletons/MetaStorage';
 
 const getFormattedString = (msg: string) => msg.replace(/%/g, '\n');
 
@@ -65,6 +66,19 @@ const NotifeeDisplayNotification = async function (
       ],
     },
   });
+
+  await incrementBadge();
 };
 
-export {NotifeeDisplayNotification};
+const incrementBadge = async () => {
+  const currBadge = await MetaStorage.instance.getNotifeeBadgeCount();
+  await MetaStorage.instance.setNotifeeCount(parseInt(currBadge, 10) + 1);
+  await notifee.setBadgeCount(parseInt(currBadge, 10) + 1);
+};
+
+const NotifeClearBadge = async () => {
+  await MetaStorage.instance.setNotifeeCount(0);
+  await notifee.setBadgeCount(0);
+};
+
+export {NotifeeDisplayNotification, NotifeClearBadge};

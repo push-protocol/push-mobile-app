@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React from 'react';
 import GLOBALS from 'src/Globals';
 
 // STATIC SINGLETON
@@ -136,6 +135,23 @@ export default class MetaStorage {
     }
   };
 
+  getNotifeeBadgeCount = async () => {
+    try {
+      let badge = await AsyncStorage.getItem(
+        'NOTIFIEE' + GLOBALS.STORAGE.PUSH_BADGE_COUNT,
+      );
+      if (badge == null) {
+        badge = 0;
+        badge = JSON.stringify(badge);
+      }
+
+      return JSON.parse(badge);
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
+  };
+
   getPreviousBadgeCount = async () => {
     try {
       let badge = await AsyncStorage.getItem(
@@ -162,6 +178,24 @@ export default class MetaStorage {
 
       await AsyncStorage.setItem(
         GLOBALS.STORAGE.PUSH_BADGE_COUNT,
+        JSON.stringify(count),
+      );
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  };
+
+  setNotifeeCount = async badge => {
+    try {
+      let count = badge;
+      if (count == null) {
+        count = 0;
+      }
+
+      await AsyncStorage.setItem(
+        'NOTIFIEE' + GLOBALS.STORAGE.PUSH_BADGE_COUNT,
         JSON.stringify(count),
       );
     } catch (error) {
@@ -235,7 +269,6 @@ export default class MetaStorage {
 
     if (isSignedIn) {
       const privateKey = await this.getEncryptedPkey();
-
       if (!privateKey || privateKey === GLOBALS.CONSTANTS.NULL_EXCEPTION) {
         // sign in is via wallet
         return GLOBALS.CONSTANTS.CRED_TYPE_WALLET;
@@ -244,6 +277,16 @@ export default class MetaStorage {
       }
     } else {
       return false;
+    }
+  };
+
+  getIsPrivateKeyAvailable = async () => {
+    const privateKey = await this.getEncryptedPkey();
+    if (!privateKey || privateKey === GLOBALS.CONSTANTS.NULL_EXCEPTION) {
+      // sign in is via wallet
+      return GLOBALS.CONSTANTS.CRED_TYPE_WALLET;
+    } else {
+      return GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY;
     }
   };
 
@@ -434,7 +477,7 @@ export default class MetaStorage {
         JSON.stringify(setting),
       );
 
-      if (userLocked == false) {
+      if (userLocked === false) {
         await this.setRemainingPasscodeAttempts(
           GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS,
         );
@@ -527,5 +570,58 @@ export default class MetaStorage {
   clearStorage = async () => {
     const keys = await AsyncStorage.getAllKeys();
     await AsyncStorage.multiRemove(keys);
+  };
+
+  // W2W methods
+  setUserChatData = async userChatData => {
+    try {
+      await AsyncStorage.setItem(
+        GLOBALS.STORAGE.USER_CHAT_DATA,
+        JSON.stringify(userChatData),
+      );
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  };
+
+  getUserChatData = async () => {
+    try {
+      let userChatData = await AsyncStorage.getItem(
+        GLOBALS.STORAGE.USER_CHAT_DATA,
+      );
+
+      // Set Default Value
+      if (userChatData == null) {
+        return false;
+      }
+
+      return JSON.parse(userChatData);
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
+  };
+
+  setUserLoginFromDapp = async () => {
+    try {
+      await AsyncStorage.setItem(GLOBALS.STORAGE.IS_FROM_DAPP, 'true');
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  };
+
+  isUserLoginFromDapp = async () => {
+    try {
+      const res = await AsyncStorage.getItem(GLOBALS.STORAGE.IS_FROM_DAPP);
+      return res !== null;
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
   };
 }
