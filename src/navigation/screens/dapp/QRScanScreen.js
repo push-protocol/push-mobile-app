@@ -1,0 +1,373 @@
+import {Ionicons} from '@expo/vector-icons';
+import {Audio} from 'expo-av';
+import {Camera} from 'expo-camera';
+import Constants from 'expo-constants';
+import React, {Component} from 'react';
+import {
+  Animated,
+  Dimensions,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
+import GLOBALS from 'src/Globals';
+import {QR_TYPES} from 'src/enums';
+import {QRCodeVerification} from 'src/helpers/QRCodeValidator';
+
+const windowHeight = Dimensions.get('screen').height;
+
+export default class QRScanScreen extends Component {
+  // CONSTRUCTOR
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      backButtonColor: GLOBALS.COLORS.BLACK,
+      render: true,
+      camrender: true,
+      fader: new Animated.Value(100),
+      isHeaderEnabled: false,
+      showError: false,
+    };
+  }
+
+  // Toggle QR Scanner
+  toggleQRScanner = closeFunc => {
+    closeFunc();
+  };
+
+  playScanSound = async () => {
+    try {
+      const {sound} = await Audio.Sound.createAsync(
+        require('assets/sounds/scanned.mp3'),
+      );
+      await sound.playAsync();
+    } catch (err) {}
+  };
+
+  // Handle barcode scanning
+  handleBarCodeScanned = async (scanned, navigation, doneFunc) => {
+    let code = scanned.data;
+
+    const isValid = QRCodeVerification(code, QR_TYPES.DAPP_PGP_SCAN);
+
+    // show error and stop
+    if (!isValid) {
+      this.setState({showError: true});
+      return;
+    }
+
+    // Call done function
+    this.handleQRCodeFromDapp(code, navigation);
+  };
+
+  handleQRCodeFromDapp = (code, navigation) => {
+    this.loadLoginFromDapp(code, navigation);
+  };
+
+  loadLoginFromDapp = async (code, navigation) => {
+    const qrScreen =
+      this.props.route.params.authState === GLOBALS.AUTH_STATE.AUTHENTICATED
+        ? GLOBALS.SCREENS.SIGNINFROMDAPP
+        : GLOBALS.SCREENS.SIGNINFROMDAPP_LOGIN;
+
+    // Goto Next Screen
+    navigation.navigate(qrScreen, {
+      code: code,
+      navigation: navigation,
+    });
+  };
+
+  // RENDER
+  render() {
+    const {title, errorMessage, doneFunc, navHeader} = this.props.route.params;
+
+    const {navigation} = this.props;
+
+    let paddingTop = getStatusBarHeight();
+    if (Platform.OS === 'ios') {
+      paddingTop = Constants.statusBarHeight;
+    }
+
+    let backicon = 'ios-arrow-back';
+    if (Platform.OS === 'android') {
+      backicon = 'md-arrow-back';
+    }
+
+    return this.state.render === false ? null : (
+      <Animated.View style={[styles.container, {opacity: this.state.fader}]}>
+        <StatusBar
+          animated={true}
+          translucent={true}
+          barStyle="light-content"
+          backgroundColor="#000000"
+        />
+
+        {this.state.camrender === false ? null : (
+          <Camera
+            onBarCodeScanned={scanned =>
+              this.handleBarCodeScanned(scanned, navigation, doneFunc)
+            }
+            style={styles.preview}
+          />
+        )}
+
+        <SafeAreaView forceInset={{top: 'never', bottom: 'always'}}>
+          <View style={styles.focusContainer}>
+            {/* <View style={styles.focusView}> */}
+            <View style={[styles.borderView, styles.leftTopBorder]} />
+            <View style={[styles.borderView, styles.rightTopBorder]} />
+            <View style={[styles.borderView, styles.leftBottomBorder]} />
+            <View style={[styles.borderView, styles.rightBottomBorder]} />
+            {/* </View> */}
+            {/* make region outside the focus dimmer */}
+            <View style={translucentStyles.b1} />
+            <View style={translucentStyles.b2} />
+            <View style={translucentStyles.b3} />
+            <View style={translucentStyles.b4} />
+          </View>
+        </SafeAreaView>
+
+        <View style={scanLabel.view}>
+          <Text style={scanLabel.text}>{title}</Text>
+        </View>
+
+        <View style={[styles.topBar, {paddingTop: paddingTop}]}>
+          <TouchableWithoutFeedback
+            onPressIn={() => {
+              this.setState({
+                backButtonColor: GLOBALS.COLORS.LINKS,
+              });
+            }}
+            onPressOut={() => {
+              this.setState({
+                backButtonColor: GLOBALS.COLORS.BLACK,
+              });
+            }}
+            onPress={() => {
+              navigation.goBack();
+            }}>
+            <View style={[styles.button, styles.back]}>
+              <Ionicons name={backicon} color="#657795" size={24} />
+            </View>
+          </TouchableWithoutFeedback>
+          <Text
+            style={{
+              paddingLeft: 10,
+              fontSize: 20,
+            }}>
+            {navHeader}
+          </Text>
+        </View>
+
+        {/* Error Modal */}
+        {this.state.showError && (
+          <View style={errorModal.container}>
+            <View style={errorModal.modal}>
+              <Text style={errorModal.header}>Invalid QR code</Text>
+              <Text style={errorModal.msg}>{errorMessage}</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({showError: false});
+                }}>
+                <Text style={errorModal.okButton}>OK</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      </Animated.View>
+    );
+  }
+}
+
+const BORDER_HORIZONTAL = '17%';
+const BORDER_TOP = windowHeight * 0.335;
+const BORDER_BOTTOM = windowHeight * 0.275;
+
+// Styling
+const errorModal = StyleSheet.create({
+  container: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    backgroundColor: '#000000aa',
+  },
+  modal: {
+    position: 'absolute',
+    top: '45%',
+    left: '10%',
+    right: '10%',
+    padding: 24,
+    height: 189,
+    borderRadius: 16,
+    backgroundColor: 'white',
+  },
+  header: {
+    fontWeight: '500',
+    fontSize: 24,
+    color: '#333333',
+    textAlign: 'center',
+  },
+  msg: {
+    fontWeight: '400',
+    fontSize: 18,
+    color: '#657795',
+    marginVertical: 14,
+    lineHeight: 24,
+    textAlign: 'center',
+  },
+  okButton: {
+    textAlign: 'center',
+    fontWeight: '700',
+    color: '#D53893',
+    fontSize: 18,
+  },
+});
+
+const scanLabel = StyleSheet.create({
+  view: {
+    position: 'absolute',
+    width: '90%',
+    left: '5%',
+    top: 125,
+    backgroundColor: '#2F313799',
+    borderRadius: 16,
+    paddingHorizontal: 21,
+    paddingVertical: 17,
+  },
+  text: {
+    color: 'white',
+    fontWeight: '500',
+    fontSize: 18,
+    lineHeight: 28,
+  },
+});
+
+const translucentStyles = StyleSheet.create({
+  b1: {
+    position: 'absolute',
+    top: 10,
+    left: 0,
+    right: BORDER_HORIZONTAL,
+    backgroundColor: GLOBALS.COLORS.MID_BLACK_TRANS,
+    width: BORDER_HORIZONTAL,
+    height: '100%',
+    zIndex: -1,
+  },
+  b2: {
+    position: 'absolute',
+    top: 10,
+    left: '83%',
+    right: 0,
+    backgroundColor: GLOBALS.COLORS.MID_BLACK_TRANS,
+    width: BORDER_HORIZONTAL,
+    height: '100%',
+    zIndex: -1,
+  },
+  b3: {
+    position: 'absolute',
+    top: 0,
+    left: BORDER_HORIZONTAL,
+    right: BORDER_HORIZONTAL,
+    backgroundColor: GLOBALS.COLORS.MID_BLACK_TRANS,
+    width: '66%',
+    height: BORDER_TOP,
+    bottom: 440,
+    zIndex: -1,
+  },
+  b4: {
+    position: 'absolute',
+    left: BORDER_HORIZONTAL,
+    right: BORDER_HORIZONTAL,
+    backgroundColor: GLOBALS.COLORS.MID_BLACK_TRANS,
+    width: '66%',
+    bottom: 0,
+    height: BORDER_BOTTOM,
+    zIndex: -1,
+  },
+});
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    ...StyleSheet.absoluteFill,
+    backgroundColor: GLOBALS.COLORS.BLACK,
+  },
+  preview: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  },
+  topBar: {
+    position: 'absolute',
+    width: '100%',
+    backgroundColor: GLOBALS.COLORS.WHITE,
+    paddingVertical: 5,
+    paddingHorizontal: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  button: {
+    paddingHorizontal: 5,
+    paddingVertical: 10,
+  },
+  back: {},
+  focusContainer: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  focusView: {
+    width: '66%',
+    aspectRatio: 1,
+    // position: 'absolute',
+  },
+  borderView: {
+    position: 'absolute',
+    width: '15%',
+    aspectRatio: 1,
+    borderWidth: 6,
+  },
+  leftTopBorder: {
+    top: BORDER_TOP,
+    left: BORDER_HORIZONTAL,
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
+    borderColor: GLOBALS.COLORS.QR_SCAN_COLOR,
+  },
+  rightTopBorder: {
+    top: BORDER_TOP,
+    right: BORDER_HORIZONTAL,
+    borderLeftWidth: 0,
+    borderBottomWidth: 0,
+    borderColor: GLOBALS.COLORS.QR_SCAN_COLOR,
+  },
+  leftBottomBorder: {
+    bottom: BORDER_BOTTOM,
+    right: BORDER_HORIZONTAL,
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+    borderColor: GLOBALS.COLORS.QR_SCAN_COLOR,
+  },
+  rightBottomBorder: {
+    bottom: BORDER_BOTTOM,
+    left: BORDER_HORIZONTAL,
+    borderRightWidth: 0,
+    borderTopWidth: 0,
+    borderColor: GLOBALS.COLORS.QR_SCAN_COLOR,
+  },
+  scannerText: {
+    padding: 20,
+    color: GLOBALS.COLORS.WHITE,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+});

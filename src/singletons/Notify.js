@@ -27,10 +27,12 @@ export default class Notify {
 
     // FIREBASE
     const status = await messaging().hasPermission();
+    console.log(status);
     if (status === messaging.AuthorizationStatus.AUTHORIZED) {
       messaging()
         .getToken()
         .then(token => {
+          console.log(token);
           this.saveDeviceToken(token);
         });
     }
@@ -40,7 +42,7 @@ export default class Notify {
   saveDeviceToken = async (token, isRefreshToken) => {
     // For Test sending
     console.log(
-      'Token Recieved:' + token + '  |---| is Refresh Token: ' + isRefreshToken,
+      'Token Receive:' + token + '  |---| is Refresh Token: ' + isRefreshToken,
     );
 
     // Get previous token

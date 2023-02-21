@@ -59,6 +59,27 @@ export default class CalendarEvents extends Component {
     return midText;
   }
 
+  handleAnchorRender(matchingString, matches) {
+    let renderString = matchingString;
+    renderString = renderString.replace(/<a[^>]*>/, '');
+    renderString = renderString.replace('</a>', '');
+    return renderString;
+  }
+
+  handelAnchorClick(matchingString, matches) {
+    let url = matchingString;
+    url = url.match(/<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1/)[0];
+    url = url.replace('<a href=', '');
+    url = url.replace(/"/g, '');
+    url = url.replace(/'/g, '');
+
+    Linking.openURL(url);
+  }
+
+  handelUrlPress(matchingString, matches) {
+    Linking.openURL(matchingString);
+  }
+
   // RENDER
   render() {
     const {style, title, fontSize, textStyle} = this.props;
@@ -80,7 +101,7 @@ export default class CalendarEvents extends Component {
         renderText: this.renderThreeStyles,
       },
       {
-        pattern: /\[(ub):([^\]]+)\]/i, // url
+        pattern: /\[(ub):([^\]]+)\]/i, // urli
         style: [
           styles.secondary,
           styles.bold,
@@ -95,6 +116,12 @@ export default class CalendarEvents extends Component {
         style: [styles.third, styles.bold, styles.italics, styles.underline],
         onPress: this.handleUrlPress,
         renderText: this.renderThreeStyles,
+      },
+      {
+        pattern: /<a[^>]*>([^<]+)<\/a>/, // for anchor tage
+        style: [styles.third, styles.bold, styles.italics, styles.underline],
+        onPress: this.handelAnchorClick,
+        renderText: this.handleAnchorRender,
       },
       {
         pattern: /\[(up):([^\]]+)\]/i, // url
@@ -161,6 +188,11 @@ export default class CalendarEvents extends Component {
         pattern: /\[(ddg):([^\]]+)\]/i, // darker gray
         style: [styles.darkergray],
         renderText: this.renderStyles,
+      },
+      {
+        type: 'url',
+        style: [styles.link, styles.underline],
+        onPress: this.handelUrlPress,
       },
     ];
 

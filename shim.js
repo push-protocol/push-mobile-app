@@ -22,6 +22,7 @@ const isDev = typeof __DEV__ === 'boolean' && __DEV__;
 let env = process.env ?? {};
 env['NODE_ENV'] = isDev ? 'development' : 'production';
 process.env = env;
+// process.env['NODE_ENV'] = isDev ? 'development' : 'production';
 if (typeof localStorage !== 'undefined') {
   localStorage.debug = isDev ? '*' : '';
 }
