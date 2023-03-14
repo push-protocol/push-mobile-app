@@ -1036,7 +1036,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6F8DDCA55A6413D75BA21A42 /* Pods-PushCommonPods-push.staging.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.Staging;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -1072,7 +1072,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BD1264CA3DEB29C25B19A1DF /* Pods-PushCommonPods-push.staging.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.Staging;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -1107,7 +1107,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D05226552DDEBF7E28760F9 /* Pods-PushCommonPods-push.prod.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.Prod;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -1143,7 +1143,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7BCA4D280A827A3C1D051FAF /* Pods-PushCommonPods-push.prod.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.Prod;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
