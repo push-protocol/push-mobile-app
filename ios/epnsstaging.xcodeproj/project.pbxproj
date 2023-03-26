@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* epnsstagingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* epnsstagingTests.m */; };
 		0C02CB08897FFBE1FF05620F /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 294DC712B52960D1DF260F3B /* ExpoModulesProvider.swift */; };
-		1E4AA6AE28BD4E4000E27A82 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1E4AA6AD28BD4E4000E27A82 /* GoogleService-Info.plist */; };
 		1E90BBE928BD672C007E6105 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1E90BBE228BD672C007E6105 /* AppDelegate.mm */; };
 		1E90BBEA28BD672C007E6105 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E90BBE328BD672C007E6105 /* main.m */; };
 		1E90BBEC28BD672C007E6105 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE628BD672C007E6105 /* LaunchScreen.storyboard */; };
@@ -28,7 +27,7 @@
 		E74C05C629C06A2800C20AC1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E90BBE328BD672C007E6105 /* main.m */; };
 		E74C05CB29C06A2800C20AC1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE628BD672C007E6105 /* LaunchScreen.storyboard */; };
 		E74C05CC29C06A2800C20AC1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE728BD672C007E6105 /* Images.xcassets */; };
-		E74C05CD29C06A2800C20AC1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1E4AA6AD28BD4E4000E27A82 /* GoogleService-Info.plist */; };
+		E7A4DAEC29C17BF300B09BEE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E7A4DAEB29C17BF300B09BEE /* GoogleService-Info.plist */; };
 		FEBC56FEE969DEAAFD83C60F /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F1FDA9A5548BAE3639353C /* ExpoModulesProvider.swift */; };
 /* End PBXBuildFile section */
 
@@ -108,6 +107,7 @@
 		E74C05C029C06A1500C20AC1 /* push.staging-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "push.staging-Info.plist"; path = "/Users/mdteach/Desktop/CDX/staging_mobile/ios/push.staging-Info.plist"; sourceTree = "<absolute>"; };
 		E74C05D629C06A2800C20AC1 /* push.prod.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = push.prod.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E74C05D729C06A2900C20AC1 /* push.prod-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "push.prod-Info.plist"; path = "/Users/mdteach/Desktop/CDX/staging_mobile/ios/push.prod-Info.plist"; sourceTree = "<absolute>"; };
+		E7A4DAEB29C17BF300B09BEE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -218,7 +218,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				1E4AA6AD28BD4E4000E27A82 /* GoogleService-Info.plist */,
+				E7A4DAE029C1795E00B09BEE /* GoogleService */,
 				1E4AA6C228BD64F300E27A82 /* epnsstaging */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* epnsstagingTests */,
@@ -266,6 +266,31 @@
 				8ACFD0E74AD416ABB6006158 /* ExpoModulesProvider.swift */,
 			);
 			name = push.staging;
+			sourceTree = "<group>";
+		};
+		E7A4DAE029C1795E00B09BEE /* GoogleService */ = {
+			isa = PBXGroup;
+			children = (
+				E7A4DAE729C17B0000B09BEE /* Staging */,
+				E7A4DAE129C1796B00B09BEE /* Prod */,
+			);
+			path = GoogleService;
+			sourceTree = "<group>";
+		};
+		E7A4DAE129C1796B00B09BEE /* Prod */ = {
+			isa = PBXGroup;
+			children = (
+				E7A4DAEB29C17BF300B09BEE /* GoogleService-Info.plist */,
+			);
+			path = Prod;
+			sourceTree = "<group>";
+		};
+		E7A4DAE729C17B0000B09BEE /* Staging */ = {
+			isa = PBXGroup;
+			children = (
+				1E4AA6AD28BD4E4000E27A82 /* GoogleService-Info.plist */,
+			);
+			path = Staging;
 			sourceTree = "<group>";
 		};
 		F41C727B9A290DD205FB8B4E /* push.prod */ = {
@@ -418,7 +443,6 @@
 			files = (
 				1E90BBEC28BD672C007E6105 /* LaunchScreen.storyboard in Resources */,
 				1E90BBED28BD672C007E6105 /* Images.xcassets in Resources */,
-				1E4AA6AE28BD4E4000E27A82 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -438,7 +462,7 @@
 			files = (
 				E74C05CB29C06A2800C20AC1 /* LaunchScreen.storyboard in Resources */,
 				E74C05CC29C06A2800C20AC1 /* Images.xcassets in Resources */,
-				E74C05CD29C06A2800C20AC1 /* GoogleService-Info.plist in Resources */,
+				E7A4DAEC29C17BF300B09BEE /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -848,7 +872,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging;
+				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject;
 				PRODUCT_NAME = "EPNS Staging";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "epnsstaging-Bridging-Header.h";
@@ -883,7 +907,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging;
+				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject;
 				PRODUCT_NAME = "EPNS Staging";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "epnsstaging-Bridging-Header.h";
@@ -1041,7 +1065,7 @@
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 109;
+				CURRENT_PROJECT_VERSION = 116;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "push.staging-Info.plist";
@@ -1050,7 +1074,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.8.13;
+				MARKETING_VERSION = 0.8.15;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1077,7 +1101,7 @@
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 109;
+				CURRENT_PROJECT_VERSION = 116;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "push.staging-Info.plist";
@@ -1086,7 +1110,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.8.13;
+				MARKETING_VERSION = 0.8.15;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1112,7 +1136,7 @@
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 109;
+				CURRENT_PROJECT_VERSION = 87;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "push.prod-Info.plist";
@@ -1121,14 +1145,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.8.13;
+				MARKETING_VERSION = 0.8.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging;
+				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "epnsstaging-Bridging-Header.h";
@@ -1148,7 +1172,7 @@
 				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 109;
+				CURRENT_PROJECT_VERSION = 87;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "push.prod-Info.plist";
@@ -1157,14 +1181,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.8.13;
+				MARKETING_VERSION = 0.8.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging;
+				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "epnsstaging-Bridging-Header.h";

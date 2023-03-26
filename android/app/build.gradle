@@ -169,6 +169,22 @@ android {
         }
     }
 
+    flavorDimensions "default"
+    productFlavors {
+        prod {
+            minSdkVersion rootProject.ext.minSdkVersion
+            applicationId "io.epns.epns"
+            targetSdkVersion rootProject.ext.targetSdkVersion
+            resValue "string", "build_config_package", "io.epns.epnsstaging"
+        }
+        staging {
+            minSdkVersion rootProject.ext.minSdkVersion
+            applicationId "io.epns.epnsstaging"
+            targetSdkVersion rootProject.ext.targetSdkVersion
+            resValue "string", "build_config_package", "io.epns.epnsstaging"
+        }
+    }
+
     if (isNewArchitectureEnabled()) {
         // We configure the NDK build only if you decide to opt-in for the New Architecture.
         externalNativeBuild {
