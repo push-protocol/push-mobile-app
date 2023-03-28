@@ -1,4 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
+import {useWalletConnect} from '@walletconnect/react-native-dapp';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
@@ -15,6 +16,7 @@ import * as PushNodeClient from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
 import {DappScanPage} from 'src/components/ui/DappScanPage';
 import MetaStorage from 'src/singletons/MetaStorage';
+import {handleWalletConnectLogin} from 'src/walletconnect';
 
 import {Chat, Requests} from './components';
 import {ChatSetup} from './components/ChatSetup';
@@ -43,6 +45,7 @@ const ChatScreen = (props: any) => {
   const [isReady, setIsReady] = useState(false);
   const [isPrivateKeyUser, setIsPrivateKeyUser] = useState(true);
   const [chatCredentials, setChatCredentials] = useState<UserChatCredentials>();
+  const connector = useWalletConnect();
 
   const onPress = (value: string) => {
     setTab(value);
@@ -53,44 +56,127 @@ const ChatScreen = (props: any) => {
   const initalizate = async () => {
     const signedInType = await MetaStorage.instance.getIsPrivateKeyAvailable();
 
-    const isLoginFromDapp = await MetaStorage.instance.isUserLoginFromDapp();
-
     const _data: UserChatCredentials =
       await MetaStorage.instance.getUserChatData();
 
-    if (
-      !isLoginFromDapp && // not from dapp
-      signedInType !== Globals.CONSTANTS.CRED_TYPE_PRIVATE_KEY // no manual private key
-    ) {
-      setIsPrivateKeyUser(false);
-      return;
-    }
-
+    // user PGP pair was not found
     if (!_data) {
-      // @ts-ignore
-      navigation.navigate(Globals.SCREENS.PGP_FROM_PK_SCREEN, {
-        navigation: navigation,
-      });
+      // user logged with private key
+      // ask user to generate the pgp pair
+      if (signedInType === Globals.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+        // @ts-ignore
+        navigation.navigate(Globals.SCREENS.PGP_FROM_PK_SCREEN, {
+          navigation: navigation,
+        });
+      } else if (isWcConnected()) {
+        console.log('do your work abishek');
+        const chatInfoLoaded = await handleWalletConnectLogin(connector);
+        if (chatInfoLoaded) {
+          //TOdo
+        } else {
+          setIsPrivateKeyUser(false);
+          return;
+        }
+      }
+      // user is new user ask them to use dapp qr
+      else {
+        setIsPrivateKeyUser(false);
+        return;
+      }
     } else {
-      console.log('doing...');
-
       setChatCredentials({..._data});
       setTab(TABS.CHATS);
       setIsReady(true);
     }
   };
 
+  const isWcConnected = () => {
+    console.log(connector.accounts);
+
+    return connector.accounts.length > 0;
+  };
+  useEffect(() => {
+    (async () => {
+      // const isWalletConnet = isWcConnected();
+      // let res = await connector.signTypedData([
+      //   '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
+      //   {
+      //     types: {
+      //       EIP712Domain: [
+      //         {
+      //           name: 'name',
+      //           type: 'string',
+      //         },
+      //         {
+      //           name: 'version',
+      //           type: 'string',
+      //         },
+      //         {
+      //           name: 'chainId',
+      //           type: 'uint256',
+      //         },
+      //         {
+      //           name: 'verifyingContract',
+      //           type: 'address',
+      //         },
+      //       ],
+      //       Person: [
+      //         {
+      //           name: 'name',
+      //           type: 'string',
+      //         },
+      //         {
+      //           name: 'wallet',
+      //           type: 'address',
+      //         },
+      //       ],
+      //       Mail: [
+      //         {
+      //           name: 'from',
+      //           type: 'Person',
+      //         },
+      //         {
+      //           name: 'to',
+      //           type: 'Person',
+      //         },
+      //         {
+      //           name: 'contents',
+      //           type: 'string',
+      //         },
+      //       ],
+      //     },
+      //     primaryType: 'Mail',
+      //     domain: {
+      //       name: 'Ether Mail',
+      //       version: '1',
+      //       chainId: 1,
+      //       verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+      //     },
+      //     message: {
+      //       from: {
+      //         name: 'Cow',
+      //         wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
+      //       },
+      //       to: {
+      //         name: 'Bob',
+      //         wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+      //       },
+      //       contents: 'Hello, Bob!',
+      //     },
+      //   },
+      // ]);
+      // console.log(res);
+    })();
+  }, []);
+
   useEffect(() => {
     let lis: any;
     (async () => {
       try {
         lis = props.navigation.addListener('focus', () => {
-          console.log('####focusing');
           if (chatData.connectedUserData) {
-            console.log('***focus');
             refresh();
           } else {
-            console.log('intitalize');
             initalizate();
           }
         });
