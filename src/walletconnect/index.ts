@@ -24,26 +24,18 @@ const handleWalletConnectLogin = async (connector: WalletConnect) => {
   const typeInformation = getTypeInformation('Create_user');
   console.log('v2', typeInformation);
 
-  //   const signedMessage = await connector.signTypedData([
-  //     connector.accounts[0],
-  //     {
-  //       types: typeInformation,
-  //       primaryType: 'data',
-  //       domain: {
-  //         name: 'Ether Mail',
-  //         version: '1',
-  //         chainId: 1,
-  //         // verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
-  //       },
-  //       message: {
-  //         data: msg,
-  //       },
-  //     },
-  //   ]);
   const account = connector.accounts[0];
   const dataToSign = getSingData(account, msg);
-  const signedMessage = await connector.signTypedData(dataToSign);
-  console.log('sig is', signedMessage);
+
+  //   const res = connector.signPersonalMessage([account, 'wola']);
+  //   console.log(res);
+
+  try {
+    const signedMessage = await connector.signTypedData(dataToSign);
+    console.log('sig is', signedMessage);
+  } catch (error) {
+    console.log('got err', error);
+  }
 
   // check if user uses chat for the first time
   if (!user || user.encryptedPrivateKey === '') {
@@ -66,7 +58,7 @@ export {handleWalletConnectLogin};
 const getSingData = (account: string, data: string) => {
   return [
     `${account}`,
-    {
+    JSON.stringify({
       types: {
         EIP712Domain: [
           {
@@ -98,11 +90,11 @@ const getSingData = (account: string, data: string) => {
         name: 'Push Chat',
         version: '1',
         chainId: 1,
-        verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+        verifyingContract: '0xD26A7BF7fa0f8F1f3f73B056c9A67565A6aFE63c',
       },
       message: {
         data: `${data}`,
       },
-    },
+    }),
   ];
 };
