@@ -3,6 +3,11 @@ import WalletConnect from '@walletconnect/client';
 
 import {createUser} from './createUser';
 
+export * from './channelSub';
+export const isWalletConnectEnabled = (connector: WalletConnect) => {
+  return connector.connected;
+};
+
 const getTypeInformation = (action: string) => {
   if (action === 'Create_user') {
     return {
@@ -15,6 +20,7 @@ const getTypeInformation = (action: string) => {
 const handleWalletConnectLogin = async (connector: WalletConnect) => {
   const user = await PushAPI.user.get({
     account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+    // @ts-ignore
     env: 'staging',
   });
 

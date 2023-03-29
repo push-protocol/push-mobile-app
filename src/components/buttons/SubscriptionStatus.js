@@ -17,6 +17,7 @@ import NoticePrompt from 'src/components/modals/NoticePrompt';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 import ENV_CONFIG from 'src/env.config';
 import MetaStorage from 'src/singletons/MetaStorage';
+import {handleChannelSub, isWalletConnectEnabled} from 'src/walletconnect';
 
 const CHANNEL_OPT_IN = 1;
 const CHANNEL_OPT_OUT = 2;
@@ -24,6 +25,7 @@ const CHANNEL_OPT_OUT = 2;
 const SubscriptionStatus = ({channel, user, style, pKey}) => {
   const [subscribed, setSubscribed] = useState(null);
 
+  const connector = useWalletConnect();
   const [modal, setModal] = useState(false);
   const [action, setAction] = useState('');
 
@@ -146,7 +148,6 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   // Wallet Connect functionality
   const {createSession, killSession, session, signTransaction} =
     useWalletConnect();
-  const connector = useWalletConnect();
 
   // Setup Refs
   const OverlayBlurRef = useRef(null);
@@ -164,15 +165,21 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   const handleOpts = async action => {
     // Check signin flow
     setProcessing(true);
-
+    const isWalletConnect = await isWalletConnectEnabled(connector, action);
     const signedInType = await MetaStorage.instance.getSignedInType();
-    if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
-      if (action == 1) {
+    if (isWalletConnect) {
+      try {
+        await handleChannelSub(connector, action, channel);
+      } catch (error) {
+        console.log(error);
+      }
+    } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+      if (action === 1) {
         handleSubscribe();
-      } else if (action == 2) {
+      } else if (action === 2) {
         handleUnsubscribe();
       }
-    } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_WALLET) {
+    } else {
       // Give Options
       showPopUp(action);
     }
