@@ -4,10 +4,10 @@ import WalletConnectProvider from '@walletconnect/react-native-dapp';
 import React, {useEffect} from 'react';
 import 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import WebviewCrypto from 'react-native-webview-crypto';
 import {Provider} from 'react-redux';
 import {persistStore} from 'redux-persist';
 import {PersistGate} from 'redux-persist/integration/react';
-import ENV_CONFIG from 'src/env.config';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import AppScreens from 'src/navigation';
 import {NotifeeDisplayNotification} from 'src/notifee';
@@ -47,6 +47,7 @@ const App = () => {
 
   return (
     <SafeAreaProvider>
+      <WebviewCrypto />
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <WalletConnectProvider

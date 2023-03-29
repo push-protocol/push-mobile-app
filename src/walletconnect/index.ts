@@ -1,106 +1,52 @@
 import * as PushAPI from '@pushprotocol/restapi';
+import {
+  getSignature,
+  getWallet,
+} from '@pushprotocol/restapi/src/lib/chat/helpers';
+import Constants from '@pushprotocol/restapi/src/lib/constants';
 import WalletConnect from '@walletconnect/client';
+import * as PushNodeClient from 'src/apis';
 
-import {createUser} from './createUser';
-
-export * from './channelSub';
-export const isWalletConnectEnabled = (connector: WalletConnect) => {
-  return connector.connected;
-};
-
-const getTypeInformation = (action: string) => {
-  if (action === 'Create_user') {
-    return {
-      Data: [{name: 'data', type: 'string'}],
-    };
-  }
-  return '';
-};
+import {decryptV2} from './aes';
+import './createUser';
+import {getSigner, hexToBytes, walletToPCAIP10} from './utils';
 
 const handleWalletConnectLogin = async (connector: WalletConnect) => {
-  const user = await PushAPI.user.get({
-    account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
-    // @ts-ignore
-    env: 'staging',
-  });
+  const [signer, account] = await getSigner(connector);
+  const caipAddrs = walletToPCAIP10(account);
+  const wallet = getWallet({account, signer});
+  const address = account;
 
-  let msg = await createUser();
-  console.log(msg);
-
-  const typeInformation = getTypeInformation('Create_user');
-  console.log('v2', typeInformation);
-
-  const account = connector.accounts[0];
-  const dataToSign = getSingData(account, msg);
-
-  //   const res = connector.signPersonalMessage([account, 'wola']);
-  //   console.log(res);
-
-  try {
-    const signedMessage = await connector.signTypedData(dataToSign);
-    console.log('sig is', signedMessage);
-  } catch (error) {
-    console.log('got err', error);
-  }
-
-  // check if user uses chat for the first time
-  if (!user || user.encryptedPrivateKey === '') {
-  }
-
-  // check chat info & act accordingly
-  if (user.encryptionType === 'x25519-xsalsa20-poly1305') {
-    console.log('old chat ');
+  const user = (await PushNodeClient.getUser(caipAddrs)) as PushAPI.IUser;
+  if (!user || !user.publicKey) {
     return false;
-  } else if (user.encryptionType === 'aes256GcmHkdfSha256') {
+  }
+  // Get the private key for the v2
+  if (user.encryptionType === Constants.ENC_TYPE_V2) {
+    console.log('new chat found');
+    const {preKey: input} = JSON.parse(user.encryptedPrivateKey);
+    const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
+    const {verificationProof: secret} = await getSignature(
+      address,
+      wallet,
+      enableProfileMessage,
+    );
+
+    const encodedPrivateKey = await decryptV2(
+      JSON.parse(user.encryptedPrivateKey),
+      hexToBytes(secret || ''),
+    );
+    const dec = new TextDecoder();
+    const privateKey = dec.decode(encodedPrivateKey);
+    console.log('####', privateKey);
     return true;
-  } else {
-    console.log('Invalid encryption');
-    return false;
   }
+
+  return false;
 };
 
 export {handleWalletConnectLogin};
-
-const getSingData = (account: string, data: string) => {
-  return [
-    `${account}`,
-    JSON.stringify({
-      types: {
-        EIP712Domain: [
-          {
-            name: 'name',
-            type: 'string',
-          },
-          {
-            name: 'version',
-            type: 'string',
-          },
-          {
-            name: 'chainId',
-            type: 'uint256',
-          },
-          {
-            name: 'verifyingContract',
-            type: 'address',
-          },
-        ],
-        Data: [
-          {
-            name: 'data',
-            type: 'string',
-          },
-        ],
-      },
-      primaryType: 'Data',
-      domain: {
-        name: 'Push Chat',
-        version: '1',
-        chainId: 1,
-        verifyingContract: '0xD26A7BF7fa0f8F1f3f73B056c9A67565A6aFE63c',
-      },
-      message: {
-        data: `${data}`,
-      },
-    }),
-  ];
+export * from './channelSub';
+export const isWalletConnectEnabled = (connector: WalletConnect) => {
+  return connector.connected;
 };

@@ -1,10 +1,11 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import WalletConnect from '@walletconnect/client';
-import WalletConnectProvider from '@walletconnect/web3-provider';
 import {ethers} from 'ethers';
 import Globals from 'src/Globals';
 import ENV_CONFIG from 'src/env.config';
+
+import {getSigner} from './utils';
 
 export const handleChannelSub = async (
   connector: WalletConnect,
@@ -46,23 +47,4 @@ const getSubConfig = (
   };
 
   return config;
-};
-
-const getSigner = async (
-  connector: WalletConnect,
-): Promise<[ethers.providers.JsonRpcSigner, string]> => {
-  const provider = new WalletConnectProvider({
-    connector,
-    rpc: {
-      [ENV_CONFIG.CHAIN_ID]: ENV_CONFIG.WC_RPC,
-    },
-    chainId: ENV_CONFIG.CHAIN_ID,
-    qrcode: false,
-  });
-  await provider.enable();
-  const ethers_provider = new ethers.providers.Web3Provider(provider);
-  const signer = ethers_provider.getSigner();
-  const account = await signer.getAddress();
-
-  return [signer, account];
 };
