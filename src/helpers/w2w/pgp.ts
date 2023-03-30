@@ -46,25 +46,32 @@ export const encryptAndSign = async ({
   sigType: string;
   encType: string;
 }> => {
-  const secretKey: string = CryptoHelper.generateRandomSecret(15);
-  const cipherText: string = CryptoHelper.encryptWithAES(plainText, secretKey);
-  const encryptedSecret = await OpenPGP.encrypt(
-    secretKey,
-    concatPublicKeys(fromPublicKeyArmored, toPublicKeyArmored),
-  );
-  const signature: string = await OpenPGP.sign(
-    cipherText,
-    fromPublicKeyArmored,
-    privateKeyArmored,
-    '',
-  );
-  return {
-    cipherText,
-    encryptedSecret, // enc AES key here
-    signature,
-    sigType: 'pgp',
-    encType: 'pgp',
-  };
+  try {
+    const secretKey: string = CryptoHelper.generateRandomSecret(15);
+    const cipherText: string = CryptoHelper.encryptWithAES(
+      plainText,
+      secretKey,
+    );
+    const encryptedSecret = await OpenPGP.encrypt(
+      secretKey,
+      concatPublicKeys(fromPublicKeyArmored, toPublicKeyArmored),
+    );
+    const signature: string = await OpenPGP.sign(
+      cipherText,
+      fromPublicKeyArmored,
+      privateKeyArmored,
+      '',
+    );
+    return {
+      cipherText,
+      encryptedSecret, // enc AES key here
+      signature,
+      sigType: 'pgp',
+      encType: 'pgp',
+    };
+  } catch (error) {
+    console.log('got err', error);
+  }
 };
 
 export const pgpSign = async (

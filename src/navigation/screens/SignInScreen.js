@@ -23,6 +23,7 @@ import QRScanner from 'src/components/modals/QRScanner';
 import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
 import {QR_TYPES} from 'src/enums';
 import {setInitialSignin} from 'src/redux/authSlice';
+import Web3 from 'web3';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
   useFocusEffect(
@@ -193,7 +194,7 @@ const SignInScreen = ({route, navigation}) => {
 
     dispatch(
       setInitialSignin({
-        wallet: walletAddress,
+        wallet: Web3.utils.toChecksumAddress(walletAddress),
         userPKey: '',
         ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
         cns: cns,
@@ -211,7 +212,7 @@ const SignInScreen = ({route, navigation}) => {
     console.log(route);
     // Goto Next Screen
     navigation.navigate(GLOBALS.SCREENS.SIGNINADVANCE, {
-      wallet: walletAddress,
+      wallet: Web3.utils.toChecksumAddress(walletAddress),
     });
   };
 
