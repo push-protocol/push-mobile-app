@@ -34,7 +34,7 @@ export const getSignature = async (
   // console.log(domainInformation)
 
   // sign a message using EIP712
-  const signedMessage = await _signer?._signTypedData({}, typeInformation, {
+  const signedMessage = await _signer._signTypedData({}, typeInformation, {
     data: hash,
   });
 

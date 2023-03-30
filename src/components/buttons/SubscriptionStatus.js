@@ -169,7 +169,10 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
     const signedInType = await MetaStorage.instance.getSignedInType();
     if (isWalletConnect) {
       try {
-        await handleChannelSub(connector, action, channel);
+        const done = await handleChannelSub(connector, action, channel);
+        if (done) {
+          setSubscribed(prev => !prev);
+        }
       } catch (error) {
         console.log(error);
       }

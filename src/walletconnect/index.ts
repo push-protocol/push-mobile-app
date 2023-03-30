@@ -6,6 +6,7 @@ import {
 import Constants from '@pushprotocol/restapi/src/lib/constants';
 import WalletConnect from '@walletconnect/client';
 import * as PushNodeClient from 'src/apis';
+import MetaStorage from 'src/singletons/MetaStorage';
 
 import {decryptV2} from './aes';
 import './createUser';
@@ -37,8 +38,11 @@ const handleWalletConnectLogin = async (connector: WalletConnect) => {
       hexToBytes(secret || ''),
     );
     const dec = new TextDecoder();
-    const privateKey = dec.decode(encodedPrivateKey);
-    console.log('####', privateKey);
+    const decryptedPrivateKey = dec.decode(encodedPrivateKey);
+    await MetaStorage.instance.setUserChatData({
+      pgpPrivateKey: decryptedPrivateKey,
+      encryptionPublicKey: '',
+    });
     return true;
   }
 

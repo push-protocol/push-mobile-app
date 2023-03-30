@@ -13,23 +13,30 @@ export const handleChannelSub = async (
   channel: string,
 ) => {
   // Ask wallet to switch network if required
-  const chaindId = connector.chainId;
-  if (chaindId !== ENV_CONFIG.CHAIN_ID) {
-    await connector.sendCustomRequest({
-      method: 'wallet_switchEthereumChain',
-      params: [{chainId: `0x${ENV_CONFIG.CHAIN_ID}}`}],
-    });
-  }
+  try {
+    const chaindId = connector.chainId;
+    if (chaindId !== ENV_CONFIG.CHAIN_ID) {
+      await connector.sendCustomRequest({
+        method: 'wallet_switchEthereumChain',
+        params: [{chainId: `0x${ENV_CONFIG.CHAIN_ID}}`}],
+      });
+    }
 
-  // From WalletConnect connector get ethers signer
-  const [signer, user] = await getSigner(connector);
-  const config = getSubConfig(signer, user, channel);
+    // From WalletConnect connector get ethers signer
+    const [signer, user] = await getSigner(connector);
+    const config = getSubConfig(signer, user, channel);
 
-  // Handle the subscription action
-  if (action === 1) {
-    await PushAPI.channels.subscribe(config);
-  } else if (action === 2) {
-    await PushAPI.channels.unsubscribe(config);
+    // Handle the subscription action
+    if (action === 1) {
+      await PushAPI.channels.subscribe(config);
+      return true;
+    } else if (action === 2) {
+      await PushAPI.channels.unsubscribe(config);
+      return true;
+    }
+  } catch (error) {
+    console.log(error);
+    return false;
   }
 };
 

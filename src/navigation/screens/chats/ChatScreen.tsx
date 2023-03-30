@@ -72,7 +72,7 @@ const ChatScreen = (props: any) => {
         console.log('do your work abishek');
         const chatInfoLoaded = await handleWalletConnectLogin(connector);
         if (chatInfoLoaded) {
-          //TOdo
+          initalizate();
         } else {
           setIsPrivateKeyUser(false);
           return;
