@@ -1,10 +1,14 @@
-import {createUserService} from '@pushprotocol/restapi/src/lib/chat/helpers';
 import {getWallet} from '@pushprotocol/restapi/src/lib/chat/helpers/wallet';
 import Constants from '@pushprotocol/restapi/src/lib/constants';
-import {preparePGPPublicKey} from '@pushprotocol/restapi/src/lib/helpers/crypto';
+import {
+  generateHash,
+  preparePGPPublicKey,
+} from '@pushprotocol/restapi/src/lib/helpers/crypto';
 import {encryptedPrivateKeyType} from '@pushprotocol/restapi/src/lib/types';
-import {ENV} from '@pushprotocol/socket/src/lib/constants';
+import WalletConnect from '@walletconnect/client';
+import axios from 'axios';
 import {ethers} from 'ethers';
+import GLOBALS from 'src/Globals';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
 
 import {encryptV2} from './aes';
@@ -12,19 +16,20 @@ import {
   bytesToHex,
   getRandomValues,
   getSignature,
+  getSigner,
   hexToBytes,
   walletToPCAIP10,
 } from './utils';
 
+const BASE_URL = GLOBALS.LINKS.W2W_EPNS_SERVER;
 export const createUser = async (
-  signer: ethers.providers.JsonRpcSigner,
-  account: string,
-) => {
+  connector: WalletConnect,
+): Promise<[boolean, string]> => {
+  const [signer, account] = await getSigner(connector);
   const keyPairs = await generateKeyPair();
   const wallet = getWallet({account, signer});
   const encryptionType = Constants.ENC_TYPE_V2;
   const address = account;
-  const caip10: string = walletToPCAIP10(address);
 
   const publicKey: string = await preparePGPPublicKey(
     encryptionType,
@@ -36,34 +41,41 @@ export const createUser = async (
   const encryptedPrivateKey: encryptedPrivateKeyType =
     await getEncryptedPrivateKey(signer, keyPairs.privateKeyArmored, address);
 
-  const body: any = {
-    user: caip10,
-    wallet,
-    publicKey: publicKey,
+  const data = {
+    caip10: walletToPCAIP10(address),
+    did: walletToPCAIP10(address),
+    publicKey,
     encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
-    encryptionType: encryptionType,
-    env: ENV.STAGING,
+    encryptionType,
+    name: '',
+    encryptedPassword: null,
+    nftOwner: null,
   };
 
-  console.log(body);
+  const hash = generateHash(data);
+  const signatureObj = await getSignature(address, signer, hash);
 
-  const res = await createUserService(body);
-  console.log(res);
+  const reqBody = {
+    ...data,
+    ...signatureObj,
+  };
 
-  // console.log('res', encryptedPrivateKey);
-  // const pubKey = await prepareChatPublicKey(signer, keyPairs.publicKeyArmored);
-  // const encPrivKey = await getEncryptedPrivateKey(
-  //   signer,
-  //   address,
-  //   keyPairs.privateKeyArmored,
-  // );
-  // console.log('abishek we got', encPrivKey);
+  const success = await axios
+    .post(`${BASE_URL}/v1/users/`, reqBody)
+    .then(_ => true)
+    .catch(_ => false);
+
+  if (success) {
+    return [true, keyPairs.privateKeyArmored];
+  } else {
+    return [false, ''];
+  }
 };
 
 const getEncryptedPrivateKey = async (
   signer: ethers.providers.JsonRpcSigner,
-  address: string,
   privateKey: string,
+  address: string,
 ) => {
   const input = bytesToHex(await getRandomValues(new Uint8Array(32)));
   const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
@@ -80,6 +92,7 @@ const getEncryptedPrivateKey = async (
     encodedPrivateKey,
     hexToBytes(secret || ''),
   );
+  encryptedPrivateKey.preKey = input;
 
   return encryptedPrivateKey;
 };

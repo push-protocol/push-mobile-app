@@ -69,7 +69,6 @@ const ChatScreen = (props: any) => {
           navigation: navigation,
         });
       } else if (isWcConnected()) {
-        console.log('do your work abishek');
         const chatInfoLoaded = await handleWalletConnectChatLogin(connector);
         if (chatInfoLoaded) {
           initalizate();

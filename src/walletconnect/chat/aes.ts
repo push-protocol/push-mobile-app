@@ -49,6 +49,8 @@ export const encryptV2 = async (
     key,
     data,
   );
+  console.log('encrypted', encrypted);
+
   return {
     ciphertext: bytesToHex(new Uint8Array(encrypted)),
     version: 'aes256GcmHkdfSha256',

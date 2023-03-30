@@ -9,6 +9,7 @@ import * as PushNodeClient from 'src/apis';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 import {decryptV2} from './aes';
+import {createUser} from './createUser';
 import {getSigner, hexToBytes, walletToPCAIP10} from './utils';
 
 export const handleWalletConnectChatLogin = async (
@@ -21,7 +22,16 @@ export const handleWalletConnectChatLogin = async (
 
   const user = (await PushNodeClient.getUser(caipAddrs)) as PushAPI.IUser;
   if (!user || !user.publicKey) {
-    return false;
+    const [success, privKey] = await createUser(connector);
+    if (success) {
+      await MetaStorage.instance.setUserChatData({
+        pgpPrivateKey: privKey,
+        encryptionPublicKey: '',
+      });
+      return true;
+    } else {
+      return false;
+    }
   }
   // Get the private key for the v2
   if (user.encryptionType === Constants.ENC_TYPE_V2) {
