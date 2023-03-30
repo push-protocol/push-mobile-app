@@ -5,7 +5,7 @@ import {ethers} from 'ethers';
 import Globals from 'src/Globals';
 import ENV_CONFIG from 'src/env.config';
 
-import {getSigner} from './utils';
+import {getSigner} from '../chat/utils';
 
 export const handleChannelSub = async (
   connector: WalletConnect,

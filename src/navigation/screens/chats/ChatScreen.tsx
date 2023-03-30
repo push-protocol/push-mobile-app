@@ -16,7 +16,7 @@ import * as PushNodeClient from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
 import {DappScanPage} from 'src/components/ui/DappScanPage';
 import MetaStorage from 'src/singletons/MetaStorage';
-import {handleWalletConnectLogin} from 'src/walletconnect';
+import {handleWalletConnectChatLogin} from 'src/walletconnect';
 
 import {Chat, Requests} from './components';
 import {ChatSetup} from './components/ChatSetup';
@@ -70,7 +70,7 @@ const ChatScreen = (props: any) => {
         });
       } else if (isWcConnected()) {
         console.log('do your work abishek');
-        const chatInfoLoaded = await handleWalletConnectLogin(connector);
+        const chatInfoLoaded = await handleWalletConnectChatLogin(connector);
         if (chatInfoLoaded) {
           initalizate();
         } else {

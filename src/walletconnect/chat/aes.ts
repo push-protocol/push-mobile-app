@@ -17,7 +17,7 @@ const hkdf = async (secret: Uint8Array, salt: Uint8Array): Promise<any> => {
     {name: 'HKDF', hash: 'SHA-256', salt, info: new ArrayBuffer(0)},
     key,
     {name: 'AES-GCM', length: 256},
-    true,
+    true, // false
     ['encrypt', 'decrypt'],
   );
   console.log('--', res);
