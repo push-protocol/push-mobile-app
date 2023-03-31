@@ -16,7 +16,7 @@ import * as PushNodeClient from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
 import {DappScanPage} from 'src/components/ui/DappScanPage';
 import MetaStorage from 'src/singletons/MetaStorage';
-import {handleWalletConnectChatLogin} from 'src/walletconnect';
+import {WallectConnectPage} from 'src/walletconnect/pages/WallectConnectPage';
 
 import {Chat, Requests} from './components';
 import {ChatSetup} from './components/ChatSetup';
@@ -44,6 +44,7 @@ const ChatScreen = (props: any) => {
   const [tab, setTab] = useState(TABS.CHATS);
   const [isReady, setIsReady] = useState(false);
   const [isPrivateKeyUser, setIsPrivateKeyUser] = useState(true);
+  const [isWCUser, setIsWCUser] = useState(false);
   const [chatCredentials, setChatCredentials] = useState<UserChatCredentials>();
   const connector = useWalletConnect();
 
@@ -69,23 +70,20 @@ const ChatScreen = (props: any) => {
           navigation: navigation,
         });
       } else if (isWcConnected()) {
-        const chatInfoLoaded = await handleWalletConnectChatLogin(connector);
-        if (chatInfoLoaded) {
-          initalizate();
-        } else {
-          setIsPrivateKeyUser(false);
-          return;
-        }
+        setIsWCUser(true);
+        return;
       }
       // user is new user ask them to use dapp qr
       else {
         setIsPrivateKeyUser(false);
+        setIsWCUser(false);
         return;
       }
     } else {
       setChatCredentials({..._data});
       setTab(TABS.CHATS);
       setIsReady(true);
+      setIsWCUser(false);
     }
   };
 
@@ -112,6 +110,10 @@ const ChatScreen = (props: any) => {
     })();
     return lis;
   }, [props, props.navigation]);
+
+  if (isWCUser) {
+    return <WallectConnectPage initalizate={initalizate} />;
+  }
 
   if (!isPrivateKeyUser && !isReady) {
     return <DappScanPage />;
