@@ -1,6 +1,15 @@
 apply plugin: "com.android.application"
 apply plugin: "com.google.gms.google-services"
 
+project.ext.envConfigFiles = [
+   prodDebug: ".env.prod",
+   prodRelease: ".env.prod",
+   stagingDebug: ".env.staging",
+   stagingRelease: ".env.staging",
+]
+
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
 import com.android.build.OutputFile
 
 /**
@@ -245,6 +254,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            matchingFallbacks = ['debug', 'release']
         }
         release {
             // Caution! In production, you need to generate your own keystore file.

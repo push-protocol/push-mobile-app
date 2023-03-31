@@ -1,14 +1,17 @@
-import {
+import Config from 'react-native-config';
+import GLOBALS from 'src/Globals';
+
+const {
   APP_VERSION,
   MAINNET_INFURA_API,
   SOCKET_KEY_PROD,
   SOCKET_KEY_STAGING,
   TESTNET_INFURA_API,
   YOUTUBE_API_KEY,
-} from '@env';
-import GLOBALS from 'src/Globals';
+  PROD_ENV,
+} = Config;
 
-const IS_PROD_ENV = true; // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work
+const IS_PROD_ENV = PROD_ENV === 'true' ? true : false;
 const SHOW_CONSOLE = 1; // Show or disable console
 
 const {
