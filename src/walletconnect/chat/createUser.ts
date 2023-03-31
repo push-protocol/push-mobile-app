@@ -1,3 +1,4 @@
+import {getSignature} from '@pushprotocol/restapi/src/lib/chat/helpers';
 import {getWallet} from '@pushprotocol/restapi/src/lib/chat/helpers/wallet';
 import Constants from '@pushprotocol/restapi/src/lib/constants';
 import {
@@ -7,7 +8,6 @@ import {
 import {encryptedPrivateKeyType} from '@pushprotocol/restapi/src/lib/types';
 import WalletConnect from '@walletconnect/client';
 import axios from 'axios';
-import {ethers} from 'ethers';
 import GLOBALS from 'src/Globals';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
 
@@ -15,7 +15,6 @@ import {encryptV2} from './aes';
 import {
   bytesToHex,
   getRandomValues,
-  getSignature,
   getSigner,
   hexToBytes,
   walletToPCAIP10,
@@ -39,7 +38,7 @@ export const createUser = async (
   );
 
   const encryptedPrivateKey: encryptedPrivateKeyType =
-    await getEncryptedPrivateKey(signer, keyPairs.privateKeyArmored, address);
+    await getEncryptedPrivateKey(wallet, keyPairs.privateKeyArmored, address);
 
   const data = {
     caip10: walletToPCAIP10(address),
@@ -53,7 +52,7 @@ export const createUser = async (
   };
 
   const hash = generateHash(data);
-  const signatureObj = await getSignature(address, signer, hash);
+  const signatureObj = await getSignature(address, wallet, hash);
 
   const reqBody = {
     ...data,
@@ -73,7 +72,7 @@ export const createUser = async (
 };
 
 const getEncryptedPrivateKey = async (
-  signer: ethers.providers.JsonRpcSigner,
+  wallet: any,
   privateKey: string,
   address: string,
 ) => {
@@ -81,7 +80,7 @@ const getEncryptedPrivateKey = async (
   const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
   const {verificationProof: secret} = await getSignature(
     address,
-    signer,
+    wallet,
     enableProfileMessage,
   );
 

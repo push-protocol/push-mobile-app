@@ -21,6 +21,9 @@ export const handleWalletConnectChatLogin = async (
   const address = account;
 
   const user = (await PushNodeClient.getUser(caipAddrs)) as PushAPI.IUser;
+
+  // user is new
+  // create the pgp pair
   if (!user || !user.publicKey) {
     const [success, privKey] = await createUser(connector);
     if (success) {

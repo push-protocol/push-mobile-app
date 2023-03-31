@@ -3,8 +3,6 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import {ethers} from 'ethers';
 import ENV_CONFIG from 'src/env.config';
 
-const SIG_TYPE_V2 = 'eip712v2';
-
 export const getSigner = async (
   connector: WalletConnect,
 ): Promise<[ethers.providers.JsonRpcSigner, string]> => {
@@ -22,34 +20,6 @@ export const getSigner = async (
   const account = await signer.getAddress();
 
   return [signer, account];
-};
-
-export const getSignature = async (
-  user: string,
-  _signer: ethers.providers.JsonRpcSigner,
-  hash: string,
-) => {
-  // get type information
-  const typeInformation: any = getTypeInformation('Create_user');
-  // console.log(domainInformation)
-
-  // sign a message using EIP712
-  const signedMessage = await _signer._signTypedData({}, typeInformation, {
-    data: hash,
-  });
-
-  const verificationProof = `${SIG_TYPE_V2}:${signedMessage}`;
-
-  return {verificationProof};
-};
-
-const getTypeInformation = (action: string) => {
-  if (action === 'Create_user') {
-    return {
-      Data: [{name: 'data', type: 'string'}],
-    };
-  }
-  return '';
 };
 
 export const walletToPCAIP10 = (account: string): string => {
