@@ -12,7 +12,7 @@ install! 'cocoapods', :deterministic_uuids => false
 
 production = ENV["PRODUCTION"] == "1"
 
-target 'epnsstaging' do
+abstract_target 'PushCommonPods' do
   # RN FIREBASE addon
   use_frameworks! :linkage => :static
   # RN FIREBASE addon ends
@@ -26,6 +26,13 @@ target 'epnsstaging' do
     end
   end
   config = use_native_modules!
+  
+  # push targets
+  target 'push.staging' do
+  end
+
+  target 'push.prod' do
+  end
 
   # Flags change depending on the env values.
   flags = get_default_flags()
@@ -50,7 +57,7 @@ target 'epnsstaging' do
     inherit! :complete
     # Pods for testing
   end
-
+  
   post_install do |installer|
     react_native_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)

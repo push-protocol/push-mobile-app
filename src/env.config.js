@@ -1,20 +1,23 @@
-import {
+import Config from 'react-native-config';
+import GLOBALS from 'src/Globals';
+
+const {
   APP_VERSION,
   MAINNET_INFURA_API,
   SOCKET_KEY_PROD,
   SOCKET_KEY_STAGING,
   TESTNET_INFURA_API,
   YOUTUBE_API_KEY,
-} from '@env';
-import GLOBALS from 'src/Globals';
+  PROD_ENV,
+} = Config;
 
-const IS_PROD_ENV = true; // 1 is Production, 0 is testnet / development, 1 or socket server doesnt work
+
+const IS_PROD_ENV = PROD_ENV === 'true' ? true : false;
 const SHOW_CONSOLE = 1; // Show or disable console
 
 const {
   DEV_EPNS_SERVER,
   PROD_EPNS_SERVER,
-  W2W_EPNS_SERVER,
   METAMASK_LINK_STAGING,
   METAMASK_LINK_PROD,
   DEEPLINK_URL,
@@ -40,7 +43,6 @@ export default {
   // All Server related endpoints
   EPNS_SERVER: IS_PROD_ENV ? PROD_EPNS_SERVER : DEV_EPNS_SERVER,
   METAMASK_LINK: IS_PROD_ENV ? METAMASK_LINK_PROD : METAMASK_LINK_STAGING,
-  W2W_EPNS_SERVER: W2W_EPNS_SERVER,
 
   // all the server endponts
   ENDPOINT_AUTHTOKEN,

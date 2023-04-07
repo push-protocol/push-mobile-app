@@ -7,10 +7,7 @@
     "version": "0.6",
     "scheme": "epnsstaging",
     "platforms": ["ios", "android", "web"],
-    "assetBundlePatterns": ["**/*"],
-    "ios": {
-      "bundleIdentifier": "io.epns.epnsstaging"
-    }
+    "assetBundlePatterns": ["**/*"]
   },
   "plugins": [
     [

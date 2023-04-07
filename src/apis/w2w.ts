@@ -1,4 +1,4 @@
-import GLOBALS from 'src/Globals';
+import envConfig from 'src/env.config';
 import {encryptWithRPCEncryptionPublicKeyReturnRawData} from 'src/helpers/w2w/metamaskSigUtil';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
 
@@ -58,10 +58,7 @@ export interface ConnectedUser extends User {
   privateKey: string;
 }
 
-// const BASE_URL = 'https://backend-staging.epns.io/apis';
-// const BASE_URL = 'https://backend.epns.io/apis';
-// const BASE_URL = 'https://backend-dev.epns.io/apis';
-const BASE_URL = GLOBALS.LINKS.W2W_EPNS_SERVER;
+const BASE_URL = envConfig.EPNS_SERVER;
 
 export const createUser = async ({
   caip10,
