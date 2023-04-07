@@ -52,7 +52,7 @@ export const createUser = async (
   };
 
   const hash = generateHash(data);
-  const signatureObj = await getSignature(address, wallet, hash);
+  const signatureObj = await getSignature(address, wallet, hash, false);
 
   const reqBody = {
     ...data,
@@ -82,6 +82,7 @@ const getEncryptedPrivateKey = async (
     address,
     wallet,
     enableProfileMessage,
+    false,
   );
 
   const enc = new TextEncoder();

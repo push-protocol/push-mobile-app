@@ -44,6 +44,7 @@ export const handleWalletConnectChatLogin = async (
       address,
       wallet,
       enableProfileMessage,
+      false,
     );
 
     const encodedPrivateKey = await decryptV2(
