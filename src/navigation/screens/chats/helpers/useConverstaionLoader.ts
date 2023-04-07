@@ -107,7 +107,6 @@ const useConversationLoader = (
 
     setIsLoadingMore(true);
     const olderMsgs = await fetchChats(pgpPrivateKey, fetchedTill.current);
-    console.log('got older msgs', olderMsgs.length, olderMsgs);
     setChatData(prev => [...prev, ...olderMsgs.reverse()]);
     setIsLoadingMore(false);
     console.log('new message palced');

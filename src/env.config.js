@@ -11,6 +11,7 @@ const {
   PROD_ENV,
 } = Config;
 
+
 const IS_PROD_ENV = PROD_ENV === 'true' ? true : false;
 const SHOW_CONSOLE = 1; // Show or disable console
 
@@ -37,8 +38,7 @@ const {
 export default {
   PROD_ENV: IS_PROD_ENV,
   SHOW_CONSOLE: SHOW_CONSOLE,
-
-  INFURA_API: IS_PROD_ENV ? MAINNET_INFURA_API : TESTNET_INFURA_API,
+  INFURA_API: MAINNET_INFURA_API,
 
   // All Server related endpoints
   EPNS_SERVER: IS_PROD_ENV ? PROD_EPNS_SERVER : DEV_EPNS_SERVER,
@@ -69,4 +69,7 @@ export default {
   SOCKET_KEY: IS_PROD_ENV ? SOCKET_KEY_PROD : SOCKET_KEY_STAGING,
 
   DAPP_URL: IS_PROD_ENV ? DAPP_LINK.PROD : DAPP_LINK.STAGING,
+  CHAIN_ID: IS_PROD_ENV ? 1 : 5,
+  WC_RPC: IS_PROD_ENV ? MAINNET_INFURA_API : TESTNET_INFURA_API,
+  ENV: IS_PROD_ENV ? 'prod' : 'staging',
 };

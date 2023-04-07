@@ -1,11 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import GLOBALS from 'src/Globals';
 import ENSButton from 'src/components/buttons/ENSButton';
@@ -38,7 +32,7 @@ const PKProfileBuilder = ({
   }, []);
 
   useEffect(() => {
-    if (blockchainNamingServiceFetched == 0 && wallet) {
+    if (blockchainNamingServiceFetched === 0 && wallet) {
       fetchBNSFunc();
     }
 

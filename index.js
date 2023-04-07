@@ -1,6 +1,9 @@
 import messaging from '@react-native-firebase/messaging';
 import React, {useEffect} from 'react';
 import {AppRegistry} from 'react-native';
+import 'react-native-crypto';
+import 'react-native-get-random-values';
+import WebviewCrypto from 'react-native-webview-crypto';
 import {NotifeClearBadge, NotifeeDisplayNotification} from 'src/notifee';
 import 'text-encoding';
 

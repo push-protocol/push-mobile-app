@@ -63,7 +63,6 @@ const NewChatScreen = ({route, navigation}: any) => {
     (async () => {
       try {
         lis = navigation.addListener('focus', () => {
-          console.log('####focusing');
           refresh();
         });
       } catch (error) {
@@ -109,7 +108,6 @@ const NewChatScreen = ({route, navigation}: any) => {
         checkIfAddressPresetInFeed(address);
 
       if (isAddressPreset) {
-        console.log('weee were called');
         setMatchedItem(matchedFeed);
       } else {
         // for send intent page
