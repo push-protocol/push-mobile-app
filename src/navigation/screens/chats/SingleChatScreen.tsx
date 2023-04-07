@@ -4,6 +4,7 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
 import {GiphyDialog, GiphyDialogEvent} from '@giphy/react-native-sdk';
+import {approveRequestPayload} from '@pushprotocol/restapi/src/lib/chat';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useNavigation} from '@react-navigation/native';
 import {FlashList} from '@shopify/flash-list';
@@ -29,8 +30,6 @@ import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
-import {walletToCAIP10} from 'src/helpers/CAIPHelper';
-import {pgpSign} from 'src/helpers/w2w/pgp';
 import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
 
 import {AcceptIntent, MessageComponent} from './components';
@@ -132,24 +131,23 @@ const SingleChatScreen = ({route}: any) => {
 
   const onAccept = async () => {
     setIsAccepting(true);
-    // user approves with signature
-    const APPROVED_INTENT = 'Approved';
-    const signature = await pgpSign(
-      APPROVED_INTENT,
-      connectedUser.publicKey,
-      connectedUser.privateKey,
-    );
 
-    // post to the intent
-    const updatedIntent: string = await PushNodeClient.approveIntent(
-      walletToCAIP10(senderAddress),
+    const APPROVED_INTENT = 'Approved';
+    const body = approveRequestPayload(
+      senderAddress,
       connectedUser.wallets,
       APPROVED_INTENT,
-      signature,
-      'sigType',
     );
 
-    console.log('approved intent', updatedIntent);
+    const sig = 'xyz';
+    const sigType = 'a';
+
+    body.verificationProof = sig;
+    body.sigType = sigType;
+    body.signature = sig;
+
+    const res = await PushNodeClient.approveIntent2(body);
+    console.log('approved intent', res);
     setisIntentReceivePage(false);
     setIsAccepting(false);
   };

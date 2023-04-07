@@ -11,7 +11,6 @@ const {
   PROD_ENV,
 } = Config;
 
-
 const IS_PROD_ENV = PROD_ENV === 'true' ? true : false;
 const SHOW_CONSOLE = 1; // Show or disable console
 

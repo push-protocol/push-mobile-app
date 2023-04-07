@@ -134,6 +134,21 @@ export const getUser = async (caip10: string): Promise<User | undefined> => {
   }
 };
 
+export const approveIntent2 = async (body: any) => {
+  const response = await fetch(BASE_URL + '/v1/chat/request/accept', {
+    method: 'PUT',
+    headers: {
+      'content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (response.status < 200 || response.status > 299) {
+    throw new Error('Error changing intent status');
+  }
+  return true;
+};
+
 export const getInbox = async (did: string): Promise<Feeds[] | undefined> => {
   let retry = 0;
   for (let i = 0; i < 3; i++) {

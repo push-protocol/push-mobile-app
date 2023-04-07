@@ -152,7 +152,7 @@ const useChatLoader = (
     return () => {
       if (SocketConfig.useSocket) {
         if (pushSDKSocket.current) {
-          console.log('clearning socket');
+          // console.log('clearning socket inbox');
           // pushSDKSocket.current.disconnect();
         }
       } else {

@@ -54,8 +54,6 @@ export const filterChatAndRequestFeeds = (
   const requestFeeds: PushNodeClient.Feeds[] = [];
 
   feeds.forEach(element => {
-    console.log('intent is', element.intent, 'user addres', userAddress);
-
     if (element.intent?.includes(userAddress)) {
       chatFeeds.push(element);
     } else {

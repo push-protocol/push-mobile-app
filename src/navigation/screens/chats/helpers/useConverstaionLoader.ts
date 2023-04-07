@@ -216,7 +216,16 @@ const useConversationLoader = (
       }
     })();
 
-    return () => clearInterval(chatListener);
+    return () => {
+      if (SocketConfig.useSocket) {
+        if (pushSDKSocket) {
+          console.log('clearning socket screen');
+          pushSDKSocket.disconnect();
+        }
+      } else {
+        clearInterval(chatListener);
+      }
+    };
   }, []);
 
   const fetchNewChatUsingTimer = () => {
