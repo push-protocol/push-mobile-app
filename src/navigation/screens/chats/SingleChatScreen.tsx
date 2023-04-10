@@ -165,7 +165,12 @@ const SingleChatScreen = ({route}: any) => {
 
   const startVideoCall = () => {
     // @ts-ignore
-    navigation.navigate(Globals.SCREENS.VIDEOCALL);
+    navigation.navigate(Globals.SCREENS.VIDEOCALL, {
+      data: {
+        connectedUser,
+        senderAddress,
+      },
+    });
   };
 
   // giphy listener
@@ -224,7 +229,6 @@ const SingleChatScreen = ({route}: any) => {
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', e => {
       setKeyboardStatus(true);
-      console.log('aaaaa \n\nset', e.endCoordinates.height);
       setKeyboardHeight(e.endCoordinates.height);
     });
     const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {

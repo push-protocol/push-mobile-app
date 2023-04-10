@@ -1,16 +1,48 @@
 import {Ionicons, MaterialIcons} from '@expo/vector-icons';
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Dimensions, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {RTCView} from 'react-native-webrtc';
+import {MediaStream, RTCView, mediaDevices} from 'react-native-webrtc';
 import Globals from 'src/Globals';
+import {ConnectedUser} from 'src/apis';
 
 const windowWidth = Dimensions.get('window').width;
 
-const VideoScreen = () => {
+// const configuration = {iceServers: [{url: 'stun:stun.l.google.com:19302'}]};
+
+const VideoScreen = ({route}: any) => {
   // const {localStream} = useSelector(
   //   (state: {video: VideoCallState}) => state.video, // TODO: add other redux slice types
   // );
+
+  const {data} = route.params;
+  const connectedUser: ConnectedUser = data.connectedUser;
+  const senderAddress: string = data.senderAddress;
+
+  // const [isUserMediaLoaded, setIsUserMediaLoaded] = useState(true);
+  const [userMedia, setUserMedia] = useState<MediaStream | null>(null);
+
+  const getMediaStream = async () => {
+    return await mediaDevices.getUserMedia({
+      audio: true,
+      video: true,
+    });
+  };
+
+  const callUser = async () => {};
+
+  useEffect(() => {
+    (async () => {
+      // Initialize the call
+      try {
+        const stream = await getMediaStream();
+        console.log('media', stream.toURL());
+        setUserMedia(stream);
+      } catch (error) {
+        console.log('eee ', error);
+      }
+    })();
+  }, []);
 
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
@@ -21,11 +53,19 @@ const VideoScreen = () => {
           streamURL="https://www.youtube.com/watch?v=dQw4w9WgXcQ" // TODO: Add remote stream
         />
         <View style={styles.smallVideoViewContainer}>
-          <RTCView
-            style={styles.videoView}
-            streamURL="https://www.youtube.com/watch?v=dQw4w9WgXcQ" // TODO: Add local stream
-            objectFit="cover"
-          />
+          {userMedia ? (
+            <RTCView
+              style={styles.videoView}
+              streamURL={userMedia.toURL()} // TODO: Add local stream
+              objectFit="cover"
+            />
+          ) : (
+            <RTCView
+              style={styles.videoView}
+              streamURL="https://www.youtube.com/watch?v=dQw4w9WgXcQ" // TODO: Add local stream
+              objectFit="cover"
+            />
+          )}
         </View>
       </View>
       <View style={styles.options}>
