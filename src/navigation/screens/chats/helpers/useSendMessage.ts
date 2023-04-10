@@ -270,7 +270,6 @@ const useSendMessage = (
       return generateNullRespose();
     }
     console.log('**** intent successfully sent');
-
     showToast(
       'Intent sent succesfully',
       '',

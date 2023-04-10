@@ -209,11 +209,15 @@ const SignInScreen = ({route, navigation}) => {
 
   // Load Advvance Screen
   const loadAdvanceScreen = async () => {
-    console.log(route);
-    // Goto Next Screen
-    navigation.navigate(GLOBALS.SCREENS.SIGNINADVANCE, {
-      wallet: Web3.utils.toChecksumAddress(walletAddress),
-    });
+    try {
+      console.log('abishek', route);
+      // Goto Next Screen
+      navigation.navigate(GLOBALS.SCREENS.SIGNINADVANCE, {
+        wallet: '',
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
