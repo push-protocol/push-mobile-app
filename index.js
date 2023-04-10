@@ -6,11 +6,25 @@ import 'react-native-crypto';
 import 'react-native-get-random-values';
 import WebviewCrypto from 'react-native-webview-crypto';
 import {NotifeClearBadge, NotifeeDisplayNotification} from 'src/notifee';
+import {PAYLOAD} from 'src/push_video/s';
 import 'text-encoding';
 
 import App from './App';
 import {name as appName} from './app.json';
 import './shim';
+
+function HeadlessCheck({isHeadless}) {
+  useEffect(() => {
+    NotifeClearBadge();
+  }, []);
+
+  if (isHeadless) {
+    // App has been launched in the background by iOS, ignore
+    return null;
+  }
+
+  return <App />;
+}
 
 const options = {
   ios: {
@@ -33,46 +47,36 @@ const options = {
   },
 };
 
-const handleCall = async () => {
-  RNCallKeep.displayIncomingCall(
-    'uid',
-    '0x85c58...6915BE',
-    'foo.eth',
-    'generic',
-    true,
-    {
-      handleType: 'generic',
-      localizedCallerName: 'eoo.eth',
-      foregroundColor: '#000000',
-      backgroundColor: '#FFFFFF',
-      notificationTitle: 'Incoming Call',
-      notificationBody: 'You have a new call',
-    },
-  );
-};
+RNCallKeep.setup(options);
 
 // FIREBASE
 // Register background handler
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log('I was called');
-  await handleCall();
+  console.log('remote message ', remoteMessage);
+  RNCallKeep.displayIncomingCall(
+    JSON.stringify(PAYLOAD),
+    '0x85c58...6915BE',
+    'foo.eth',
+    'generic',
+    true,
+  );
   // await NotifeeDisplayNotification(remoteMessage);
 });
 
-function HeadlessCheck({isHeadless}) {
-  useEffect(() => {
-    NotifeClearBadge();
-  }, []);
+RNCallKeep.addEventListener('answerCall', ({callUUID}) => {
+  try {
+    console.log('call3');
+    RNCallKeep.endCall(callUUID);
+    RNCallKeep.backToForeground();
+    console.log('don the info ', callUUID);
 
-  RNCallKeep.setup(options).then(accepted => {});
-
-  if (isHeadless) {
-    // App has been launched in the background by iOS, ignore
-    return null;
+    const callInfo = JSON.parse(callInfo);
+    const {identity} = callInfo;
+    const singalData = 0;
+  } catch (error) {
+    console.log('eer', error);
   }
-
-  return <App />;
-}
+});
 
 AppRegistry.registerComponent(appName, () => HeadlessCheck);
 AppRegistry.registerHeadlessTask(

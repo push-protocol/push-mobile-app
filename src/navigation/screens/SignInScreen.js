@@ -135,7 +135,7 @@ const SignInScreen = ({route, navigation}) => {
 
   // Detect PK Code
   const onWalletDetect = code => {
-    setWalletAddress(code);
+    setWalletAddress('0xD26A7BF7fa0f8F1f3f73B056c9A67565A6aFE63c');
   };
 
   // Reset PK Code

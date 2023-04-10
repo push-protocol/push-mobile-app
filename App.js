@@ -3,6 +3,7 @@ import messaging from '@react-native-firebase/messaging';
 import WalletConnectProvider from '@walletconnect/react-native-dapp';
 import React, {useEffect} from 'react';
 import {Text, Touchable, TouchableOpacity, View} from 'react-native';
+import {NativeModules} from 'react-native';
 import RNCallKeep from 'react-native-callkeep';
 import 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -58,15 +59,15 @@ const App = () => {
       Notify.instance.saveDeviceToken(token, true); // true means it's a refresh
     });
 
-    const handleBackgroundMessageHandler =
-      messaging().setBackgroundMessageHandler(async remoteMessage => {
-        await handleCall();
-        await NotifeeDisplayNotification(remoteMessage);
-      });
+    // const handleBackgroundMessageHandler =
+    //   messaging().setBackgroundMessageHandler(async remoteMessage => {
+    //     await handleCall();
+    //     await NotifeeDisplayNotification(remoteMessage);
+    //   });
 
     return () => {
       onTokenRefresh;
-      handleBackgroundMessageHandler;
+      // handleBackgroundMessageHandler;
       handleAppNotificationBadge();
     };
   }, []);
