@@ -151,6 +151,7 @@ export default {
     QRScanScreen: 'QRScanScreen',
     QRScanScreenFromLogin: 'QRScanScreenFromLogin',
     NewChatScreen: 'NewChatScreen',
+    VIDEOCALL: 'VideoCall',
   },
   APP_AUTH_STATES: {
     INITIALIZING: 1,
