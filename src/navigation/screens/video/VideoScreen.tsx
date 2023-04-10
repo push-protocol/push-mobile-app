@@ -16,18 +16,15 @@ import Peer from 'simple-peer';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 
+import {sendCallPayload} from './connection';
+
 const windowWidth = Dimensions.get('window').width;
 
 const VideoScreen = ({route}: any) => {
-  // const {localStream} = useSelector(
-  //   (state: {video: VideoCallState}) => state.video, // TODO: add other redux slice types
-  // );
-
   const {data} = route.params;
   const connectedUser: ConnectedUser = data.connectedUser;
   const senderAddress: string = data.senderAddress;
 
-  // const [isUserMediaLoaded, setIsUserMediaLoaded] = useState(true);
   const [userMedia, setUserMedia] = useState<MediaStream | null>(null);
 
   const getMediaStream = async () => {
@@ -62,6 +59,12 @@ const VideoScreen = ({route}: any) => {
 
         peer.on('signal', (_data: any) => {
           console.log('CALL USER -> SIGNAL CALLBACK');
+          // send a notification to the user
+          // Prepare post request
+          // 1 is call initiated, 2 is call answered
+          sendCallPayload(connectedUser.wallets, senderAddress, _data)
+            .then(r => console.log(r))
+            .catch(e => console.log(e));
         });
       } catch (error) {
         console.log('eee ', error);
