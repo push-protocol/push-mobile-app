@@ -1,14 +1,22 @@
 import {Ionicons, MaterialIcons} from '@expo/vector-icons';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Dimensions, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {MediaStream, RTCView, mediaDevices} from 'react-native-webrtc';
+import {
+  MediaStream,
+  MediaStreamTrack,
+  RTCIceCandidate,
+  RTCPeerConnection,
+  RTCSessionDescription,
+  RTCView,
+  mediaDevices,
+  registerGlobals,
+} from 'react-native-webrtc';
+import Peer from 'simple-peer';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 
 const windowWidth = Dimensions.get('window').width;
-
-// const configuration = {iceServers: [{url: 'stun:stun.l.google.com:19302'}]};
 
 const VideoScreen = ({route}: any) => {
   // const {localStream} = useSelector(
@@ -29,8 +37,6 @@ const VideoScreen = ({route}: any) => {
     });
   };
 
-  const callUser = async () => {};
-
   useEffect(() => {
     (async () => {
       // Initialize the call
@@ -38,6 +44,25 @@ const VideoScreen = ({route}: any) => {
         const stream = await getMediaStream();
         console.log('media', stream.toURL());
         setUserMedia(stream);
+
+        const peer = new Peer({
+          initiator: true,
+          wrtc: {
+            RTCPeerConnection,
+            RTCIceCandidate,
+            RTCSessionDescription,
+            // @ts-ignore
+            RTCView,
+            MediaStream,
+            MediaStreamTrack,
+            mediaDevices,
+            registerGlobals,
+          },
+        });
+
+        peer.on('signal', (_data: any) => {
+          console.log('CALL USER -> SIGNAL CALLBACK');
+        });
       } catch (error) {
         console.log('eee ', error);
       }
