@@ -25,8 +25,6 @@ export const sendCallPayload = (from: string, to: string, data: any) => {
     status: 1,
   };
 
-  console.log('### payload', videoPayload);
-
   let identityPayload = {
     notification: {
       title: 'VideoCall',

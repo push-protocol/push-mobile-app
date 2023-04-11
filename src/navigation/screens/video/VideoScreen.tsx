@@ -1,4 +1,6 @@
 import {Ionicons, MaterialIcons} from '@expo/vector-icons';
+import {createSocketConnection} from '@pushprotocol/socket';
+import {ENV, EVENTS} from '@pushprotocol/socket/src/lib/constants';
 import React, {useEffect, useState} from 'react';
 import {Dimensions, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -15,6 +17,7 @@ import {
 import Peer from 'simple-peer';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
+import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
 import {sendCallPayload} from './connection';
 
@@ -26,6 +29,9 @@ const VideoScreen = ({route}: any) => {
   const senderAddress: string = data.senderAddress;
 
   const [userMedia, setUserMedia] = useState<MediaStream | null>(null);
+  const [anotherUserMedia, setAnotherUserMedia] = useState<MediaStream | null>(
+    null,
+  );
 
   const getMediaStream = async () => {
     return await mediaDevices.getUserMedia({
@@ -34,8 +40,12 @@ const VideoScreen = ({route}: any) => {
     });
   };
 
+  let called = false;
+
   useEffect(() => {
     (async () => {
+      console.log('<<<called');
+
       // Initialize the call
       try {
         const stream = await getMediaStream();
@@ -58,14 +68,58 @@ const VideoScreen = ({route}: any) => {
         });
 
         peer.on('signal', (_data: any) => {
-          console.log('CALL USER -> SIGNAL CALLBACK');
-          // send a notification to the user
-          // Prepare post request
-          // 1 is call initiated, 2 is call answered
-          sendCallPayload(connectedUser.wallets, senderAddress, _data)
-            .then(r => console.log(r))
-            .catch(e => console.log(e));
+          if (!called) {
+            called = true;
+            console.log('CALL USER -> SIGNAL CALLBACK');
+
+            // ring the user
+            sendCallPayload(connectedUser.wallets, senderAddress, _data)
+              .then(r => console.log(r.status))
+              .catch(e => console.error(e));
+          }
         });
+
+        // listenback from the user
+        const socket = createSocketConnection({
+          user: caip10ToWallet(connectedUser.wallets),
+          env: ENV.STAGING,
+          socketOptions: {autoConnect: true, reconnectionAttempts: 3},
+        });
+
+        if (socket) {
+          socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
+            console.log('*** got feed', feedItem);
+
+            try {
+              const {payload} = feedItem || {};
+
+              // if video meta, skip notification
+              if (
+                payload.hasOwnProperty('data') &&
+                payload.data.hasOwnProperty('videoMeta')
+              ) {
+                const videoMeta = JSON.parse(payload.data.videoMeta);
+
+                console.log('RECIEVED CALL FEED', videoMeta);
+
+                if (videoMeta.status === 1) {
+                  // incoming call
+                  // TODO incomingCall(videoMeta);
+                } else if (videoMeta.status === 2) {
+                  // call answered
+                  // acceptCall(videoMeta);
+                  setAnotherUserMedia(videoMeta.signalData);
+                }
+              }
+            } catch (e) {
+              console.error('Error while diplaying received Notification: ', e);
+            }
+          });
+
+          socket.on(EVENTS.CONNECT, () => {
+            console.log('socket connection connection done');
+          });
+        }
       } catch (error) {
         console.log('eee ', error);
       }
@@ -75,11 +129,19 @@ const VideoScreen = ({route}: any) => {
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
       <View style={styles.videoViewContainer}>
-        <RTCView
-          style={styles.videoView}
-          objectFit="cover"
-          streamURL="https://www.youtube.com/watch?v=dQw4w9WgXcQ" // TODO: Add remote stream
-        />
+        {anotherUserMedia ? (
+          <RTCView
+            style={styles.videoView}
+            objectFit="cover"
+            streamURL={anotherUserMedia.toURL()} // TODO: Add remote stream
+          />
+        ) : (
+          <RTCView
+            style={styles.videoView}
+            objectFit="cover"
+            streamURL="https://www.youtube.com/watch?v=dQw4w9WgXcQ" // TODO: Add remote stream
+          />
+        )}
         <View style={styles.smallVideoViewContainer}>
           {userMedia ? (
             <RTCView
