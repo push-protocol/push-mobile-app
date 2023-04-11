@@ -7,15 +7,12 @@ import LinearGradient from 'react-native-linear-gradient';
 import RNSimplePeer from 'react-native-simple-peer';
 import {
   MediaStream,
-  MediaStreamTrack,
   RTCIceCandidate,
   RTCPeerConnection,
   RTCSessionDescription,
   RTCView,
   mediaDevices,
-  registerGlobals,
 } from 'react-native-webrtc';
-import Peer from 'simple-peer';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
@@ -49,39 +46,23 @@ const VideoScreen = ({route}: any) => {
 
       try {
         const stream = await getMediaStream();
-        console.log('media', stream.toURL());
-        setUserMedia(stream);
 
-        // const peer = new Peer({
-        //   initiator: true,
-        //   wrtc: {
-        //     RTCPeerConnection,
-        //     RTCIceCandidate,
-        //     RTCSessionDescription,
-        //     // @ts-ignore
-        //     RTCView,
-        //     MediaStream,
-        //     MediaStreamTrack,
-        //     mediaDevices,
-        //     registerGlobals,
-        //   },
-        //   stream: stream,
-        // });
+        setUserMedia(stream);
 
         const peer = new RNSimplePeer({
           initiator: true,
-          trickle: true,
+          trickle: false,
           config: {},
           webRTC: {
             RTCPeerConnection,
             RTCIceCandidate,
             RTCSessionDescription,
           },
+          offerOptions: {},
           stream: stream,
         });
 
-        // const res = peer.signal('a' as any);
-
+        // @ts-ignore
         peer.on('signal', (_data: any) => {
           if (!called) {
             called = true;
@@ -94,6 +75,11 @@ const VideoScreen = ({route}: any) => {
           }
         });
 
+        // @ts-ignore
+        peer.on('stream', (_data: any) => {
+          setAnotherUserMedia(_data);
+        });
+
         // listenback from the user
         const socket = createSocketConnection({
           user: caip10ToWallet(connectedUser.wallets),
@@ -103,7 +89,7 @@ const VideoScreen = ({route}: any) => {
 
         if (socket) {
           socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
-            console.log('*** got feed', feedItem);
+            console.log('*** got feed');
 
             try {
               const {payload} = feedItem || {};
@@ -115,15 +101,12 @@ const VideoScreen = ({route}: any) => {
               ) {
                 const videoMeta = JSON.parse(payload.data.videoMeta);
 
-                console.log('RECIEVED CALL FEED', videoMeta);
-
                 if (videoMeta.status === 1) {
                   // incoming call
                   // TODO incomingCall(videoMeta);
                 } else if (videoMeta.status === 2) {
-                  // call answered
-                  // acceptCall(videoMeta);
-                  setAnotherUserMedia(videoMeta.signalData);
+                  const signalData = videoMeta.signalData;
+                  peer.signal(signalData);
                 }
               }
             } catch (e) {
