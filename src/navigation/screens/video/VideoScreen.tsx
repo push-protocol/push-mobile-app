@@ -4,15 +4,17 @@ import {ENV, EVENTS} from '@pushprotocol/socket/src/lib/constants';
 import React, {useEffect, useState} from 'react';
 import {Dimensions, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import RNSimplePeer from 'react-native-simple-peer';
 import {
   MediaStream,
+  MediaStreamTrack,
   RTCIceCandidate,
   RTCPeerConnection,
   RTCSessionDescription,
   RTCView,
   mediaDevices,
+  registerGlobals,
 } from 'react-native-webrtc';
+import Peer from 'simple-peer';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
@@ -49,17 +51,50 @@ const VideoScreen = ({route}: any) => {
 
         setUserMedia(stream);
 
-        const peer = new RNSimplePeer({
+        const peer = new Peer({
           initiator: true,
           trickle: false,
-          config: {},
-          webRTC: {
+          stream: stream,
+          wrtc: {
             RTCPeerConnection,
             RTCIceCandidate,
             RTCSessionDescription,
+            // @ts-ignore
+            RTCView,
+            MediaStream,
+            MediaStreamTrack,
+            mediaDevices,
+            registerGlobals,
           },
-          offerOptions: {},
-          stream: stream,
+          config: {
+            ice_servers: [
+              {
+                url: 'stun:global.stun.twilio.com:3478',
+                urls: 'stun:global.stun.twilio.com:3478',
+              },
+              {
+                url: 'turn:global.turn.twilio.com:3478?transport=udp',
+                username:
+                  '7c0479d041874e91392ab52c3e403efe90202051a393e5a03d3a938b3af21ff8',
+                urls: 'turn:global.turn.twilio.com:3478?transport=udp',
+                credential: '6+sioRGkn7oS7L+HlwaZW1jfxylpBoJvCdFDvE26GPg=',
+              },
+              {
+                url: 'turn:global.turn.twilio.com:3478?transport=tcp',
+                username:
+                  '7c0479d041874e91392ab52c3e403efe90202051a393e5a03d3a938b3af21ff8',
+                urls: 'turn:global.turn.twilio.com:3478?transport=tcp',
+                credential: '6+sioRGkn7oS7L+HlwaZW1jfxylpBoJvCdFDvE26GPg=',
+              },
+              {
+                url: 'turn:global.turn.twilio.com:443?transport=tcp',
+                username:
+                  '7c0479d041874e91392ab52c3e403efe90202051a393e5a03d3a938b3af21ff8',
+                urls: 'turn:global.turn.twilio.com:443?transport=tcp',
+                credential: '6+sioRGkn7oS7L+HlwaZW1jfxylpBoJvCdFDvE26GPg=',
+              },
+            ],
+          },
         });
 
         // @ts-ignore
@@ -77,6 +112,14 @@ const VideoScreen = ({route}: any) => {
 
         // @ts-ignore
         peer.on('stream', (_data: any) => {
+          console.log('got stream ', _data);
+          // console.log('----------------- stream -------------------------------');
+          if (_data.currentTarget && _data.currentTarget._remoteStreams) {
+            _data = _data.currentTarget._remoteStreams[0];
+          }
+          //console.log('Got peer stream!!!', peerId, stream);
+
+          // peer.stream = stream;
           setAnotherUserMedia(_data);
         });
 
@@ -106,6 +149,7 @@ const VideoScreen = ({route}: any) => {
                   // TODO incomingCall(videoMeta);
                 } else if (videoMeta.status === 2) {
                   const signalData = videoMeta.signalData;
+                  console.log('got the signal data', signalData);
                   peer.signal(signalData);
                 }
               }
@@ -246,3 +290,46 @@ const styles = StyleSheet.create({
     color: Globals.COLORS.WHITE,
   },
 });
+
+// const peer = new RNSimplePeer({
+//   initiator: true,
+//   trickle: false,
+//   debugConsole: false,
+//   // iceCompleteTimeout
+//   config: {
+//     ice_servers: [
+//       {
+//         url: 'stun:global.stun.twilio.com:3478',
+//         urls: 'stun:global.stun.twilio.com:3478',
+//       },
+//       {
+//         url: 'turn:global.turn.twilio.com:3478?transport=udp',
+//         username:
+//           '7c0479d041874e91392ab52c3e403efe90202051a393e5a03d3a938b3af21ff8',
+//         urls: 'turn:global.turn.twilio.com:3478?transport=udp',
+//         credential: '6+sioRGkn7oS7L+HlwaZW1jfxylpBoJvCdFDvE26GPg=',
+//       },
+//       {
+//         url: 'turn:global.turn.twilio.com:3478?transport=tcp',
+//         username:
+//           '7c0479d041874e91392ab52c3e403efe90202051a393e5a03d3a938b3af21ff8',
+//         urls: 'turn:global.turn.twilio.com:3478?transport=tcp',
+//         credential: '6+sioRGkn7oS7L+HlwaZW1jfxylpBoJvCdFDvE26GPg=',
+//       },
+//       {
+//         url: 'turn:global.turn.twilio.com:443?transport=tcp',
+//         username:
+//           '7c0479d041874e91392ab52c3e403efe90202051a393e5a03d3a938b3af21ff8',
+//         urls: 'turn:global.turn.twilio.com:443?transport=tcp',
+//         credential: '6+sioRGkn7oS7L+HlwaZW1jfxylpBoJvCdFDvE26GPg=',
+//       },
+//     ],
+//   },
+//   webRTC: {
+//     RTCPeerConnection,
+//     RTCIceCandidate,
+//     RTCSessionDescription,
+//   },
+//   offerOptions: {},
+//   stream: stream,
+// });
