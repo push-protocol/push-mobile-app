@@ -4,6 +4,7 @@ import {ENV, EVENTS} from '@pushprotocol/socket/src/lib/constants';
 import React, {useEffect, useState} from 'react';
 import {Dimensions, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import RNSimplePeer from 'react-native-simple-peer';
 import {
   MediaStream,
   MediaStreamTrack,
@@ -46,31 +47,45 @@ const VideoScreen = ({route}: any) => {
     (async () => {
       console.log('<<<called');
 
-      // Initialize the call
       try {
         const stream = await getMediaStream();
         console.log('media', stream.toURL());
         setUserMedia(stream);
 
-        const peer = new Peer({
+        // const peer = new Peer({
+        //   initiator: true,
+        //   wrtc: {
+        //     RTCPeerConnection,
+        //     RTCIceCandidate,
+        //     RTCSessionDescription,
+        //     // @ts-ignore
+        //     RTCView,
+        //     MediaStream,
+        //     MediaStreamTrack,
+        //     mediaDevices,
+        //     registerGlobals,
+        //   },
+        //   stream: stream,
+        // });
+
+        const peer = new RNSimplePeer({
           initiator: true,
-          wrtc: {
+          trickle: true,
+          config: {},
+          webRTC: {
             RTCPeerConnection,
             RTCIceCandidate,
             RTCSessionDescription,
-            // @ts-ignore
-            RTCView,
-            MediaStream,
-            MediaStreamTrack,
-            mediaDevices,
-            registerGlobals,
           },
+          stream: stream,
         });
+
+        // const res = peer.signal('a' as any);
 
         peer.on('signal', (_data: any) => {
           if (!called) {
             called = true;
-            console.log('CALL USER -> SIGNAL CALLBACK');
+            console.log('CALL USER -> SIGNAL CALLBACK', _data);
 
             // ring the user
             sendCallPayload(connectedUser.wallets, senderAddress, _data)
