@@ -78,6 +78,12 @@ const videoSlice = createSlice({
     setIncomingAudioOn: (state, action) => {
       state.incomingAudioOn = action.payload;
     },
+    toggleIsVideoOn: state => {
+      state.isVideoOn = !state.isVideoOn;
+    },
+    toggleIsAudioOn: state => {
+      state.isAudioOn = !state.isAudioOn;
+    },
   },
 });
 
@@ -93,6 +99,34 @@ export const {
   setIsAudioOn,
   setIncomingVideoOn,
   setIncomingAudioOn,
+  toggleIsVideoOn,
+  toggleIsAudioOn,
 } = videoSlice.actions;
 
+export const selectVideoCall = (state: any) => state.video;
+
 export default videoSlice.reducer;
+
+const enableAudio = (stream: any) => {
+  stream.getAudioTracks().forEach((track: any) => (track.enabled = true));
+};
+
+const disableAudio = (stream: any) => {
+  stream.getAudioTracks().forEach((track: any) => (track.enabled = false));
+};
+
+const enableVideo = (stream: any) => {
+  stream.getVideoTracks().forEach((track: any) => (track.enabled = true));
+};
+
+const disableVideo = (stream: any) => {
+  stream.getVideoTracks().forEach((track: any) => (track.enabled = false));
+};
+
+const toggleCamera = (stream: any) => {
+  stream.getVideoTracks().forEach((track: any) => {
+    track._switchCamera();
+  });
+};
+
+export {enableAudio, disableAudio, enableVideo, disableVideo, toggleCamera};

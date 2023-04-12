@@ -1,8 +1,9 @@
-import {Ionicons, MaterialIcons} from '@expo/vector-icons';
+import {Feather, Ionicons, MaterialIcons} from '@expo/vector-icons';
 import {createSocketConnection} from '@pushprotocol/socket';
 import {ENV, EVENTS} from '@pushprotocol/socket/src/lib/constants';
+import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
-import {Dimensions, StyleSheet, View} from 'react-native';
+import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {
   MediaStream,
@@ -14,10 +15,23 @@ import {
   mediaDevices,
   registerGlobals,
 } from 'react-native-webrtc';
+import {useDispatch, useSelector} from 'react-redux';
 import Peer from 'simple-peer';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
+import {
+  disableAudio,
+  disableVideo,
+  enableAudio,
+  enableVideo,
+  selectVideoCall,
+  setCallEnded,
+  setReceiverPeerSignalled,
+  toggleCamera,
+  toggleIsAudioOn,
+  toggleIsVideoOn,
+} from 'src/redux/videoSlice';
 
 import {sendCallPayload} from './connection';
 
@@ -32,6 +46,10 @@ const VideoScreen = ({route}: any) => {
   const [anotherUserMedia, setAnotherUserMedia] = useState<MediaStream | null>(
     null,
   );
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const {isAudioOn, isVideoOn} = useSelector(selectVideoCall);
+  const connectionRef = React.useRef<any>();
 
   const getMediaStream = async () => {
     return await mediaDevices.getUserMedia({
@@ -41,6 +59,33 @@ const VideoScreen = ({route}: any) => {
   };
 
   let called = false;
+
+  const toggleAudio = () => {
+    if (userMedia) {
+      isAudioOn ? disableAudio(userMedia) : enableAudio(userMedia);
+      dispatch(toggleIsAudioOn());
+    }
+  };
+
+  const toggleVideo = () => {
+    if (userMedia) {
+      isVideoOn ? disableVideo(userMedia) : enableVideo(userMedia);
+      dispatch(toggleIsVideoOn());
+    }
+  };
+
+  const changeCamera = () => {
+    if (userMedia) {
+      toggleCamera(userMedia);
+    }
+  };
+
+  const endCall = () => {
+    dispatch(setReceiverPeerSignalled(false));
+    dispatch(setCallEnded(true));
+    connectionRef.current.destroy();
+    navigation.goBack();
+  };
 
   useEffect(() => {
     (async () => {
@@ -123,6 +168,9 @@ const VideoScreen = ({route}: any) => {
           setAnotherUserMedia(_data);
         });
 
+        // Save the peer connection
+        connectionRef.current = peer;
+
         // listenback from the user
         const socket = createSocketConnection({
           user: caip10ToWallet(connectedUser.wallets),
@@ -201,18 +249,30 @@ const VideoScreen = ({route}: any) => {
         </View>
       </View>
       <View style={styles.options}>
-        <View style={styles.iconContainer}>
+        <TouchableOpacity style={styles.iconContainer} onPress={changeCamera}>
           <Ionicons name="md-camera-reverse-outline" style={styles.icon} />
-        </View>
-        <View style={styles.iconContainer}>
-          <Ionicons name="videocam-outline" style={styles.icon} />
-        </View>
-        <View style={styles.iconContainer}>
-          <Ionicons name="mic-outline" style={styles.icon} />
-        </View>
-        <View style={[styles.iconContainer, styles.callendContainer]}>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.iconContainer, !isVideoOn && styles.backgroundRed]}
+          onPress={toggleVideo}>
+          <Feather
+            name={isVideoOn ? 'video' : 'video-off'}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.iconContainer, !isAudioOn && styles.backgroundRed]}
+          onPress={toggleAudio}>
+          <Ionicons
+            name={isAudioOn ? 'mic-outline' : 'mic-off-outline'}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.iconContainer, styles.callendContainer]}
+          onPress={endCall}>
           <MaterialIcons name="call-end" style={[styles.icon, styles.white]} />
-        </View>
+        </TouchableOpacity>
       </View>
     </LinearGradient>
   );
@@ -288,6 +348,9 @@ const styles = StyleSheet.create({
   },
   white: {
     color: Globals.COLORS.WHITE,
+  },
+  backgroundRed: {
+    backgroundColor: Globals.COLORS.SUBLIME_RED,
   },
 });
 
