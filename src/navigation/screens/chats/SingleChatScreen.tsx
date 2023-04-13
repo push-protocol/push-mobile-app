@@ -163,6 +163,16 @@ const SingleChatScreen = ({route}: any) => {
     );
   };
 
+  const startVideoCall = () => {
+    // @ts-ignore
+    navigation.navigate(Globals.SCREENS.VIDEOCALL, {
+      data: {
+        connectedUser,
+        senderAddress,
+      },
+    });
+  };
+
   // giphy listener
   useEffect(() => {
     const listener = GiphyDialog.addListener(
@@ -219,7 +229,6 @@ const SingleChatScreen = ({route}: any) => {
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', e => {
       setKeyboardStatus(true);
-      console.log('aaaaa \n\nset', e.endCoordinates.height);
       setKeyboardHeight(e.endCoordinates.height);
     });
     const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
@@ -294,6 +303,14 @@ const SingleChatScreen = ({route}: any) => {
             </TouchableOpacity>
           </View>
         </View>
+
+        <Ionicons
+          name="videocam"
+          size={35}
+          style={styles.videoIcon}
+          color={Globals.COLORS.PINK}
+          onPress={() => startVideoCall()}
+        />
       </View>
 
       <KeyboardAvoidingView
@@ -577,7 +594,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     marginLeft: 20,
-    width: '85%',
     justifyContent: 'space-between',
   },
 
@@ -655,5 +671,8 @@ const styles = StyleSheet.create({
   menuItemText: {
     marginLeft: 10,
     marginTop: 5,
+  },
+  videoIcon: {
+    marginLeft: 'auto',
   },
 });

@@ -59,6 +59,7 @@ const App = () => {
       Notify.instance.saveDeviceToken(token, true); // true means it's a refresh
     });
 
+
     // const handleBackgroundMessageHandler =
     //   messaging().setBackgroundMessageHandler(async remoteMessage => {
     //     await handleCall();
