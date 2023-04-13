@@ -165,12 +165,7 @@ const SingleChatScreen = ({route}: any) => {
 
   const startVideoCall = () => {
     // @ts-ignore
-    navigation.navigate(Globals.SCREENS.VIDEOCALL, {
-      data: {
-        connectedUser,
-        senderAddress,
-      },
-    });
+    navigation.navigate(Globals.SCREENS.VIDEOCALL);
   };
 
   // giphy listener

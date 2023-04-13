@@ -1,4 +1,5 @@
 import {Ionicons, MaterialIcons} from '@expo/vector-icons';
+import {useNavigation} from '@react-navigation/native';
 import {BlurView} from 'expo-blur';
 import React, {useEffect, useState} from 'react';
 import {
@@ -12,14 +13,28 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {RTCView} from 'react-native-webrtc';
+import {useDispatch} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {DEFAULT_AVATAR} from 'src/navigation/screens/chats/constants';
 import VideoPlaceholder from 'src/navigation/screens/video/components/VideoPlaceholder';
+import {setCall} from 'src/redux/videoSlice';
 
 const windowWidth = Dimensions.get('window').width;
 
 const IncomingCall = ({stream}) => {
   const [fader] = useState(new Animated.Value(0));
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+
+  const handleCancel = () => {
+    dispatch(setCall({isReceivingCall: false, signal: null}));
+  };
+
+  const handleAnswer = () => {
+    dispatch(setCall({isReceivingCall: false}));
+    // @ts-ignore
+    navigation.navigate(GLOBALS.SCREENS.VIDEOCALL);
+  };
 
   useEffect(() => {
     Animated.timing(fader, {
@@ -45,7 +60,11 @@ const IncomingCall = ({stream}) => {
           useAngle
           angle={179.97}
           style={styles.flex}>
-          <Ionicons name="close" style={styles.closeIcon} />
+          <Ionicons
+            name="close"
+            style={styles.closeIcon}
+            onPress={handleCancel}
+          />
           <View style={styles.detailsContainer}>
             <Image source={{uri: DEFAULT_AVATAR}} style={styles.image} />
             <View style={styles.textContainer}>
@@ -67,9 +86,16 @@ const IncomingCall = ({stream}) => {
             </View>
             <View style={styles.options}>
               <TouchableHighlight style={styles.callAccept}>
-                <Ionicons name="videocam" size={24} color="white" />
+                <Ionicons
+                  name="videocam"
+                  size={24}
+                  color="white"
+                  onPress={handleAnswer}
+                />
               </TouchableHighlight>
-              <TouchableHighlight style={styles.callReject}>
+              <TouchableHighlight
+                style={styles.callReject}
+                onPress={handleCancel}>
                 <MaterialIcons name="call-end" size={26} color="white" />
               </TouchableHighlight>
             </View>

@@ -18,20 +18,22 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import Peer from 'simple-peer';
 import Globals from 'src/Globals';
-import {ConnectedUser} from 'src/apis';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
+import {
+  VideoCallState,
+  selectVideoCall,
+  setCallEnded,
+  setReceiverPeerSignalled,
+  toggleIsAudioOn,
+  toggleIsVideoOn,
+} from 'src/redux/videoSlice';
 import {
   disableAudio,
   disableVideo,
   enableAudio,
   enableVideo,
-  selectVideoCall,
-  setCallEnded,
-  setReceiverPeerSignalled,
   toggleCamera,
-  toggleIsAudioOn,
-  toggleIsVideoOn,
-} from 'src/redux/videoSlice';
+} from 'src/socket';
 
 import {DEFAULT_AVATAR} from '../chats/constants';
 import VideoPlaceholder from './components/VideoPlaceholder';
@@ -39,18 +41,19 @@ import {sendCallPayload} from './connection';
 
 const windowWidth = Dimensions.get('window').width;
 
-const VideoScreen = ({route}: any) => {
-  const {data} = route.params;
-  const connectedUser: ConnectedUser = data.connectedUser;
-  const senderAddress: string = data.senderAddress;
-
+const VideoScreen = () => {
   const [userMedia, setUserMedia] = useState<MediaStream | null>(null);
   const [anotherUserMedia, setAnotherUserMedia] = useState<MediaStream | null>(
     null,
   );
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const {isAudioOn, isVideoOn} = useSelector(selectVideoCall);
+  const {isAudioOn, isVideoOn, call} = useSelector(
+    selectVideoCall,
+  ) as VideoCallState;
+
+  const connectedUser: string = call.to || '';
+  const senderAddress: string = call.from || '';
   const connectionRef = React.useRef<any>();
 
   const getMediaStream = async () => {
@@ -95,7 +98,6 @@ const VideoScreen = ({route}: any) => {
 
       try {
         const stream = await getMediaStream();
-
         setUserMedia(stream);
 
         const peer = new Peer({
@@ -151,7 +153,7 @@ const VideoScreen = ({route}: any) => {
             console.log('CALL USER -> SIGNAL CALLBACK', _data);
 
             // ring the user
-            sendCallPayload(connectedUser.wallets, senderAddress, _data)
+            sendCallPayload(connectedUser, senderAddress, _data)
               .then(r => console.log(r.status))
               .catch(e => console.error(e));
           }
@@ -175,7 +177,7 @@ const VideoScreen = ({route}: any) => {
 
         // listenback from the user
         const socket = createSocketConnection({
-          user: caip10ToWallet(connectedUser.wallets),
+          user: caip10ToWallet(connectedUser),
           env: ENV.STAGING,
           socketOptions: {autoConnect: true, reconnectionAttempts: 3},
         });

@@ -25,8 +25,6 @@ const ServerHelper = {
       platform: platform,
     });
 
-    console.log('body is', body, apiURL);
-
     try {
       const res = await fetch(apiURL, {
         method: 'POST',
