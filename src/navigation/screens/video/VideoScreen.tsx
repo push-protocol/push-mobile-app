@@ -33,6 +33,8 @@ import {
   toggleIsVideoOn,
 } from 'src/redux/videoSlice';
 
+import {DEFAULT_AVATAR} from '../chats/constants';
+import VideoPlaceholder from './components/VideoPlaceholder';
 import {sendCallPayload} from './connection';
 
 const windowWidth = Dimensions.get('window').width;
@@ -240,11 +242,7 @@ const VideoScreen = ({route}: any) => {
               objectFit="cover"
             />
           ) : (
-            <RTCView
-              style={styles.videoView}
-              streamURL="https://www.youtube.com/watch?v=dQw4w9WgXcQ" // TODO: Add local stream
-              objectFit="cover"
-            />
+            <VideoPlaceholder uri={DEFAULT_AVATAR} />
           )}
         </View>
       </View>
@@ -330,6 +328,7 @@ const styles = StyleSheet.create({
     width: windowWidth - 10,
     overflow: 'hidden',
     flex: 1,
+    zIndex: 1,
   },
   videoView: {
     flex: 1,
