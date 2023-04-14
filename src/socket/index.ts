@@ -26,14 +26,12 @@ const toggleCamera = (stream: any) => {
   });
 };
 
-const handleIncomingCall = (videoMeta: any) => {
-  console.log('handleIncomingCall', typeof videoMeta);
-};
-const handleAcceptCall = (videoMeta: any) => {
-  console.log('handleAcceptCall', videoMeta);
-};
+let socket;
+
+// const handleIncomingCall = (videoMeta: any) => {};
+// const handleAcceptCall = (videoMeta: any) => {};
 const setupGlobalSocket = (userAddress: string, dispatch: Dispatch) => {
-  const socket = createSocketConnection({
+  socket = createSocketConnection({
     env: ENV.STAGING,
     apiKey: SocketConfig.key,
     user: userAddress,
@@ -52,10 +50,19 @@ const setupGlobalSocket = (userAddress: string, dispatch: Dispatch) => {
 
   socket.on('disconnect', () => {
     console.log('Disconnected from video socket');
+    console.log('connecting agin...');
+
+    socket = createSocketConnection({
+      env: ENV.STAGING,
+      apiKey: SocketConfig.key,
+      user: userAddress,
+      socketType: 'notification',
+      socketOptions: {autoConnect: true, reconnectionAttempts: 3},
+    });
   });
 
   socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
-    console.log('feedItem', feedItem);
+    console.log('got feed feedItem');
     try {
       const {payload} = feedItem || {};
       // if video meta, skip notification
@@ -68,7 +75,7 @@ const setupGlobalSocket = (userAddress: string, dispatch: Dispatch) => {
         console.log('Call feed status', videoMeta.status);
         console.log('Status Type', typeof videoMeta.status);
         if (videoMeta.status === 1) {
-          console.log('video', videoMeta);
+          console.log('video signal got');
           // incoming call received, do something with it
           dispatch(
             setCall({
@@ -79,9 +86,9 @@ const setupGlobalSocket = (userAddress: string, dispatch: Dispatch) => {
               signal: videoMeta.signalData,
             }),
           );
-          handleIncomingCall(videoMeta);
+          // handleIncomingCall(videoMeta);
         } else if (videoMeta.status === 2) {
-          handleAcceptCall(videoMeta);
+          // handleAcceptCall(videoMeta);
         }
       }
     } catch (e) {

@@ -14,10 +14,19 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {RTCView} from 'react-native-webrtc';
 import {useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {DEFAULT_AVATAR} from 'src/navigation/screens/chats/constants';
 import VideoPlaceholder from 'src/navigation/screens/video/components/VideoPlaceholder';
 import {setCall} from 'src/redux/videoSlice';
+import {
+  VideoCallState,
+  selectVideoCall,
+  setCallEnded,
+  setReceiverPeerSignalled,
+  toggleIsAudioOn,
+  toggleIsVideoOn,
+} from 'src/redux/videoSlice';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -26,12 +35,14 @@ const IncomingCall = ({stream}) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
+  const {call} = useSelector(selectVideoCall);
+
   const handleCancel = () => {
     dispatch(setCall({isReceivingCall: false, signal: null}));
   };
 
   const handleAnswer = () => {
-    dispatch(setCall({isReceivingCall: false}));
+    dispatch(setCall({...call, isReceivingCall: false}));
     // @ts-ignore
     navigation.navigate(GLOBALS.SCREENS.VIDEOCALL);
   };

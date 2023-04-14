@@ -2403,10 +2403,10 @@
     typescript "^5.0.2"
     uuid "^9.0.0"
 
-"@pushprotocol/socket@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@pushprotocol/socket/-/socket-0.2.0.tgz#d800c1b87bb8fa7bbb5f27db9ccf004c0b928280"
-  integrity sha512-vfwU4hboGHmb48fVhmbNehQizQUCtOOvketzN5tNZAVv+yZ9jgYsSxdwFpZiS/c9rTC9UXBs8wJ1FYgpUrT3mw==
+"@pushprotocol/socket@latest":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@pushprotocol/socket/-/socket-0.4.2.tgz#b2bf5f67a155d3b83ed792e84ce11b88ee99e49d"
+  integrity sha512-Pcm0zCT9lB49stuFK+pMORD1UJkJjVzKXhWofQQxbIsUpG10pujZhVfoJtohDT99k+AN2EZLWCImU8j0rfwVlw==
   dependencies:
     socket.io-client "^4.5.2"
     tslib "^2.3.0"

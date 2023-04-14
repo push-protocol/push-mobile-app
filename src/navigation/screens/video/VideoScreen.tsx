@@ -5,6 +5,7 @@ import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import RNPeer from 'react-native-simple-peer';
 import {
   MediaStream,
   MediaStreamTrack,
@@ -99,6 +100,7 @@ const VideoScreen = () => {
       try {
         const stream = await getMediaStream();
         setUserMedia(stream);
+        return;
 
         const peer = new Peer({
           initiator: true,
@@ -219,6 +221,119 @@ const VideoScreen = () => {
       }
     })();
   }, []);
+
+  const [receiverPeerSignalled, setRecieverPeerSignalled] = useState(false);
+  useEffect(() => {
+    if (!userMedia) {
+      return;
+    }
+
+    let toAddress = connectedUser;
+    let fromAddress = senderAddress;
+    console.log('******ANSWER CALL');
+
+    try {
+      const peer2: any = new RNPeer({
+        initiator: true,
+        trickle: true,
+        config: {},
+        webRTC: {
+          RTCPeerConnection,
+          RTCIceCandidate,
+          RTCSessionDescription,
+        },
+        stream: userMedia,
+      });
+      console.log('answer call -> data');
+      const res = peer2.signal(call.signal);
+      console.log('got res', res);
+
+      console.log('Sending Payload for answer call - Step 1');
+
+      peer2.on('signal', (data: any) => {
+        console.log('ANSWER CALL -> SIGNAL CALLBACK');
+        console.log('RECIEVER PEER SIGNALED', receiverPeerSignalled);
+
+        // send answer call notification
+        // Prepare post request
+        // 1 is call initiated, 2 is call answered, 3 is completed
+        console.log(
+          'Sending Payload for answer call - Peer on Signal - Step 2',
+        );
+        if (!receiverPeerSignalled) {
+          setRecieverPeerSignalled(true);
+
+          console.log(
+            'Sending Payload for answer call - Peer on Signal - Step 3',
+            receiverPeerSignalled,
+          );
+          const videoPayload: any = {
+            userToCall: toAddress,
+            fromUser: fromAddress,
+            signalData: data,
+            name: 'name',
+            status: 2,
+          };
+          let identityPayload = {
+            notification: {
+              title: 'VideoCall',
+              body: 'VideoCall',
+            },
+            data: {
+              amsg: 'VideoCall',
+              asub: 'VideoCall',
+              type: '3',
+              etime: Date.now() + 245543,
+              hidden: '1',
+              videoMeta: videoPayload,
+            },
+          };
+
+          const identityType: number = 2;
+          const stringifiedData: string = JSON.stringify(identityPayload);
+          const identity: string = `${identityType}+${stringifiedData}`;
+
+          const payload: any = {
+            sender: `eip155:42:${toAddress}`,
+            recipient: `eip155:42:${fromAddress}`,
+            identity: identity,
+            source: 'PUSH_VIDEO',
+          };
+
+          console.log('****/// sending payload', payload);
+
+          const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload),
+          };
+          fetch(
+            'https://backend-staging.epns.io/apis/v1/payloads/video/poc',
+            requestOptions,
+          );
+        }
+        // socket.emit('answerCall', { signal: data, to: call.from });
+      });
+
+      peer2.on('connect', () => {
+        // wait for 'connect' event before using the data channel
+        peer2.send('hey caller, how is it going?');
+      });
+
+      peer2.on('stream', (currentStream: MediaStream) => {
+        console.log('GOT STREAM BACK IN ANSWERCALL');
+        setAnotherUserMedia(currentStream);
+      });
+
+      peer2.on('error', (err: any) => {
+        console.log('!!!!!!!! err', err);
+      });
+
+      connectionRef.current = peer2;
+    } catch (error) {
+      console.log('------err: ', error);
+    }
+  }, [userMedia]);
 
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
