@@ -8,7 +8,7 @@ import {
   Image,
   StyleSheet,
   Text,
-  TouchableHighlight,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -70,7 +70,7 @@ const IncomingCall = ({stream}) => {
           <View style={styles.detailsContainer}>
             <Image source={{uri: DEFAULT_AVATAR}} style={styles.image} />
             <View style={styles.textContainer}>
-              <Text style={styles.name}>John Doe</Text>
+              <Text style={styles.name}>{call.name}</Text>
               <Text style={styles.description}>Incoming Video Call</Text>
             </View>
           </View>
@@ -87,19 +87,19 @@ const IncomingCall = ({stream}) => {
               )}
             </View>
             <View style={styles.options}>
-              <TouchableHighlight style={styles.callAccept}>
+              <TouchableOpacity style={styles.callAccept}>
                 <Ionicons
                   name="videocam"
                   size={24}
                   color="white"
                   onPress={handleAnswer}
                 />
-              </TouchableHighlight>
-              <TouchableHighlight
+              </TouchableOpacity>
+              <TouchableOpacity
                 style={styles.callReject}
                 onPress={handleCancel}>
                 <MaterialIcons name="call-end" size={26} color="white" />
-              </TouchableHighlight>
+              </TouchableOpacity>
             </View>
           </View>
         </LinearGradient>
@@ -124,6 +124,15 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: GLOBALS.COLORS.WHITE,
     overflow: 'hidden',
+    shadowColor: 'rgba(0, 0, 0, 0.4)',
+    borderStyle: 'solid',
+    shadowOffset: {
+      width: 0,
+      height: 12,
+    },
+    shadowOpacity: 0.58,
+    shadowRadius: 16.0,
+    elevation: 24,
   },
   flex: {
     flex: 1,
@@ -140,7 +149,6 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     borderRadius: 46.29 / 2,
     overflow: 'hidden',
-    backgroundColor: GLOBALS.COLORS.GRAY,
   },
   video: {
     borderRadius: 24,

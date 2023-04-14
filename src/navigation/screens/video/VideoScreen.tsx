@@ -24,7 +24,7 @@ import {
 
 import {DEFAULT_AVATAR} from '../chats/constants';
 import VideoPlaceholder from './components/VideoPlaceholder';
-import {usePeer} from './peer';
+import {usePeer} from './helpers/peer';
 
 const windowWidth = Dimensions.get('window').width;
 

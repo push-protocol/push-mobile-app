@@ -5,24 +5,23 @@ import GLOBALS from 'src/Globals';
 import IncomingCall from 'src/components/modals/IncomingCall';
 import {selectAuthState, setLogout} from 'src/redux/authSlice';
 import {selectVideoCall} from 'src/redux/videoSlice';
-import {setupGlobalSocket} from 'src/socket';
 
 import AuthenticatedNavigator from './AuthenticatedNavigator';
 import InitializingNavigator from './InitializingNavigator';
 import OnboardedNavigator from './OnboardedNavigator';
 import OnboardingNavigator from './OnboardingNavigator';
+import useVideoSocket from './screens/video/helpers/useVideoSocket';
 
 const Screens = () => {
   const authState = useSelector(selectAuthState);
   console.log('auth state was', authState);
   const dispatch = useDispatch();
   const {call} = useSelector(selectVideoCall);
+  useVideoSocket('0x3aae65DF8424b0Bb80C1f74dD480b04dbEA54213');
 
   // reset user login
   useEffect(() => {
     dispatch(setLogout(null));
-    console.log('calling setup global socket');
-    setupGlobalSocket('0xD26A7BF7fa0f8F1f3f73B056c9A67565A6aFE63c', dispatch);
   }, []);
 
   return (

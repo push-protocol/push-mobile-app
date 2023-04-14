@@ -1,8 +1,6 @@
 import {createSocketConnection} from '@pushprotocol/socket';
-import {ENV, EVENTS} from '@pushprotocol/socket/src/lib/constants';
-import {Dispatch} from '@reduxjs/toolkit';
+import {EVENTS} from '@pushprotocol/socket/src/lib/constants';
 import {SocketConfig} from 'src/navigation/screens/chats/helpers/socketHelper';
-import {setCall} from 'src/redux/videoSlice';
 
 const enableAudio = (stream: any) => {
   stream.getAudioTracks().forEach((track: any) => (track.enabled = true));
@@ -28,16 +26,21 @@ const toggleCamera = (stream: any) => {
 
 let socket;
 
-// const handleIncomingCall = (videoMeta: any) => {};
-// const handleAcceptCall = (videoMeta: any) => {};
-const setupGlobalSocket = (userAddress: string, dispatch: Dispatch) => {
-  socket = createSocketConnection({
-    env: ENV.STAGING,
+const newSocket = (userAddress: string) => {
+  return createSocketConnection({
+    env: SocketConfig.url,
     apiKey: SocketConfig.key,
     user: userAddress,
     socketType: 'notification',
     socketOptions: {autoConnect: true, reconnectionAttempts: 3},
   });
+};
+
+const setupGlobalSocket = (
+  userAddress: string,
+  onIncomingCall: (videoMeta: any) => void,
+) => {
+  socket = newSocket(userAddress);
 
   if (!socket) {
     console.log('Socket not initialized properly!');
@@ -52,13 +55,7 @@ const setupGlobalSocket = (userAddress: string, dispatch: Dispatch) => {
     console.log('Disconnected from video socket');
     console.log('connecting agin...');
 
-    socket = createSocketConnection({
-      env: ENV.STAGING,
-      apiKey: SocketConfig.key,
-      user: userAddress,
-      socketType: 'notification',
-      socketOptions: {autoConnect: true, reconnectionAttempts: 3},
-    });
+    socket = newSocket(userAddress);
   });
 
   socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
@@ -77,16 +74,7 @@ const setupGlobalSocket = (userAddress: string, dispatch: Dispatch) => {
         if (videoMeta.status === 1) {
           console.log('video signal got');
           // incoming call received, do something with it
-          dispatch(
-            setCall({
-              isReceivingCall: true,
-              from: videoMeta.fromUser,
-              to: userAddress,
-              name: videoMeta.name,
-              signal: videoMeta.signalData,
-            }),
-          );
-          // handleIncomingCall(videoMeta);
+          onIncomingCall(videoMeta);
         } else if (videoMeta.status === 2) {
           // handleAcceptCall(videoMeta);
         }
