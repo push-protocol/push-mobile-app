@@ -1,3 +1,5 @@
+import {createSocketConnection} from '@pushprotocol/socket';
+import {ENV, EVENTS} from '@pushprotocol/socket/src/lib/constants';
 import RNPeer from 'react-native-simple-peer';
 import {
   MediaStream,
@@ -5,6 +7,9 @@ import {
   RTCPeerConnection,
   RTCSessionDescription,
 } from 'react-native-webrtc';
+import {caip10ToWallet} from 'src/helpers/CAIPHelper';
+
+import {sendCallPayload} from './connection';
 
 interface UsePeerArgs {
   calling: boolean;
@@ -14,7 +19,11 @@ interface UsePeerArgs {
   call: any;
   toAddress: string;
   fromAddress: string;
+  rcalled: any;
+  rsetCalled: any;
 }
+
+let k = false;
 
 const usePeer = ({
   calling,
@@ -24,11 +33,13 @@ const usePeer = ({
   call,
   toAddress,
   fromAddress,
+  rcalled,
+  rsetCalled,
 }: UsePeerArgs) => {
-  let receiverPeerSignalled = false;
   const peer = new RNPeer({
-    initiator: true,
-    trickle: true,
+    initiator: calling,
+    trickle: false,
+    debugConsole: false,
     config: {},
     webRTC: {
       RTCPeerConnection,
@@ -38,94 +49,105 @@ const usePeer = ({
     stream: userMedia,
   });
   if (calling) {
+    console.log('calling the peer');
+
+    try {
+      const socket = createSocketConnection({
+        user: caip10ToWallet(fromAddress),
+        env: ENV.STAGING,
+        socketOptions: {autoConnect: true, reconnectionAttempts: 3},
+      });
+
+      if (socket) {
+        socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
+          console.log('*** got feed');
+          const {payload} = feedItem || {};
+
+          if (
+            payload.hasOwnProperty('data') &&
+            payload.data.hasOwnProperty('videoMeta')
+          ) {
+            const videoMeta = JSON.parse(payload.data.videoMeta);
+            if (videoMeta.status === 2) {
+              const signalData = videoMeta.signalData;
+              console.log('got the signal data', signalData);
+              peer.signal(signalData);
+            }
+          }
+        });
+
+        socket.on(EVENTS.CONNECT, () => {
+          console.log('*****() socket connection connection done');
+        });
+
+        socket.on(EVENTS.DISCONNECT, () => {
+          console.log('caller disconn');
+        });
+      }
+    } catch (error) {
+      console.log('err', error);
+    }
+
+    // @ts-ignore
+    peer.on('signal', (_data: any) => {
+      if (!rcalled && !k) {
+        console.log('CALL USER -> SIGNAL CALLBACK');
+        rsetCalled(true);
+        k = true;
+
+        // ring the user
+        sendCallPayload({
+          from: caip10ToWallet(fromAddress),
+          to: toAddress,
+          name: '',
+          signalData: _data,
+          status: 1,
+        })
+          .then(r => console.log(r.status))
+          .catch(e => console.error(e));
+      }
+    });
   } else {
     console.log('answer call -> data');
-
-    const res = peer.signal(call.signal);
-    console.log('got res', res);
-
+    peer.signal(call.signal);
     console.log('Sending Payload for answer call - Step 1');
 
     // @ts-ignore
     peer.on('signal', (data: any) => {
       console.log('ANSWER CALL -> SIGNAL CALLBACK');
-      console.log('RECIEVER PEER SIGNALED', receiverPeerSignalled);
 
       // send answer call notification
-      // Prepare post request
-      // 1 is call initiated, 2 is call answered, 3 is completed
       console.log('Sending Payload for answer call - Peer on Signal - Step 2');
-      if (!receiverPeerSignalled) {
-        receiverPeerSignalled = true;
-
-        console.log(
-          'Sending Payload for answer call - Peer on Signal - Step 3',
-          receiverPeerSignalled,
-        );
-        const videoPayload: any = {
-          userToCall: toAddress,
-          fromUser: fromAddress,
-          signalData: data,
+      if (!rcalled) {
+        rsetCalled(true);
+        sendCallPayload({
+          from: toAddress,
+          to: fromAddress,
           name: 'name',
+          signalData: data,
           status: 2,
-        };
-        let identityPayload = {
-          notification: {
-            title: 'VideoCall',
-            body: 'VideoCall',
-          },
-          data: {
-            amsg: 'VideoCall',
-            asub: 'VideoCall',
-            type: '3',
-            etime: Date.now() + 245543,
-            hidden: '1',
-            videoMeta: videoPayload,
-          },
-        };
-
-        const identityType: number = 2;
-        const stringifiedData: string = JSON.stringify(identityPayload);
-        const identity: string = `${identityType}+${stringifiedData}`;
-
-        const payload: any = {
-          sender: `eip155:42:${toAddress}`,
-          recipient: `eip155:42:${fromAddress}`,
-          identity: identity,
-          source: 'PUSH_VIDEO',
-        };
-
-        console.log('****/// sending payload', payload);
-
-        const requestOptions = {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(payload),
-        };
-        fetch(
-          'https://backend-staging.epns.io/apis/v1/payloads/video/poc',
-          requestOptions,
-        );
+        })
+          .then(r => console.log(r.status))
+          .catch(e => console.error(e));
       }
-      // socket.emit('answerCall', { signal: data, to: call.from });
-    });
-
-    // @ts-ignore
-    peer.on('connect', () => {
-      // wait for 'connect' event before using the data channel
-      peer.send('hey caller, how is it going?');
-    });
-
-    // @ts-ignore
-    peer.on('stream', (currentStream: MediaStream) => {
-      console.log('++ GOT STREAM BACK IN ANSWERCALL');
-      setAnotherUserMedia(currentStream);
     });
   }
 
   // @ts-ignore
   peer.on('error', (err: any) => {
     console.log('!!!!!!!! err', err);
+  });
+
+  // @ts-ignore
+  peer.on('connect', () => {
+    // wait for 'connect' event before using the data channel
+    peer.send('hey caller, how is it going?');
+  });
+
+  // @ts-ignore
+  peer.on('stream', (currentStream: MediaStream) => {
+    console.log('++ GOT STREAM BACK IN ANSWERCALL');
+    setAnotherUserMedia(currentStream);
   });
 
   connectionRef.current = peer;

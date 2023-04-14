@@ -1,24 +1,11 @@
 import {Feather, Ionicons, MaterialIcons} from '@expo/vector-icons';
-import {createSocketConnection} from '@pushprotocol/socket';
-import {ENV, EVENTS} from '@pushprotocol/socket/src/lib/constants';
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {
-  MediaStream,
-  MediaStreamTrack,
-  RTCIceCandidate,
-  RTCPeerConnection,
-  RTCSessionDescription,
-  RTCView,
-  mediaDevices,
-  registerGlobals,
-} from 'react-native-webrtc';
+import {MediaStream, RTCView, mediaDevices} from 'react-native-webrtc';
 import {useDispatch, useSelector} from 'react-redux';
-import Peer from 'simple-peer';
 import Globals from 'src/Globals';
-import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import {
   VideoCallState,
   selectVideoCall,
@@ -37,7 +24,6 @@ import {
 
 import {DEFAULT_AVATAR} from '../chats/constants';
 import VideoPlaceholder from './components/VideoPlaceholder';
-import {sendCallPayload} from './connection';
 import {usePeer} from './peer';
 
 const windowWidth = Dimensions.get('window').width;
@@ -63,8 +49,6 @@ const VideoScreen = () => {
       video: true,
     });
   };
-
-  let called = false;
 
   const toggleAudio = () => {
     if (userMedia) {
@@ -96,132 +80,12 @@ const VideoScreen = () => {
   useEffect(() => {
     (async () => {
       console.log('<<<called');
-
-      try {
-        const stream = await getMediaStream();
-        setUserMedia(stream);
-        return;
-
-        const peer = new Peer({
-          initiator: true,
-          trickle: false,
-          stream: stream,
-          wrtc: {
-            RTCPeerConnection,
-            RTCIceCandidate,
-            RTCSessionDescription,
-            // @ts-ignore
-            RTCView,
-            MediaStream,
-            MediaStreamTrack,
-            mediaDevices,
-            registerGlobals,
-          },
-          config: {
-            ice_servers: [
-              {
-                url: 'stun:global.stun.twilio.com:3478',
-                urls: 'stun:global.stun.twilio.com:3478',
-              },
-              {
-                url: 'turn:global.turn.twilio.com:3478?transport=udp',
-                username:
-                  '7c0479d041874e91392ab52c3e403efe90202051a393e5a03d3a938b3af21ff8',
-                urls: 'turn:global.turn.twilio.com:3478?transport=udp',
-                credential: '6+sioRGkn7oS7L+HlwaZW1jfxylpBoJvCdFDvE26GPg=',
-              },
-              {
-                url: 'turn:global.turn.twilio.com:3478?transport=tcp',
-                username:
-                  '7c0479d041874e91392ab52c3e403efe90202051a393e5a03d3a938b3af21ff8',
-                urls: 'turn:global.turn.twilio.com:3478?transport=tcp',
-                credential: '6+sioRGkn7oS7L+HlwaZW1jfxylpBoJvCdFDvE26GPg=',
-              },
-              {
-                url: 'turn:global.turn.twilio.com:443?transport=tcp',
-                username:
-                  '7c0479d041874e91392ab52c3e403efe90202051a393e5a03d3a938b3af21ff8',
-                urls: 'turn:global.turn.twilio.com:443?transport=tcp',
-                credential: '6+sioRGkn7oS7L+HlwaZW1jfxylpBoJvCdFDvE26GPg=',
-              },
-            ],
-          },
-        });
-
-        // @ts-ignore
-        peer.on('signal', (_data: any) => {
-          if (!called) {
-            called = true;
-            console.log('CALL USER -> SIGNAL CALLBACK', _data);
-
-            // ring the user
-            sendCallPayload(connectedUser, senderAddress, _data)
-              .then(r => console.log(r.status))
-              .catch(e => console.error(e));
-          }
-        });
-
-        // @ts-ignore
-        peer.on('stream', (_data: any) => {
-          console.log('got stream ', _data);
-          // console.log('----------------- stream -------------------------------');
-          if (_data.currentTarget && _data.currentTarget._remoteStreams) {
-            _data = _data.currentTarget._remoteStreams[0];
-          }
-          //console.log('Got peer stream!!!', peerId, stream);
-
-          // peer.stream = stream;
-          setAnotherUserMedia(_data);
-        });
-
-        // Save the peer connection
-        connectionRef.current = peer;
-
-        // listenback from the user
-        const socket = createSocketConnection({
-          user: caip10ToWallet(connectedUser),
-          env: ENV.STAGING,
-          socketOptions: {autoConnect: true, reconnectionAttempts: 3},
-        });
-
-        if (socket) {
-          socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
-            console.log('*** got feed');
-
-            try {
-              const {payload} = feedItem || {};
-
-              // if video meta, skip notification
-              if (
-                payload.hasOwnProperty('data') &&
-                payload.data.hasOwnProperty('videoMeta')
-              ) {
-                const videoMeta = JSON.parse(payload.data.videoMeta);
-
-                if (videoMeta.status === 1) {
-                  // incoming call
-                  // TODO incomingCall(videoMeta);
-                } else if (videoMeta.status === 2) {
-                  const signalData = videoMeta.signalData;
-                  console.log('got the signal data', signalData);
-                  peer.signal(signalData);
-                }
-              }
-            } catch (e) {
-              console.error('Error while diplaying received Notification: ', e);
-            }
-          });
-
-          socket.on(EVENTS.CONNECT, () => {
-            console.log('socket connection connection done');
-          });
-        }
-      } catch (error) {
-        console.log('eee ', error);
-      }
+      const stream = await getMediaStream();
+      setUserMedia(stream);
     })();
   }, []);
 
+  const [rcalled, rsetCalled] = useState(false);
   useEffect(() => {
     if (!userMedia) {
       return;
@@ -230,15 +94,16 @@ const VideoScreen = () => {
     let toAddress = connectedUser;
     let fromAddress = senderAddress;
     console.log('******ANSWER CALL');
-
     const peer = usePeer({
-      calling: false,
+      calling: call.calling,
       call: call,
       connectionRef: connectionRef,
       fromAddress,
       toAddress,
       userMedia,
       setAnotherUserMedia,
+      rcalled,
+      rsetCalled,
     });
 
     console.log(peer);

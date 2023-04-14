@@ -25,12 +25,14 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import {useDispatch} from 'react-redux';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
+import {setCall} from 'src/redux/videoSlice';
 
 import {AcceptIntent, MessageComponent} from './components';
 import {CustomScroll} from './components/CustomScroll';
@@ -163,7 +165,18 @@ const SingleChatScreen = ({route}: any) => {
     );
   };
 
+  const dispatch = useDispatch();
+
   const startVideoCall = () => {
+    dispatch(
+      setCall({
+        isReceivingCall: false,
+        calling: true,
+        to: senderAddress,
+        from: connectedUser.wallets,
+        call: {},
+      }),
+    );
     // @ts-ignore
     navigation.navigate(Globals.SCREENS.VIDEOCALL);
   };

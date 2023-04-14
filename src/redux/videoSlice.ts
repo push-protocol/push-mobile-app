@@ -17,6 +17,7 @@ export interface VideoCallState {
 
 interface Call {
   isReceivingCall: boolean;
+  calling: boolean;
   from: string | null;
   to: string | null;
   name: string | null;
@@ -31,6 +32,7 @@ const initialState: VideoCallState = {
   name: 'Joe',
   call: {
     isReceivingCall: false,
+    calling: false,
     from: null,
     name: null,
     signal: null,

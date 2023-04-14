@@ -14,15 +14,28 @@ export interface payloadType {
   identity: string;
   source: string;
 }
-const NAME = 'JOHN';
 
-export const sendCallPayload = (from: string, to: string, data: any) => {
+interface SendCallPayload {
+  from: string;
+  to: string;
+  signalData: any;
+  name: string;
+  status: 1 | 2;
+}
+
+export const sendCallPayload = ({
+  signalData,
+  from,
+  to,
+  status,
+  name,
+}: SendCallPayload) => {
   const videoPayload: videoPayloadType = {
     userToCall: caip10ToWallet(to),
     fromUser: caip10ToWallet(from),
-    signalData: data,
-    name: NAME,
-    status: 1,
+    signalData,
+    name,
+    status,
   };
 
   let identityPayload = {
