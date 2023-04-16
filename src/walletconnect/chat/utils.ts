@@ -9,10 +9,12 @@ export const getSigner = async (
   const provider = new WalletConnectProvider({
     connector,
     rpc: {
-      [ENV_CONFIG.CHAIN_ID]: ENV_CONFIG.WC_RPC,
+      [ENV_CONFIG.CHAIN_ID]:
+        'https://eth-mainnet.g.alchemy.com/v2/_DVMbA1hCM873eUo4LHII1dExHHoH7BO',
     },
     chainId: ENV_CONFIG.CHAIN_ID,
     qrcode: false,
+    pollingInterval: 60000,
   });
   await provider.enable();
   const ethers_provider = new ethers.providers.Web3Provider(provider);
