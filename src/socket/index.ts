@@ -77,6 +77,10 @@ const setupGlobalSocket = (
           onIncomingCall(videoMeta);
         } else if (videoMeta.status === 2) {
           // handleAcceptCall(videoMeta);
+          // i'm calling the user
+          // user sends me the second notification
+          // then this once called
+          // initalize the peer
         }
       }
     } catch (e) {
