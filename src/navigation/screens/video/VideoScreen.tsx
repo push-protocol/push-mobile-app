@@ -146,15 +146,15 @@ const VideoScreen = () => {
           onPress={toggleVideo}>
           <Feather
             name={isVideoOn ? 'video' : 'video-off'}
-            style={styles.icon}
+            style={styles.featherIcon}
           />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.iconContainer, !isAudioOn && styles.backgroundRed]}
           onPress={toggleAudio}>
-          <Ionicons
-            name={isAudioOn ? 'mic-outline' : 'mic-off-outline'}
-            style={styles.icon}
+          <Feather
+            name={isAudioOn ? 'mic' : 'mic-off'}
+            style={styles.featherIcon}
           />
         </TouchableOpacity>
         <TouchableOpacity
@@ -187,8 +187,8 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   iconContainer: {
-    width: 34,
-    height: 34,
+    width: 48,
+    height: 48,
     backgroundColor: Globals.COLORS.WHITE,
     borderRadius: 10,
     fontSize: 24,
@@ -209,9 +209,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: Globals.COLORS.BLACK,
   },
+  featherIcon: {
+    fontSize: 20,
+    color: Globals.COLORS.BLACK,
+  },
   callendContainer: {
-    width: 52,
-    height: 40,
+    width: 80,
+    height: 48,
     backgroundColor: Globals.COLORS.SUBLIME_RED,
   },
   videoViewContainer: {

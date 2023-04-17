@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   callReject: {
-    width: 46,
+    width: 60,
     height: 44,
     borderRadius: 16,
     backgroundColor: GLOBALS.COLORS.BADGE_RED,
