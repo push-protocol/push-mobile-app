@@ -1,9 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import WalletConnectProvider from '@walletconnect/react-native-dapp';
-import React, {useEffect} from 'react';
-import {Text, Touchable, TouchableOpacity, View} from 'react-native';
-import {NativeModules} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Text, TouchableOpacity, View} from 'react-native';
 import RNCallKeep from 'react-native-callkeep';
 import 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -13,13 +12,11 @@ import {persistStore} from 'redux-persist';
 import {PersistGate} from 'redux-persist/integration/react';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import AppScreens from 'src/navigation';
-import {NotifeeDisplayNotification} from 'src/notifee';
+import {VideoScreenApp} from 'src/push_video/VideoScreen';
 import store from 'src/redux';
 import Notify from 'src/singletons/Notify';
 
 import appConfig from './app.json';
-
-let persistor = persistStore(store);
 
 const options = {
   ios: {
@@ -42,7 +39,18 @@ const options = {
   },
 };
 
-RNCallKeep.setup(options).then(accepted => {});
+const getCaller = jsonObj => {
+  try {
+    const bodyStr = jsonObj.notification.body;
+    const regex = /0x[\w]+/;
+    const match = bodyStr.match(regex);
+    return match[0];
+  } catch (error) {
+    console.log('got err', error);
+  }
+  return 'abishek';
+};
+let persistor = persistStore(store);
 
 const App = () => {
   const handleAppNotificationBadge = async () => {
@@ -51,20 +59,12 @@ const App = () => {
 
   useEffect(() => {
     // PUSH NOTIFICATIONS HANDLING
-    // Request Device Token and save it user is signed in
     Notify.instance.requestDeviceToken(true);
 
     // Listen to whether the token changes
     const onTokenRefresh = messaging().onTokenRefresh(token => {
       Notify.instance.saveDeviceToken(token, true); // true means it's a refresh
     });
-
-
-    // const handleBackgroundMessageHandler =
-    //   messaging().setBackgroundMessageHandler(async remoteMessage => {
-    //     await handleCall();
-    //     await NotifeeDisplayNotification(remoteMessage);
-    //   });
 
     return () => {
       onTokenRefresh;
@@ -73,37 +73,50 @@ const App = () => {
     };
   }, []);
 
-  const handleCall = async () => {
-    RNCallKeep.displayIncomingCall(
-      'uid',
-      '0x85c58...6915BE',
-      'foo.eth',
-      'generic',
-      true,
-      {
-        handleType: 'generic',
-        localizedCallerName: 'eoo.eth',
-        foregroundColor: '#000000',
-        backgroundColor: '#FFFFFF',
-        notificationTitle: 'Incoming Call',
-        notificationBody: 'You have a new call',
-      },
-    );
-  };
+  const [test, setTest] = useState(false);
+  const [connectedUser, setSonnectedUser] = useState('');
+  const [senderAddress, setSenderAddress] = useState('');
 
-  // const test = true;
-  const test = false;
+  RNCallKeep.setup(options);
+
+  // FIREBASE
+  messaging().setBackgroundMessageHandler(async remoteMessage => {
+    console.log('remote message ', remoteMessage);
+    try {
+      const caller = getCaller(remoteMessage);
+      console.log('got caller', caller);
+      await RNCallKeep.displayIncomingCall(
+        caller,
+        '0x85c58...6915BE',
+        'foo.eth',
+        'generic',
+        true,
+      );
+    } catch (e) {
+      console.log('err', e);
+    }
+  });
+
+  RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
+    try {
+      console.log('call3');
+      console.log('I calling');
+      RNCallKeep.backToForeground();
+      RNCallKeep.endCall(callUUID);
+      console.log('I am back to the screen', callUUID);
+      setSenderAddress(callUUID);
+      setTest(true);
+    } catch (error) {
+      console.log('eer', error);
+    }
+  });
 
   if (test) {
     return (
-      <View>
-        <Text>Wola</Text>
-        <TouchableOpacity
-          onPress={handleCall}
-          style={{backgroundColor: 'green', width: 200, margin: 50}}>
-          <Text style={{padding: 20, color: 'white'}}>Do call</Text>
-        </TouchableOpacity>
-      </View>
+      <VideoScreenApp
+        connectedUser="0xD26A7BF7fa0f8F1f3f73B056c9A67565A6aFE63c"
+        senderAddress={senderAddress}
+      />
     );
   }
 

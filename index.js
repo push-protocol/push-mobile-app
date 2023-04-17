@@ -26,65 +26,13 @@ function HeadlessCheck({isHeadless}) {
   return <App />;
 }
 
-const options = {
-  ios: {
-    appName: 'My app name',
-  },
-  android: {
-    alertTitle: 'Permissions required',
-    alertDescription: 'This application needs to access your phone accounts',
-    cancelButton: 'Cancel',
-    okButton: 'ok',
-    imageName: 'phone_account_icon',
-    // additionalPermissions: [PermissionsAndroid.PERMISSIONS.example],
-    // Required to get audio in background when using Android 11
-    foregroundService: {
-      channelId: 'com.company.my',
-      channelName: 'Foreground service for my app',
-      notificationTitle: 'My app is running on background',
-      notificationIcon: 'Path to the resource icon of the notification',
-    },
-  },
-};
-
-RNCallKeep.setup(options);
-
-// FIREBASE
-// Register background handler
-messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log('remote message ', remoteMessage);
-  RNCallKeep.displayIncomingCall(
-    JSON.stringify(PAYLOAD),
-    '0x85c58...6915BE',
-    'foo.eth',
-    'generic',
-    true,
-  );
-  // await NotifeeDisplayNotification(remoteMessage);
-});
-
-RNCallKeep.addEventListener('answerCall', ({callUUID}) => {
-  try {
-    console.log('call3');
-    RNCallKeep.endCall(callUUID);
-    RNCallKeep.backToForeground();
-    console.log('don the info ', callUUID);
-
-    const callInfo = JSON.parse(callInfo);
-    const {identity} = callInfo;
-    const singalData = 0;
-  } catch (error) {
-    console.log('eer', error);
-  }
-});
-
 AppRegistry.registerComponent(appName, () => HeadlessCheck);
 AppRegistry.registerHeadlessTask(
   'RNCallKeepBackgroundMessage',
   () =>
     ({name, callUUID, handle}) => {
       // Make your call here
-
+      console.log('####*****', name, callUUID);
       return Promise.resolve();
     },
 );
