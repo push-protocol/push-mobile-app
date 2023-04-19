@@ -403,7 +403,7 @@ const SignInScreen = ({route, navigation}) => {
         <PKEntryPrompt
           ref={TextEntryPromptRef}
           title="Enter Wallet Address"
-          subtitle="Please enter your wallet address whose notification you want to receive."
+          subtitle="Please enter your wallet address or web3 domain whose notification you want to receive."
           entryLimit={42}
           allowDomainDetection={true}
           doneTitle="Verify!"

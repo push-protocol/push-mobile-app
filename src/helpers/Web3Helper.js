@@ -1,4 +1,5 @@
 import ENS from 'ethereum-ens';
+import EthENS from 'ethereum-ens';
 import {ethers} from 'ethers';
 import ENV_CONFIG from 'src/env.config';
 import MetaStorage from 'src/singletons/MetaStorage';
@@ -247,9 +248,46 @@ const Web3Helper = {
       return /^[0-9a-f]+$/.test(modStr);
     }
   },
-  // Resolve Domain name
+  // Resolve Domain name .eth or unstoppable domain
   resolveBlockchainDomain: async (domain, currency) => {
-    const resolution = new Resolution();
+    if (domain.includes('.eth')) {
+      const provider = Web3Helper.getWeb3Provider();
+      const ens = new EthENS(provider);
+      return new Promise((resolve, reject) => {
+        ens
+          .resolver(domain)
+          .addr()
+          .then(address => {
+            console.log(address);
+            resolve(address);
+          })
+          .catch(err => {
+            console.log('got error');
+            console.log(err);
+            reject(err);
+          });
+      });
+    }
+    const resolution = new Resolution({
+      sourceConfig: {
+        uns: {
+          locations: {
+            Layer1: {
+              network: 'mainnet',
+              url: ENV_CONFIG.INFURA_API,
+            },
+            Layer2: {
+              network: 'polygon-mainnet',
+              url: ENV_CONFIG.INFURA_API,
+            },
+          },
+        },
+        zns: {
+          url: 'https://api.zilliqa.com',
+          network: 'mainnet',
+        },
+      },
+    });
     return new Promise((resolve, reject) => {
       resolution
         .addr(domain, currency)
