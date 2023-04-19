@@ -4,6 +4,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import IncomingCall from 'src/components/modals/IncomingCall';
 import {selectAuthState, setLogout} from 'src/redux/authSlice';
+import {selectUsers} from 'src/redux/authSlice';
 import {selectVideoCall} from 'src/redux/videoSlice';
 
 import AuthenticatedNavigator from './AuthenticatedNavigator';
@@ -14,10 +15,14 @@ import useVideoSocket from './screens/video/helpers/useVideoSocket';
 
 const Screens = () => {
   const authState = useSelector(selectAuthState);
+  const [connectedUser] = useSelector(selectUsers);
+  console.log('its-----$$$$$$', connectedUser);
+
   console.log('auth state was', authState);
+
   const dispatch = useDispatch();
   const {call} = useSelector(selectVideoCall);
-  useVideoSocket('0x3aae65DF8424b0Bb80C1f74dD480b04dbEA54213');
+  useVideoSocket('0xD26A7BF7fa0f8F1f3f73B056c9A67565A6aFE63c');
 
   // reset user login
   useEffect(() => {

@@ -20,7 +20,7 @@ import {
   walletToPCAIP10,
 } from './utils';
 
-const BASE_URL = GLOBALS.LINKS.W2W_EPNS_SERVER;
+const BASE_URL = GLOBALS.LINKS.PROD_EPNS_SERVER;
 export const createUser = async (
   connector: WalletConnect,
 ): Promise<[boolean, string]> => {
