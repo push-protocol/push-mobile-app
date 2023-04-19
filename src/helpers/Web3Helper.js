@@ -7,6 +7,25 @@ import Web3 from 'web3';
 
 const {default: Resolution} = require('@unstoppabledomains/resolution');
 
+const getResolution = () => {
+  return new Resolution({
+    sourceConfig: {
+      uns: {
+        locations: {
+          Layer1: {
+            network: 'mainnet',
+            // url: ENV_CONFIG.INFURA_API,
+            provider: new ethers.providers.InfuraProvider(
+              1,
+              ENV_CONFIG.INFURA_API,
+            ),
+          },
+        },
+      },
+    },
+  });
+};
+
 // Web3 Helper Function
 const Web3Helper = {
   // To get checksum
@@ -149,7 +168,7 @@ const Web3Helper = {
     const endpoint = ENV_CONFIG.CNS_ENDPOINT;
 
     // prepare api url
-    const apiURL = endpoint + '?owner=' + wallet + '&extension=crypto';
+    const apiURL = endpoint + '?owner=' + wallet;
 
     return await fetch(apiURL, {
       method: 'GET',
@@ -164,6 +183,8 @@ const Web3Helper = {
           success: false,
           cns: '',
         };
+
+        console.log('got res', responseJson);
 
         if (responseJson['domains']?.length > 0) {
           response.success = true;
@@ -190,6 +211,20 @@ const Web3Helper = {
         console.warn(error);
         return error;
       });
+  },
+  getUDRev: async function (wallet) {
+    console.log('**** callled');
+    try {
+      const resolution = getResolution();
+      const name = await resolution.reverse(wallet, 'ETH');
+      console.log('got rev', name, 'for wallet', wallet);
+      if (name) {
+        return [true, name];
+      }
+    } catch (error) {
+      console.log('got err', error);
+    }
+    return [false, ''];
   },
   // Update CNS Record
   updateCNSAndFetchWalletInfoObject: async () => {
@@ -268,26 +303,8 @@ const Web3Helper = {
           });
       });
     }
-    const resolution = new Resolution({
-      sourceConfig: {
-        uns: {
-          locations: {
-            Layer1: {
-              network: 'mainnet',
-              url: ENV_CONFIG.INFURA_API,
-            },
-            Layer2: {
-              network: 'polygon-mainnet',
-              url: ENV_CONFIG.INFURA_API,
-            },
-          },
-        },
-        zns: {
-          url: 'https://api.zilliqa.com',
-          network: 'mainnet',
-        },
-      },
-    });
+
+    const resolution = getResolution();
     return new Promise((resolve, reject) => {
       resolution
         .addr(domain, currency)

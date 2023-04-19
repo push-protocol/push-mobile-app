@@ -60,7 +60,7 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
         address = Web3Helper.getAddressChecksum(query.toLowerCase());
       } else {
         try {
-          address = await Web3Helper.resolveBlockchainDomain(query, 'eth');
+          address = await Web3Helper.resolveBlockchainDomain(query, 'ETH');
           setEthAddress(address);
         } catch (error) {
           showError(query);

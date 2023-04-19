@@ -25,6 +25,14 @@ const getFormattedAddress = (originalAddress: string) => {
       if (res.success) {
         // @ts-ignore: Unreachable code error
         setFormattedAddress(res.ens);
+        return;
+      }
+
+      const [success, name] = await Web3Helper.getUDRev(originalAddress);
+      if (success) {
+        // @ts-ignore: Unreachable code error
+        setFormattedAddress(name);
+        return;
       }
     })();
   }, []);
