@@ -6,11 +6,10 @@ import ENV_CONFIG from 'src/env.config';
 export const getSigner = async (
   connector: WalletConnect,
 ): Promise<[ethers.providers.JsonRpcSigner, string]> => {
-  console.log('going with', ENV_CONFIG.WC_RPC);
   const provider = new WalletConnectProvider({
     connector,
     rpc: {
-      [ENV_CONFIG.CHAIN_ID]: ENV_CONFIG.WC_RPC || '',
+      [ENV_CONFIG.CHAIN_ID]: ENV_CONFIG.INFURA_API || '',
     },
     chainId: ENV_CONFIG.CHAIN_ID,
     qrcode: false,

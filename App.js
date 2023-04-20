@@ -8,7 +8,6 @@ import WebviewCrypto from 'react-native-webview-crypto';
 import {Provider} from 'react-redux';
 import {persistStore} from 'redux-persist';
 import {PersistGate} from 'redux-persist/integration/react';
-import envConfig from 'src/env.config';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import AppScreens from 'src/navigation';
 import {NotifeeDisplayNotification} from 'src/notifee';
@@ -18,7 +17,6 @@ import Notify from 'src/singletons/Notify';
 import appConfig from './app.json';
 
 let persistor = persistStore(store);
-console.log('wc rpc', envConfig.WC_RPC);
 
 const App = () => {
   const handleAppNotificationBadge = async () => {
