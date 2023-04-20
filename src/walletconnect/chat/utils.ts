@@ -6,15 +6,15 @@ import ENV_CONFIG from 'src/env.config';
 export const getSigner = async (
   connector: WalletConnect,
 ): Promise<[ethers.providers.JsonRpcSigner, string]> => {
+  console.log('going with', ENV_CONFIG.WC_RPC);
   const provider = new WalletConnectProvider({
     connector,
     rpc: {
-      [ENV_CONFIG.CHAIN_ID]:
-        'https://eth-mainnet.g.alchemy.com/v2/_DVMbA1hCM873eUo4LHII1dExHHoH7BO',
+      [ENV_CONFIG.CHAIN_ID]: ENV_CONFIG.WC_RPC || '',
     },
     chainId: ENV_CONFIG.CHAIN_ID,
     qrcode: false,
-    pollingInterval: 60000,
+    pollingInterval: 6000000,
   });
   await provider.enable();
   const ethers_provider = new ethers.providers.Web3Provider(provider);

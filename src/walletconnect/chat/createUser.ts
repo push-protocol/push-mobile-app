@@ -8,7 +8,7 @@ import {
 import {encryptedPrivateKeyType} from '@pushprotocol/restapi/src/lib/types';
 import WalletConnect from '@walletconnect/client';
 import axios from 'axios';
-import GLOBALS from 'src/Globals';
+import envConfig from 'src/env.config';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
 
 import {encryptV2} from './aes';
@@ -20,7 +20,7 @@ import {
   walletToPCAIP10,
 } from './utils';
 
-const BASE_URL = GLOBALS.LINKS.PROD_EPNS_SERVER;
+const BASE_URL = envConfig.EPNS_SERVER;
 export const createUser = async (
   connector: WalletConnect,
 ): Promise<[boolean, string]> => {

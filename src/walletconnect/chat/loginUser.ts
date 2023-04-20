@@ -20,7 +20,7 @@ export const handleWalletConnectChatLogin = async (
   const wallet = getWallet({account, signer});
   const address = account;
 
-  const user = (await PushNodeClient.getUser(caipAddrs)) as PushAPI.IUser;
+  let user = (await PushNodeClient.getUser(caipAddrs)) as PushAPI.IUser;
 
   // user is new
   // create the pgp pair
@@ -37,7 +37,10 @@ export const handleWalletConnectChatLogin = async (
     }
   }
   // Get the private key for the v2
-  if (user.encryptionType === Constants.ENC_TYPE_V2) {
+  if (
+    user.encryptionType === Constants.ENC_TYPE_V2 ||
+    user.encryptionType === 'eip191-aes256-gcm-hkdf-sha256'
+  ) {
     const {preKey: input} = JSON.parse(user.encryptedPrivateKey);
     const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
     const {verificationProof: secret} = await getSignature(

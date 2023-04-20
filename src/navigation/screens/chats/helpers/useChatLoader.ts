@@ -42,8 +42,6 @@ const useChatLoader = (
     caipAddress: string,
     pgpPrivateKey: string,
   ) => {
-    console.log('aai was called');
-
     let user = await PushNodeClient.getUser(caipAddress);
     console.log('got user');
 

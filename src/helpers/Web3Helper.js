@@ -8,20 +8,28 @@ import Web3 from 'web3';
 const {default: Resolution} = require('@unstoppabledomains/resolution');
 
 const getResolution = () => {
-  return new Resolution({
-    sourceConfig: {
-      uns: {
-        locations: {
-          Layer1: {
-            network: 'mainnet',
-            // url: ENV_CONFIG.INFURA_API,
-            provider: new ethers.providers.InfuraProvider(
-              1,
-              ENV_CONFIG.INFURA_API,
-            ),
-          },
+  return Resolution.fromEthersProvider({
+    uns: {
+      locations: {
+        Layer1: {
+          network: 'mainnet',
+          provider: new ethers.providers.InfuraProvider(
+            1,
+            ENV_CONFIG.INFURA_PROJECT_ID,
+          ),
+        },
+        Layer2: {
+          network: 'polygon-mainnet',
+          provider: new ethers.providers.InfuraProvider(
+            137,
+            ENV_CONFIG.INFURA_PROJECT_ID,
+          ),
         },
       },
+    },
+    zns: {
+      url: 'https://api.zilliqa.com',
+      network: 'mainnet',
     },
   });
 };

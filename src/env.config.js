@@ -8,10 +8,9 @@ const {
   SOCKET_KEY_STAGING,
   TESTNET_INFURA_API,
   YOUTUBE_API_KEY,
+  INFURA_PROJECT_ID,
   PROD_ENV,
 } = Config;
-
-console.log('****abishek its', MAINNET_INFURA_API);
 
 const IS_PROD_ENV = PROD_ENV === 'true' ? true : true;
 const SHOW_CONSOLE = 1; // Show or disable console
@@ -39,7 +38,7 @@ const {
 export default {
   PROD_ENV: IS_PROD_ENV,
   SHOW_CONSOLE: SHOW_CONSOLE,
-  INFURA_API: MAINNET_INFURA_API,
+  INFURA_API: IS_PROD_ENV ? MAINNET_INFURA_API : TESTNET_INFURA_API,
 
   // All Server related endpoints
   EPNS_SERVER: IS_PROD_ENV ? PROD_EPNS_SERVER : DEV_EPNS_SERVER,
@@ -73,4 +72,5 @@ export default {
   CHAIN_ID: IS_PROD_ENV ? 1 : 5,
   WC_RPC: IS_PROD_ENV ? MAINNET_INFURA_API : TESTNET_INFURA_API,
   ENV: IS_PROD_ENV ? 'prod' : 'staging',
+  INFURA_PROJECT_ID: INFURA_PROJECT_ID,
 };
