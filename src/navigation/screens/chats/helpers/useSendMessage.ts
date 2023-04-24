@@ -7,8 +7,6 @@ import {encryptAndSign} from 'src/helpers/w2w/pgp';
 
 import {ChatMessage} from './chatResolver';
 
-// import {storeConversationData} from './storage';
-
 export interface MessageFormat {
   message: string;
   messageType: 'GIF' | 'Text';
@@ -43,12 +41,27 @@ const getEncryptedMessage = async (
       encType: 'PlainText',
     };
   }
+
+  // TODO: update to support pgpv2
+  let fromPublicKeyArmored = connectedUser.publicKey;
+  try {
+    // @ts-ignore
+    if (JSON.parse(fromPublicKeyArmored).key) {
+      // @ts-ignore
+      fromPublicKeyArmored = JSON.parse(fromPublicKeyArmored).key;
+    }
+  } catch {
+    console.log('pgp_v1 sender');
+  }
+
   const encryptedMessage = await encryptAndSign({
     plainText: message,
-    fromPublicKeyArmored: connectedUser.publicKey,
+    fromPublicKeyArmored,
     toPublicKeyArmored: messageReceiver.pgpAddress,
     privateKeyArmored: connectedUser.privateKey,
   });
+
+  console.log('i was dioe', encryptedMessage);
 
   return encryptedMessage;
 };
@@ -97,7 +110,16 @@ const useSendMessage = (
       );
 
       if (res && res !== null) {
-        messageReceiver.current.pgpAddress = res.publicKey;
+        // TODO: support pgpv2
+        let pubKey = res.publicKey;
+        try {
+          if (JSON.parse(pubKey).key) {
+            pubKey = JSON.parse(pubKey).key;
+          }
+        } catch {
+          console.log('pgpv1 receiver');
+        }
+        messageReceiver.current.pgpAddress = pubKey;
         console.log('Receiver addrs found');
       } else {
         console.log('Receiver not found');
@@ -127,6 +149,7 @@ const useSendMessage = (
       messageReceiver.current,
       message,
     );
+    console.log('i was never called');
 
     const postBody = {
       fromCAIP10: connectedUser.wallets,
@@ -247,7 +270,6 @@ const useSendMessage = (
       return generateNullRespose();
     }
     console.log('**** intent successfully sent');
-
     showToast(
       'Intent sent succesfully',
       '',

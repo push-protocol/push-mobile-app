@@ -23,6 +23,7 @@ import QRScanner from 'src/components/modals/QRScanner';
 import PKProfileBuilder from 'src/components/web3/PKProfileBuilder';
 import {QR_TYPES} from 'src/enums';
 import {setInitialSignin} from 'src/redux/authSlice';
+import Web3 from 'web3';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
   useFocusEffect(
@@ -193,7 +194,7 @@ const SignInScreen = ({route, navigation}) => {
 
     dispatch(
       setInitialSignin({
-        wallet: walletAddress,
+        wallet: Web3.utils.toChecksumAddress(walletAddress),
         userPKey: '',
         ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
         cns: cns,
@@ -208,11 +209,15 @@ const SignInScreen = ({route, navigation}) => {
 
   // Load Advvance Screen
   const loadAdvanceScreen = async () => {
-    console.log(route);
-    // Goto Next Screen
-    navigation.navigate(GLOBALS.SCREENS.SIGNINADVANCE, {
-      wallet: walletAddress,
-    });
+    try {
+      console.log('abishek', route);
+      // Goto Next Screen
+      navigation.navigate(GLOBALS.SCREENS.SIGNINADVANCE, {
+        wallet: '',
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -429,7 +434,7 @@ const SignInScreen = ({route, navigation}) => {
         <PKEntryPrompt
           ref={TextEntryPromptRef}
           title="Enter Wallet Address"
-          subtitle="Please enter your wallet address whose notification you want to receive."
+          subtitle="Please enter your wallet address or web3 domain whose notification you want to receive."
           entryLimit={42}
           allowDomainDetection={true}
           doneTitle="Verify!"

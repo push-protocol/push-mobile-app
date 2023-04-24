@@ -28,6 +28,7 @@ import {
   setUser,
   switchUser,
 } from 'src/redux/authSlice';
+import Web3 from 'web3';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
   useFocusEffect(
@@ -200,7 +201,7 @@ const SignInScreen = ({route, navigation}) => {
           ensRefreshTime: new Date().getTime() / 1000, // Time in epoch
           cns: cns,
           ens: ens,
-          wallet: walletAddress,
+          wallet: Web3.utils.toChecksumAddress(walletAddress),
           userPKey: '',
           index: currentUser,
         }),
@@ -212,9 +213,10 @@ const SignInScreen = ({route, navigation}) => {
 
   // Load Advvance Screen
   const loadAdvanceScreen = async () => {
+    Web3.utils.toChecksumAddress(walletAddress);
     // Goto Next Screen
     navigation.navigate(GLOBALS.SCREENS.SIGNINADVANCE, {
-      wallet: walletAddress,
+      wallet: Web3.utils.toChecksumAddress(walletAddress),
       fromOnboarding: route.params.fromOnboarding,
     });
   };
@@ -401,7 +403,7 @@ const SignInScreen = ({route, navigation}) => {
         <PKEntryPrompt
           ref={TextEntryPromptRef}
           title="Enter Wallet Address"
-          subtitle="Please enter your wallet address whose notification you want to receive."
+          subtitle="Please enter your wallet address or web3 domain whose notification you want to receive."
           entryLimit={42}
           allowDomainDetection={true}
           doneTitle="Verify!"

@@ -241,6 +241,8 @@ RNTester/Pods/*
 
 # Sensitive Files
 .env
+.env.prod
+.env.staging
 google-services.json
 GoogleService-Info.plist
 dump.rdb
