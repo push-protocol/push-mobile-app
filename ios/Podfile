@@ -53,7 +53,7 @@ abstract_target 'PushCommonPods' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'epnsstagingTests' do
+  target 'epnsTests' do
     inherit! :complete
     # Pods for testing
   end

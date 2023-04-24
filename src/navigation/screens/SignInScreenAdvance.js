@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
-    top: 0,
+    top: -25,
     bottom: 0,
     padding: 20,
     maxWidth: 540,

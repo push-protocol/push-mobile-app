@@ -1,6 +1,6 @@
 {
-  "name": "epnsstaging",
-  "version": "0.0.1",
+  "name": "push",
+  "version": "8.0.4",
   "private": true,
   "scripts": {
     "android:prod": "react-native run-android --variant=prodDebug --appId=io.epns.epns",
