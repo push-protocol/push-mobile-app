@@ -7,14 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* epnsstagingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* epnsstagingTests.m */; };
+		00E356F31AD99517003FC87E /* epnsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* epnsTests.m */; };
 		0C02CB08897FFBE1FF05620F /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 294DC712B52960D1DF260F3B /* ExpoModulesProvider.swift */; };
 		1E90BBE928BD672C007E6105 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1E90BBE228BD672C007E6105 /* AppDelegate.mm */; };
 		1E90BBEA28BD672C007E6105 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E90BBE328BD672C007E6105 /* main.m */; };
 		1E90BBEC28BD672C007E6105 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE628BD672C007E6105 /* LaunchScreen.storyboard */; };
 		1E90BBED28BD672C007E6105 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE728BD672C007E6105 /* Images.xcassets */; };
-		25CB30CDA6EBF75DFD8382F0 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04512AE0BA94470778D7800 /* ExpoModulesProvider.swift */; };
-		7ED8F3E1B12F4BB205E730AA /* Pods_PushCommonPods_epnsstagingTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE41877145A1BE42588F428F /* Pods_PushCommonPods_epnsstagingTests.framework */; };
 		8057F915C8D3564879419F46 /* Pods_PushCommonPods_push_staging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7071E7B7D0C95C09E76C6BFF /* Pods_PushCommonPods_push_staging.framework */; };
 		C1D9B5B82613F81E10960B81 /* Pods_PushCommonPods_push_prod.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CD2F67B5F2F9989064C6F8B /* Pods_PushCommonPods_push_prod.framework */; };
 		C47003BF13480F969A7EF146 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACFD0E74AD416ABB6006158 /* ExpoModulesProvider.swift */; };
@@ -28,7 +26,8 @@
 		E74C05CB29C06A2800C20AC1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE628BD672C007E6105 /* LaunchScreen.storyboard */; };
 		E74C05CC29C06A2800C20AC1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE728BD672C007E6105 /* Images.xcassets */; };
 		E7A4DAEC29C17BF300B09BEE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E7A4DAEB29C17BF300B09BEE /* GoogleService-Info.plist */; };
-		FEBC56FEE969DEAAFD83C60F /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F1FDA9A5548BAE3639353C /* ExpoModulesProvider.swift */; };
+		E8351FBD0375EAE7B50C572B /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D567BAEB1DF112E72F4E912 /* ExpoModulesProvider.swift */; };
+		F0E66C8B0ECF50802A638EC6 /* Pods_PushCommonPods_epnsTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C495A089C2DAFF01A2EC0489 /* Pods_PushCommonPods_epnsTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,39 +76,39 @@
 /* Begin PBXFileReference section */
 		00E356EE1AD99517003FC87E /* epnsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = epnsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* epnsstagingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = epnsstagingTests.m; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* EPNS Staging.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "EPNS Staging.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356F21AD99517003FC87E /* epnsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = epnsTests.m; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* Push (EPNS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Push (EPNS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D567BAEB1DF112E72F4E912 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-PushCommonPods-epnsTests/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		1E4AA6AD28BD4E4000E27A82 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		1E90BBE128BD672B007E6105 /* epnsstaging-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "epnsstaging-Bridging-Header.h"; sourceTree = "<group>"; };
-		1E90BBE228BD672C007E6105 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = epnsstaging/AppDelegate.mm; sourceTree = "<group>"; };
-		1E90BBE328BD672C007E6105 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = epnsstaging/main.m; sourceTree = "<group>"; };
-		1E90BBE428BD672C007E6105 /* epnsstaging.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = epnsstaging.entitlements; path = epnsstaging/epnsstaging.entitlements; sourceTree = "<group>"; };
-		1E90BBE528BD672C007E6105 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = epnsstaging/Info.plist; sourceTree = "<group>"; };
-		1E90BBE628BD672C007E6105 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = epnsstaging/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		1E90BBE728BD672C007E6105 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = epnsstaging/Images.xcassets; sourceTree = "<group>"; };
-		1E90BBE828BD672C007E6105 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = epnsstaging/AppDelegate.h; sourceTree = "<group>"; };
-		21F1FDA9A5548BAE3639353C /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-epnsstaging-epnsstagingTests/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		1E90BBE128BD672B007E6105 /* epns-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "epns-Bridging-Header.h"; sourceTree = "<group>"; };
+		1E90BBE228BD672C007E6105 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = epns/AppDelegate.mm; sourceTree = "<group>"; };
+		1E90BBE328BD672C007E6105 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = epns/main.m; sourceTree = "<group>"; };
+		1E90BBE428BD672C007E6105 /* epns.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = epns.entitlements; path = epns/epns.entitlements; sourceTree = "<group>"; };
+		1E90BBE528BD672C007E6105 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = epns/Info.plist; sourceTree = "<group>"; };
+		1E90BBE628BD672C007E6105 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = epns/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		1E90BBE728BD672C007E6105 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = epns/Images.xcassets; sourceTree = "<group>"; };
+		1E90BBE828BD672C007E6105 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = epns/AppDelegate.h; sourceTree = "<group>"; };
 		294DC712B52960D1DF260F3B /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-PushCommonPods-push.prod/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		4D94C3A4417083CA7202EDEF /* Pods-PushCommonPods-epnsstagingTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-epnsstagingTests.debug.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-epnsstagingTests/Pods-PushCommonPods-epnsstagingTests.debug.xcconfig"; sourceTree = "<group>"; };
+		4838F86AABEB14FCEB46D88D /* Pods-PushCommonPods-epnsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-epnsTests.debug.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-epnsTests/Pods-PushCommonPods-epnsTests.debug.xcconfig"; sourceTree = "<group>"; };
+		4D94C3A4417083CA7202EDEF /* Pods-PushCommonPods-epnsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-epnsTests.debug.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-epnsTests/Pods-PushCommonPods-epnsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5D05226552DDEBF7E28760F9 /* Pods-PushCommonPods-push.prod.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-push.prod.debug.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-push.prod/Pods-PushCommonPods-push.prod.debug.xcconfig"; sourceTree = "<group>"; };
+		6BA9404A78A02A70A03078EB /* Pods-PushCommonPods-epnsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-epnsTests.release.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-epnsTests/Pods-PushCommonPods-epnsTests.release.xcconfig"; sourceTree = "<group>"; };
 		6CD2F67B5F2F9989064C6F8B /* Pods_PushCommonPods_push_prod.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PushCommonPods_push_prod.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F8DDCA55A6413D75BA21A42 /* Pods-PushCommonPods-push.staging.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-push.staging.debug.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-push.staging/Pods-PushCommonPods-push.staging.debug.xcconfig"; sourceTree = "<group>"; };
 		7071E7B7D0C95C09E76C6BFF /* Pods_PushCommonPods_push_staging.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PushCommonPods_push_staging.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BCA4D280A827A3C1D051FAF /* Pods-PushCommonPods-push.prod.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-push.prod.release.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-push.prod/Pods-PushCommonPods-push.prod.release.xcconfig"; sourceTree = "<group>"; };
 		8ACFD0E74AD416ABB6006158 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-PushCommonPods-push.staging/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		BD1264CA3DEB29C25B19A1DF /* Pods-PushCommonPods-push.staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-push.staging.release.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-push.staging/Pods-PushCommonPods-push.staging.release.xcconfig"; sourceTree = "<group>"; };
-		C04512AE0BA94470778D7800 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-PushCommonPods-epnsstagingTests/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		C9041BE3154909493B710C2E /* Pods-epnsstaging-epnsstagingTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epnsstaging-epnsstagingTests.release.xcconfig"; path = "Target Support Files/Pods-epnsstaging-epnsstagingTests/Pods-epnsstaging-epnsstagingTests.release.xcconfig"; sourceTree = "<group>"; };
-		CE97DAB67C26D6A8B47B43E1 /* Pods-PushCommonPods-epnsstagingTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-epnsstagingTests.release.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-epnsstagingTests/Pods-PushCommonPods-epnsstagingTests.release.xcconfig"; sourceTree = "<group>"; };
-		DDC652D185E2B83DBB0ACCC3 /* Pods-epnsstaging-epnsstagingTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epnsstaging-epnsstagingTests.debug.xcconfig"; path = "Target Support Files/Pods-epnsstaging-epnsstagingTests/Pods-epnsstaging-epnsstagingTests.debug.xcconfig"; sourceTree = "<group>"; };
-		DE41877145A1BE42588F428F /* Pods_PushCommonPods_epnsstagingTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PushCommonPods_epnsstagingTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C495A089C2DAFF01A2EC0489 /* Pods_PushCommonPods_epnsTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PushCommonPods_epnsTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9041BE3154909493B710C2E /* Pods-epns-epnsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epns-epnsTests.release.xcconfig"; path = "Target Support Files/Pods-epns-epnsTests/Pods-epns-epnsTests.release.xcconfig"; sourceTree = "<group>"; };
+		CE97DAB67C26D6A8B47B43E1 /* Pods-PushCommonPods-epnsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-epnsTests.release.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-epnsTests/Pods-PushCommonPods-epnsTests.release.xcconfig"; sourceTree = "<group>"; };
+		DDC652D185E2B83DBB0ACCC3 /* Pods-epns-epnsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epns-epnsTests.debug.xcconfig"; path = "Target Support Files/Pods-epns-epnsTests/Pods-epns-epnsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E74C05BF29C06A1400C20AC1 /* push.staging.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = push.staging.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E74C05C029C06A1500C20AC1 /* push.staging-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "push.staging-Info.plist"; path = "/Users/mdteach/Desktop/CDX/staging_mobile/ios/push.staging-Info.plist"; sourceTree = "<absolute>"; };
 		E74C05D629C06A2800C20AC1 /* push.prod.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = push.prod.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E74C05D729C06A2900C20AC1 /* push.prod-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "push.prod-Info.plist"; path = "/Users/mdteach/Desktop/CDX/staging_mobile/ios/push.prod-Info.plist"; sourceTree = "<absolute>"; };
 		E7A4DAEB29C17BF300B09BEE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F65F84C9A037C0EC5E6A8B42 /* Pods-epns-epnsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epns-epnsTests.debug.xcconfig"; path = "Target Support Files/Pods-epns-epnsTests/Pods-epns-epnsTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,7 +116,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7ED8F3E1B12F4BB205E730AA /* Pods_PushCommonPods_epnsstagingTests.framework in Frameworks */,
+				F0E66C8B0ECF50802A638EC6 /* Pods_PushCommonPods_epnsTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -164,7 +163,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		1E4AA6C228BD64F300E27A82 /* epnsstaging */ = {
+		199F3CE5B2152BDE55C36D1E /* epnsTests */ = {
+			isa = PBXGroup;
+			children = (
+				1D567BAEB1DF112E72F4E912 /* ExpoModulesProvider.swift */,
+			);
+			name = epnsTests;
+			sourceTree = "<group>";
+		};
+		1E4AA6C228BD64F300E27A82 /* epns */ = {
 			isa = PBXGroup;
 			children = (
 				1E90BBE828BD672C007E6105 /* AppDelegate.h */,
@@ -176,15 +183,15 @@
 				1E90BBE328BD672C007E6105 /* main.m */,
 				1E90BBE128BD672B007E6105 /* epns-Bridging-Header.h */,
 			);
-			name = epnsstaging;
+			name = epns;
 			sourceTree = "<group>";
 		};
 		24A77CBDA61EF12E0476140E /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				46144C99B96A1B77137C0017 /* epnsstagingTests */,
 				F41C727B9A290DD205FB8B4E /* push.prod */,
 				CD707370716921AF6541D692 /* push.staging */,
+				199F3CE5B2152BDE55C36D1E /* epnsTests */,
 			);
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
@@ -193,20 +200,11 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				DE41877145A1BE42588F428F /* Pods_PushCommonPods_epnsstagingTests.framework */,
 				6CD2F67B5F2F9989064C6F8B /* Pods_PushCommonPods_push_prod.framework */,
 				7071E7B7D0C95C09E76C6BFF /* Pods_PushCommonPods_push_staging.framework */,
+				C495A089C2DAFF01A2EC0489 /* Pods_PushCommonPods_epnsTests.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		46144C99B96A1B77137C0017 /* epnsstagingTests */ = {
-			isa = PBXGroup;
-			children = (
-				21F1FDA9A5548BAE3639353C /* ExpoModulesProvider.swift */,
-				C04512AE0BA94470778D7800 /* ExpoModulesProvider.swift */,
-			);
-			name = epnsstagingTests;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -220,9 +218,9 @@
 			isa = PBXGroup;
 			children = (
 				E7A4DAE029C1795E00B09BEE /* GoogleService */,
-				1E4AA6C228BD64F300E27A82 /* epnsstaging */,
+				1E4AA6C228BD64F300E27A82 /* epns */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* epnsstagingTests */,
+				00E356EF1AD99517003FC87E /* epnsTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
@@ -238,33 +236,27 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* EPNS Staging.app */,
-				00E356EE1AD99517003FC87E /* epnsstagingTests.xctest */,
+				13B07F961A680F5B00A75B9A /* Push (EPNS).app */,
+				00E356EE1AD99517003FC87E /* epnsTests.xctest */,
 				E74C05BF29C06A1400C20AC1 /* push.staging.app */,
 				E74C05D629C06A2800C20AC1 /* push.prod.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B59BEA77BA18F381A3E0315E /* epnsTests */ = {
-			isa = PBXGroup;
-			children = (
-				BE63C4933C944001F3CEC27F /* ExpoModulesProvider.swift */,
-			);
-			name = epnsTests;
-			sourceTree = "<group>";
-		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				DDC652D185E2B83DBB0ACCC3 /* Pods-epnsstaging-epnsstagingTests.debug.xcconfig */,
-				C9041BE3154909493B710C2E /* Pods-epnsstaging-epnsstagingTests.release.xcconfig */,
-				4D94C3A4417083CA7202EDEF /* Pods-PushCommonPods-epnsstagingTests.debug.xcconfig */,
-				CE97DAB67C26D6A8B47B43E1 /* Pods-PushCommonPods-epnsstagingTests.release.xcconfig */,
+				DDC652D185E2B83DBB0ACCC3 /* Pods-epns-epnsTests.debug.xcconfig */,
+				C9041BE3154909493B710C2E /* Pods-epns-epnsTests.release.xcconfig */,
+				4D94C3A4417083CA7202EDEF /* Pods-PushCommonPods-epnsTests.debug.xcconfig */,
+				CE97DAB67C26D6A8B47B43E1 /* Pods-PushCommonPods-epnsTests.release.xcconfig */,
 				5D05226552DDEBF7E28760F9 /* Pods-PushCommonPods-push.prod.debug.xcconfig */,
 				7BCA4D280A827A3C1D051FAF /* Pods-PushCommonPods-push.prod.release.xcconfig */,
 				6F8DDCA55A6413D75BA21A42 /* Pods-PushCommonPods-push.staging.debug.xcconfig */,
 				BD1264CA3DEB29C25B19A1DF /* Pods-PushCommonPods-push.staging.release.xcconfig */,
+				4838F86AABEB14FCEB46D88D /* Pods-PushCommonPods-epnsTests.debug.xcconfig */,
+				6BA9404A78A02A70A03078EB /* Pods-PushCommonPods-epnsTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -344,9 +336,6 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				1EA8E1C428D77AA600268DAD /* Embed App Extensions */,
-				1E022C3F8D8C4739E22DCD98 /* [CP] Copy Pods Resources */,
-				D3BA2CB21D4C198BCB62DC01 /* [CP-User] [RNFB] Core Configuration */,
-				91D2F20B7B099A251AD22E8B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -354,7 +343,7 @@
 			);
 			name = push;
 			productName = epns_mobile_app;
-			productReference = 13B07F961A680F5B00A75B9A /* EPNS.app */;
+			productReference = 13B07F961A680F5B00A75B9A /* Push (EPNS).app */;
 			productType = "com.apple.product-type.application";
 		};
 		E74C05AA29C06A1400C20AC1 /* push.staging */ = {
@@ -434,7 +423,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* push */,
-				00E356ED1AD99517003FC87E /* epnsstagingTests */,
+				00E356ED1AD99517003FC87E /* epnsTests */,
 				E74C05AA29C06A1400C20AC1 /* push.staging */,
 				E74C05C129C06A2800C20AC1 /* push.prod */,
 			);
@@ -503,15 +492,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PushCommonPods-epnsstagingTests/Pods-PushCommonPods-epnsstagingTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-PushCommonPods-epnsTests/Pods-PushCommonPods-epnsTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PushCommonPods-epnsstagingTests/Pods-PushCommonPods-epnsstagingTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-PushCommonPods-epnsTests/Pods-PushCommonPods-epnsTests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PushCommonPods-epnsstagingTests/Pods-PushCommonPods-epnsstagingTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PushCommonPods-epnsTests/Pods-PushCommonPods-epnsTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		54E518A0D54949BF82DC5A6E /* [CP] Check Pods Manifest.lock */ = {
@@ -529,7 +518,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-PushCommonPods-epnsstagingTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-PushCommonPods-epnsTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -542,15 +531,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PushCommonPods-epnsstagingTests/Pods-PushCommonPods-epnsstagingTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-PushCommonPods-epnsTests/Pods-PushCommonPods-epnsTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PushCommonPods-epnsstagingTests/Pods-PushCommonPods-epnsstagingTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-PushCommonPods-epnsTests/Pods-PushCommonPods-epnsTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PushCommonPods-epnsstagingTests/Pods-PushCommonPods-epnsstagingTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PushCommonPods-epnsTests/Pods-PushCommonPods-epnsTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E74C05AB29C06A1400C20AC1 /* [CP] Check Pods Manifest.lock */ = {
@@ -735,28 +724,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PushCommonPods-push.prod/Pods-PushCommonPods-push.prod-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		EDCE034C8B589A7F4E2A905B /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-epns-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -783,9 +750,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E356F31AD99517003FC87E /* epnsstagingTests.m in Sources */,
-				FEBC56FEE969DEAAFD83C60F /* ExpoModulesProvider.swift in Sources */,
-				25CB30CDA6EBF75DFD8382F0 /* ExpoModulesProvider.swift in Sources */,
+				00E356F31AD99517003FC87E /* epnsTests.m in Sources */,
+				E8351FBD0375EAE7B50C572B /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -831,7 +797,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4D94C3A4417083CA7202EDEF /* Pods-PushCommonPods-epnsstagingTests.debug.xcconfig */;
+			baseConfigurationReference = 4838F86AABEB14FCEB46D88D /* Pods-PushCommonPods-epnsTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -859,7 +825,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CE97DAB67C26D6A8B47B43E1 /* Pods-PushCommonPods-epnsstagingTests.release.xcconfig */;
+			baseConfigurationReference = 6BA9404A78A02A70A03078EB /* Pods-PushCommonPods-epnsTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -907,7 +873,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject;
-				PRODUCT_NAME = "EPNS Staging";
+				PRODUCT_NAME = "Push (EPNS)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "epns-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -928,8 +894,8 @@
 				CURRENT_PROJECT_VERSION = 109;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = epnsstaging/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "EPNS Staging";
+				INFOPLIST_FILE = epns/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Push (EPNS)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -942,7 +908,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject;
-				PRODUCT_NAME = "EPNS Staging";
+				PRODUCT_NAME = "Push (EPNS)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "epns-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -1096,14 +1062,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.Staging;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
+				CODE_SIGN_ENTITLEMENTS = epns/epns.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 116;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "push.staging-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "EPNS Staging";
+				INFOPLIST_KEY_CFBundleDisplayName = "Push (EPNS)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1118,7 +1084,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "epnsstaging-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "epns-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1132,14 +1098,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.Staging;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
+				CODE_SIGN_ENTITLEMENTS = epns/epns.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 116;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "push.staging-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "EPNS Staging";
+				INFOPLIST_KEY_CFBundleDisplayName = "Push (EPNS)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1154,7 +1120,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsstaging;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "epnsstaging-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "epns-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1167,14 +1133,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.Prod;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
+				CODE_SIGN_ENTITLEMENTS = epns/epns.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 87;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "push.prod-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "EPNS Staging";
+				INFOPLIST_KEY_CFBundleDisplayName = "Push (EPNS)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1189,7 +1155,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "epnsstaging-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "epns-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1203,14 +1169,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.Prod;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = epnsstaging/epnsstaging.entitlements;
+				CODE_SIGN_ENTITLEMENTS = epns/epns.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 87;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "push.prod-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "EPNS Staging";
+				INFOPLIST_KEY_CFBundleDisplayName = "Push (EPNS)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1225,7 +1191,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.epns.epnsproject;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "epnsstaging-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "epns-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1253,7 +1219,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "epnsstaging" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "epns" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

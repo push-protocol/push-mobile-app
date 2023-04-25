@@ -17,7 +17,7 @@
                      BlueprintIdentifier = "E74C05AA29C06A1400C20AC1"
                      BuildableName = "push.staging.app"
                      BlueprintName = "push.staging"
-                     ReferencedContainer = "container:epnsstaging.xcodeproj">
+                     ReferencedContainer = "container:epns.xcodeproj">
                   </BuildableReference>
                </EnvironmentBuildable>
             </ActionContent>
@@ -35,7 +35,7 @@
                BlueprintIdentifier = "E74C05AA29C06A1400C20AC1"
                BuildableName = "push.staging.app"
                BlueprintName = "push.staging"
-               ReferencedContainer = "container:epnsstaging.xcodeproj">
+               ReferencedContainer = "container:epns.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -65,7 +65,7 @@
             BlueprintIdentifier = "E74C05AA29C06A1400C20AC1"
             BuildableName = "push.staging.app"
             BlueprintName = "push.staging"
-            ReferencedContainer = "container:epnsstaging.xcodeproj">
+            ReferencedContainer = "container:epns.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -82,7 +82,7 @@
             BlueprintIdentifier = "E74C05AA29C06A1400C20AC1"
             BuildableName = "push.staging.app"
             BlueprintName = "push.staging"
-            ReferencedContainer = "container:epnsstaging.xcodeproj">
+            ReferencedContainer = "container:epns.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
