@@ -72,6 +72,7 @@ export const decryptV2 = async (
   if (additionalData) {
     aesGcmParams.additionalData = additionalData;
   }
+  console.log('2');
 
   // @ts-ignore
   const decrypted: ArrayBuffer = await crypto.subtle.decrypt(
@@ -79,6 +80,7 @@ export const decryptV2 = async (
     key,
     hexToBytes(encryptedData.ciphertext),
   );
+  console.log('3');
   return new Uint8Array(decrypted);
 };
 

@@ -18,6 +18,7 @@ export const getSigner = async (
   await provider.enable();
   const ethers_provider = new ethers.providers.Web3Provider(provider);
   const signer = ethers_provider.getSigner();
+
   const account = await signer.getAddress();
 
   return [signer, account];
