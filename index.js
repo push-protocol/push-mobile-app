@@ -3,7 +3,7 @@ import {AppRegistry} from 'react-native';
 import 'react-native-crypto';
 import 'react-native-get-random-values';
 import WebviewCrypto from 'react-native-webview-crypto';
-import {NotifeClearBadge, NotifeeDisplayNotification} from 'src/notifee';
+import {NotifeClearBadge} from 'src/notifee';
 import 'text-encoding';
 
 import App from './App';
