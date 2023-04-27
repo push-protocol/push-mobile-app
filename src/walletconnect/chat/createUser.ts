@@ -15,6 +15,7 @@ import {generateKeyPair} from 'src/helpers/w2w/pgp';
 import {getSigner, walletToPCAIP10} from './utils';
 
 const BASE_URL = envConfig.EPNS_SERVER;
+
 export const createUser = async (
   connector: WalletConnect,
 ): Promise<[boolean, string]> => {

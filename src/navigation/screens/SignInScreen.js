@@ -210,7 +210,6 @@ const SignInScreen = ({route, navigation}) => {
   // Load Advvance Screen
   const loadAdvanceScreen = async () => {
     try {
-      console.log('abishek', route);
       // Goto Next Screen
       navigation.navigate(GLOBALS.SCREENS.SIGNINADVANCE, {
         wallet: '',

@@ -1,4 +1,3 @@
-import messaging from '@react-native-firebase/messaging';
 import React, {useEffect} from 'react';
 import {AppRegistry} from 'react-native';
 import 'react-native-crypto';
@@ -10,12 +9,6 @@ import 'text-encoding';
 import App from './App';
 import {name as appName} from './app.json';
 import './shim';
-
-// FIREBASE
-// Register background handler
-messaging().setBackgroundMessageHandler(async remoteMessage => {
-  await NotifeeDisplayNotification(remoteMessage);
-});
 
 function HeadlessCheck({isHeadless}) {
   useEffect(() => {
@@ -31,3 +24,10 @@ function HeadlessCheck({isHeadless}) {
 }
 
 AppRegistry.registerComponent(appName, () => HeadlessCheck);
+AppRegistry.registerHeadlessTask(
+  'RNCallKeepBackgroundMessage',
+  () =>
+    ({name, callUUID, handle}) => {
+      return Promise.resolve();
+    },
+);

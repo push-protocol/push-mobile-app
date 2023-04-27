@@ -25,12 +25,14 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import {useDispatch} from 'react-redux';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
+import {setCall} from 'src/redux/videoSlice';
 
 import {AcceptIntent, MessageComponent} from './components';
 import {CustomScroll} from './components/CustomScroll';
@@ -163,6 +165,22 @@ const SingleChatScreen = ({route}: any) => {
     );
   };
 
+  const dispatch = useDispatch();
+
+  const startVideoCall = () => {
+    dispatch(
+      setCall({
+        isReceivingCall: false,
+        calling: true,
+        to: senderAddress,
+        from: connectedUser.wallets,
+        call: {},
+      }),
+    );
+    // @ts-ignore
+    navigation.navigate(Globals.SCREENS.VIDEOCALL);
+  };
+
   // giphy listener
   useEffect(() => {
     const listener = GiphyDialog.addListener(
@@ -219,7 +237,6 @@ const SingleChatScreen = ({route}: any) => {
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', e => {
       setKeyboardStatus(true);
-      console.log('aaaaa \n\nset', e.endCoordinates.height);
       setKeyboardHeight(e.endCoordinates.height);
     });
     const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
@@ -294,6 +311,14 @@ const SingleChatScreen = ({route}: any) => {
             </TouchableOpacity>
           </View>
         </View>
+
+        <Ionicons
+          name="videocam"
+          size={35}
+          style={styles.videoIcon}
+          color={Globals.COLORS.PINK}
+          onPress={() => startVideoCall()}
+        />
       </View>
 
       <KeyboardAvoidingView
@@ -577,7 +602,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     marginLeft: 20,
-    width: '85%',
     justifyContent: 'space-between',
   },
 
@@ -655,5 +679,8 @@ const styles = StyleSheet.create({
   menuItemText: {
     marginLeft: 10,
     marginTop: 5,
+  },
+  videoIcon: {
+    marginLeft: 'auto',
   },
 });

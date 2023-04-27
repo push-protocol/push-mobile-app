@@ -12,6 +12,7 @@ import SettingsScreen from './screens/SettingsScreen';
 import SignInFromDapp from './screens/SignInFromDapp';
 import {SingleChatScreen} from './screens/chats';
 import {NewChatScreen} from './screens/chats/NewChatScreen';
+import VideoScreen from './screens/video/VideoScreen';
 
 const Stack = createStackNavigator();
 
@@ -130,6 +131,15 @@ export default function AuthenticatedNavigator() {
       <Stack.Screen
         name={GLOBALS.SCREENS.NewChatScreen}
         component={NewChatScreen}
+        options={{
+          headerShown: false,
+          headerTintColor: GLOBALS.COLORS.MID_GRAY,
+        }}
+      />
+
+      <Stack.Screen
+        name={GLOBALS.SCREENS.VIDEOCALL}
+        component={VideoScreen}
         options={{
           headerShown: false,
           headerTintColor: GLOBALS.COLORS.MID_GRAY,
