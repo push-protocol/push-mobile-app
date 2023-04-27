@@ -73,6 +73,8 @@ const App = () => {
     };
   }, []);
 
+  const [callAccepted, setCallAccepted] = useState(false);
+
   const [test, setTest] = useState(false);
   const [connectedUser, setSonnectedUser] = useState('');
   const [senderAddress, setSenderAddress] = useState('');
@@ -100,25 +102,15 @@ const App = () => {
   RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
     try {
       console.log('call3');
-      console.log('I calling');
       RNCallKeep.backToForeground();
       RNCallKeep.endCall(callUUID);
-      console.log('I am back to the screen', callUUID);
       setSenderAddress(callUUID);
-      setTest(true);
+      setCallAccepted(true);
+      // setTest(true);
     } catch (error) {
       console.log('eer', error);
     }
   });
-
-  if (test) {
-    return (
-      <VideoScreenApp
-        connectedUser="0xD26A7BF7fa0f8F1f3f73B056c9A67565A6aFE63c"
-        senderAddress={senderAddress}
-      />
-    );
-  }
 
   return (
     <SafeAreaProvider>
@@ -141,7 +133,7 @@ const App = () => {
             storageOptions={{
               asyncStorage: AsyncStorage,
             }}>
-            <AppScreens />
+            <AppScreens callAccepted={callAccepted} />
           </WalletConnectProvider>
         </PersistGate>
       </Provider>
