@@ -19,10 +19,12 @@ import appConfig from './app.json';
 
 let persistor = persistStore(store);
 
+const handleAppNotificationBadge = async () => {
+  await AppBadgeHelper.setAppBadgeCount(0);
+};
+
 const App = () => {
-  const handleAppNotificationBadge = async () => {
-    await AppBadgeHelper.setAppBadgeCount(0);
-  };
+  const [callAccepted, setCallAccepted] = useState(false);
 
   useEffect(() => {
     // PUSH NOTIFICATIONS HANDLING
@@ -38,8 +40,6 @@ const App = () => {
       handleAppNotificationBadge();
     };
   }, []);
-
-  const [callAccepted, setCallAccepted] = useState(false);
 
   RNCallKeep.setup(callKeepHelper.options);
 

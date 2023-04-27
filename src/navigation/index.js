@@ -13,7 +13,7 @@ import OnboardedNavigator from './OnboardedNavigator';
 import OnboardingNavigator from './OnboardingNavigator';
 import useVideoSocket from './screens/video/helpers/useVideoSocket';
 
-const NavWrapper = ({callAccepted, connectedUser}) => {
+const NavGlobalSocket = ({callAccepted, connectedUser}) => {
   useVideoSocket(connectedUser.wallet, callAccepted);
   useEffect(() => {}, []);
 };
@@ -35,7 +35,7 @@ const Screens = ({callAccepted}) => {
     <>
       <NavigationContainer>
         {connectedUser && (
-          <NavWrapper
+          <NavGlobalSocket
             callAccepted={callAccepted}
             connectedUser={connectedUser}
           />
