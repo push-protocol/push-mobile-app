@@ -9,7 +9,6 @@ import WebviewCrypto from 'react-native-webview-crypto';
 import {Provider} from 'react-redux';
 import {persistStore} from 'redux-persist';
 import {PersistGate} from 'redux-persist/integration/react';
-import {callKeepHelper} from 'src/callkeep';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import AppScreens from 'src/navigation';
 import store from 'src/redux';
@@ -40,20 +39,6 @@ const App = () => {
       handleAppNotificationBadge();
     };
   }, []);
-
-  RNCallKeep.setup(callKeepHelper.options);
-
-  messaging().setBackgroundMessageHandler(async remoteMessage => {
-    const caller = callKeepHelper.getCaller(remoteMessage);
-    const addressTrimmed = callKeepHelper.formatEthAddress(caller);
-    await RNCallKeep.displayIncomingCall(
-      caller,
-      addressTrimmed,
-      addressTrimmed,
-      'generic',
-      true,
-    );
-  });
 
   useEffect(() => {
     const answerCallListener = RNCallKeep.addEventListener(
