@@ -42,8 +42,6 @@ const useChatLoader = (
     caipAddress: string,
     pgpPrivateKey: string,
   ) => {
-    console.log('aai was called');
-
     let user = await PushNodeClient.getUser(caipAddress);
     console.log('got user');
 
@@ -62,7 +60,6 @@ const useChatLoader = (
 
   const loadInbox = async (ethAddress: string) => {
     console.log('loading inbox @');
-
     const feeds = await PushNodeClient.getInbox(ethAddress);
 
     if (!feeds) {
@@ -129,19 +126,17 @@ const useChatLoader = (
           }
 
           pushSDKSocket.current.on(EVENTS.CONNECT, () => {
-            console.log('connection all good', time);
+            console.log('connection done', time);
           });
 
           pushSDKSocket.current.on(EVENTS.DISCONNECT, () => {
             console.log('disconnected :(', time);
           });
           pushSDKSocket.current.on(EVENTS.CHAT_RECEIVED_MESSAGE, _ => {
-            console.log('@@@@ works');
             loadInbox(derivedAddress);
           });
 
           pushSDKSocket.current.on(EVENTS.CHAT_UPDATE_INTENT, _ => {
-            console.log('###called this one');
             loadInbox(derivedAddress);
           });
         }
@@ -155,7 +150,7 @@ const useChatLoader = (
     return () => {
       if (SocketConfig.useSocket) {
         if (pushSDKSocket.current) {
-          console.log('clearning socket');
+          // console.log('clearning socket inbox');
           // pushSDKSocket.current.disconnect();
         }
       } else {

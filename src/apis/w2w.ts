@@ -1,4 +1,4 @@
-import GLOBALS from 'src/Globals';
+import envConfig from 'src/env.config';
 import {encryptWithRPCEncryptionPublicKeyReturnRawData} from 'src/helpers/w2w/metamaskSigUtil';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
 
@@ -58,10 +58,7 @@ export interface ConnectedUser extends User {
   privateKey: string;
 }
 
-// const BASE_URL = 'https://backend-staging.epns.io/apis';
-// const BASE_URL = 'https://backend.epns.io/apis';
-// const BASE_URL = 'https://backend-dev.epns.io/apis';
-const BASE_URL = GLOBALS.LINKS.W2W_EPNS_SERVER;
+const BASE_URL = envConfig.EPNS_SERVER;
 
 export const createUser = async ({
   caip10,
@@ -115,7 +112,6 @@ export const getUser = async (caip10: string): Promise<User | undefined> => {
       if (caip10) {
         path += `?caip10=${caip10}`;
       }
-      console.log('calling', BASE_URL + path);
 
       const response = await fetch(BASE_URL + path, {
         method: 'GET',
@@ -123,8 +119,8 @@ export const getUser = async (caip10: string): Promise<User | undefined> => {
           'Content-Type': 'application/json',
         },
       });
-      const data: User = await response.json();
 
+      const data: User = await response.json();
       return data;
     } catch (err) {
       if (retry > 1) {
@@ -135,6 +131,21 @@ export const getUser = async (caip10: string): Promise<User | undefined> => {
       continue;
     }
   }
+};
+
+export const approveIntent2 = async (body: any) => {
+  const response = await fetch(BASE_URL + '/v1/chat/request/accept', {
+    method: 'PUT',
+    headers: {
+      'content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (response.status < 200 || response.status > 299) {
+    throw new Error('Error changing intent status');
+  }
+  return true;
 };
 
 export const getInbox = async (did: string): Promise<Feeds[] | undefined> => {

@@ -1,4 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
+import {useWalletConnect} from '@walletconnect/react-native-dapp';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
@@ -15,6 +16,7 @@ import * as PushNodeClient from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
 import {DappScanPage} from 'src/components/ui/DappScanPage';
 import MetaStorage from 'src/singletons/MetaStorage';
+import {WallectConnectPage} from 'src/walletconnect/pages/WallectConnectPage';
 
 import {Chat, Requests} from './components';
 import {ChatSetup} from './components/ChatSetup';
@@ -42,7 +44,9 @@ const ChatScreen = (props: any) => {
   const [tab, setTab] = useState(TABS.CHATS);
   const [isReady, setIsReady] = useState(false);
   const [isPrivateKeyUser, setIsPrivateKeyUser] = useState(true);
+  const [isWCUser, setIsWCUser] = useState(false);
   const [chatCredentials, setChatCredentials] = useState<UserChatCredentials>();
+  const connector = useWalletConnect();
 
   const onPress = (value: string) => {
     setTab(value);
@@ -53,31 +57,40 @@ const ChatScreen = (props: any) => {
   const initalizate = async () => {
     const signedInType = await MetaStorage.instance.getIsPrivateKeyAvailable();
 
-    const isLoginFromDapp = await MetaStorage.instance.isUserLoginFromDapp();
-
     const _data: UserChatCredentials =
       await MetaStorage.instance.getUserChatData();
 
-    if (
-      !isLoginFromDapp && // not from dapp
-      signedInType !== Globals.CONSTANTS.CRED_TYPE_PRIVATE_KEY // no manual private key
-    ) {
-      setIsPrivateKeyUser(false);
-      return;
-    }
-
+    // user PGP pair was not found
     if (!_data) {
-      // @ts-ignore
-      navigation.navigate(Globals.SCREENS.PGP_FROM_PK_SCREEN, {
-        navigation: navigation,
-      });
+      // user logged with private key
+      // ask user to generate the pgp pair
+      if (signedInType === Globals.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
+        // @ts-ignore
+        navigation.navigate(Globals.SCREENS.PGP_FROM_PK_SCREEN, {
+          navigation: navigation,
+        });
+      } else if (isWcConnected()) {
+        setIsWCUser(true);
+        return;
+      }
+      // user is new user ask them to use dapp qr
+      else {
+        setIsPrivateKeyUser(false);
+        setIsWCUser(false);
+        return;
+      }
     } else {
-      console.log('doing...');
-
       setChatCredentials({..._data});
       setTab(TABS.CHATS);
       setIsReady(true);
+      setIsWCUser(false);
     }
+  };
+
+  const isWcConnected = () => {
+    console.log(connector.accounts);
+
+    return connector.accounts.length > 0;
   };
 
   useEffect(() => {
@@ -85,12 +98,9 @@ const ChatScreen = (props: any) => {
     (async () => {
       try {
         lis = props.navigation.addListener('focus', () => {
-          console.log('####focusing');
           if (chatData.connectedUserData) {
-            console.log('***focus');
             refresh();
           } else {
-            console.log('intitalize');
             initalizate();
           }
         });
@@ -100,6 +110,10 @@ const ChatScreen = (props: any) => {
     })();
     return lis;
   }, [props, props.navigation]);
+
+  if (isWCUser) {
+    return <WallectConnectPage initalizate={initalizate} />;
+  }
 
   if (!isPrivateKeyUser && !isReady) {
     return <DappScanPage />;

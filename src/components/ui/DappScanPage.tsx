@@ -17,9 +17,6 @@ import {QR_TYPES} from 'src/enums';
 import envConfig from 'src/env.config';
 import {selectAuthState} from 'src/redux/authSlice';
 
-const windowHeight = Dimensions.get('window').height;
-const isSmallScreen = windowHeight < 700;
-
 const DappScanPage = () => {
   const navigation = useNavigation();
   const authState = useSelector(selectAuthState);
@@ -54,10 +51,13 @@ const DappScanPage = () => {
     NoticePromptRef.current.changeRenderState(toggle, animate);
   };
 
-  const isAuth = authState === GLOBALS.AUTH_STATE.AUTHENTICATED;
-
   return (
-    <View style={isAuth ? styles.container : styles.containerNoLogin}>
+    <View
+      style={
+        authState === GLOBALS.AUTH_STATE.AUTHENTICATED
+          ? styles.container
+          : styles.containerNoLogin
+      }>
       <Image source={require('assets/ui/pgp_dapp.png')} style={styles.image} />
       <View style={styles.textContainer}>
         <Text style={styles.textHeader}>To use Push Chat on mobile</Text>
@@ -65,12 +65,12 @@ const DappScanPage = () => {
           <View style={{display: 'flex', flexDirection: 'row'}}>
             <Text style={styles.lowerTextContainer}>1.</Text>
             <Text style={styles.lowerTextContainer}>
-              Go to the {envConfig.DAPP_URL} in your computer
+              Go to {envConfig.DAPP_URL} in your computer
             </Text>
           </View>
           <View
             style={{
-              marginVertical: isSmallScreen ? 2 : 12,
+              marginVertical: 12,
               display: 'flex',
               flexDirection: 'row',
             }}>
@@ -134,15 +134,16 @@ const DappScanPage = () => {
   );
 };
 
+const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
   container: {
-    marginTop: isSmallScreen ? 0 : '8%',
+    marginTop: '4%',
     paddingHorizontal: 25,
     paddingVertical: windowHeight * 0.01,
     alignItems: 'center',
   },
   containerNoLogin: {
-    marginTop: isSmallScreen ? windowHeight * 0.05 : windowHeight * 0.12,
+    marginTop: '10%',
     paddingHorizontal: 25,
     paddingVertical: windowHeight * 0.04,
     alignItems: 'center',
@@ -150,9 +151,9 @@ const styles = StyleSheet.create({
   textContainer: {
     alignItems: 'flex-start',
     width: '100%',
-    marginTop: isSmallScreen ? 0 : 10,
+    marginTop: 10,
     paddingHorizontal: 21,
-    paddingVertical: isSmallScreen ? 0 : 17,
+    paddingVertical: 17,
   },
   textHeader: {
     textAlign: 'center',
@@ -169,11 +170,13 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 250,
+    height: 250,
     aspectRatio: 1,
     resizeMode: 'contain',
+    paddingVertical: 20,
   },
   button: {
-    marginTop: isSmallScreen ? 15 : 18,
+    marginTop: 18,
     backgroundColor: '#CF1C84',
     color: 'white',
     width: '80%',

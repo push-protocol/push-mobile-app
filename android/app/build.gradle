@@ -1,6 +1,15 @@
 apply plugin: "com.android.application"
 apply plugin: "com.google.gms.google-services"
 
+project.ext.envConfigFiles = [
+   prodDebug: ".env.prod",
+   prodRelease: ".env.prod",
+   stagingDebug: ".env.staging",
+   stagingRelease: ".env.staging",
+]
+
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
 import com.android.build.OutputFile
 
 /**
@@ -138,8 +147,6 @@ android {
         applicationId "io.epns.epns"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 62
-        versionName "0.8.5"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {
@@ -166,6 +173,26 @@ android {
                     abiFilters (*reactNativeArchitectures())
                 }
             }
+        }
+    }
+
+    flavorDimensions "default"
+    productFlavors {
+        prod {
+            minSdkVersion rootProject.ext.minSdkVersion
+            applicationId "io.epns.epns"
+            targetSdkVersion rootProject.ext.targetSdkVersion
+            resValue "string", "build_config_package", "io.epns.epns"
+            versionCode 63
+            versionName "0.8.6"
+        }
+        staging {
+            minSdkVersion rootProject.ext.minSdkVersion
+            applicationId "io.epns.epnsstaging"
+            targetSdkVersion rootProject.ext.targetSdkVersion
+            resValue "string", "build_config_package", "io.epns.epns"
+            versionCode 18
+            versionName "0.8.2"
         }
     }
 
@@ -218,22 +245,34 @@ android {
             include (*reactNativeArchitectures())
         }
     }
+
     signingConfigs {
-        debug {
-            storeFile file('debug.keystore')
+        staging {
+            storeFile file('staging.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+        prod {
+            storeFile file('prod.keystore')
             storePassword 'android'
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
     }
+
     buildTypes {
         debug {
-            signingConfig signingConfigs.debug
+            productFlavors.staging.signingConfig signingConfigs.staging
+            productFlavors.prod.signingConfig signingConfigs.prod
+            signingConfig null
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            productFlavors.staging.signingConfig signingConfigs.staging
+            productFlavors.prod.signingConfig signingConfigs.prod
+            signingConfig null
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -264,7 +303,7 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
-    // gif	
+    // gif
     implementation 'com.facebook.fresco:animated-gif:2.6.0'    
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {

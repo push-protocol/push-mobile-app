@@ -107,7 +107,6 @@ const useConversationLoader = (
 
     setIsLoadingMore(true);
     const olderMsgs = await fetchChats(pgpPrivateKey, fetchedTill.current);
-    console.log('got older msgs', olderMsgs.length, olderMsgs);
     setChatData(prev => [...prev, ...olderMsgs.reverse()]);
     setIsLoadingMore(false);
     console.log('new message palced');
@@ -217,7 +216,16 @@ const useConversationLoader = (
       }
     })();
 
-    return () => clearInterval(chatListener);
+    return () => {
+      if (SocketConfig.useSocket) {
+        if (pushSDKSocket) {
+          console.log('clearning socket screen');
+          pushSDKSocket.disconnect();
+        }
+      } else {
+        clearInterval(chatListener);
+      }
+    };
   }, []);
 
   const fetchNewChatUsingTimer = () => {

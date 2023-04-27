@@ -79,6 +79,7 @@ export default props => {
     notice,
     showIndicator,
   ) => {
+    console.log('its', NoticePromptRef.current);
     // Set Notice First
     NoticePromptRef.current.changeTitle(title);
     NoticePromptRef.current.changeSubtitle(subtitle);
@@ -106,14 +107,12 @@ export default props => {
     // if permisson granted then proceed
     if (permission.granted) {
       toggleQRScanner(true, navigation);
-      return;
     }
 
     // ask for the permission
     let {granted} = await requestPermission();
     if (granted) {
       toggleQRScanner(true, navigation);
-      return;
     }
 
     // ask user explicitly to enable the camera

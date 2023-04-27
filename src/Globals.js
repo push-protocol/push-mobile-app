@@ -4,9 +4,6 @@ export default {
     APP_WEBSITE: 'https://push.org',
     DEV_EPNS_SERVER: 'https://backend-staging.epns.io/apis',
     PROD_EPNS_SERVER: 'https://backend.epns.io/apis',
-    // W2W_EPNS_SERVER: 'https://backend-dev.epns.io/apis',
-    // W2W_EPNS_SERVER: 'https://backend-staging.epns.io/apis',
-    W2W_EPNS_SERVER: 'https://backend.epns.io/apis',
     METAMASK_LINK_STAGING: 'https://metamask.app.link/dapp/staging.epns.io',
     METAMASK_LINK_PROD: 'https://metamask.app.link/dapp/epns.io',
     DEEPLINK_URL: 'https://metamask.app.link/dapp/staging.epns.io',
@@ -166,5 +163,8 @@ export default {
     ONBOARDING: 'ONBOARDING',
     ONBOARDED: 'ONBOARDED',
     AUTHENTICATED: 'AUTHENTICATED',
+  },
+  CONTRACTS: {
+    COMM_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
   },
 };
