@@ -112,7 +112,6 @@ export const getUser = async (caip10: string): Promise<User | undefined> => {
       if (caip10) {
         path += `?caip10=${caip10}`;
       }
-      console.log('calling', BASE_URL + path);
 
       const response = await fetch(BASE_URL + path, {
         method: 'GET',
@@ -120,8 +119,8 @@ export const getUser = async (caip10: string): Promise<User | undefined> => {
           'Content-Type': 'application/json',
         },
       });
-      const data: User = await response.json();
 
+      const data: User = await response.json();
       return data;
     } catch (err) {
       if (retry > 1) {

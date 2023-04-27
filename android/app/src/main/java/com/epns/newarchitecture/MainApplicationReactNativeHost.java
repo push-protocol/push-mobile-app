@@ -1,4 +1,4 @@
-package io.epns.epnsstaging.newarchitecture;
+package io.epns.epns.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import io.epns.epnsstaging.BuildConfig;
-import io.epns.epnsstaging.newarchitecture.components.MainComponentsRegistry;
-import io.epns.epnsstaging.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import io.epns.epns.BuildConfig;
+import io.epns.epns.newarchitecture.components.MainComponentsRegistry;
+import io.epns.epns.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +33,7 @@ import java.util.List;
  * `newArchEnabled` property). Is ignored otherwise.
  */
 public class MainApplicationReactNativeHost extends ReactNativeHost {
+
   public MainApplicationReactNativeHost(Application application) {
     super(application);
   }
@@ -61,8 +62,7 @@ public class MainApplicationReactNativeHost extends ReactNativeHost {
 
   @NonNull
   @Override
-  protected ReactPackageTurboModuleManagerDelegate.Builder
-      getReactPackageTurboModuleManagerDelegateBuilder() {
+  protected ReactPackageTurboModuleManagerDelegate.Builder getReactPackageTurboModuleManagerDelegateBuilder() {
     // Here we provide the ReactPackageTurboModuleManagerDelegate Builder. This is necessary
     // for the new architecture and to use TurboModules correctly.
     return new MainApplicationTurboModuleManagerDelegate.Builder();
@@ -71,44 +71,51 @@ public class MainApplicationReactNativeHost extends ReactNativeHost {
   @Override
   protected JSIModulePackage getJSIModulePackage() {
     return new JSIModulePackage() {
+
       @Override
       public List<JSIModuleSpec> getJSIModules(
-          final ReactApplicationContext reactApplicationContext,
-          final JavaScriptContextHolder jsContext) {
+        final ReactApplicationContext reactApplicationContext,
+        final JavaScriptContextHolder jsContext
+      ) {
         final List<JSIModuleSpec> specs = new ArrayList<>();
 
         // Here we provide a new JSIModuleSpec that will be responsible of providing the
         // custom Fabric Components.
         specs.add(
-            new JSIModuleSpec() {
-              @Override
-              public JSIModuleType getJSIModuleType() {
-                return JSIModuleType.UIManager;
-              }
+          new JSIModuleSpec() {
 
-              @Override
-              public JSIModuleProvider<UIManager> getJSIModuleProvider() {
-                final ComponentFactory componentFactory = new ComponentFactory();
-                CoreComponentsRegistry.register(componentFactory);
+            @Override
+            public JSIModuleType getJSIModuleType() {
+              return JSIModuleType.UIManager;
+            }
 
-                // Here we register a Components Registry.
-                // The one that is generated with the template contains no components
-                // and just provides you the one from React Native core.
-                MainComponentsRegistry.register(componentFactory);
+            @Override
+            public JSIModuleProvider<UIManager> getJSIModuleProvider() {
+              final ComponentFactory componentFactory = new ComponentFactory();
+              CoreComponentsRegistry.register(componentFactory);
 
-                final ReactInstanceManager reactInstanceManager = getReactInstanceManager();
+              // Here we register a Components Registry.
+              // The one that is generated with the template contains no components
+              // and just provides you the one from React Native core.
+              MainComponentsRegistry.register(componentFactory);
 
-                ViewManagerRegistry viewManagerRegistry =
-                    new ViewManagerRegistry(
-                        reactInstanceManager.getOrCreateViewManagers(reactApplicationContext));
+              final ReactInstanceManager reactInstanceManager = getReactInstanceManager();
 
-                return new FabricJSIModuleProvider(
-                    reactApplicationContext,
-                    componentFactory,
-                    ReactNativeConfig.DEFAULT_CONFIG,
-                    viewManagerRegistry);
-              }
-            });
+              ViewManagerRegistry viewManagerRegistry = new ViewManagerRegistry(
+                reactInstanceManager.getOrCreateViewManagers(
+                  reactApplicationContext
+                )
+              );
+
+              return new FabricJSIModuleProvider(
+                reactApplicationContext,
+                componentFactory,
+                ReactNativeConfig.DEFAULT_CONFIG,
+                viewManagerRegistry
+              );
+            }
+          }
+        );
         return specs;
       }
     };

@@ -144,11 +144,9 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        applicationId "io.epns.epnsstaging"
+        applicationId "io.epns.epns"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 17
-        versionName "0.8.1"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {
@@ -184,13 +182,17 @@ android {
             minSdkVersion rootProject.ext.minSdkVersion
             applicationId "io.epns.epns"
             targetSdkVersion rootProject.ext.targetSdkVersion
-            resValue "string", "build_config_package", "io.epns.epnsstaging"
+            resValue "string", "build_config_package", "io.epns.epns"
+            versionCode 63
+            versionName "0.8.6"
         }
         staging {
             minSdkVersion rootProject.ext.minSdkVersion
             applicationId "io.epns.epnsstaging"
             targetSdkVersion rootProject.ext.targetSdkVersion
-            resValue "string", "build_config_package", "io.epns.epnsstaging"
+            resValue "string", "build_config_package", "io.epns.epns"
+            versionCode 18
+            versionName "0.8.2"
         }
     }
 

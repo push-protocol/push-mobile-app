@@ -40,11 +40,11 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow EPNS Staging to access your camera. EPNS will use this to scan the QR Code of your wallet.</string>
+	<string>Allow EPNS to access your camera. EPNS will use this to scan the QR Code of your wallet.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Enabling Face ID allows you to quickly and securely access your Account.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow EPNS Staging to access your Audio. EPNS Staging will use this to play sounds.</string>
+	<string>Allow EPNS to access your Audio. EPNS will use this to play sounds.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

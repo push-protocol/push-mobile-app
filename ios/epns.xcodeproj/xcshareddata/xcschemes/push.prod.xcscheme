@@ -10,14 +10,14 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "cp &quot;${PROJECT_DIR}/../.env.staging&quot; &quot;${PROJECT_DIR}/../.env&quot;&#10;">
+               scriptText = "cp &quot;${PROJECT_DIR}/../.env.prod&quot; &quot;${PROJECT_DIR}/../.env&quot;&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
-                     BlueprintIdentifier = "E74C05AA29C06A1400C20AC1"
-                     BuildableName = "push.staging.app"
-                     BlueprintName = "push.staging"
-                     ReferencedContainer = "container:epnsstaging.xcodeproj">
+                     BlueprintIdentifier = "E74C05C129C06A2800C20AC1"
+                     BuildableName = "push.prod.app"
+                     BlueprintName = "push.prod"
+                     ReferencedContainer = "container:epns.xcodeproj">
                   </BuildableReference>
                </EnvironmentBuildable>
             </ActionContent>
@@ -32,10 +32,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E74C05AA29C06A1400C20AC1"
-               BuildableName = "push.staging.app"
-               BlueprintName = "push.staging"
-               ReferencedContainer = "container:epnsstaging.xcodeproj">
+               BlueprintIdentifier = "E74C05C129C06A2800C20AC1"
+               BuildableName = "push.prod.app"
+               BlueprintName = "push.prod"
+               ReferencedContainer = "container:epns.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -62,10 +62,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E74C05AA29C06A1400C20AC1"
-            BuildableName = "push.staging.app"
-            BlueprintName = "push.staging"
-            ReferencedContainer = "container:epnsstaging.xcodeproj">
+            BlueprintIdentifier = "E74C05C129C06A2800C20AC1"
+            BuildableName = "push.prod.app"
+            BlueprintName = "push.prod"
+            ReferencedContainer = "container:epns.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -79,10 +79,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E74C05AA29C06A1400C20AC1"
-            BuildableName = "push.staging.app"
-            BlueprintName = "push.staging"
-            ReferencedContainer = "container:epnsstaging.xcodeproj">
+            BlueprintIdentifier = "E74C05C129C06A2800C20AC1"
+            BuildableName = "push.prod.app"
+            BlueprintName = "push.prod"
+            ReferencedContainer = "container:epns.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

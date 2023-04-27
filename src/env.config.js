@@ -3,11 +3,10 @@ import GLOBALS from 'src/Globals';
 
 const {
   APP_VERSION,
-  MAINNET_INFURA_API,
   SOCKET_KEY_PROD,
   SOCKET_KEY_STAGING,
-  TESTNET_INFURA_API,
   YOUTUBE_API_KEY,
+  INFURA_PROJECT_ID,
   PROD_ENV,
 } = Config;
 
@@ -17,6 +16,7 @@ const SHOW_CONSOLE = 1; // Show or disable console
 const {
   DEV_EPNS_SERVER,
   PROD_EPNS_SERVER,
+  W2W_EPNS_SERVER,
   METAMASK_LINK_STAGING,
   METAMASK_LINK_PROD,
   DEEPLINK_URL,
@@ -37,11 +37,12 @@ const {
 export default {
   PROD_ENV: IS_PROD_ENV,
   SHOW_CONSOLE: SHOW_CONSOLE,
-  INFURA_API: MAINNET_INFURA_API,
+  INFURA_API: `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID}`,
 
   // All Server related endpoints
   EPNS_SERVER: IS_PROD_ENV ? PROD_EPNS_SERVER : DEV_EPNS_SERVER,
   METAMASK_LINK: IS_PROD_ENV ? METAMASK_LINK_PROD : METAMASK_LINK_STAGING,
+  W2W_EPNS_SERVER: W2W_EPNS_SERVER,
 
   // all the server endponts
   ENDPOINT_AUTHTOKEN,
@@ -69,6 +70,9 @@ export default {
 
   DAPP_URL: IS_PROD_ENV ? DAPP_LINK.PROD : DAPP_LINK.STAGING,
   CHAIN_ID: IS_PROD_ENV ? 1 : 5,
-  WC_RPC: IS_PROD_ENV ? MAINNET_INFURA_API : TESTNET_INFURA_API,
+  WC_RPC: IS_PROD_ENV
+    ? `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID}`
+    : `https://goerli.infura.io/v3/${INFURA_PROJECT_ID}`,
   ENV: IS_PROD_ENV ? 'prod' : 'staging',
+  INFURA_PROJECT_ID: INFURA_PROJECT_ID,
 };

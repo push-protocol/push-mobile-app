@@ -14,14 +14,6 @@ export const handleChannelSub = async (
 ) => {
   // Ask wallet to switch network if required
   try {
-    const chaindId = connector.chainId;
-    if (chaindId !== ENV_CONFIG.CHAIN_ID) {
-      await connector.sendCustomRequest({
-        method: 'wallet_switchEthereumChain',
-        params: [{chainId: `0x${ENV_CONFIG.CHAIN_ID}}`}],
-      });
-    }
-
     // From WalletConnect connector get ethers signer
     const [signer, user] = await getSigner(connector);
     const config = getSubConfig(signer, user, channel);

@@ -1,10 +1,38 @@
 import ENS from 'ethereum-ens';
+import EthENS from 'ethereum-ens';
 import {ethers} from 'ethers';
 import ENV_CONFIG from 'src/env.config';
 import MetaStorage from 'src/singletons/MetaStorage';
 import Web3 from 'web3';
 
 const {default: Resolution} = require('@unstoppabledomains/resolution');
+
+const getResolution = () => {
+  return Resolution.fromEthersProvider({
+    uns: {
+      locations: {
+        Layer1: {
+          network: 'mainnet',
+          provider: new ethers.providers.InfuraProvider(
+            1,
+            ENV_CONFIG.INFURA_PROJECT_ID,
+          ),
+        },
+        Layer2: {
+          network: 'polygon-mainnet',
+          provider: new ethers.providers.InfuraProvider(
+            137,
+            ENV_CONFIG.INFURA_PROJECT_ID,
+          ),
+        },
+      },
+    },
+    zns: {
+      url: 'https://api.zilliqa.com',
+      network: 'mainnet',
+    },
+  });
+};
 
 // Web3 Helper Function
 const Web3Helper = {
@@ -148,7 +176,7 @@ const Web3Helper = {
     const endpoint = ENV_CONFIG.CNS_ENDPOINT;
 
     // prepare api url
-    const apiURL = endpoint + '?owner=' + wallet + '&extension=crypto';
+    const apiURL = endpoint + '?owner=' + wallet;
 
     return await fetch(apiURL, {
       method: 'GET',
@@ -163,6 +191,8 @@ const Web3Helper = {
           success: false,
           cns: '',
         };
+
+        console.log('got res', responseJson);
 
         if (responseJson['domains']?.length > 0) {
           response.success = true;
@@ -189,6 +219,20 @@ const Web3Helper = {
         console.warn(error);
         return error;
       });
+  },
+  getUDRev: async function (wallet) {
+    console.log('**** callled');
+    try {
+      const resolution = getResolution();
+      const name = await resolution.reverse(wallet, 'ETH');
+      console.log('got rev', name, 'for wallet', wallet);
+      if (name) {
+        return [true, name];
+      }
+    } catch (error) {
+      console.log('got err', error);
+    }
+    return [false, ''];
   },
   // Update CNS Record
   updateCNSAndFetchWalletInfoObject: async () => {
@@ -247,9 +291,28 @@ const Web3Helper = {
       return /^[0-9a-f]+$/.test(modStr);
     }
   },
-  // Resolve Domain name
+  // Resolve Domain name .eth or unstoppable domain
   resolveBlockchainDomain: async (domain, currency) => {
-    const resolution = new Resolution();
+    if (domain.includes('.eth')) {
+      const provider = Web3Helper.getWeb3Provider();
+      const ens = new EthENS(provider);
+      return new Promise((resolve, reject) => {
+        ens
+          .resolver(domain)
+          .addr()
+          .then(address => {
+            console.log(address);
+            resolve(address);
+          })
+          .catch(err => {
+            console.log('got error');
+            console.log(err);
+            reject(err);
+          });
+      });
+    }
+
+    const resolution = getResolution();
     return new Promise((resolve, reject) => {
       resolution
         .addr(domain, currency)

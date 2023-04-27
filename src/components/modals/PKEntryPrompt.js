@@ -115,7 +115,9 @@ export default class PKEntryPrompt extends Component {
         .catch(err => {
           this.setState({
             domainAddr: null,
-            domainErr: err.toString().replace('ResolutionError: ', ''),
+            domainErr: err
+              .toString()
+              .substring(err.toString().lastIndexOf(':') + 1),
           });
         });
     } else {
@@ -266,7 +268,7 @@ export default class PKEntryPrompt extends Component {
                         </ErrorMsg>
                       </>
                     ) : (
-                      'Checking for CNS / ENS Name...'
+                      'Checking for Web3 Name...'
                     )}
                   </Text>
                 </React.Fragment>

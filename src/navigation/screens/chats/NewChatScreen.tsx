@@ -96,13 +96,15 @@ const NewChatScreen = ({route, navigation}: any) => {
       let address = '';
       if (Web3Helper.isHex(query)) {
         address = Web3Helper.getAddressChecksum(query.toLowerCase());
-      } else if (query.includes('.eth')) {
-        address = await Web3Helper.resolveBlockchainDomain(query, 'eth');
-        setEthAddress(address);
       } else {
-        showError(query);
-        setEthAddress('');
-        return;
+        try {
+          address = await Web3Helper.resolveBlockchainDomain(query, 'ETH');
+          setEthAddress(address);
+        } catch (error) {
+          showError(query);
+          setEthAddress('');
+          return;
+        }
       }
       const [matchedFeed, isAddressPreset] =
         checkIfAddressPresetInFeed(address);
@@ -197,7 +199,7 @@ const NewChatScreen = ({route, navigation}: any) => {
             style={styles.input}
             onChangeText={setEthAddress}
             value={ethAddress}
-            placeholder="Search name.eth or 0x123.."
+            placeholder="Search web3 domain or 0x123.."
             editable={!isSearching}
             selectTextOnFocus={!isSearching}
             placeholderTextColor={Globals.COLORS.CHAT_LIGHT_DARK}

@@ -16,7 +16,6 @@ const WallectConnectPage = ({initalizate}: any) => {
     if (chatInfoLoaded) {
       initalizate();
     } else {
-      // setIsWCUser(true);
       return;
     }
   };

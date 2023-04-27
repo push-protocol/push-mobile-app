@@ -9,14 +9,16 @@ export const getSigner = async (
   const provider = new WalletConnectProvider({
     connector,
     rpc: {
-      [ENV_CONFIG.CHAIN_ID]: ENV_CONFIG.WC_RPC,
+      [ENV_CONFIG.CHAIN_ID]: ENV_CONFIG.INFURA_API || '',
     },
     chainId: ENV_CONFIG.CHAIN_ID,
     qrcode: false,
+    pollingInterval: 6000000,
   });
   await provider.enable();
   const ethers_provider = new ethers.providers.Web3Provider(provider);
   const signer = ethers_provider.getSigner();
+
   const account = await signer.getAddress();
 
   return [signer, account];
