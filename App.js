@@ -22,9 +22,8 @@ const handleAppNotificationBadge = async () => {
   await AppBadgeHelper.setAppBadgeCount(0);
 };
 
-const App = () => {
-  const [callAccepted, setCallAccepted] = useState(false);
-
+const App = ({isCallAccepted}) => {
+  const [isCallLocal, setCallAccepted] = useState(false);
   useEffect(() => {
     // PUSH NOTIFICATIONS HANDLING
     Notify.instance.requestDeviceToken(true);
@@ -41,18 +40,11 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    const answerCallListener = RNCallKeep.addEventListener(
-      'answerCall',
-      async ({callUUID}) => {
-        RNCallKeep.backToForeground();
-        RNCallKeep.endCall(callUUID);
-        setCallAccepted(true);
-      },
-    );
-
-    return () => {
-      answerCallListener;
-    };
+    RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
+      RNCallKeep.backToForeground();
+      RNCallKeep.endCall(callUUID);
+      setCallAccepted(true);
+    });
   }, []);
 
   return (
@@ -76,7 +68,8 @@ const App = () => {
             storageOptions={{
               asyncStorage: AsyncStorage,
             }}>
-            <AppScreens callAccepted={callAccepted} />
+            {/* TODO: Improve this */}
+            <AppScreens callAccepted={isCallLocal || isCallAccepted} />
           </WalletConnectProvider>
         </PersistGate>
       </Provider>

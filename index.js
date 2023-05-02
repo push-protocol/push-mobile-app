@@ -1,6 +1,7 @@
 import messaging from '@react-native-firebase/messaging';
 import React, {useEffect} from 'react';
 import {AppRegistry} from 'react-native';
+import {AppState} from 'react-native';
 import RNCallKeep from 'react-native-callkeep';
 import 'react-native-crypto';
 import 'react-native-get-random-values';
@@ -13,6 +14,18 @@ import App from './App';
 import {name as appName} from './app.json';
 import './shim';
 
+let isCallAccepted = false;
+
+// listen to the user answer
+if (AppState.currentState === 'background') {
+  RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
+    console.log('got call', callUUID);
+    RNCallKeep.backToForeground();
+    RNCallKeep.endCall(callUUID);
+    isCallAccepted = true;
+  });
+}
+
 function HeadlessCheck({isHeadless}) {
   useEffect(() => {
     NotifeClearBadge();
@@ -23,13 +36,14 @@ function HeadlessCheck({isHeadless}) {
     return null;
   }
 
-  return <App />;
+  return <App isCallAccepted={isCallAccepted} />;
 }
 
 RNCallKeep.setup(callKeepHelper.options);
 RNCallKeep.setAvailable(true);
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('got msg', remoteMessage);
   RNCallKeep.setup(callKeepHelper.options);
   RNCallKeep.setAvailable(true);
 
@@ -44,11 +58,19 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   );
 });
 
-AppRegistry.registerComponent(appName, () => HeadlessCheck);
+if (isCallAccepted) {
+  AppRegistry.registerComponent(appName, () => HeadlessCheck);
+} else {
+  AppRegistry.registerComponent(appName, () => HeadlessCheck);
+}
 AppRegistry.registerHeadlessTask(
   'RNCallKeepBackgroundMessage',
-  () =>
-    ({name, callUUID, handle}) => {
-      return Promise.resolve();
-    },
+  () => bgCalling,
 );
+// AppRegistry.registerHeadlessTask(
+//   'RNCallKeepBackgroundMessage',
+//   () =>
+//     ({name, callUUID, handle}) => {
+//       return Promise.resolve();
+//     },
+// );
