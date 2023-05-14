@@ -2358,10 +2358,10 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@pushprotocol/restapi@1.2.3":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@pushprotocol/restapi/-/restapi-1.2.3.tgz#81b30dca186ec881d4fe926035ab27bc2ac0ab54"
-  integrity sha512-MWPBusG++7e8Gdjg59m2Vh77ppUBWNQvkzaTYuM3uYeKeg/ZZInW0lB3z9fWNscSDiD4rIH4SdUKe3LhvzIMcA==
+"@pushprotocol/restapi@1.2.15":
+  version "1.2.15"
+  resolved "https://registry.yarnpkg.com/@pushprotocol/restapi/-/restapi-1.2.15.tgz#cc5e1e1fb82a107358ab3b0a03e2a3121f547663"
+  integrity sha512-zZ65e/bDX4XHFy7i83JgwEsHAWdnVGGsK8cGlbAqlY/z6qceqih39ZChEw7zRHSl5IqsIV0IVkrPFjtxASVCAw==
   dependencies:
     "@metamask/eth-sig-util" "^5.0.2"
     axios "^0.27.2"
