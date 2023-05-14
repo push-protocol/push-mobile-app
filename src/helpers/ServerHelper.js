@@ -35,9 +35,6 @@ const ServerHelper = {
         body: body,
       });
 
-      const rr = res.json();
-      console.log('reg got the res 	✅', rr);
-
       await MetaStorage.instance.setTokenServerSynced(true);
     } catch (error) {
       console.warn(error);

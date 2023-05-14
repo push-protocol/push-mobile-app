@@ -156,7 +156,7 @@ const VideoScreenApp = ({
 
         if (socket) {
           socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
-            console.log('*** got feed');
+            console.log('*** got feed', feedItem);
 
             try {
               const {payload} = feedItem || {};

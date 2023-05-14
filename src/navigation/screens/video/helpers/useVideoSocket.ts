@@ -24,6 +24,8 @@ const useVideoSocket = (userAddress: string, callAccepted: boolean) => {
   const dispatch = useDispatch();
 
   const onIncomingCall = (videoMeta: any) => {
+    console.log('this was called', videoMeta.chatId);
+
     dispatch(
       setCall({
         isReceivingCall: true,
@@ -31,6 +33,7 @@ const useVideoSocket = (userAddress: string, callAccepted: boolean) => {
         to: userAddress,
         name: videoMeta.name,
         signal: videoMeta.signalData,
+        chatId: videoMeta.chatId,
       }),
     );
   };
@@ -47,6 +50,7 @@ const useVideoSocket = (userAddress: string, callAccepted: boolean) => {
               to: userAddress,
               name: videoMeta.name,
               signal: videoMeta.signalData,
+              chatId: videoMeta.chatId,
               isReceivingCall: false,
               calling: false,
             }),

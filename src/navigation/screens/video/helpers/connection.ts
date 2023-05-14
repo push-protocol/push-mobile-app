@@ -1,8 +1,14 @@
+import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
+import {NOTIFICATION_TYPE, sendNotification} from 'src/push_video/payloads';
+import MetaStorage from 'src/singletons/MetaStorage';
 
-export interface videoPayloadType {
+import {UserChatCredentials} from '../../chats/ChatScreen';
+
+interface videoPayloadType {
   userToCall: string;
   fromUser: string;
+  chatId: string;
   signalData: any;
   name: string;
   status: number;
@@ -20,22 +26,28 @@ interface SendCallPayload {
   to: string;
   signalData: any;
   name: string;
-  status: 1 | 2;
+  status: 1 | 2 | 3;
+  chatId: string;
 }
 
-export const sendCallPayload = ({
+export const sendCallPayload = async ({
   signalData,
   from,
   to,
   status,
   name,
+  chatId,
 }: SendCallPayload) => {
+  const {pgpPrivateKey}: UserChatCredentials =
+    await MetaStorage.instance.getUserChatData();
+
   const videoPayload: videoPayloadType = {
     userToCall: caip10ToWallet(to),
     fromUser: caip10ToWallet(from),
     signalData,
     name,
     status,
+    chatId,
   };
 
   let identityPayload = {
@@ -58,23 +70,55 @@ export const sendCallPayload = ({
   const identity: string = `${identityType}+${stringifiedData}`;
 
   const payload: payloadType = {
-    sender: `eip155:42:${videoPayload.fromUser}`,
-    recipient: `eip155:42:${videoPayload.userToCall}`,
+    sender: `eip155:5:${videoPayload.fromUser}`,
+    recipient: `eip155:5:${videoPayload.userToCall}`,
     identity: identity,
     source: 'PUSH_VIDEO',
   };
 
-  return _sendCallPayload(payload);
+  // sendNotification({
+  //   senderType: 1,
+  //   signer: '',
+  //   type: NOTIFICATION_TYPE.TARGETTED,
+  //   identityType,
+  //   notification: identityPayload.notification,
+  // });
+
+  const notificationText = `Video Call from ${payload.sender}`;
+
+  await sendNotification({
+    senderType: 1, // for chat notification
+    signer: '',
+    pgpPrivateKey: pgpPrivateKey,
+    chatId: chatId,
+    type: NOTIFICATION_TYPE.TARGETTED,
+    identityType: 2,
+    notification: {
+      title: notificationText,
+      body: notificationText,
+    },
+    payload: {
+      title: 'VideoCall',
+      body: 'VideoCall',
+      cta: '',
+      img: '',
+      additionalMeta: videoPayload,
+    },
+    recipients: payload.recipient,
+    channel: payload.sender,
+    env: ENV.STAGING,
+  });
+  // return _sendCallPayload(payload);
 };
 
-const _sendCallPayload = async (payload: payloadType) => {
-  const requestOptions = {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(payload),
-  };
-  return fetch(
-    'https://backend-staging.epns.io/apis/v1/payloads/video/poc',
-    requestOptions,
-  );
-};
+// const _sendCallPayload = async (payload: payloadType) => {
+//   const requestOptions = {
+//     method: 'POST',
+//     headers: {'Content-Type': 'application/json'},
+//     body: JSON.stringify(payload),
+//   };
+//   return fetch(
+//     'https://backend-staging.epns.io/apis/v1/payloads/video/poc',
+//     requestOptions,
+//   );
+// };

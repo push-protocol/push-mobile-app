@@ -1,10 +1,14 @@
-import {getConnectedUser} from '@pushprotocol/restapi/src/lib/chat/helpers';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {
   INotificationPayload,
   ISendNotificationInputOptions,
   walletType,
 } from '@pushprotocol/restapi/src/lib/types';
+import CryptoHelper from 'src/helpers/CryptoHelper';
+import {pgpSign} from 'src/helpers/w2w/pgp';
+import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
+import MetaStorage from 'src/singletons/MetaStorage';
+import {v4 as uuidv4} from 'uuid';
 
 import {getCAIPAddress} from '../helpers/address';
 import {
@@ -58,7 +62,7 @@ export function getPayloadForAPIInput(
 }
 
 export function getUUID() {
-  return '' as any;
+  return uuidv4();
 }
 
 /**
@@ -243,25 +247,35 @@ export async function getVerificationProof({
       break;
     }
     case 1: {
-      const connectedUser = await getConnectedUser(
-        wallet!,
-        pgpPrivateKey!,
-        env!,
-      );
+      const connectedUser: UserChatCredentials =
+        await MetaStorage.instance.getUserChatData();
+      console.log('got connected users', connectedUser);
+
       // TODO:
-      // const hash = CryptoJS.SHA256(JSON.stringify(message)).toString();
-      // const signature = await sign({
-      //   message: hash,
-      //   signingKey: connectedUser.privateKey!,
-      // });
-      const signature = connectedUser.did;
+      const hash = await CryptoHelper.hashWithSha256(JSON.stringify(message));
+      console.log('got hash', hash);
+
+      const signature = await pgpSign(
+        hash,
+        JSON.parse(connectedUser.encryptionPublicKey).key,
+        connectedUser.pgpPrivateKey,
+      );
+      console.log('got sig', signature);
+
       verificationProof = `pgpv2:${signature}:meta:${chatId}::uid::${uuid}`;
+      verificationProof = verificationProof.replace(
+        '\nVersion: openpgp-mobile',
+        '',
+      );
+
       break;
     }
     default: {
       throw new Error('Invalid SenderType');
     }
   }
+  console.log('got the verifcaition profo', verificationProof);
+
   return verificationProof;
 }
 

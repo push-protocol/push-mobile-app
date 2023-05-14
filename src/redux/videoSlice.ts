@@ -21,6 +21,7 @@ interface Call {
   from: string | null;
   to: string | null;
   name: string | null;
+  chatId: string;
   signal: any;
 }
 
@@ -37,6 +38,7 @@ const initialState: VideoCallState = {
     name: null,
     signal: null,
     to: null,
+    chatId: '',
   },
   me: '',
   isVideoOn: true,

@@ -18,7 +18,7 @@ const BASE_URL = envConfig.EPNS_SERVER;
 
 export const createUser = async (
   connector: WalletConnect,
-): Promise<[boolean, string]> => {
+): Promise<[boolean, string, string]> => {
   const [signer, account] = await getSigner(connector);
   const keyPairs = await generateKeyPair();
   const wallet = getWallet({account, signer: signer as any});
@@ -34,6 +34,7 @@ export const createUser = async (
   const encryptedPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(
     encryptionType,
     keyPairs.privateKeyArmored,
+    //@ts-expect-error
     address,
     wallet,
   );
@@ -63,8 +64,8 @@ export const createUser = async (
     .catch(_ => false);
 
   if (success) {
-    return [true, keyPairs.privateKeyArmored];
+    return [true, keyPairs.privateKeyArmored, keyPairs.publicKeyArmored];
   } else {
-    return [false, ''];
+    return [false, '', ''];
   }
 };

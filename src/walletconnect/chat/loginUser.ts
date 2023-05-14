@@ -25,11 +25,11 @@ export const handleWalletConnectChatLogin = async (
   // user is new
   // create the pgp pair
   if (!user || !user.publicKey) {
-    const [success, privKey] = await createUser(connector);
+    const [success, privKey, pubKey] = await createUser(connector);
     if (success) {
       await MetaStorage.instance.setUserChatData({
         pgpPrivateKey: privKey,
-        encryptionPublicKey: '',
+        encryptionPublicKey: pubKey,
       });
       return true;
     } else {
@@ -55,7 +55,7 @@ export const handleWalletConnectChatLogin = async (
     const decryptedPrivateKey = dec.decode(encodedPrivateKey);
     await MetaStorage.instance.setUserChatData({
       pgpPrivateKey: decryptedPrivateKey,
-      encryptionPublicKey: '',
+      encryptionPublicKey: user.publicKey,
     });
     return true;
   } else if (user.encryptionType === Constants.ENC_TYPE_V3) {
@@ -71,9 +71,11 @@ export const handleWalletConnectChatLogin = async (
     );
     const dec = new TextDecoder();
     const decryptedPrivateKey = dec.decode(encodedPrivateKey);
+    console.log('uu', user.publicKey);
+
     await MetaStorage.instance.setUserChatData({
       pgpPrivateKey: decryptedPrivateKey,
-      encryptionPublicKey: '',
+      encryptionPublicKey: user.publicKey,
     });
     return true;
   }

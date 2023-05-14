@@ -60,19 +60,20 @@ const usePeer = ({
 
       if (socket) {
         socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
-          console.log('*** got feed');
-          const {payload} = feedItem || {};
-
-          if (
-            payload.hasOwnProperty('data') &&
-            payload.data.hasOwnProperty('videoMeta')
-          ) {
-            const videoMeta = JSON.parse(payload.data.videoMeta);
-            if (videoMeta.status === 2) {
-              const signalData = videoMeta.signalData;
-              console.log('got the signal data', signalData);
-              peer.signal(signalData);
+          console.log('got feed abishek', Object.keys(feedItem));
+          try {
+            if (feedItem.source === 'PUSH_VIDEO') {
+              const {payload} = feedItem || {};
+              const videoMeta = JSON.parse(payload.data.additionalMeta);
+              if (videoMeta.status === 1) {
+              } else if (videoMeta.status === 2) {
+                const signalData = videoMeta.signalData;
+                console.log('got the signal data', signalData);
+                peer.signal(signalData);
+              }
             }
+          } catch (e) {
+            console.error('Notification error: ', e);
           }
         });
 
@@ -102,9 +103,10 @@ const usePeer = ({
           name: '',
           signalData: _data,
           status: 1,
-        })
-          .then(r => console.log(r.status))
-          .catch(e => console.error(e));
+          chatId: call.chatId,
+        });
+        // .then(r => console.log(r.status))
+        // .catch(e => console.error(e));
       }
     });
   } else {
@@ -126,9 +128,10 @@ const usePeer = ({
           name: 'name',
           signalData: data,
           status: 2,
-        })
-          .then(r => console.log(r.status))
-          .catch(e => console.error(e));
+          chatId: call.chatId,
+        });
+        // .then(r => console.log(r.status))
+        // .catch(e => console.error(e));
       }
     });
   }

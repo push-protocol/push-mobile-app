@@ -55,7 +55,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       channel,
       graph,
       ipfsHash,
-      env = ENV.PROD,
+      env = ENV.STAGING,
       chatId,
       pgpPrivateKey,
     } = options || {};
@@ -67,17 +67,20 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     }
 
     const wallet = getWallet({account: null, signer});
-
     const _channelAddress = getCAIPAddress(env, channel, 'Channel');
+    console.log('got channel addrs', _channelAddress);
+
     const channelCAIPDetails = getCAIPDetails(_channelAddress);
 
     if (!channelCAIPDetails) throw Error('Invalid Channel CAIP!');
 
     const uuid = getUUID();
+    console.log('got uuid', uuid);
+
     const chainId = parseInt(channelCAIPDetails.networkId, 10);
 
     const {API_BASE_URL, EPNS_COMMUNICATOR_CONTRACT} = getConfig(
-      env,
+      ENV.STAGING,
       channelCAIPDetails,
     );
 
@@ -137,16 +140,16 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     };
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;
+    console.log('api', requestURL);
+    console.log('load', JSON.stringify(apiPayload));
+
     return await axios.post(requestURL, apiPayload, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
   } catch (err) {
-    console.error(
-      '[Push SDK] - Error - sendNotification() - ',
-      JSON.stringify(err),
-    );
+    console.error('[Push SDK] - Error - sendNotification() - ', err);
     throw err;
   }
 }

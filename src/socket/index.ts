@@ -28,6 +28,7 @@ let socket;
 
 const newSocket = (userAddress: string) => {
   return createSocketConnection({
+    //@ts-ignore
     env: SocketConfig.url,
     apiKey: SocketConfig.key,
     user: userAddress,
@@ -59,18 +60,12 @@ const setupGlobalSocket = (
   });
 
   socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
-    console.log('got feed feedItem');
+    console.log('got feed abishek', Object.keys(feedItem));
+
     try {
-      const {payload} = feedItem || {};
-      // if video meta, skip notification
-      if (
-        payload.hasOwnProperty('data') &&
-        payload.data.hasOwnProperty('videoMeta')
-      ) {
-        const videoMeta = JSON.parse(payload.data.videoMeta);
-        console.log('Call feed', Object.keys(videoMeta));
-        console.log('Call feed status', videoMeta.status);
-        console.log('Status Type', typeof videoMeta.status);
+      if (feedItem.source === 'PUSH_VIDEO') {
+        const {payload} = feedItem || {};
+        const videoMeta = JSON.parse(payload.data.additionalMeta);
         if (videoMeta.status === 1) {
           console.log('video signal got');
           // incoming call received, do something with it
