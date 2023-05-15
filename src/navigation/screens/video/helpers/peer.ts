@@ -38,7 +38,7 @@ const usePeer = ({
 }: UsePeerArgs) => {
   const peer = new RNPeer({
     initiator: calling,
-    trickle: false,
+    trickle: true,
     debugConsole: false,
     config: {},
     webRTC: {

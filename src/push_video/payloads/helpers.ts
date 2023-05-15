@@ -178,10 +178,10 @@ export async function getVerificationProof({
   graph = {},
   uuid,
   chatId,
-  wallet, //
-  pgpPrivateKey, //
-  env, //
-}: {
+}: // wallet,
+// pgpPrivateKey,
+// env,
+{
   senderType: 0 | 1;
   signer: any;
   chainId: number;
