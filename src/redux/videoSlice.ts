@@ -15,7 +15,7 @@ export interface VideoCallState {
   incomingAudioOn: boolean;
 }
 
-interface Call {
+export interface Call {
   isReceivingCall: boolean;
   calling: boolean;
   from: string | null;

@@ -52,6 +52,7 @@ export interface Feeds {
   intentTimestamp: string;
   combinedDID: string;
   cid: string;
+  chatId?: string;
 }
 
 export interface ConnectedUser extends User {

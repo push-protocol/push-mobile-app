@@ -49,6 +49,7 @@ interface ChatScreenParam {
   combinedDID: string;
   isIntentSendPage: boolean;
   isIntentReceivePage: boolean;
+  chatId?: string;
 }
 
 const windowHeight = Dimensions.get('window').height;
@@ -65,6 +66,7 @@ const SingleChatScreen = ({route}: any) => {
     connectedUser,
     isIntentSendPage,
     combinedDID,
+    chatId,
   }: ChatScreenParam = route.params;
 
   const [isIntentReceivePage, setisIntentReceivePage] = useState<boolean>(
@@ -175,6 +177,7 @@ const SingleChatScreen = ({route}: any) => {
         to: senderAddress,
         from: connectedUser.wallets,
         call: {},
+        chatId: chatId,
       }),
     );
     // @ts-ignore

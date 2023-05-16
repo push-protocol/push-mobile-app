@@ -1,6 +1,11 @@
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
+import envConfig from 'src/env.config';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
-import {NOTIFICATION_TYPE, sendNotification} from 'src/push_video/payloads';
+import {
+  IDENTITY_TYPE,
+  NOTIFICATION_TYPE,
+  sendNotification,
+} from 'src/push_video/payloads';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 import {UserChatCredentials} from '../../chats/ChatScreen';
@@ -92,7 +97,7 @@ export const sendCallPayload = async ({
     pgpPrivateKey: pgpPrivateKey,
     chatId: chatId,
     type: NOTIFICATION_TYPE.TARGETTED,
-    identityType: 2,
+    identityType: IDENTITY_TYPE.DIRECT_PAYLOAD,
     notification: {
       title: notificationText,
       body: notificationText,
@@ -106,7 +111,7 @@ export const sendCallPayload = async ({
     },
     recipients: payload.recipient,
     channel: payload.sender,
-    env: ENV.STAGING,
+    env: envConfig.ENV as ENV,
   });
   // return _sendCallPayload(payload);
 };

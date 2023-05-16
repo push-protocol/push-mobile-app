@@ -8,6 +8,7 @@ import {
   RTCSessionDescription,
 } from 'react-native-webrtc';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
+import {Call} from 'src/redux/videoSlice';
 
 import {sendCallPayload} from './connection';
 
@@ -16,7 +17,7 @@ interface UsePeerArgs {
   userMedia: MediaStream;
   connectionRef: any;
   setAnotherUserMedia: any;
-  call: any;
+  call: Call;
   toAddress: string;
   fromAddress: string;
   rcalled: any;
@@ -98,9 +99,9 @@ const usePeer = ({
 
         // ring the user
         sendCallPayload({
-          from: caip10ToWallet(fromAddress),
+          from: fromAddress,
           to: toAddress,
-          name: '',
+          name: 'John Doe',
           signalData: _data,
           status: 1,
           chatId: call.chatId,
