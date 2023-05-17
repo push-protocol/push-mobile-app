@@ -7,9 +7,10 @@ import {MediaStream, RTCView, mediaDevices} from 'react-native-webrtc';
 import {useDispatch, useSelector} from 'react-redux';
 import Globals from 'src/Globals';
 import {
-  VideoCallState,
   selectVideoCall,
   setCallEnded,
+  setIncomingAudioOn,
+  setIncomingVideoOn,
   setReceiverPeerSignalled,
   toggleIsAudioOn,
   toggleIsVideoOn,
@@ -24,6 +25,7 @@ import {
 
 import {DEFAULT_AVATAR} from '../chats/constants';
 import VideoPlaceholder from './components/VideoPlaceholder';
+import {VIDEO_DATA} from './helpers/constants';
 import {usePeer} from './helpers/peer';
 
 const windowWidth = Dimensions.get('window').width;
@@ -35,9 +37,8 @@ const VideoScreen = () => {
   );
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const {isAudioOn, isVideoOn, call} = useSelector(
-    selectVideoCall,
-  ) as VideoCallState;
+  const {isAudioOn, isVideoOn, call, incomingVideoOn} =
+    useSelector(selectVideoCall);
 
   const connectedUser: string = call.to || '';
   const senderAddress: string = call.from || '';
@@ -52,6 +53,10 @@ const VideoScreen = () => {
 
   const toggleAudio = () => {
     if (userMedia) {
+      const peer = connectionRef.current;
+      peer?.send(
+        JSON.stringify({type: VIDEO_DATA.AUDIO_STATUS, isAudioOn: !isAudioOn}),
+      );
       isAudioOn ? disableAudio(userMedia) : enableAudio(userMedia);
       dispatch(toggleIsAudioOn());
     }
@@ -59,6 +64,10 @@ const VideoScreen = () => {
 
   const toggleVideo = () => {
     if (userMedia) {
+      const peer = connectionRef.current;
+      peer?.send(
+        JSON.stringify({type: VIDEO_DATA.VIDEO_STATUS, isVideoOn: !isVideoOn}),
+      );
       isVideoOn ? disableVideo(userMedia) : enableVideo(userMedia);
       dispatch(toggleIsVideoOn());
     }
@@ -73,8 +82,24 @@ const VideoScreen = () => {
   const endCall = () => {
     dispatch(setReceiverPeerSignalled(false));
     dispatch(setCallEnded(true));
-    connectionRef.current.destroy();
+    const peer = connectionRef.current;
+    try {
+      peer?.send(
+        JSON.stringify({type: VIDEO_DATA.END_CALL, endLocalStream: true}),
+      );
+    } catch (e) {
+      console.log('Error while sending end call notification', e);
+    }
+    connectionRef.current?.destroy();
     navigation.goBack();
+  };
+
+  const setIncomingAudioStatus = (status: boolean) => {
+    dispatch(setIncomingAudioOn(status));
+  };
+
+  const setIncomingVideoStatus = (status: boolean) => {
+    dispatch(setIncomingVideoOn(status));
   };
 
   useEffect(() => {
@@ -104,6 +129,11 @@ const VideoScreen = () => {
       setAnotherUserMedia,
       rcalled,
       rsetCalled,
+      isVideoOn,
+      isAudioOn,
+      setIncomingAudioStatus,
+      setIncomingVideoStatus,
+      onEndCall: endCall,
     });
 
     console.log(peer);
@@ -112,25 +142,22 @@ const VideoScreen = () => {
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
       <View style={styles.videoViewContainer}>
-        {anotherUserMedia ? (
+        {anotherUserMedia && incomingVideoOn ? (
           <RTCView
             style={styles.videoView}
             objectFit="cover"
-            streamURL={anotherUserMedia.toURL()} // TODO: Add remote stream
+            streamURL={anotherUserMedia.toURL()}
           />
         ) : (
-          <RTCView
-            style={styles.videoView}
-            objectFit="cover"
-            streamURL="https://www.youtube.com/watch?v=dQw4w9WgXcQ" // TODO: Add remote stream
-          />
+          <VideoPlaceholder uri={DEFAULT_AVATAR} />
         )}
         <View style={styles.smallVideoViewContainer}>
-          {userMedia ? (
+          {userMedia && isVideoOn ? (
             <RTCView
               style={styles.videoView}
-              streamURL={userMedia.toURL()} // TODO: Add local stream
+              streamURL={userMedia.toURL()}
               objectFit="cover"
+              zOrder={1}
             />
           ) : (
             <VideoPlaceholder uri={DEFAULT_AVATAR} />
@@ -223,22 +250,27 @@ const styles = StyleSheet.create({
     width: windowWidth - 10,
     overflow: 'hidden',
     flex: 1,
-    zIndex: 1,
   },
   videoView: {
     flex: 1,
   },
   smallVideoViewContainer: {
     position: 'absolute',
-    right: 3,
-    bottom: 3,
+    right: 6,
+    bottom: 6,
     width: 198,
     height: 120,
     borderRadius: 16,
     overflow: 'hidden',
-    // TODO: Remove below 2 lines after adding video connections
-    borderWidth: 2,
-    borderColor: Globals.COLORS.WHITE,
+    shadowColor: Globals.COLORS.BLACK,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowRadius: 1.51,
+    shadowOpacity: 0.16,
+    elevation: 4,
+    zIndex: 1,
   },
   white: {
     color: Globals.COLORS.WHITE,

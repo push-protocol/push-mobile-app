@@ -109,6 +109,6 @@ export const {
   toggleIsAudioOn,
 } = videoSlice.actions;
 
-export const selectVideoCall = (state: any) => state.video;
+export const selectVideoCall = (state: {video: VideoCallState}) => state.video;
 
 export default videoSlice.reducer;

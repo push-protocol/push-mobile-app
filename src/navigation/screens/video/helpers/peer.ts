@@ -8,9 +8,11 @@ import {
   RTCSessionDescription,
 } from 'react-native-webrtc';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
+import JsonHelper from 'src/helpers/JsonHelper';
 import {Call} from 'src/redux/videoSlice';
 
 import {sendCallPayload} from './connection';
+import {VIDEO_DATA} from './constants';
 
 interface UsePeerArgs {
   calling: boolean;
@@ -22,6 +24,11 @@ interface UsePeerArgs {
   fromAddress: string;
   rcalled: any;
   rsetCalled: any;
+  isVideoOn: boolean;
+  isAudioOn: boolean;
+  setIncomingVideoStatus: (status: boolean) => void;
+  setIncomingAudioStatus: (status: boolean) => void;
+  onEndCall: () => void;
 }
 
 let k = false;
@@ -36,6 +43,11 @@ const usePeer = ({
   fromAddress,
   rcalled,
   rsetCalled,
+  isVideoOn,
+  isAudioOn,
+  setIncomingVideoStatus,
+  setIncomingAudioStatus,
+  onEndCall,
 }: UsePeerArgs) => {
   const peer = new RNPeer({
     initiator: calling,
@@ -80,6 +92,18 @@ const usePeer = ({
 
         socket.on(EVENTS.CONNECT, () => {
           console.log('*****() socket connection connection done');
+          peer.send(
+            JSON.stringify({
+              type: VIDEO_DATA.VIDEO_STATUS,
+              isVideoOn: isVideoOn,
+            }),
+          );
+          peer.send(
+            JSON.stringify({
+              type: VIDEO_DATA.AUDIO_STATUS,
+              isAudioOn: isAudioOn,
+            }),
+          );
         });
 
         socket.on(EVENTS.DISCONNECT, () => {
@@ -146,12 +170,38 @@ const usePeer = ({
   peer.on('connect', () => {
     // wait for 'connect' event before using the data channel
     peer.send('hey caller, how is it going?');
+
+    peer.send(
+      JSON.stringify({type: VIDEO_DATA.VIDEO_STATUS, isVideoOn: isVideoOn}),
+    );
+    peer.send(
+      JSON.stringify({type: VIDEO_DATA.AUDIO_STATUS, isAudioOn: isAudioOn}),
+    );
   });
 
   // @ts-ignore
   peer.on('stream', (currentStream: MediaStream) => {
     console.log('++ GOT STREAM BACK IN ANSWERCALL');
     setAnotherUserMedia(currentStream);
+  });
+
+  // @ts-ignore
+  peer.on('data', (data: any) => {
+    if (JsonHelper.isJSON(data)) {
+      const jsonData = JSON.parse(data);
+      if (jsonData.type === VIDEO_DATA.VIDEO_STATUS) {
+        setIncomingVideoStatus(jsonData.isVideoOn);
+      } else if (jsonData.type === VIDEO_DATA.AUDIO_STATUS) {
+        setIncomingAudioStatus(jsonData.isAudioOn);
+      } else if (jsonData.type === VIDEO_DATA.END_CALL) {
+        onEndCall();
+      }
+    }
+  });
+
+  // @ts-ignore
+  peer.on('disconnect', () => {
+    onEndCall();
   });
 
   connectionRef.current = peer;
