@@ -36,6 +36,19 @@ const callKeepHelper = {
     const suffix = address.slice(38);
     return `${prefix}...${suffix}`;
   },
+
+  isVideoCall: (jsonObj: any) => {
+    try {
+      const bodyStr = jsonObj.notification.title;
+      const regex = /Push Video - Video Call from/;
+      const match = bodyStr.match(regex);
+      console.log('is a video call', match !== null);
+      return match !== null;
+    } catch (error) {
+      console.log('got err', error);
+    }
+    return false;
+  },
 };
 
 export {callKeepHelper};

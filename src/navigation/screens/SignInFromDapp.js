@@ -3,9 +3,11 @@ import {StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
+import * as PushNodeClient from 'src/apis';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import {Toaster} from 'src/components/indicators/Toaster';
 import ProfileFromDappBuilder from 'src/components/web3/ProfileFromDappBuilder';
+import * as CaipHelper from 'src/helpers/CAIPHelper';
 import {selectAuthState} from 'src/redux/authSlice';
 import {setInitialSignin} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
@@ -31,10 +33,14 @@ const SignInScreen = props => {
       // Store that user login fromdapp
       await MetaStorage.instance.setUserLoginFromDapp();
 
+      const user = await PushNodeClient.getUser(
+        CaipHelper.walletToCAIP10(account),
+      );
+
       // store chat data
       await MetaStorage.instance.setUserChatData({
         pgpPrivateKey: pgpSecret.current,
-        encryptionPublicKey: '',
+        encryptionPublicKey: user.publicKey,
       });
 
       // navigate to bimetrics screen

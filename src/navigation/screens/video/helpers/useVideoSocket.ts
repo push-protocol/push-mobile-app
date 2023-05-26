@@ -8,12 +8,19 @@ import {setupGlobalSocket} from 'src/socket';
 
 const getCallInfoFromServer = async (userAddress: string): Promise<any> => {
   try {
+    console.log('getting call info from server');
     const URI = `${ENV_CONFIG.EPNS_SERVER}/v1/users/eip155:${userAddress}/feeds?page=1&limit=1&spam=false&showHidden=true`;
+    console.log('URI', URI);
     const userFeeds = await fetch(URI).then(response => response.json());
+    console.log('userFeeds', userFeeds);
     if (userFeeds.feeds.length > 0) {
-      const videoMeta = JSON.parse(userFeeds.feeds[0].payload.data.videoMeta);
+      const videoMeta = JSON.parse(
+        userFeeds.feeds[0].payload.data.additionalMeta,
+      );
+      console.log('got videoMeta', videoMeta);
       return [true, videoMeta];
     }
+    return [false, {}];
   } catch (error) {
     return [false, {}];
   }
