@@ -4,6 +4,8 @@ import {
   ISendNotificationInputOptions,
   walletType,
 } from '@pushprotocol/restapi/src/lib/types';
+import * as PushNodeClient from 'src/apis';
+import * as CaipHelper from 'src/helpers/CAIPHelper';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import {pgpSign} from 'src/helpers/w2w/pgp';
 import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
@@ -251,13 +253,30 @@ export async function getVerificationProof({
         await MetaStorage.instance.getUserChatData();
       console.log('got connected users', connectedUser);
 
+      let userEncryptionPublicKey;
+      try {
+        userEncryptionPublicKey = JSON.parse(
+          connectedUser.encryptionPublicKey,
+        ).key;
+      } catch (e) {
+        const wallets = await MetaStorage.instance.getStoredWallet();
+        if (!wallets.length) {
+          throw new Error('No wallet found');
+        }
+        const {wallet} = wallets[0];
+        const user = await PushNodeClient.getUser(
+          CaipHelper.walletToCAIP10(wallet),
+        );
+        userEncryptionPublicKey = user?.publicKey;
+      }
+
       // TODO:
       const hash = await CryptoHelper.hashWithSha256(JSON.stringify(message));
       console.log('got hash', hash);
 
       const signature = await pgpSign(
         hash,
-        JSON.parse(connectedUser.encryptionPublicKey).key,
+        userEncryptionPublicKey,
         connectedUser.pgpPrivateKey,
       );
       console.log('got sig', signature);
