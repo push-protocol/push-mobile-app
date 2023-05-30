@@ -123,6 +123,12 @@ const VideoScreen = () => {
       console.log('Error while sending end call notification', e);
     }
     connectionRef.current?.destroy();
+    if (!isVideoOn) {
+      dispatch(toggleIsVideoOn());
+    }
+    if (!isAudioOn) {
+      dispatch(toggleIsAudioOn());
+    }
     navigation.goBack();
   };
 
