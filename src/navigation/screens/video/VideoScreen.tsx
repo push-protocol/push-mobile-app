@@ -1,7 +1,15 @@
 import {Feather, Ionicons, MaterialIcons} from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
-import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  DeviceEventEmitter,
+  Dimensions,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import InCallManager from 'react-native-incall-manager';
 import LinearGradient from 'react-native-linear-gradient';
 import {MediaStream, RTCView, mediaDevices} from 'react-native-webrtc';
 import {useDispatch, useSelector} from 'react-redux';
@@ -45,10 +53,34 @@ const VideoScreen = () => {
   const connectionRef = React.useRef<any>();
 
   const getMediaStream = async () => {
-    return await mediaDevices.getUserMedia({
+    const devices = await mediaDevices.getUserMedia({
       audio: true,
       video: true,
     });
+
+    if (Platform.OS === 'ios') {
+      InCallManager.setForceSpeakerphoneOn(
+        !InCallManager.getIsWiredHeadsetPluggedIn(),
+      );
+    } else if (Platform.OS === 'android') {
+      InCallManager.setSpeakerphoneOn(true);
+    }
+
+    DeviceEventEmitter.addListener(
+      'WiredHeadset',
+      ({isPlugged, hasMic}: {isPlugged: boolean; hasMic: boolean}) => {
+        console.log('WiredHeadset', isPlugged, hasMic);
+        if (isPlugged && hasMic) {
+          InCallManager.setForceSpeakerphoneOn(false);
+        } else if (Platform.OS === 'ios') {
+          InCallManager.setForceSpeakerphoneOn(!isPlugged);
+        } else if (Platform.OS === 'android') {
+          InCallManager.setSpeakerphoneOn(!isPlugged);
+        }
+      },
+    );
+
+    return devices;
   };
 
   const toggleAudio = () => {
