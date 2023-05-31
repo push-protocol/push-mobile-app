@@ -86,9 +86,14 @@ const VideoScreen = () => {
   const toggleAudio = () => {
     if (userMedia) {
       const peer = connectionRef.current;
-      peer?.send(
-        JSON.stringify({type: VIDEO_DATA.AUDIO_STATUS, isAudioOn: !isAudioOn}),
-      );
+      try {
+        peer?.send(
+          JSON.stringify({
+            type: VIDEO_DATA.AUDIO_STATUS,
+            isAudioOn: !isAudioOn,
+          }),
+        );
+      } catch (e) {}
       isAudioOn ? disableAudio(userMedia) : enableAudio(userMedia);
       dispatch(toggleIsAudioOn());
     }
@@ -97,9 +102,14 @@ const VideoScreen = () => {
   const toggleVideo = () => {
     if (userMedia) {
       const peer = connectionRef.current;
-      peer?.send(
-        JSON.stringify({type: VIDEO_DATA.VIDEO_STATUS, isVideoOn: !isVideoOn}),
-      );
+      try {
+        peer?.send(
+          JSON.stringify({
+            type: VIDEO_DATA.VIDEO_STATUS,
+            isVideoOn: !isVideoOn,
+          }),
+        );
+      } catch (e) {}
       isVideoOn ? disableVideo(userMedia) : enableVideo(userMedia);
       dispatch(toggleIsVideoOn());
     }
@@ -180,26 +190,30 @@ const VideoScreen = () => {
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
       <View style={styles.videoViewContainer}>
-        {anotherUserMedia && incomingVideoOn ? (
-          <RTCView
-            style={styles.videoView}
-            objectFit="cover"
-            streamURL={anotherUserMedia.toURL()}
-          />
-        ) : (
-          <VideoPlaceholder uri={DEFAULT_AVATAR} />
-        )}
-        <View style={styles.smallVideoViewContainer}>
-          {userMedia && isVideoOn ? (
+        <View style={styles.videoViewWrapper}>
+          {anotherUserMedia && incomingVideoOn ? (
             <RTCView
               style={styles.videoView}
-              streamURL={userMedia.toURL()}
               objectFit="cover"
-              zOrder={1}
+              streamURL={anotherUserMedia.toURL()}
             />
           ) : (
             <VideoPlaceholder uri={DEFAULT_AVATAR} />
           )}
+        </View>
+        <View style={styles.smallVideoViewContainer}>
+          <View style={styles.videoViewWrapper}>
+            {userMedia && isVideoOn ? (
+              <RTCView
+                style={styles.videoView}
+                streamURL={userMedia.toURL()}
+                objectFit="cover"
+                zOrder={1}
+              />
+            ) : (
+              <VideoPlaceholder uri={DEFAULT_AVATAR} />
+            )}
+          </View>
         </View>
       </View>
       <View style={styles.options}>
@@ -241,7 +255,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 50, // TODO: Find appropriate value
+    marginTop: 64,
   },
   options: {
     display: 'flex',
@@ -286,8 +300,15 @@ const styles = StyleSheet.create({
   videoViewContainer: {
     borderRadius: 16,
     width: windowWidth - 10,
-    overflow: 'hidden',
     flex: 1,
+    shadowColor: Globals.COLORS.BLACK,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowRadius: 1.51,
+    shadowOpacity: 0.16,
+    elevation: 1,
   },
   videoView: {
     flex: 1,
@@ -299,14 +320,13 @@ const styles = StyleSheet.create({
     width: 198,
     height: 120,
     borderRadius: 16,
-    overflow: 'hidden',
     shadowColor: Globals.COLORS.BLACK,
     shadowOffset: {
       width: 0,
       height: 1,
     },
     shadowRadius: 1.51,
-    shadowOpacity: 0.16,
+    shadowOpacity: 0.32,
     elevation: 4,
     zIndex: 1,
   },
@@ -315,5 +335,10 @@ const styles = StyleSheet.create({
   },
   backgroundRed: {
     backgroundColor: Globals.COLORS.SUBLIME_RED,
+  },
+  videoViewWrapper: {
+    flex: 1,
+    borderRadius: 16,
+    overflow: 'hidden',
   },
 });

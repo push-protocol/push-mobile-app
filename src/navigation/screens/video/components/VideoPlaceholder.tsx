@@ -24,7 +24,6 @@ export default VideoPlaceholder;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    borderRadius: 16,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',

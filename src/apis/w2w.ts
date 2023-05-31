@@ -109,7 +109,7 @@ export const getUser = async (caip10: string): Promise<User | undefined> => {
 
   for (let i = 0; i < 3; i++) {
     try {
-      let path = '/v1/w2w/users';
+      let path = '/v1/users';
       if (caip10) {
         path += `?caip10=${caip10}`;
       }
