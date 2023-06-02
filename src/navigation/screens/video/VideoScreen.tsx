@@ -23,6 +23,7 @@ import {
   toggleIsAudioOn,
   toggleIsVideoOn,
 } from 'src/redux/videoSlice';
+import MetaStorage from 'src/singletons/MetaStorage';
 import {
   disableAudio,
   disableVideo,
@@ -31,6 +32,7 @@ import {
   toggleCamera,
 } from 'src/socket';
 
+import {UserChatCredentials} from '../chats/ChatScreen';
 import {DEFAULT_AVATAR} from '../chats/constants';
 import VideoPlaceholder from './components/VideoPlaceholder';
 import {VIDEO_DATA} from './helpers/constants';
@@ -139,7 +141,12 @@ const VideoScreen = () => {
     if (!isAudioOn) {
       dispatch(toggleIsAudioOn());
     }
-    navigation.goBack();
+    try {
+      navigation.goBack();
+    } catch (e) {
+      // @ts-ignore
+      navigation.navigate(Globals.SCREENS.SPLASH);
+    }
   };
 
   const setIncomingAudioStatus = (status: boolean) => {
@@ -159,32 +166,39 @@ const VideoScreen = () => {
   }, []);
 
   const [rcalled, rsetCalled] = useState(false);
+
   useEffect(() => {
-    if (!userMedia) {
-      return;
-    }
+    (async () => {
+      const {pgpPrivateKey}: UserChatCredentials =
+        await MetaStorage.instance.getUserChatData();
 
-    let toAddress = connectedUser;
-    let fromAddress = senderAddress;
-    console.log('******ANSWER CALL');
-    const peer = usePeer({
-      calling: call.calling,
-      call: call,
-      connectionRef: connectionRef,
-      fromAddress,
-      toAddress,
-      userMedia,
-      setAnotherUserMedia,
-      rcalled,
-      rsetCalled,
-      isVideoOn,
-      isAudioOn,
-      setIncomingAudioStatus,
-      setIncomingVideoStatus,
-      onEndCall: endCall,
-    });
+      if (!userMedia || !pgpPrivateKey) {
+        return;
+      }
 
-    console.log(peer);
+      let toAddress = connectedUser;
+      let fromAddress = senderAddress;
+      console.log('******ANSWER CALL');
+      const peer = usePeer({
+        calling: call.calling,
+        call: call,
+        connectionRef: connectionRef,
+        fromAddress,
+        toAddress,
+        userMedia,
+        setAnotherUserMedia,
+        rcalled,
+        rsetCalled,
+        isVideoOn,
+        isAudioOn,
+        setIncomingAudioStatus,
+        setIncomingVideoStatus,
+        onEndCall: endCall,
+        pgpPrivateKey: pgpPrivateKey,
+      });
+
+      console.log(peer);
+    })();
   }, [userMedia]);
 
   return (

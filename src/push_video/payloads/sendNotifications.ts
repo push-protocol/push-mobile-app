@@ -1,7 +1,8 @@
-import {ISendNotificationInputOptions} from '@pushprotocol/restapi';
+import {ISendNotificationInputOptions, SignerType} from '@pushprotocol/restapi';
 import {getWallet} from '@pushprotocol/restapi/src/lib/chat/helpers';
-import {ENV} from '@pushprotocol/restapi/src/lib/constants';
+import Constants, {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import axios from 'axios';
+import envConfig from 'src/env.config';
 
 import {getCAIPAddress, getCAIPDetails, getConfig} from '../helpers';
 import {IDENTITY_TYPE} from './constants';
@@ -39,6 +40,105 @@ function validateOptions(options: any) {
   }
 }
 
+export enum VideoCallStatus {
+  UNINITIALIZED,
+  INITIALIZED,
+  RECEIVED,
+  CONNECTED,
+  DISCONNECTED,
+  RETRY_INITIALIZED,
+  RETRY_RECEIVED,
+}
+
+export enum ADDITIONAL_META_TYPE {
+  CUSTOM = 0,
+  PUSH_VIDEO = 1,
+}
+
+interface VideoCallInfoType {
+  recipientAddress: string;
+  senderAddress: string;
+  chatId: string;
+  signalData: any;
+  status: VideoCallStatus;
+  env?: ENV;
+}
+
+interface UserInfoType {
+  signer: SignerType | string; // updated to string for now
+  chainId: number;
+  pgpPrivateKey: string;
+}
+
+interface VideoDataType {
+  recipientAddress: string;
+  senderAddress: string;
+  chatId: string;
+  signalData?: any;
+  status: VideoCallStatus;
+}
+
+export const sendVideoCallNotification = async (
+  {
+    signer,
+    // chainId,
+    pgpPrivateKey,
+  }: UserInfoType,
+  {
+    recipientAddress,
+    senderAddress,
+    chatId,
+    signalData = null,
+    status,
+    env = Constants.ENV.PROD,
+  }: VideoCallInfoType,
+) => {
+  try {
+    const videoData: VideoDataType = {
+      recipientAddress,
+      senderAddress,
+      chatId,
+      signalData,
+      status,
+    };
+
+    console.log('sendVideoCallNotification', 'videoData', videoData);
+
+    const senderAddressInCaip = getCAIPAddress(env, senderAddress);
+    const recipientAddressInCaip = getCAIPAddress(env, recipientAddress);
+
+    const notificationText = `Video Call from ${senderAddress}`;
+
+    await sendNotification({
+      senderType: 1, // for chat notification
+      signer,
+      pgpPrivateKey,
+      chatId,
+      type: 3,
+      identityType: 2,
+      notification: {
+        title: notificationText,
+        body: notificationText,
+      },
+      payload: {
+        title: 'VideoCall',
+        body: 'VideoCall',
+        cta: '',
+        img: '',
+        additionalMeta: {
+          type: `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`,
+          data: JSON.stringify(videoData),
+        },
+      },
+      recipients: recipientAddressInCaip,
+      channel: senderAddressInCaip,
+      env,
+    });
+  } catch (err) {
+    console.log('Error occured while sending notification for video call', err);
+  }
+};
+
 export async function sendNotification(options: ISendNotificationInputOptions) {
   try {
     const {
@@ -55,7 +155,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       channel,
       graph,
       ipfsHash,
-      env = ENV.STAGING,
+      env = envConfig.ENV as ENV,
       chatId,
       pgpPrivateKey,
     } = options || {};
@@ -80,7 +180,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     const chainId = parseInt(channelCAIPDetails.networkId, 10);
 
     const {API_BASE_URL, EPNS_COMMUNICATOR_CONTRACT} = getConfig(
-      ENV.STAGING,
+      envConfig.ENV as ENV,
       channelCAIPDetails,
     );
 
