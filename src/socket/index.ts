@@ -60,14 +60,18 @@ const setupGlobalSocket = (
   });
 
   socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
-    console.log('got feed abishek', Object.keys(feedItem));
+    // console.log('got feed abishek', Object.keys(feedItem));
+    // console.log(
+    //   'global socket: feedItem',
+    //   feedItem.payload.data.additionalMeta,
+    // );
 
     try {
       if (feedItem.source === 'PUSH_VIDEO') {
         const {payload} = feedItem || {};
         const videoMeta = JSON.parse(payload.data.additionalMeta);
         if (videoMeta.status === 1) {
-          console.log('video signal got');
+          // console.log('global socket: video signal got');
           // incoming call received, do something with it
           onIncomingCall(videoMeta);
         } else if (videoMeta.status === 2) {
@@ -79,7 +83,7 @@ const setupGlobalSocket = (
         }
       }
     } catch (e) {
-      console.error('Notification error: ', e);
+      // console.error('Notification error: ', e);
     }
   });
 

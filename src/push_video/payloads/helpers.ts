@@ -7,7 +7,7 @@ import {
 import * as PushNodeClient from 'src/apis';
 import * as CaipHelper from 'src/helpers/CAIPHelper';
 import CryptoHelper from 'src/helpers/CryptoHelper';
-import {pgpSign} from 'src/helpers/w2w/pgp';
+import {pgpSign, pgpVerify} from 'src/helpers/w2w/pgp';
 import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
 import MetaStorage from 'src/singletons/MetaStorage';
 import {v4 as uuidv4} from 'uuid';
@@ -251,7 +251,7 @@ export async function getVerificationProof({
     case 1: {
       const connectedUser: UserChatCredentials =
         await MetaStorage.instance.getUserChatData();
-      console.log('got connected users', connectedUser);
+      // console.log('got connected users', connectedUser);
 
       let userEncryptionPublicKey;
       try {
@@ -270,16 +270,17 @@ export async function getVerificationProof({
         userEncryptionPublicKey = user?.publicKey;
       }
 
+      // console.log('my message', message);
       // TODO:
       const hash = await CryptoHelper.hashWithSha256(JSON.stringify(message));
-      console.log('got hash', hash);
+      // console.log('got hash', hash);
 
       const signature = await pgpSign(
         hash,
         userEncryptionPublicKey,
         connectedUser.pgpPrivateKey,
       );
-      console.log('got sig', signature);
+      // console.log('got sig', signature);
 
       verificationProof = `pgpv2:${signature}:meta:${chatId}::uid::${uuid}`;
       verificationProof = verificationProof.replace(
@@ -293,7 +294,7 @@ export async function getVerificationProof({
       throw new Error('Invalid SenderType');
     }
   }
-  console.log('got the verifcaition profo', verificationProof);
+  // console.log('got the verifcaition profo', verificationProof);
 
   return verificationProof;
 }

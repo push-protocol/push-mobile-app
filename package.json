@@ -69,6 +69,7 @@
     "expo-permissions": "^13.2.0",
     "expo-sharing": "^10.3.0",
     "https-browserify": "^1.0.0",
+    "immer": "^10.0.2",
     "moment": "^2.29.4",
     "node-libs-browser": "^2.2.1",
     "react": "18.0.0",

@@ -81,3 +81,11 @@ export const pgpSign = async (
 
   return signature;
 };
+
+export const pgpVerify = async (
+  plainText: string,
+  signature: string,
+  publicKeyArmored: string,
+) => {
+  return await OpenPGP.verify(signature, plainText, publicKeyArmored);
+};

@@ -36,7 +36,7 @@ import {UserChatCredentials} from '../chats/ChatScreen';
 import {DEFAULT_AVATAR} from '../chats/constants';
 import VideoPlaceholder from './components/VideoPlaceholder';
 import {VIDEO_DATA} from './helpers/constants';
-import {usePeer} from './helpers/peer';
+import {VideoCallStatus, usePeer} from './helpers/peer';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -49,6 +49,31 @@ const VideoScreen = () => {
   const dispatch = useDispatch();
   const {isAudioOn, isVideoOn, call, incomingVideoOn} =
     useSelector(selectVideoCall);
+  const [data, setDataState] = useState<any>({
+    meta: {
+      chatId: '',
+      initiator: {
+        address: '',
+        signal: null,
+      },
+    },
+    local: {
+      stream: null,
+      audio: null,
+      video: null,
+      address: '',
+    },
+    incoming: [
+      {
+        stream: null,
+        audio: null,
+        video: null,
+        address: '',
+        status: VideoCallStatus.UNINITIALIZED,
+        retryCount: 0,
+      },
+    ],
+  });
 
   const connectedUser: string = call.to || '';
   const senderAddress: string = call.from || '';
@@ -179,7 +204,7 @@ const VideoScreen = () => {
       let toAddress = connectedUser;
       let fromAddress = senderAddress;
       console.log('******ANSWER CALL');
-      const peer = usePeer({
+      usePeer({
         calling: call.calling,
         call: call,
         connectionRef: connectionRef,
@@ -195,11 +220,12 @@ const VideoScreen = () => {
         setIncomingVideoStatus,
         onEndCall: endCall,
         pgpPrivateKey: pgpPrivateKey,
+        setDataState,
       });
-
-      console.log(peer);
     })();
   }, [userMedia]);
+
+  console.log('incomingUserMedia', anotherUserMedia);
 
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>

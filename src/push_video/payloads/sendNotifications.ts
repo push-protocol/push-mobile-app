@@ -1,10 +1,16 @@
 import {ISendNotificationInputOptions, SignerType} from '@pushprotocol/restapi';
 import {getWallet} from '@pushprotocol/restapi/src/lib/chat/helpers';
-import Constants, {ENV} from '@pushprotocol/restapi/src/lib/constants';
+import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import axios from 'axios';
 import envConfig from 'src/env.config';
 
-import {getCAIPAddress, getCAIPDetails, getConfig} from '../helpers';
+import {
+  getCAIPAddress,
+  getCAIPDetails,
+  getCAIPWithChainId,
+  getConfig,
+  isValidETHAddress,
+} from '../helpers';
 import {IDENTITY_TYPE} from './constants';
 import {
   getPayloadForAPIInput,
@@ -16,12 +22,23 @@ import {
   getVerificationProof,
 } from './helpers';
 
+const DEFAULT_DOMAIN = 'push.org';
+
 /**
  * Validate options for some scenarios
  */
 function validateOptions(options: any) {
   if (!options?.channel) {
     throw '[Push SDK] - Error - sendNotification() - "channel" is mandatory!';
+  }
+  if (!isValidETHAddress(options.channel)) {
+    throw '[Push SDK] - Error - sendNotification() - "channel" is invalid!';
+  }
+  if (options.senderType === 0 && options.signer === undefined) {
+    throw '[Push SDK] - Error - sendNotification() - "signer" is mandatory!';
+  }
+  if (options.senderType === 1 && options.pgpPrivateKey === undefined) {
+    throw '[Push SDK] - Error - sendNotification() - "pgpPrivateKey" is mandatory!';
   }
 
   /**
@@ -61,7 +78,7 @@ interface VideoCallInfoType {
   chatId: string;
   signalData: any;
   status: VideoCallStatus;
-  env?: ENV;
+  env: ENV;
 }
 
 interface UserInfoType {
@@ -79,18 +96,14 @@ interface VideoDataType {
 }
 
 export const sendVideoCallNotification = async (
-  {
-    signer,
-    // chainId,
-    pgpPrivateKey,
-  }: UserInfoType,
+  {signer, chainId, pgpPrivateKey}: UserInfoType,
   {
     recipientAddress,
     senderAddress,
     chatId,
     signalData = null,
     status,
-    env = Constants.ENV.PROD,
+    env,
   }: VideoCallInfoType,
 ) => {
   try {
@@ -102,10 +115,21 @@ export const sendVideoCallNotification = async (
       status,
     };
 
-    console.log('sendVideoCallNotification', 'videoData', videoData);
+    // console.log('sendVideoCallNotification', 'videoData', videoData);
 
-    const senderAddressInCaip = getCAIPAddress(env, senderAddress);
-    const recipientAddressInCaip = getCAIPAddress(env, recipientAddress);
+    // console.log('senderAddress', senderAddress);
+    // console.log('recipientAddress', recipientAddress);
+    const senderAddressInCaip = getCAIPWithChainId(senderAddress, chainId);
+    const recipientAddressInCaip = getCAIPWithChainId(
+      recipientAddress,
+      chainId,
+    );
+
+    // console.log(
+    //   'sendVideoCallNotification',
+    //   'senderAddressInCaip',
+    //   senderAddressInCaip,
+    // );
 
     const notificationText = `Video Call from ${senderAddress}`;
 
@@ -139,6 +163,8 @@ export const sendVideoCallNotification = async (
   }
 };
 
+let payloadCopy: any = null;
+
 export async function sendNotification(options: ISendNotificationInputOptions) {
   try {
     const {
@@ -162,20 +188,29 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
 
     validateOptions(options);
 
+    if (
+      payload &&
+      payload.additionalMeta &&
+      typeof payload.additionalMeta === 'object' &&
+      !payload.additionalMeta.domain
+    ) {
+      payload.additionalMeta.domain = DEFAULT_DOMAIN;
+    }
+
     if (signer === undefined) {
       throw new Error(`Signer is necessary!`);
     }
 
     const wallet = getWallet({account: null, signer});
     const _channelAddress = getCAIPAddress(env, channel, 'Channel');
-    console.log('got channel addrs', _channelAddress);
+    // console.log('got channel addrs', _channelAddress);
 
     const channelCAIPDetails = getCAIPDetails(_channelAddress);
 
     if (!channelCAIPDetails) throw Error('Invalid Channel CAIP!');
 
     const uuid = getUUID();
-    console.log('got uuid', uuid);
+    // console.log('got uuid', uuid);
 
     const chainId = parseInt(channelCAIPDetails.networkId, 10);
 
@@ -192,7 +227,13 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       secretType: payload?.sectype,
     });
 
+    // console.log('got chain id', chainId);
+    // console.log('got recipients', _recipients);
+
     const notificationPayload = getPayloadForAPIInput(options, _recipients);
+
+    // console.log('notificationPayload', notificationPayload);
+    payloadCopy = notificationPayload;
 
     const verificationProof = await getVerificationProof({
       senderType,
@@ -240,16 +281,20 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     };
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;
-    console.log('api', requestURL);
-    console.log('load', JSON.stringify(apiPayload));
+    // console.log('api', requestURL);
+    // console.log('load', JSON.stringify(apiPayload));
 
-    return await axios.post(requestURL, apiPayload, {
+    const res = await axios.post(requestURL, apiPayload, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
-  } catch (err) {
+    // console.log('payloadcopy works', payloadCopy);
+    return res;
+  } catch (err: any) {
     console.error('[Push SDK] - Error - sendNotification() - ', err);
+    console.log(err.response?.data);
+    // console.log('payloadCopy', payloadCopy);
     throw err;
   }
 }
