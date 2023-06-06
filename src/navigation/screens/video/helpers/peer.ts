@@ -572,10 +572,7 @@ const usePeer = ({
               //   peer.signal(signalData);
               // }
               const payload = feedItem.payload;
-              const additionalMeta =
-                payload.data.additionalMeta.data === undefined
-                  ? payload.data.additionalMeta
-                  : payload.data.additionalMeta.data;
+              const additionalMeta = payload.data.additionalMeta.data;
               // const videoCallMetaData = JsonHelper.isJSON(additionalMeta)
               //   ? JSON.parse(additionalMeta)
               //   : additionalMeta;

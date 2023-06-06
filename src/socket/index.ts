@@ -60,12 +60,6 @@ const setupGlobalSocket = (
   });
 
   socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
-    // console.log('got feed abishek', Object.keys(feedItem));
-    // console.log(
-    //   'global socket: feedItem',
-    //   feedItem.payload.data.additionalMeta,
-    // );
-
     try {
       console.log('feed incoming', Object.keys(feedItem));
       if (feedItem.source === 'PUSH_VIDEO') {
