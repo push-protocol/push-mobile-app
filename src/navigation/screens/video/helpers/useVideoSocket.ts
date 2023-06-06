@@ -36,7 +36,7 @@ const useVideoSocket = (userAddress: string, callAccepted: boolean) => {
     dispatch(
       setCall({
         isReceivingCall: true,
-        from: videoMeta.fromUser,
+        from: videoMeta.fromUser || videoMeta.senderAddress,
         to: userAddress,
         name: videoMeta.name,
         signal: videoMeta.signalData,
@@ -53,7 +53,7 @@ const useVideoSocket = (userAddress: string, callAccepted: boolean) => {
         if (success) {
           dispatch(
             setCall({
-              from: videoMeta.fromUser,
+              from: videoMeta.fromUser || videoMeta.senderAddress,
               to: userAddress,
               name: videoMeta.name,
               signal: videoMeta.signalData,
