@@ -61,8 +61,6 @@ const getEncryptedMessage = async (
     privateKeyArmored: connectedUser.privateKey,
   });
 
-  console.log('i was dioe', encryptedMessage);
-
   return encryptedMessage;
 };
 

@@ -19,6 +19,15 @@ const hkdf = async (secret: Uint8Array, salt: Uint8Array): Promise<any> => {
     true, // false
     ['encrypt', 'decrypt'],
   );
+
+  //@ts-ignore
+  let rawKey = crypto.subtle.exportKey('raw', res);
+  console.log('rwa', rawKey);
+
+  const keyBuffer = Buffer.from(rawKey);
+  const base64Key = keyBuffer.toString('base64');
+  console.log('Derived key (base64):', base64Key);
+
   return res;
 };
 
@@ -64,7 +73,11 @@ export const decryptV2 = async (
   secret: Uint8Array,
   additionalData?: Uint8Array,
 ): Promise<Uint8Array> => {
+  console.log('for user', 'salt', encryptedData.salt, encryptedData.nonce);
+
   const key = await hkdf(secret, hexToBytes(encryptedData.salt));
+  console.log('---- got key', key);
+
   const aesGcmParams: any = {
     name: 'AES-GCM',
     iv: hexToBytes(encryptedData.nonce),

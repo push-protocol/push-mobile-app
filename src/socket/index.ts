@@ -67,9 +67,14 @@ const setupGlobalSocket = (
     // );
 
     try {
+      console.log('feed incoming', Object.keys(feedItem));
       if (feedItem.source === 'PUSH_VIDEO') {
-        const {payload} = feedItem || {};
-        const videoMeta = JSON.parse(payload.data.additionalMeta);
+        console.log(
+          'goot feedo',
+          typeof feedItem.payload.data.additionalMeta.data,
+          // feedItem.payload.data.additionalMeta.data,
+        );
+        const videoMeta = JSON.parse(feedItem.payload.data.additionalMeta.data);
         if (videoMeta.status === 1) {
           // console.log('global socket: video signal got');
           // incoming call received, do something with it
@@ -83,7 +88,7 @@ const setupGlobalSocket = (
         }
       }
     } catch (e) {
-      // console.error('Notification error: ', e);
+      console.error('Notification error: ', e);
     }
   });
 

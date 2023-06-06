@@ -149,11 +149,11 @@ export const sendVideoCallNotification = async (
         body: 'VideoCall',
         cta: '',
         img: '',
-        // additionalMeta: {
-        //   type: `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`,
-        //   data: JSON.stringify(videoData),
-        // },
-        additionalMeta: JSON.stringify(videoData),
+        additionalMeta: {
+          type: `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`,
+          data: JSON.stringify(videoData),
+        },
+        // additionalMeta: JSON.stringify(videoData),
       },
       recipients: recipientAddressInCaip,
       channel: senderAddressInCaip,

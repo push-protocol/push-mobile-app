@@ -61,10 +61,13 @@ export const handleWalletConnectChatLogin = async (
   } else if (user.encryptionType === Constants.ENC_TYPE_V3) {
     const {preKey: input} = JSON.parse(user.encryptedPrivateKey);
     const enableProfileMessage = 'Enable Push Profile \n' + input;
+    console.log('message', enableProfileMessage);
+
     const {verificationProof: secret} = await getEip191Signature(
       wallet,
       enableProfileMessage,
     );
+    console.log('******* user gives', secret);
     const encodedPrivateKey = await decryptV2(
       JSON.parse(user.encryptedPrivateKey),
       hexToBytes(secret || ''),
@@ -73,11 +76,11 @@ export const handleWalletConnectChatLogin = async (
     const decryptedPrivateKey = dec.decode(encodedPrivateKey);
     console.log('uu', user.publicKey);
 
-    await MetaStorage.instance.setUserChatData({
-      pgpPrivateKey: decryptedPrivateKey,
-      encryptionPublicKey: user.publicKey,
-    });
-    return true;
+    // await MetaStorage.instance.setUserChatData({
+    //   pgpPrivateKey: decryptedPrivateKey,
+    //   encryptionPublicKey: user.publicKey,
+    // });
+    // return true;
   }
 
   return false;
