@@ -184,6 +184,7 @@ const usePeer = ({
       onEndCall();
     }
 
+    console.log('sending retry initialized notification');
     await sendVideoCallNotification(
       {
         chainId: envConfig.CHAIN_ID,
@@ -201,6 +202,7 @@ const usePeer = ({
         env: envConfig.ENV as ENV,
       },
     );
+    console.log('sent retry initialized notification successfully');
   };
 
   const request = (options: VideoRequestInputOptions) => {
@@ -391,9 +393,14 @@ const usePeer = ({
       console.log('sending signal data', signalData);
       peer.signal(signalData);
       setTimeout(async () => {
-        console.log('data.incoming[0].stream', data.incoming[0].stream);
-        console.log('data.meta.initiator.signal', data.meta.initiator.signal);
-        console.log('data.local.signal', signalData);
+        console.log(
+          'data.incoming[0].stream',
+          data.incoming[0].stream !== null,
+        );
+        console.log(
+          'data.meta.initiator.signal',
+          data.meta.initiator.signal !== null,
+        );
         if (data.incoming[0].stream === null) {
           await errorWhileAcceptingRequest({
             chatId: chatId,
@@ -413,6 +420,7 @@ const usePeer = ({
           });
         });
 
+        console.log('got signal, sending notification');
         await sendVideoCallNotification(
           {
             chainId: envConfig.CHAIN_ID,
@@ -421,7 +429,7 @@ const usePeer = ({
           },
           {
             chatId: chatId,
-            recipientAddress: recipientAddress,
+            recipientAddress: caip10ToWallet(recipientAddress),
             senderAddress: caip10ToWallet(senderAddress),
             signalData: _data,
             status: retry
@@ -430,6 +438,7 @@ const usePeer = ({
             env: envConfig.ENV as ENV,
           },
         );
+        console.log('sent notification after receiving signal');
       });
 
       // @ts-ignore
@@ -563,7 +572,10 @@ const usePeer = ({
               //   peer.signal(signalData);
               // }
               const payload = feedItem.payload;
-              const additionalMeta = payload.data.additionalMeta.data;
+              const additionalMeta =
+                payload.data.additionalMeta.data === undefined
+                  ? payload.data.additionalMeta
+                  : payload.data.additionalMeta.data;
               // const videoCallMetaData = JsonHelper.isJSON(additionalMeta)
               //   ? JSON.parse(additionalMeta)
               //   : additionalMeta;
@@ -721,30 +733,36 @@ const usePeer = ({
       signalData: call.signal,
       retry: true,
     });
-    // console.log('answer call -> data');
-    // peer.signal(call.signal);
-    // console.log('Sending Payload for answer call - Step 1');
-
-    // // @ts-ignore
-    // peer.on('signal', (_data: any) => {
-    //   console.log('ANSWER CALL -> SIGNAL CALLBACK');
-    //   // send answer call notification
-    //   console.log('Sending Payload for answer call - Peer on Signal - Step 2');
-    //   if (!rcalled) {
-    //     rsetCalled(true);
-    //     sendCallPayload({
-    //       from: toAddress,
-    //       to: fromAddress,
-    //       name: 'name',
-    //       signalData: _data,
-    //       status: 2,
-    //       chatId: call.chatId,
-    //     });
-    //     // .then(r => console.log(r.status))
-    //     // .catch(e => console.error(e));
-    //   }
+    // rsetCalled(true);
+    // sendCallPayload({
+    //   from: toAddress,
+    //   to: fromAddress,
+    //   name: 'name',
+    //   signalData: call.signal,
+    //   status: 2,
+    //   chatId: call.chatId,
     // });
   }
+
+  // @ts-ignore
+  // peer.on('signal', (_data: any) => {
+  //   console.log('ANSWER CALL -> SIGNAL CALLBACK');
+  //   // send answer call notification
+  //   console.log('Sending Payload for answer call - Peer on Signal - Step 2');
+  //   if (!rcalled) {
+  //     rsetCalled(true);
+  //     sendCallPayload({
+  //       from: toAddress,
+  //       to: fromAddress,
+  //       name: 'name',
+  //       signalData: _data,
+  //       status: 2,
+  //       chatId: call.chatId,
+  //     });
+  //     // .then(r => console.log(r.status))
+  //     // .catch(e => console.error(e));
+  //   }
+  // });
 
   // @ts-ignore
   peer.on('error', (err: any) => {

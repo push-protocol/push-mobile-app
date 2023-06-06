@@ -225,8 +225,6 @@ const VideoScreen = () => {
     })();
   }, [userMedia]);
 
-  console.log('incomingUserMedia', anotherUserMedia);
-
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
       <View style={styles.videoViewContainer}>

@@ -149,10 +149,11 @@ export const sendVideoCallNotification = async (
         body: 'VideoCall',
         cta: '',
         img: '',
-        additionalMeta: {
-          type: `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`,
-          data: JSON.stringify(videoData),
-        },
+        // additionalMeta: {
+        //   type: `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`,
+        //   data: JSON.stringify(videoData),
+        // },
+        additionalMeta: JSON.stringify(videoData),
       },
       recipients: recipientAddressInCaip,
       channel: senderAddressInCaip,
@@ -289,12 +290,12 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
         'Content-Type': 'application/json',
       },
     });
-    // console.log('payloadcopy works', payloadCopy);
+    console.log('payloadcopy works', payloadCopy);
     return res;
   } catch (err: any) {
     console.error('[Push SDK] - Error - sendNotification() - ', err);
     console.log(err.response?.data);
-    // console.log('payloadCopy', payloadCopy);
+    console.log('notification payload', payloadCopy);
     throw err;
   }
 }
