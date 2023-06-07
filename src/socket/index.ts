@@ -61,7 +61,7 @@ const setupGlobalSocket = (
 
   socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
     try {
-      console.log('feed incoming', Object.keys(feedItem));
+      // console.log('feed incoming', feedItem);
       if (feedItem.source === 'PUSH_VIDEO') {
         console.log(
           'goot feedo',

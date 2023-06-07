@@ -164,8 +164,6 @@ export const sendVideoCallNotification = async (
   }
 };
 
-let payloadCopy: any = null;
-
 export async function sendNotification(options: ISendNotificationInputOptions) {
   try {
     const {
@@ -283,19 +281,19 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;
     // console.log('api', requestURL);
-    // console.log('load', JSON.stringify(apiPayload));
+    // console.log('load', apiPayload);
 
     const res = await axios.post(requestURL, apiPayload, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    console.log('payloadcopy works', payloadCopy);
+    // console.log('payloadcopy works', payloadCopy);
     return res;
   } catch (err: any) {
     console.error('[Push SDK] - Error - sendNotification() - ', err);
     console.log(err.response?.data);
-    console.log('notification payload', payloadCopy);
+    // console.log('payloadcopy fails', payloadCopy);
     throw err;
   }
 }

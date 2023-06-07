@@ -193,10 +193,10 @@ const usePeer = ({
       },
       {
         chatId: chatId,
-        recipientAddress: caip10ToWallet(recipientAddress),
-        senderAddress: caip10ToWallet(senderAddress),
-        // recipientAddress: caip10ToWallet(senderAddress),
-        // senderAddress: caip10ToWallet(recipientAddress),
+        // recipientAddress: caip10ToWallet(recipientAddress),
+        // senderAddress: caip10ToWallet(senderAddress),
+        recipientAddress: caip10ToWallet(senderAddress),
+        senderAddress: caip10ToWallet(recipientAddress),
         signalData: null,
         status: VideoCallStatus.RETRY_INITIALIZED,
         env: envConfig.ENV as ENV,
@@ -258,10 +258,8 @@ const usePeer = ({
           },
           {
             chatId: chatId,
-            // recipientAddress: recipientAddress,
-            // senderAddress: caip10ToWallet(senderAddress),
-            recipientAddress: caip10ToWallet(senderAddress),
-            senderAddress: caip10ToWallet(recipientAddress),
+            recipientAddress: caip10ToWallet(recipientAddress),
+            senderAddress: caip10ToWallet(senderAddress),
             signalData: _data,
             status: retry
               ? VideoCallStatus.RETRY_INITIALIZED
@@ -355,6 +353,7 @@ const usePeer = ({
           draft.incoming[0].retryCount += retry ? 1 : 0;
         });
       });
+      console.log('data after setting', data);
     } catch (err) {
       console.log('error in request', err);
     }
@@ -429,8 +428,8 @@ const usePeer = ({
           },
           {
             chatId: chatId,
-            recipientAddress: caip10ToWallet(recipientAddress),
-            senderAddress: caip10ToWallet(senderAddress),
+            recipientAddress: caip10ToWallet(senderAddress),
+            senderAddress: caip10ToWallet(recipientAddress),
             signalData: _data,
             status: retry
               ? VideoCallStatus.RETRY_RECEIVED
@@ -542,193 +541,231 @@ const usePeer = ({
     }
   };
 
-  if (calling) {
-    try {
-      const socket = createSocketConnection({
-        user: caip10ToWallet(fromAddress),
-        env: envConfig.ENV as ENV,
-        socketOptions: {autoConnect: true, reconnectionAttempts: 3},
-      });
+  // if (calling) {
+  try {
+    console.log('creating new socket connection');
+    const socket = createSocketConnection({
+      user: caip10ToWallet(fromAddress),
+      env: envConfig.ENV as ENV,
+      socketOptions: {autoConnect: true, reconnectionAttempts: 3},
+    });
 
-      if (socket) {
-        socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
-          // console.log('got feed abishek', Object.keys(feedItem));
-          console.log('got feed inside peer', feedItem);
-          try {
-            if (
-              feedItem.source === 'PUSH_VIDEO' &&
-              feedItem.payload &&
-              feedItem.payload.data &&
-              feedItem.payload.data.additionalMeta
-            ) {
-              // * OLD CODE FOR REFERENCE
-              // const {payload} = feedItem || {};
-              // console.log('got the payload', payload.data);
-              // const videoMeta = JSON.parse(payload.data.additionalMeta);
-              // if (videoMeta.status === 1) {
-              // } else if (videoMeta.status === 2) {
-              //   const signalData = videoMeta.signalData;
-              //   console.log('got the signal data', signalData);
-              //   peer.signal(signalData);
-              // }
-              const payload = feedItem.payload;
-              const additionalMeta = payload.data.additionalMeta.data;
-              // const videoCallMetaData = JsonHelper.isJSON(additionalMeta)
-              //   ? JSON.parse(additionalMeta)
-              //   : additionalMeta;
-              const videoCallMetaData = JSON.parse(additionalMeta);
-              console.log(
-                'got the payload in here with status',
-                videoCallMetaData.status,
-                calling,
-              );
+    if (socket) {
+      console.log('socket created successfully');
+      socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
+        // console.log('got feed abishek', Object.keys(feedItem));
+        console.log('got feed inside peer', feedItem);
+        try {
+          if (
+            feedItem.source === 'PUSH_VIDEO' &&
+            feedItem.payload &&
+            feedItem.payload.data &&
+            feedItem.payload.data.additionalMeta
+          ) {
+            // * OLD CODE FOR REFERENCE
+            // const {payload} = feedItem || {};
+            // console.log('got the payload', payload.data);
+            // const videoMeta = JSON.parse(payload.data.additionalMeta);
+            // if (videoMeta.status === 1) {
+            // } else if (videoMeta.status === 2) {
+            //   const signalData = videoMeta.signalData;
+            //   console.log('got the signal data', signalData);
+            //   peer.signal(signalData);
+            // }
+            const payload = feedItem.payload;
+            const additionalMeta =
+              payload.data.additionalMeta.data === undefined
+                ? payload.data.additionalMeta
+                : payload.data.additionalMeta.data;
+            // const videoCallMetaData = JsonHelper.isJSON(additionalMeta)
+            //   ? JSON.parse(additionalMeta)
+            //   : additionalMeta;
+            const videoCallMetaData = JSON.parse(additionalMeta);
+            console.log(
+              'got the payload in here with status',
+              videoCallMetaData.status,
+              calling,
+            );
 
-              if (videoCallMetaData.status === VideoCallStatus.RETRY_RECEIVED) {
-                const {signalData} = additionalMeta;
-                try {
-                  peer.signal(signalData);
-                  console.log('signaled the peer successfully');
-                  setTimeout(() => {
-                    if (data.incoming[0].stream !== null) {
-                      // data.incoming[0].status = VideoCallStatus.CONNECTED;
-                      setData(oldData => {
-                        return produce(oldData, draft => {
-                          draft.incoming[0].status = VideoCallStatus.CONNECTED;
-                        });
+            if (videoCallMetaData.status === VideoCallStatus.RETRY_RECEIVED) {
+              const {signalData} = additionalMeta;
+              try {
+                peer.signal(signalData);
+                console.log('signaled the peer successfully');
+                setTimeout(() => {
+                  if (data.incoming[0].stream !== null) {
+                    // data.incoming[0].status = VideoCallStatus.CONNECTED;
+                    setData(oldData => {
+                      return produce(oldData, draft => {
+                        draft.incoming[0].status = VideoCallStatus.CONNECTED;
                       });
-                    } else {
-                      if (data.incoming[0].retryCount >= 5) {
-                        console.log('retry count exceeded');
-                        onEndCall();
-                      }
-                      request({
-                        chatId: data.meta.chatId,
-                        retry: true,
-                        recipientAddress: data.incoming[0].address,
-                        senderAddress: data.local.address,
-                      });
+                    });
+                  } else {
+                    if (data.incoming[0].retryCount >= 5) {
+                      console.log('retry count exceeded');
+                      onEndCall();
                     }
-                  }, 5000);
-                } catch (e) {
-                  // TODO: REFACTOR REPEATED CODE
-                  if (data.incoming[0].retryCount >= 5) {
-                    console.log('retry count exceeded');
-                    onEndCall();
+                    request({
+                      chatId: data.meta.chatId,
+                      retry: true,
+                      recipientAddress: data.incoming[0].address,
+                      senderAddress: data.local.address,
+                    });
                   }
-                  request({
-                    chatId: data.meta.chatId,
-                    retry: true,
-                    recipientAddress: data.incoming[0].address,
-                    senderAddress: data.local.address,
-                  });
+                }, 5000);
+              } catch (e) {
+                // TODO: REFACTOR REPEATED CODE
+                if (data.incoming[0].retryCount >= 5) {
+                  console.log('retry count exceeded');
+                  onEndCall();
                 }
-              } else if (
-                videoCallMetaData.status ===
-                  VideoCallStatus.RETRY_INITIALIZED &&
-                calling
-              ) {
-                console.log(
-                  'retry initialized and calling is true so retry request',
-                  data,
-                );
-                // CHANGE FROMM DATA TO CALL HERE
-                // request({
-                //   chatId: data.meta.chatId,
-                //   retry: true,
-                //   recipientAddress: data.incoming[0].address,
-                //   senderAddress: data.local.address,
-                // });
                 request({
-                  chatId: call.chatId,
-                  retry: true,
-                  recipientAddress: caip10ToWallet(toAddress),
-                  senderAddress: caip10ToWallet(fromAddress),
-                });
-              } else if (
-                videoCallMetaData.status ===
-                  VideoCallStatus.RETRY_INITIALIZED &&
-                !calling
-              ) {
-                console.log(
-                  'retry initialized and calling is false so accept request',
-                  data,
-                );
-                const {signalData} = additionalMeta;
-
-                acceptRequest({
                   chatId: data.meta.chatId,
                   retry: true,
                   recipientAddress: data.incoming[0].address,
                   senderAddress: data.local.address,
-                  signalData,
                 });
               }
+            } else if (
+              videoCallMetaData.status === VideoCallStatus.RETRY_INITIALIZED &&
+              calling
+            ) {
+              console.log(
+                'retry initialized and calling is true so retry request',
+                data,
+              );
+              // CHANGE FROMM DATA TO CALL HERE
+              // request({
+              //   chatId: data.meta.chatId,
+              //   retry: true,
+              //   recipientAddress: data.incoming[0].address,
+              //   senderAddress: data.local.address,
+              // });
+              request({
+                chatId: call.chatId,
+                retry: true,
+                recipientAddress: caip10ToWallet(toAddress),
+                senderAddress: caip10ToWallet(fromAddress),
+              });
+            } else if (
+              videoCallMetaData.status === VideoCallStatus.RETRY_INITIALIZED &&
+              !calling
+            ) {
+              console.log(
+                'retry initialized and calling is false so accept request',
+                data,
+              );
+              const {signalData} = additionalMeta;
+
+              acceptRequest({
+                chatId: data.meta.chatId,
+                retry: true,
+                recipientAddress: data.incoming[0].address,
+                senderAddress: data.local.address,
+                signalData,
+              });
             }
-          } catch (e) {
-            console.error('Notification error: ', e);
           }
-        });
+        } catch (e) {
+          console.error('Notification error: ', e);
+        }
+      });
 
-        socket.on(EVENTS.CONNECT, () => {
-          console.log('*****() socket connection connection done');
-          peer.send(
-            JSON.stringify({
-              type: VIDEO_DATA.VIDEO_STATUS,
-              isVideoOn: isVideoOn,
-            }),
-          );
-          peer.send(
-            JSON.stringify({
-              type: VIDEO_DATA.AUDIO_STATUS,
-              isAudioOn: isAudioOn,
-            }),
-          );
-        });
+      socket.on(EVENTS.CONNECT, () => {
+        console.log('*****() socket connection connection done');
+        peer.send(
+          JSON.stringify({
+            type: VIDEO_DATA.VIDEO_STATUS,
+            isVideoOn: isVideoOn,
+          }),
+        );
+        peer.send(
+          JSON.stringify({
+            type: VIDEO_DATA.AUDIO_STATUS,
+            isAudioOn: isAudioOn,
+          }),
+        );
+      });
 
-        socket.on(EVENTS.DISCONNECT, () => {
-          console.log('caller disconn');
-        });
-      }
-    } catch (error) {
-      console.log('err', error);
+      socket.on(EVENTS.DISCONNECT, () => {
+        console.log('caller disconn');
+      });
     }
+  } catch (error) {
+    console.log('err', error);
+  }
 
-    // @ts-ignore
-    peer.on('signal', (_data: any) => {
-      if (!rcalled && !k) {
-        console.log('CALL USER -> SIGNAL CALLBACK');
-        rsetCalled(true);
-        k = true;
-        // ring the user
-        sendCallPayload({
-          from: fromAddress,
-          to: toAddress,
-          name: 'John Doe',
+  // @ts-ignore
+  peer.on('signal', (_data: any) => {
+    if (!rcalled && !k) {
+      console.log('CALL USER -> SIGNAL CALLBACK');
+      rsetCalled(true);
+      k = true;
+      // ring the user
+      // sendCallPayload({
+      //   from: fromAddress,
+      //   to: toAddress,
+      //   name: 'John Doe',
+      //   signalData: _data,
+      //   status: 1,
+      //   chatId: call.chatId,
+      // });
+      console.log('sending video call notification', {
+        pgpPrivateKey: pgpPrivateKey,
+        chainId: envConfig.CHAIN_ID,
+        signer: '',
+        chatId: call.chatId,
+        env: envConfig.ENV as ENV,
+        recipientAddress: toAddress,
+        senderAddress: fromAddress,
+        signalData: _data,
+        status: 1,
+      });
+      sendVideoCallNotification(
+        {
+          pgpPrivateKey: pgpPrivateKey,
+          chainId: envConfig.CHAIN_ID,
+          signer: '',
+        },
+        {
+          chatId: call.chatId,
+          env: envConfig.ENV as ENV,
+          recipientAddress: caip10ToWallet(toAddress),
+          senderAddress: caip10ToWallet(fromAddress),
           signalData: _data,
           status: 1,
-          chatId: call.chatId,
-        });
-        // .then(r => console.log(r.status))
-        // .catch(e => console.error(e));
-      }
-      if (!rcalled && !k) {
-        // rsetCalled(true);
-        // k = true;
-        // request({
-        //   chatId: call.chatId,
-        //   recipientAddress: toAddress,
-        //   senderAddress: fromAddress,
-        //   retry: true,
-        // });
-      }
-    });
-  } else {
-    acceptRequest({
+        },
+      );
+
+      // .then(r => console.log(r.status))
+      // .catch(e => console.error(e));
+    }
+    if (!rcalled && !k) {
+      // rsetCalled(true);
+      // k = true;
+      // request({
+      //   chatId: call.chatId,
+      //   recipientAddress: toAddress,
+      //   senderAddress: fromAddress,
+      //   retry: true,
+      // });
+    }
+  });
+  // } else {
+  if (!calling) {
+    console.log('going to accept the call', {
       chatId: call.chatId,
       recipientAddress: caip10ToWallet(toAddress),
       senderAddress: caip10ToWallet(fromAddress),
       signalData: call.signal,
       retry: true,
+    });
+    acceptRequest({
+      chatId: call.chatId,
+      recipientAddress: caip10ToWallet(toAddress),
+      senderAddress: caip10ToWallet(fromAddress),
+      signalData: call.signal,
+      retry: false,
     });
     // rsetCalled(true);
     // sendCallPayload({
