@@ -20,7 +20,7 @@ const persistConfig = {
   version: 1,
   storage: AsyncStorage,
   whitelist: ['feed', 'auth'],
-  blacklist: ['video'], // TODO: Discuss with team if we want to blacklist video
+  blacklist: ['video'],
   // blacklist: ['feed', 'auth'],
 };
 

@@ -1,7 +1,7 @@
 import {Ionicons, MaterialIcons} from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
 import {BlurView} from 'expo-blur';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Animated,
   Dimensions,
@@ -13,29 +13,52 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {RTCView} from 'react-native-webrtc';
-import {useDispatch, useSelector} from 'react-redux';
+// import {useDispatch, useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
+import {VideoCallContext} from 'src/contexts/VideoContext';
 import {DEFAULT_AVATAR} from 'src/navigation/screens/chats/constants';
 import VideoPlaceholder from 'src/navigation/screens/video/components/VideoPlaceholder';
-import {setCall} from 'src/redux/videoSlice';
-import {selectVideoCall} from 'src/redux/videoSlice';
+import MetaStorage from 'src/singletons/MetaStorage';
+
+// import {setCall} from 'src/redux/videoSlice';
+// import {selectVideoCall} from 'src/redux/videoSlice';
 
 const windowWidth = Dimensions.get('window').width;
 
+const formattedAddress = address => {
+  if (address.length < 10) {
+    return address;
+  }
+  return address.slice(0, 8) + '...' + address.slice(-5);
+};
+
 const IncomingCall = ({stream}) => {
   const [fader] = useState(new Animated.Value(0));
-  const dispatch = useDispatch();
-  const {call} = useSelector(selectVideoCall);
+  // const dispatch = useDispatch();
+  // const {call} = useSelector(selectVideoCall);
   const navigation = useNavigation();
 
-  const handleCancel = () => {
-    dispatch(setCall({isReceivingCall: false, signal: null}));
-  };
+  const {videoCallData, acceptRequestWrapper, disconnectWrapper} =
+    useContext(VideoCallContext);
+
+  // const handleCancel = () => {
+  //   dispatch(setCall({isReceivingCall: false, signal: null}));
+  // };
 
   const handleAnswer = () => {
-    dispatch(setCall({...call, isReceivingCall: false, calling: false}));
-    // @ts-ignore
-    navigation.navigate(GLOBALS.SCREENS.VIDEOCALL);
+    // dispatch(setCall({...call, isReceivingCall: false, calling: false}));
+    (async () => {
+      const {pgpPrivateKey} = await MetaStorage.instance.getUserChatData();
+      console.log('pgp private key was', pgpPrivateKey);
+      await acceptRequestWrapper({
+        senderAddress: videoCallData.local.address,
+        recipientAddress: videoCallData.incoming[0].address,
+        chatId: videoCallData.meta.chatId,
+        pgpPrivateKey: pgpPrivateKey,
+      });
+      // @ts-ignore
+      navigation.navigate(GLOBALS.SCREENS.VIDEOCALL);
+    })();
   };
 
   useEffect(() => {
@@ -65,12 +88,14 @@ const IncomingCall = ({stream}) => {
           <Ionicons
             name="close"
             style={styles.closeIcon}
-            onPress={handleCancel}
+            onPress={disconnectWrapper}
           />
           <View style={styles.detailsContainer}>
             <Image source={{uri: DEFAULT_AVATAR}} style={styles.image} />
             <View style={styles.textContainer}>
-              <Text style={styles.name}>{call.name}</Text>
+              <Text style={styles.name}>
+                {formattedAddress(videoCallData.incoming[0].address)}
+              </Text>
               <Text style={styles.description}>Incoming Video Call</Text>
             </View>
           </View>
@@ -97,7 +122,7 @@ const IncomingCall = ({stream}) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.callReject}
-                onPress={handleCancel}>
+                onPress={disconnectWrapper}>
                 <MaterialIcons name="call-end" size={26} color="white" />
               </TouchableOpacity>
             </View>

@@ -1,145 +1,34 @@
 import {Feather, Ionicons, MaterialIcons} from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
-import {
-  DeviceEventEmitter,
-  Dimensions,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import InCallManager from 'react-native-incall-manager';
+import React, {useContext, useEffect} from 'react';
+import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {MediaStream, RTCView, mediaDevices} from 'react-native-webrtc';
-import {useDispatch, useSelector} from 'react-redux';
+import {RTCView} from 'react-native-webrtc';
 import Globals from 'src/Globals';
-import {
-  selectVideoCall,
-  setCallEnded,
-  setIncomingAudioOn,
-  setIncomingVideoOn,
-  setReceiverPeerSignalled,
-  toggleIsAudioOn,
-  toggleIsVideoOn,
-} from 'src/redux/videoSlice';
-import MetaStorage from 'src/singletons/MetaStorage';
-import {
-  disableAudio,
-  disableVideo,
-  enableAudio,
-  enableVideo,
-  toggleCamera,
-} from 'src/socket';
+import {VideoCallContext} from 'src/contexts/VideoContext';
+import {toggleCamera} from 'src/socket';
 
-import {UserChatCredentials} from '../chats/ChatScreen';
 import {DEFAULT_AVATAR} from '../chats/constants';
 import VideoPlaceholder from './components/VideoPlaceholder';
-import {VIDEO_DATA} from './helpers/constants';
-import {VideoCallStatus, usePeer} from './helpers/peer';
+import {VideoCallStatus} from './helpers/video';
 
 const windowWidth = Dimensions.get('window').width;
 
 const VideoScreen = () => {
-  const [userMedia, setUserMedia] = useState<MediaStream | null>(null);
-  const [anotherUserMedia, setAnotherUserMedia] = useState<MediaStream | null>(
-    null,
-  );
   const navigation = useNavigation();
-  const dispatch = useDispatch();
-  const {isAudioOn, isVideoOn, call, incomingVideoOn} =
-    useSelector(selectVideoCall);
-  const [data, setDataState] = useState<any>({
-    meta: {
-      chatId: '',
-      initiator: {
-        address: '',
-        signal: null,
-      },
-    },
-    local: {
-      stream: null,
-      audio: null,
-      video: null,
-      address: '',
-    },
-    incoming: [
-      {
-        stream: null,
-        audio: null,
-        video: null,
-        address: '',
-        status: VideoCallStatus.UNINITIALIZED,
-        retryCount: 0,
-      },
-    ],
-  });
 
-  const connectedUser: string = call.to || '';
-  const senderAddress: string = call.from || '';
-  const connectionRef = React.useRef<any>();
+  const {
+    videoCallData: data,
+    disconnectWrapper: disconnect,
+    toggleVideoWrapper: toggleVideo,
+    toggleAudioWrapper: toggleAudio,
+    requestWrapper,
+    createWrapper,
+  } = useContext(VideoCallContext);
 
-  const getMediaStream = async () => {
-    const devices = await mediaDevices.getUserMedia({
-      audio: true,
-      video: true,
-    });
-
-    if (Platform.OS === 'ios') {
-      InCallManager.setForceSpeakerphoneOn(
-        !InCallManager.getIsWiredHeadsetPluggedIn(),
-      );
-    } else if (Platform.OS === 'android') {
-      InCallManager.setSpeakerphoneOn(true);
-    }
-
-    DeviceEventEmitter.addListener(
-      'WiredHeadset',
-      ({isPlugged, hasMic}: {isPlugged: boolean; hasMic: boolean}) => {
-        console.log('WiredHeadset', isPlugged, hasMic);
-        if (isPlugged && hasMic) {
-          InCallManager.setForceSpeakerphoneOn(false);
-        } else if (Platform.OS === 'ios') {
-          InCallManager.setForceSpeakerphoneOn(!isPlugged);
-        } else if (Platform.OS === 'android') {
-          InCallManager.setSpeakerphoneOn(!isPlugged);
-        }
-      },
-    );
-
-    return devices;
-  };
-
-  const toggleAudio = () => {
-    if (userMedia) {
-      const peer = connectionRef.current;
-      try {
-        peer?.send(
-          JSON.stringify({
-            type: VIDEO_DATA.AUDIO_STATUS,
-            isAudioOn: !isAudioOn,
-          }),
-        );
-      } catch (e) {}
-      isAudioOn ? disableAudio(userMedia) : enableAudio(userMedia);
-      dispatch(toggleIsAudioOn());
-    }
-  };
-
-  const toggleVideo = () => {
-    if (userMedia) {
-      const peer = connectionRef.current;
-      try {
-        peer?.send(
-          JSON.stringify({
-            type: VIDEO_DATA.VIDEO_STATUS,
-            isVideoOn: !isVideoOn,
-          }),
-        );
-      } catch (e) {}
-      isVideoOn ? disableVideo(userMedia) : enableVideo(userMedia);
-      dispatch(toggleIsVideoOn());
-    }
+  const endCall = () => {
+    disconnect();
+    navigation.goBack();
   };
 
   const changeCamera = () => {
@@ -148,82 +37,27 @@ const VideoScreen = () => {
     }
   };
 
-  const endCall = () => {
-    dispatch(setReceiverPeerSignalled(false));
-    dispatch(setCallEnded(true));
-    const peer = connectionRef.current;
-    try {
-      peer?.send(
-        JSON.stringify({type: VIDEO_DATA.END_CALL, endLocalStream: true}),
-      );
-    } catch (e) {
-      console.log('Error while sending end call notification', e);
-    }
-    connectionRef.current?.destroy();
-    if (!isVideoOn) {
-      dispatch(toggleIsVideoOn());
-    }
-    if (!isAudioOn) {
-      dispatch(toggleIsAudioOn());
-    }
-    try {
-      navigation.goBack();
-    } catch (e) {
-      // @ts-ignore
-      navigation.navigate(Globals.SCREENS.SPLASH);
-    }
-  };
-
-  const setIncomingAudioStatus = (status: boolean) => {
-    dispatch(setIncomingAudioOn(status));
-  };
-
-  const setIncomingVideoStatus = (status: boolean) => {
-    dispatch(setIncomingVideoOn(status));
-  };
+  const anotherUserMedia = data.incoming[0].stream;
+  const incomingVideoOn = data.incoming[0].video;
+  const userMedia = data.local.stream;
+  const isVideoOn = data.local.video;
+  const isAudioOn = data.local.audio;
 
   useEffect(() => {
     (async () => {
-      console.log('<<<called');
-      const stream = await getMediaStream();
-      setUserMedia(stream);
+      console.log('VideoScreen useEffect called', data);
+      if (data.local.stream === null) {
+        await createWrapper();
+      }
+      if (data.incoming[0].status === VideoCallStatus.INITIALIZED) {
+        requestWrapper({
+          senderAddress: data.local.address,
+          recipientAddress: data.incoming[0].address,
+          chatId: data.meta.chatId,
+        });
+      }
     })();
   }, []);
-
-  const [rcalled, rsetCalled] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const {pgpPrivateKey}: UserChatCredentials =
-        await MetaStorage.instance.getUserChatData();
-
-      if (!userMedia || !pgpPrivateKey) {
-        return;
-      }
-
-      let toAddress = connectedUser;
-      let fromAddress = senderAddress;
-      console.log('******ANSWER CALL');
-      usePeer({
-        calling: call.calling,
-        call: call,
-        connectionRef: connectionRef,
-        fromAddress,
-        toAddress,
-        userMedia,
-        setAnotherUserMedia,
-        rcalled,
-        rsetCalled,
-        isVideoOn,
-        isAudioOn,
-        setIncomingAudioStatus,
-        setIncomingVideoStatus,
-        onEndCall: endCall,
-        pgpPrivateKey: pgpPrivateKey,
-        setDataState,
-      });
-    })();
-  }, [userMedia]);
 
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>

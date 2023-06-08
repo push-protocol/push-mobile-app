@@ -8,7 +8,8 @@ import {approveRequestPayload} from '@pushprotocol/restapi/src/lib/chat';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useNavigation} from '@react-navigation/native';
 import {FlashList} from '@shopify/flash-list';
-import React, {useEffect, useRef, useState} from 'react';
+import {produce} from 'immer';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
   Animated,
   Dimensions,
@@ -31,7 +32,10 @@ import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
+import {VideoCallContext} from 'src/contexts/VideoContext';
+import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
+import {VideoCallStatus} from 'src/push_video/payloads';
 import {setCall} from 'src/redux/videoSlice';
 
 import {AcceptIntent, MessageComponent} from './components';
@@ -167,19 +171,31 @@ const SingleChatScreen = ({route}: any) => {
     );
   };
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
+  const {setVideoCallData} = useContext(VideoCallContext);
 
   const startVideoCall = () => {
-    dispatch(
-      setCall({
-        isReceivingCall: false,
-        calling: true,
-        to: senderAddress,
-        from: connectedUser.wallets,
-        call: {},
-        chatId: chatId,
-      }),
-    );
+    // dispatch(
+    //   setCall({
+    //     isReceivingCall: false,
+    //     calling: true,
+    //     to: senderAddress,
+    //     from: connectedUser.wallets,
+    //     call: {},
+    //     chatId: chatId,
+    //   }),
+    // );
+
+    setVideoCallData((oldData: any) => {
+      return produce(oldData, (draft: any) => {
+        draft.local.address = caip10ToWallet(connectedUser.wallets);
+        draft.incoming[0].address = senderAddress;
+        draft.incoming[0].status = VideoCallStatus.INITIALIZED;
+        draft.meta.chatId = chatId;
+        draft.meta.initiator.address = caip10ToWallet(connectedUser.wallets);
+      });
+    });
+
     // @ts-ignore
     navigation.navigate(Globals.SCREENS.VIDEOCALL);
   };

@@ -9,6 +9,7 @@ import WebviewCrypto from 'react-native-webview-crypto';
 import {Provider} from 'react-redux';
 import {persistStore} from 'redux-persist';
 import {PersistGate} from 'redux-persist/integration/react';
+import VideoCallContextProvider from 'src/contexts/VideoContext';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import AppScreens from 'src/navigation';
 import store from 'src/redux';
@@ -69,7 +70,9 @@ const App = ({isCallAccepted}) => {
               asyncStorage: AsyncStorage,
             }}>
             {/* TODO: Improve this */}
-            <AppScreens callAccepted={isCallLocal || isCallAccepted} />
+            <VideoCallContextProvider>
+              <AppScreens callAccepted={isCallLocal || isCallAccepted} />
+            </VideoCallContextProvider>
           </WalletConnectProvider>
         </PersistGate>
       </Provider>

@@ -1,0 +1,31 @@
+diff --git a/node_modules/simple-peer/index.js b/node_modules/simple-peer/index.js
+index 0ee8051..e1470e9 100644
+--- a/node_modules/simple-peer/index.js
++++ b/node_modules/simple-peer/index.js
+@@ -156,6 +156,13 @@ class Peer extends stream.Duplex {
+       this._onTrack(event)
+     }
+ 
++    this._pc.onaddstream = event => {
++      queueMicrotask(() => {
++        this._debug('on stream')
++        this.emit('stream', event.stream) // ensure all tracks have been added
++      })
++    }
++
+     this._debug('initial negotiation')
+     this._needsNegotiation()
+ 
+@@ -301,7 +308,11 @@ class Peer extends stream.Duplex {
+     const submap = this._senderMap.get(track) || new Map() // nested Maps map [track, stream] to sender
+     let sender = submap.get(stream)
+     if (!sender) {
+-      sender = this._pc.addTrack(track, stream)
++      if (this._pc.addTrack) {
++        sender = this._pc.addTrack(track, stream)
++      } else {
++        sender = this._pc.addStream(stream)
++      }
+       submap.set(stream, sender)
+       this._senderMap.set(track, submap)
+       this._needsNegotiation()

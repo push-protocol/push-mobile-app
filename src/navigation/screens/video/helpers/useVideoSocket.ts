@@ -4,7 +4,6 @@ import {useDispatch} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import ENV_CONFIG from 'src/env.config';
 import {setCall} from 'src/redux/videoSlice';
-import {setupGlobalSocket} from 'src/socket';
 
 const getCallInfoFromServer = async (userAddress: string): Promise<any> => {
   try {
@@ -15,7 +14,9 @@ const getCallInfoFromServer = async (userAddress: string): Promise<any> => {
     console.log('userFeeds', userFeeds);
     if (userFeeds.feeds.length > 0) {
       const videoMeta = JSON.parse(
-        userFeeds.feeds[0].payload.data.additionalMeta,
+        userFeeds.feeds[0].payload.data.additionalMeta.data
+          ? userFeeds.feeds[0].payload.data.additionalMeta.data
+          : userFeeds.feeds[0].payload.data.additionalMeta,
       );
       console.log('got videoMeta', videoMeta);
       return [true, videoMeta];
@@ -30,20 +31,20 @@ const useVideoSocket = (userAddress: string, callAccepted: boolean) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const onIncomingCall = (videoMeta: any) => {
-    console.log('this was called', videoMeta.chatId);
+  // const onIncomingCall = (videoMeta: any) => {
+  //   console.log('this was called', videoMeta.chatId);
 
-    dispatch(
-      setCall({
-        isReceivingCall: true,
-        from: videoMeta.fromUser || videoMeta.senderAddress,
-        to: userAddress,
-        name: videoMeta.name,
-        signal: videoMeta.signalData,
-        chatId: videoMeta.chatId,
-      }),
-    );
-  };
+  //   dispatch(
+  //     setCall({
+  //       isReceivingCall: true,
+  //       from: videoMeta.fromUser || videoMeta.senderAddress,
+  //       to: userAddress,
+  //       name: videoMeta.name,
+  //       signal: videoMeta.signalData,
+  //       chatId: videoMeta.chatId,
+  //     }),
+  //   );
+  // };
 
   useEffect(() => {
     (async () => {
@@ -67,9 +68,6 @@ const useVideoSocket = (userAddress: string, callAccepted: boolean) => {
           navigation.navigate(GLOBALS.SCREENS.VIDEOCALL);
         }
         return;
-      } else {
-        // listen to incomming call
-        setupGlobalSocket(userAddress, onIncomingCall);
       }
     })();
   }, [callAccepted]);
