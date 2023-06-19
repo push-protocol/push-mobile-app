@@ -18,15 +18,15 @@ interface AcceptRequestWrapperOptionsType {
   senderAddress: string;
   recipientAddress: string;
   chatId: string;
-  signalData?: any;
-  retry: boolean;
+  signalData: any;
+  retry?: boolean;
 }
 
 interface VideoCallMetaDataType {
   recipientAddress: string;
   senderAddress: string;
   chatId: string;
-  signalData?: any;
+  signalData: any;
   status: number;
 }
 
@@ -123,6 +123,7 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
     senderAddress,
     recipientAddress,
     chatId,
+    retry = false,
   }: RequestWrapperOptionsType): void => {
     if (!videoObjectRef.current) {
       return;
@@ -134,6 +135,7 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
         senderAddress,
         recipientAddress,
         chatId,
+        retry,
       });
     } catch (err) {
       console.log('Error in requesting video call', err);
@@ -145,6 +147,7 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
     recipientAddress,
     chatId,
     signalData,
+    retry = false,
   }: AcceptRequestWrapperOptionsType): Promise<void> => {
     console.log('ACCEPT REQUEST WRAPPER');
     dispatch(setCall({isReceivingCall: false}));
@@ -157,6 +160,7 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
         senderAddress,
         recipientAddress,
         chatId,
+        retry,
       });
     } catch (err) {
       console.log('Error in requesting video call', err);
@@ -188,7 +192,11 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
       console.log('videoObjectRef.current', videoObjectRef.current);
       return;
     }
-    console.log('INCOMING CALL');
+    console.log('INCOMING CALL', {
+      senderAddress: videoCallMetaData.senderAddress,
+      recipientAddress: videoCallMetaData.recipientAddress,
+      chatId: videoCallMetaData.chatId,
+    });
     videoObjectRef.current.setData(oldData => {
       return produce(oldData, draft => {
         draft.local.address = videoCallMetaData.recipientAddress;
@@ -207,6 +215,7 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
     if (!videoObjectRef.current) {
       return;
     }
+    console.log('TOGGLE VIDEO WRAPPER', data.local.video);
     videoObjectRef.current.enableVideo({state: !data.local.video});
     videoObjectRef.current.setData(oldData => {
       return produce(oldData, draft => {
@@ -219,6 +228,7 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
     if (!videoObjectRef.current) {
       return;
     }
+    console.log('TOGGLE AUDIO WRAPPER', data.local.audio);
     videoObjectRef.current.enableAudio({state: !data.local.audio});
     videoObjectRef.current.setData(oldData => {
       return produce(oldData, draft => {

@@ -232,7 +232,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     const notificationPayload = getPayloadForAPIInput(options, _recipients);
 
     // console.log('notificationPayload', notificationPayload);
-    payloadCopy = notificationPayload;
+    // payloadCopy = notificationPayload;
 
     const verificationProof = await getVerificationProof({
       senderType,
@@ -291,8 +291,8 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     // console.log('payloadcopy works', payloadCopy);
     return res;
   } catch (err: any) {
-    console.error('[Push SDK] - Error - sendNotification() - ', err);
-    console.log(err.response?.data);
+    console.error('Send notification error -', err);
+    // console.log(err.response?.data);
     // console.log('payloadcopy fails', payloadCopy);
     throw err;
   }

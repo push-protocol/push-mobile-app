@@ -1,0 +1,65 @@
+diff --git a/node_modules/react-native-simple-peer/lib/module/index.js b/node_modules/react-native-simple-peer/lib/module/index.js
+index ff6a0fc..352ee8f 100644
+--- a/node_modules/react-native-simple-peer/lib/module/index.js
++++ b/node_modules/react-native-simple-peer/lib/module/index.js
+@@ -832,7 +832,7 @@ class RNSimplePeer extends stream.Duplex {
+     if (this.destroyed) return;
+ 
+     if (this._pc.connectionState === 'failed') {
+-      this.destroy(errCode(new Error('Connection failed.'), 'ERR_CONNECTION_FAILURE'));
++      // this.destroy(errCode(new Error('Connection failed.'), 'ERR_CONNECTION_FAILURE'));
+     }
+   }
+ 
+@@ -851,13 +851,13 @@ class RNSimplePeer extends stream.Duplex {
+       this._maybeReady();
+     }
+ 
+-    if (iceConnectionState === 'failed') {
+-      this.destroy(errCode(new Error('Ice connection failed.'), 'ERR_ICE_CONNECTION_FAILURE'));
+-    }
++    // if (iceConnectionState === 'failed') {
++    //   this.destroy(errCode(new Error('Ice connection failed.'), 'ERR_ICE_CONNECTION_FAILURE'));
++    // }
+ 
+-    if (iceConnectionState === 'closed') {
+-      this.destroy(errCode(new Error('Ice connection closed.'), 'ERR_ICE_CONNECTION_CLOSED'));
+-    }
++    // if (iceConnectionState === 'closed') {
++    //   this.destroy(errCode(new Error('Ice connection closed.'), 'ERR_ICE_CONNECTION_CLOSED'));
++    // }
+   }
+ 
+   getStats(cb) {
+diff --git a/node_modules/react-native-simple-peer/src/index.ts b/node_modules/react-native-simple-peer/src/index.ts
+index c67830a..02610a9 100644
+--- a/node_modules/react-native-simple-peer/src/index.ts
++++ b/node_modules/react-native-simple-peer/src/index.ts
+@@ -741,7 +741,7 @@ class RNSimplePeer extends stream.Duplex {
+   _onConnectionStateChange() {
+     if (this.destroyed) return
+     if (this._pc.connectionState === 'failed') {
+-      this.destroy(errCode(new Error('Connection failed.'), 'ERR_CONNECTION_FAILURE'))
++      // this.destroy(errCode(new Error('Connection failed.'), 'ERR_CONNECTION_FAILURE'))
+     }
+   }
+ 
+@@ -761,12 +761,12 @@ class RNSimplePeer extends stream.Duplex {
+       this._pcReady = true
+       this._maybeReady()
+     }
+-    if (iceConnectionState === 'failed') {
+-      this.destroy(errCode(new Error('Ice connection failed.'), 'ERR_ICE_CONNECTION_FAILURE'))
+-    }
+-    if (iceConnectionState === 'closed') {
+-      this.destroy(errCode(new Error('Ice connection closed.'), 'ERR_ICE_CONNECTION_CLOSED'))
+-    }
++    // if (iceConnectionState === 'failed') {
++    //   this.destroy(errCode(new Error('Ice connection failed.'), 'ERR_ICE_CONNECTION_FAILURE'))
++    // }
++    // if (iceConnectionState === 'closed') {
++    //   this.destroy(errCode(new Error('Ice connection closed.'), 'ERR_ICE_CONNECTION_CLOSED'))
++    // }
+   }
+ 
+   getStats(cb: any) {

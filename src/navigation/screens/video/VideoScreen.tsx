@@ -6,7 +6,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {RTCView} from 'react-native-webrtc';
 import Globals from 'src/Globals';
 import {VideoCallContext} from 'src/contexts/VideoContext';
-import {toggleCamera} from 'src/socket';
+import {endStream, toggleCamera} from 'src/socket';
 
 import {DEFAULT_AVATAR} from '../chats/constants';
 import VideoPlaceholder from './components/VideoPlaceholder';
@@ -32,24 +32,17 @@ const VideoScreen = () => {
   };
 
   const changeCamera = () => {
-    if (userMedia) {
-      toggleCamera(userMedia);
+    if (data.local.stream) {
+      toggleCamera(data.local.stream);
     }
   };
 
-  const anotherUserMedia = data.incoming[0].stream;
-  const incomingVideoOn = data.incoming[0].video;
-  const userMedia = data.local.stream;
-  const isVideoOn = data.local.video;
-  const isAudioOn = data.local.audio;
-
   useEffect(() => {
     (async () => {
-      console.log('VideoScreen useEffect called', data);
-      if (data.local.stream === null) {
-        await createWrapper();
-      }
       if (data.incoming[0].status === VideoCallStatus.INITIALIZED) {
+        if (data.local.stream === null) {
+          await createWrapper();
+        }
         requestWrapper({
           senderAddress: data.local.address,
           recipientAddress: data.incoming[0].address,
@@ -57,17 +50,24 @@ const VideoScreen = () => {
         });
       }
     })();
+
+    return () => {
+      // Cleanup - end camera/mic streams when screen unmounts
+      if (data.local.stream) {
+        endStream(data.local.stream);
+      }
+    };
   }, []);
 
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
       <View style={styles.videoViewContainer}>
         <View style={styles.videoViewWrapper}>
-          {anotherUserMedia && incomingVideoOn ? (
+          {data.incoming[0].stream && data.incoming[0].video ? (
             <RTCView
               style={styles.videoView}
               objectFit="cover"
-              streamURL={anotherUserMedia.toURL()}
+              streamURL={data.incoming[0].stream.toURL()}
             />
           ) : (
             <VideoPlaceholder uri={DEFAULT_AVATAR} />
@@ -75,10 +75,10 @@ const VideoScreen = () => {
         </View>
         <View style={styles.smallVideoViewContainer}>
           <View style={styles.videoViewWrapper}>
-            {userMedia && isVideoOn ? (
+            {data.local.stream && data.local.video ? (
               <RTCView
                 style={styles.videoView}
-                streamURL={userMedia.toURL()}
+                streamURL={data.local.stream.toURL()}
                 objectFit="cover"
                 zOrder={1}
               />
@@ -93,18 +93,24 @@ const VideoScreen = () => {
           <Ionicons name="md-camera-reverse-outline" style={styles.icon} />
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.iconContainer, !isVideoOn && styles.backgroundRed]}
+          style={[
+            styles.iconContainer,
+            !data.local.video && styles.backgroundRed,
+          ]}
           onPress={toggleVideo}>
           <Feather
-            name={isVideoOn ? 'video' : 'video-off'}
+            name={data.local.video ? 'video' : 'video-off'}
             style={styles.featherIcon}
           />
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.iconContainer, !isAudioOn && styles.backgroundRed]}
+          style={[
+            styles.iconContainer,
+            !data.local.audio && styles.backgroundRed,
+          ]}
           onPress={toggleAudio}>
           <Feather
-            name={isAudioOn ? 'mic' : 'mic-off'}
+            name={data.local.audio ? 'mic' : 'mic-off'}
             style={styles.featherIcon}
           />
         </TouchableOpacity>

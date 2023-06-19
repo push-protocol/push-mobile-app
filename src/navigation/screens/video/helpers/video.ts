@@ -203,7 +203,6 @@ export class Video {
 
   async create(options: VideoCreateInputOptions): Promise<void> {
     const {audio = true, video = true, stream = null} = options || {};
-    console.log('creating video call with stream', stream === null);
     try {
       const localStream = stream || (await getMediaStream());
 
@@ -225,7 +224,7 @@ export class Video {
       recipientAddress, // notification receiver
       chatId,
       onReceiveMessage = (message: string) => {
-        console.log('received a meesage', message);
+        console.log('received a message', message);
       },
       retry = false,
     } = options || {};
@@ -236,9 +235,19 @@ export class Video {
         'options',
         options,
         'localStream',
-        this.data.local.stream,
+        this.data.local.stream === null,
       );
 
+      if (this.data.local.stream === null) {
+        const stream = await getMediaStream();
+        this.setData(oldData => {
+          return produce(oldData, draft => {
+            draft.local.stream = stream;
+          });
+        });
+      }
+
+      console.log('Sending stream', this.data.local.stream);
       this.peerInstance = new RNPeer({
         initiator: true,
         trickle: false,
@@ -246,22 +255,12 @@ export class Video {
         config: {
           iceServers: [
             {
-              urls: 'stun:openrelay.metered.ca:80',
+              url: 'stun:13.51.108.204',
             },
             {
-              urls: 'turn:openrelay.metered.ca:80',
-              username: 'openrelayproject',
-              credential: 'openrelayproject',
-            },
-            {
-              urls: 'turn:openrelay.metered.ca:443',
-              username: 'openrelayproject',
-              credential: 'openrelayproject',
-            },
-            {
-              urls: 'turn:openrelay.metered.ca:443?transport=tcp',
-              username: 'openrelayproject',
-              credential: 'openrelayproject',
+              url: 'turn:13.51.108.204',
+              username: 'admin',
+              credential: 'admin',
             },
           ],
         },
@@ -272,16 +271,6 @@ export class Video {
         },
         stream: this.data.local.stream,
       });
-      // this.peerInstance = new Peer({
-      //   initiator: true,
-      //   trickle: false,
-      //   stream: this.data.local.stream,
-      //   wrtc: {
-      //     RTCIceCandidate,
-      //     RTCPeerConnection,
-      //     RTCSessionDescription,
-      //   },
-      // });
 
       this.peerInstance.on('signal', (data: any) => {
         this.setData(oldData => {
@@ -370,7 +359,7 @@ export class Video {
         // ) {
         //   currentStream = currentStream.currentTarget._remoteStreams[0];
         // }
-        console.log('received incoming stream', currentStream);
+        console.log('received incoming stream');
         this.setData(oldData => {
           return produce(oldData, draft => {
             draft.incoming[0].stream = currentStream;
@@ -403,7 +392,7 @@ export class Video {
       recipientAddress, // notification receiver
       chatId,
       onReceiveMessage = (message: string) => {
-        console.log('received a meesage', message);
+        console.log('received a message', message);
       },
       retry = false,
     } = options || {};
@@ -412,20 +401,26 @@ export class Video {
       console.log(
         'accept request',
         'options',
-        options,
+        {
+          senderAddress,
+          recipientAddress,
+          chatId,
+          retry,
+        },
         'localStream',
-        this.data.local.stream,
+        this.data.local.stream === null,
       );
 
       if (this.data.local.stream === null) {
-        const localStream = await getMediaStream();
+        const stream = await getMediaStream();
         this.setData(oldData => {
           return produce(oldData, draft => {
-            draft.local.stream = localStream;
+            draft.local.stream = stream;
           });
         });
       }
 
+      console.log('sending stream', this.data.local.stream);
       this.peerInstance = new RNPeer({
         initiator: false,
         trickle: false,
@@ -433,22 +428,12 @@ export class Video {
         config: {
           iceServers: [
             {
-              urls: 'stun:openrelay.metered.ca:80',
+              url: 'stun:13.51.108.204',
             },
             {
-              urls: 'turn:openrelay.metered.ca:80',
-              username: 'openrelayproject',
-              credential: 'openrelayproject',
-            },
-            {
-              urls: 'turn:openrelay.metered.ca:443',
-              username: 'openrelayproject',
-              credential: 'openrelayproject',
-            },
-            {
-              urls: 'turn:openrelay.metered.ca:443?transport=tcp',
-              username: 'openrelayproject',
-              credential: 'openrelayproject',
+              url: 'turn:13.51.108.204',
+              username: 'admin',
+              credential: 'admin',
             },
           ],
         },
@@ -459,17 +444,6 @@ export class Video {
         },
         stream: this.data.local.stream,
       });
-
-      // this.peerInstance = new Peer({
-      //   initiator: true,
-      //   trickle: false,
-      //   stream: this.data.local.stream,
-      //   wrtc: {
-      //     RTCIceCandidate,
-      //     RTCPeerConnection,
-      //     RTCSessionDescription,
-      //   },
-      // });
 
       this.peerInstance.signal(signalData);
 
@@ -575,6 +549,14 @@ export class Video {
         });
       });
 
+      // this.peerInstance.on('iceStateChange', (iceState: any) => {
+      //   if (iceState === 'failed') {
+      //     console.log('iceStateChange failed');
+      //     console.log('retry Count was ', this.data.incoming[0].retryCount);
+      //     this.errorInAcceptRequest(options);
+      //   }
+      // });
+
       // set videoCallInfo state with status 2 (call received)
       this.setData(oldData => {
         return produce(oldData, draft => {
@@ -589,38 +571,45 @@ export class Video {
         });
       });
     } catch (err) {
-      console.log('error in accept request', err);
-
-      if (this.data.incoming[0].retryCount >= 5) {
-        console.log('Max retries exceeded, please try again.');
-        this.disconnect();
-      }
-
-      // retrying in case of connection error
-      sendVideoCallNotification(
-        {
-          signer: this.signer,
-          chainId: this.chainId,
-          pgpPrivateKey: this.pgpPrivateKey,
-        },
-        {
-          senderAddress,
-          recipientAddress,
-          status: VideoCallStatus.RETRY_INITIALIZED,
-          chatId,
-          signalData: null,
-          env: this.env,
-        },
-      );
+      console.log('iceStateChange failed in catch', err);
+      // this.errorInAcceptRequest(options);
     }
+  }
+
+  async errorInAcceptRequest(
+    options: VideoAcceptRequestInputOptions,
+  ): Promise<void> {
+    const {senderAddress, recipientAddress, chatId} = options;
+
+    console.log('error in accept request');
+
+    if (this.data.incoming[0].retryCount >= 5) {
+      console.log('Max retries exceeded, please try again.');
+      this.disconnect();
+    }
+
+    // retrying in case of connection error
+    await sendVideoCallNotification(
+      {
+        signer: this.signer,
+        chainId: this.chainId,
+        pgpPrivateKey: this.pgpPrivateKey,
+      },
+      {
+        senderAddress,
+        recipientAddress,
+        status: VideoCallStatus.RETRY_INITIALIZED,
+        chatId,
+        signalData: null,
+        env: this.env,
+      },
+    );
   }
 
   connect(options: VideoConnectInputOptions): void {
     const {signalData} = options || {};
 
     try {
-      console.log('connect', 'options', options);
-
       this.peerInstance?.signal(signalData);
 
       // set videoCallInfo state with status connected for the caller's end
@@ -630,20 +619,18 @@ export class Video {
         });
       });
     } catch (err) {
-      console.log('error in connect', err);
-
-      if (this.data.incoming[0].retryCount >= 5) {
-        console.log('Max retries exceeded, please try again.');
-        this.disconnect();
-      }
-
-      // retrying in case of connection error
-      this.request({
-        senderAddress: this.data.local.address,
-        recipientAddress: this.data.incoming[0].address,
-        chatId: this.data.meta.chatId,
-        retry: true,
-      });
+      //   console.log('error in connect', err);
+      //   if (this.data.incoming[0].retryCount >= 5) {
+      //     console.log('Max retries exceeded, please try again.');
+      //     this.disconnect();
+      //   }
+      //   // retrying in case of connection error
+      //   this.request({
+      //     senderAddress: this.data.local.address,
+      //     recipientAddress: this.data.incoming[0].address,
+      //     chatId: this.data.meta.chatId,
+      //     retry: true,
+      //   });
     }
   }
 
@@ -711,16 +698,17 @@ export class Video {
         );
       }
       if (this.data.local.stream) {
-        if (state) {
-          restartVideoStream(this.data.local.stream);
-        } else {
-          stopVideoStream(this.data.local.stream);
-        }
+        console.log('stream exists');
         this.setData(oldData => {
           return produce(oldData, draft => {
             draft.local.video = state;
           });
         });
+        if (state) {
+          restartVideoStream(this.data.local.stream);
+        } else {
+          stopVideoStream(this.data.local.stream);
+        }
       }
     }
   }
@@ -746,8 +734,10 @@ export class Video {
       }
       if (this.data.local.stream) {
         if (state) {
+          console.log('restarting audio stream');
           restartAudioStream(this.data.local.stream);
         } else {
+          console.log('stopping audio stream');
           stopAudioStream(this.data.local.stream);
         }
         this.setData(oldData => {
@@ -762,6 +752,10 @@ export class Video {
   // helper functions
 
   isInitiator(): boolean {
+    console.log('Checking if initiator', {
+      initiator: this.data.meta.initiator.address,
+      local: this.data.local.address,
+    });
     if (
       this.data.meta.initiator.address === '' ||
       this.data.local.address === ''

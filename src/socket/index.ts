@@ -1,6 +1,6 @@
 import {createSocketConnection} from '@pushprotocol/socket';
 import {EVENTS} from '@pushprotocol/socket/src/lib/constants';
-import {useContext} from 'react';
+import {useContext, useState} from 'react';
 import {VideoCallContext} from 'src/contexts/VideoContext';
 import {SocketConfig} from 'src/navigation/screens/chats/helpers/socketHelper';
 import {ADDITIONAL_META_TYPE, VideoCallStatus} from 'src/push_video/payloads';
@@ -42,12 +42,9 @@ const newSocket = (userAddress: string) => {
   });
 };
 
-const useGlobalSocket = (
-  userAddress: string,
-  // onIncomingCall: (videoMeta: any) => void,
-) => {
-  // const [socket, setSocket] = useState<any>(newSocket(userAddress));
-  const socket = newSocket(userAddress);
+const useGlobalSocket = (userAddress: string) => {
+  const [socket, setSocket] = useState(newSocket(userAddress));
+
   const {
     isVideoCallInitiator,
     acceptRequestWrapper,
@@ -55,6 +52,7 @@ const useGlobalSocket = (
     requestWrapper,
     incomingCall,
     disconnectWrapper,
+    videoCallData,
   } = useContext(VideoCallContext);
 
   if (!socket) {
@@ -70,9 +68,9 @@ const useGlobalSocket = (
     console.log('Disconnected from video socket');
     console.log('connecting agin...');
 
-    // setTimeout(() => {
-    //   socket.connect();
-    // }, 1000);
+    setTimeout(() => {
+      setSocket(newSocket(userAddress));
+    }, 10000);
   });
 
   socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
@@ -81,16 +79,25 @@ const useGlobalSocket = (
 
       // check for additionalMeta
       if (
+        payload &&
         payload.hasOwnProperty('data') &&
         payload.data.hasOwnProperty('additionalMeta')
       ) {
+        // console.log('RECEIVED PAYLOAD', payload);
         const additionalMeta = payload.data.additionalMeta;
-        console.log('RECEIVED ADDITIONAL META', additionalMeta);
+        // console.log('RECEIVED ADDITIONAL META', additionalMeta);
 
         // check for PUSH_VIDEO
-        if (additionalMeta.type === `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`) {
+        if (
+          additionalMeta !== null &&
+          additionalMeta.type === `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`
+        ) {
           const videoCallMetaData = JSON.parse(additionalMeta.data);
-          console.log('RECIEVED VIDEO DATA', videoCallMetaData);
+          console.log(
+            'RECIEVED VIDEO DATA',
+            videoCallMetaData.status,
+            isVideoCallInitiator(),
+          );
 
           console.log('status is', VideoCallStatus[videoCallMetaData.status]);
 
@@ -110,9 +117,9 @@ const useGlobalSocket = (
             isVideoCallInitiator()
           ) {
             requestWrapper({
-              senderAddress: videoCallMetaData.local.address,
-              recipientAddress: videoCallMetaData.incoming[0].address,
-              chatId: videoCallMetaData.meta.chatId,
+              senderAddress: videoCallMetaData.recipientAddress,
+              recipientAddress: videoCallMetaData.senderAddress,
+              chatId: videoCallMetaData.chatId,
               retry: true,
             });
           } else if (
@@ -121,16 +128,16 @@ const useGlobalSocket = (
           ) {
             acceptRequestWrapper({
               signalData: videoCallMetaData.signalData,
-              senderAddress: videoCallMetaData.local.address,
-              recipientAddress: videoCallMetaData.incoming[0].address,
-              chatId: videoCallMetaData.meta.chatId,
+              senderAddress: videoCallMetaData.recipientAddress,
+              recipientAddress: videoCallMetaData.senderAddress,
+              chatId: videoCallMetaData.chatId,
               retry: true,
             });
           }
         }
       }
     } catch (e) {
-      console.error('DAPP Error while diplaying received Notification: ', e);
+      console.error('Error while diplaying received Notification: ', e);
     }
   });
 

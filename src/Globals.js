@@ -21,6 +21,9 @@ export default {
     ENDPOINT_SUBSCRIBE_OFFCHAIN: '/channels/subscribe_offchain',
     ENDPOINT_UNSUBSCRIBE_OFFCHAIN: '/channels/unsubscribe_offchain',
 
+    DELIVERY_NODE_STAGING: 'https://delivery-staging.epns.io',
+    DELIVERY_NODE_PROD: 'https://delivery-prod.epns.io',
+
     DAPP_LINK: {
       PROD: 'app.push.org',
       STAGING: 'staging.push.org',

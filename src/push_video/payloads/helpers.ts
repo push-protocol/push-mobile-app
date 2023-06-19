@@ -7,6 +7,7 @@ import {
 import * as PushNodeClient from 'src/apis';
 import * as CaipHelper from 'src/helpers/CAIPHelper';
 import CryptoHelper from 'src/helpers/CryptoHelper';
+import JsonHelper from 'src/helpers/JsonHelper';
 import {pgpSign, pgpVerify} from 'src/helpers/w2w/pgp';
 import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
 import MetaStorage from 'src/singletons/MetaStorage';
@@ -274,6 +275,18 @@ export async function getVerificationProof({
       // TODO:
       const hash = await CryptoHelper.hashWithSha256(JSON.stringify(message));
       // console.log('got hash', hash);
+
+      try {
+        const encKey = JSON.parse(userEncryptionPublicKey).key;
+        userEncryptionPublicKey = encKey;
+        console.log('got userEncryptionPublicKey', userEncryptionPublicKey);
+      } catch (e) {}
+
+      // console.log('pgpSigning params', {
+      //   hash,
+      //   userEncryptionPublicKey,
+      //   connectedUser: connectedUser.pgpPrivateKey,
+      // });
 
       const signature = await pgpSign(
         hash,

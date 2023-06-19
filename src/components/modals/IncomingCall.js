@@ -49,8 +49,7 @@ const IncomingCall = ({stream}) => {
     // dispatch(setCall({...call, isReceivingCall: false, calling: false}));
     (async () => {
       const {pgpPrivateKey} = await MetaStorage.instance.getUserChatData();
-      console.log('pgp private key was', pgpPrivateKey);
-      await acceptRequestWrapper({
+      acceptRequestWrapper({
         senderAddress: videoCallData.local.address,
         recipientAddress: videoCallData.incoming[0].address,
         chatId: videoCallData.meta.chatId,
