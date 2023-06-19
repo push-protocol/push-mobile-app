@@ -679,13 +679,6 @@ export class Video {
   enableVideo(options: EnableVideoInputOptions): void {
     const {state} = options || {};
 
-    console.log(
-      'enableVideo',
-      'current video',
-      this.data.local.video,
-      'requested state',
-      state,
-    );
     if (this.data.local.video !== state) {
       // need to change the video state
 
@@ -698,7 +691,6 @@ export class Video {
         );
       }
       if (this.data.local.stream) {
-        console.log('stream exists');
         this.setData(oldData => {
           return produce(oldData, draft => {
             draft.local.video = state;
@@ -716,14 +708,6 @@ export class Video {
   enableAudio(options: EnableAudioInputOptions): void {
     const {state} = options || {};
 
-    console.log(
-      'enableAudio',
-      'current audio',
-      this.data.local.audio,
-      'requested state',
-      state,
-    );
-
     if (this.data.local.audio !== state) {
       // need to change the audio state
 
@@ -733,6 +717,11 @@ export class Video {
         );
       }
       if (this.data.local.stream) {
+        this.setData(oldData => {
+          return produce(oldData, draft => {
+            draft.local.audio = state;
+          });
+        });
         if (state) {
           console.log('restarting audio stream');
           restartAudioStream(this.data.local.stream);
@@ -740,11 +729,6 @@ export class Video {
           console.log('stopping audio stream');
           stopAudioStream(this.data.local.stream);
         }
-        this.setData(oldData => {
-          return produce(oldData, draft => {
-            draft.local.audio = state;
-          });
-        });
       }
     }
   }

@@ -217,11 +217,6 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
     }
     console.log('TOGGLE VIDEO WRAPPER', data.local.video);
     videoObjectRef.current.enableVideo({state: !data.local.video});
-    videoObjectRef.current.setData(oldData => {
-      return produce(oldData, draft => {
-        draft.local.video = !draft.local.video;
-      });
-    });
   };
 
   const toggleAudioWrapper = () => {
@@ -230,11 +225,6 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
     }
     console.log('TOGGLE AUDIO WRAPPER', data.local.audio);
     videoObjectRef.current.enableAudio({state: !data.local.audio});
-    videoObjectRef.current.setData(oldData => {
-      return produce(oldData, draft => {
-        draft.local.audio = !draft.local.audio;
-      });
-    });
   };
 
   const isVideoCallInitiator = () => {
