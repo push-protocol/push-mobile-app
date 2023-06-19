@@ -1,9 +1,8 @@
 import {useNavigation} from '@react-navigation/native';
-import {useEffect} from 'react';
-import {useDispatch} from 'react-redux';
+import {useContext, useEffect} from 'react';
 import GLOBALS from 'src/Globals';
+import {VideoCallContext} from 'src/contexts/VideoContext';
 import ENV_CONFIG from 'src/env.config';
-import {setCall} from 'src/redux/videoSlice';
 
 const getCallInfoFromServer = async (userAddress: string): Promise<any> => {
   try {
@@ -29,22 +28,7 @@ const getCallInfoFromServer = async (userAddress: string): Promise<any> => {
 
 const useVideoSocket = (userAddress: string, callAccepted: boolean) => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
-
-  // const onIncomingCall = (videoMeta: any) => {
-  //   console.log('this was called', videoMeta.chatId);
-
-  //   dispatch(
-  //     setCall({
-  //       isReceivingCall: true,
-  //       from: videoMeta.fromUser || videoMeta.senderAddress,
-  //       to: userAddress,
-  //       name: videoMeta.name,
-  //       signal: videoMeta.signalData,
-  //       chatId: videoMeta.chatId,
-  //     }),
-  //   );
-  // };
+  const {acceptRequestWrapper, incomingCall} = useContext(VideoCallContext);
 
   useEffect(() => {
     (async () => {
@@ -52,17 +36,13 @@ const useVideoSocket = (userAddress: string, callAccepted: boolean) => {
         // fetch the caller info from the backend
         const [success, videoMeta] = await getCallInfoFromServer(userAddress);
         if (success) {
-          dispatch(
-            setCall({
-              from: videoMeta.fromUser || videoMeta.senderAddress,
-              to: userAddress,
-              name: videoMeta.name,
-              signal: videoMeta.signalData,
-              chatId: videoMeta.chatId,
-              isReceivingCall: false,
-              calling: false,
-            }),
-          );
+          await incomingCall(videoMeta);
+          acceptRequestWrapper({
+            senderAddress: videoMeta.recipientAddress,
+            recipientAddress: videoMeta.senderAddress,
+            chatId: videoMeta.chatId,
+            signalData: videoMeta.signalData,
+          });
 
           // @ts-ignore
           navigation.navigate(GLOBALS.SCREENS.VIDEOCALL);
