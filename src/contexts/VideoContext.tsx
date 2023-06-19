@@ -4,7 +4,7 @@ import {useDispatch} from 'react-redux';
 import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
 import {Video, VideoCallData} from 'src/navigation/screens/video/helpers/video';
 import {VideoCallStatus} from 'src/push_video/payloads';
-import {setCall} from 'src/redux/videoSlice';
+import {setIsReceivingCall} from 'src/redux/videoSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 interface RequestWrapperOptionsType {
@@ -30,7 +30,7 @@ interface VideoCallMetaDataType {
   status: number;
 }
 
-const initVideoCallData: VideoCallData = {
+export const initVideoCallData: VideoCallData = {
   meta: {
     chatId: '',
     initiator: {
@@ -150,7 +150,7 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
     retry = false,
   }: AcceptRequestWrapperOptionsType): Promise<void> => {
     console.log('ACCEPT REQUEST WRAPPER');
-    dispatch(setCall({isReceivingCall: false}));
+    dispatch(setIsReceivingCall(false));
     if (!videoObjectRef.current) {
       return;
     }
@@ -178,7 +178,7 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
   };
 
   const disconnectWrapper = () => {
-    dispatch(setCall({isReceivingCall: false}));
+    dispatch(setIsReceivingCall(false));
     if (!videoObjectRef.current) {
       return;
     }
@@ -187,7 +187,7 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
   };
 
   const incomingCall = async (videoCallMetaData: VideoCallMetaDataType) => {
-    dispatch(setCall({isReceivingCall: true}));
+    dispatch(setIsReceivingCall(true));
     if (!videoObjectRef.current) {
       console.log('videoObjectRef.current', videoObjectRef.current);
       return;

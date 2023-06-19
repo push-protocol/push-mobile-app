@@ -26,7 +26,6 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {useDispatch} from 'react-redux';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
@@ -36,7 +35,6 @@ import {VideoCallContext} from 'src/contexts/VideoContext';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
 import {VideoCallStatus} from 'src/push_video/payloads';
-import {setCall} from 'src/redux/videoSlice';
 
 import {AcceptIntent, MessageComponent} from './components';
 import {CustomScroll} from './components/CustomScroll';
@@ -175,17 +173,6 @@ const SingleChatScreen = ({route}: any) => {
   const {setVideoCallData} = useContext(VideoCallContext);
 
   const startVideoCall = () => {
-    // dispatch(
-    //   setCall({
-    //     isReceivingCall: false,
-    //     calling: true,
-    //     to: senderAddress,
-    //     from: connectedUser.wallets,
-    //     call: {},
-    //     chatId: chatId,
-    //   }),
-    // );
-
     setVideoCallData((oldData: any) => {
       return produce(oldData, (draft: any) => {
         draft.local.address = caip10ToWallet(connectedUser.wallets);

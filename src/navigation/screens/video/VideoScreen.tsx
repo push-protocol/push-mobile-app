@@ -5,7 +5,7 @@ import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {RTCView} from 'react-native-webrtc';
 import Globals from 'src/Globals';
-import {VideoCallContext} from 'src/contexts/VideoContext';
+import {VideoCallContext, initVideoCallData} from 'src/contexts/VideoContext';
 import {endStream, toggleCamera} from 'src/socket';
 
 import {DEFAULT_AVATAR} from '../chats/constants';
@@ -26,9 +26,18 @@ const VideoScreen = () => {
     createWrapper,
   } = useContext(VideoCallContext);
 
+  const handleGoBack = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      // @ts-ignore
+      navigation.navigate(Globals.SCREENS.SPLASH);
+    }
+  };
+
   const endCall = () => {
     disconnect();
-    navigation.goBack();
+    handleGoBack();
   };
 
   const changeCamera = () => {
@@ -58,6 +67,12 @@ const VideoScreen = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (data === initVideoCallData) {
+      handleGoBack();
+    }
+  }, [data]);
 
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>

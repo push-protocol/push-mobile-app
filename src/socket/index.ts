@@ -1,6 +1,7 @@
 import {createSocketConnection} from '@pushprotocol/socket';
 import {EVENTS} from '@pushprotocol/socket/src/lib/constants';
 import {useContext, useState} from 'react';
+import InCallManager from 'react-native-incall-manager';
 import {VideoCallContext} from 'src/contexts/VideoContext';
 import {SocketConfig} from 'src/navigation/screens/chats/helpers/socketHelper';
 import {ADDITIONAL_META_TYPE, VideoCallStatus} from 'src/push_video/payloads';
@@ -29,6 +30,8 @@ const toggleCamera = (stream: any) => {
 
 const endStream = (stream: any) => {
   stream.getTracks().forEach((track: any) => track.stop());
+  stream.release();
+  InCallManager.stop();
 };
 
 const newSocket = (userAddress: string) => {
@@ -52,7 +55,6 @@ const useGlobalSocket = (userAddress: string) => {
     requestWrapper,
     incomingCall,
     disconnectWrapper,
-    videoCallData,
   } = useContext(VideoCallContext);
 
   if (!socket) {

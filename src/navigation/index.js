@@ -27,7 +27,7 @@ const Screens = ({callAccepted}) => {
   console.log('auth state was', authState);
 
   const dispatch = useDispatch();
-  const {call} = useSelector(selectVideoCall);
+  const {isReceivingCall} = useSelector(selectVideoCall);
 
   // reset user login
   useEffect(() => {
@@ -44,7 +44,7 @@ const Screens = ({callAccepted}) => {
           />
         )}
 
-        {call.isReceivingCall && <IncomingCall />}
+        {isReceivingCall && <IncomingCall />}
 
         {authState === GLOBALS.AUTH_STATE.INITIALIZING && (
           <InitializingNavigator />

@@ -11,6 +11,7 @@ import {
   RTCSessionDescription,
 } from 'react-native-webrtc';
 import {mediaDevices} from 'react-native-webrtc';
+import {initVideoCallData} from 'src/contexts/VideoContext';
 // import Peer from 'simple-peer';
 import envConfig from 'src/env.config';
 import JsonHelper from 'src/helpers/JsonHelper';
@@ -64,32 +65,6 @@ export type VideoCallData = {
     address: string;
   };
   incoming: [PeerData];
-};
-
-const initVideoCallData: VideoCallData = {
-  meta: {
-    chatId: '',
-    initiator: {
-      address: '',
-      signal: null,
-    },
-  },
-  local: {
-    stream: null,
-    audio: null,
-    video: null,
-    address: '',
-  },
-  incoming: [
-    {
-      stream: null,
-      audio: null,
-      video: null,
-      address: '',
-      status: VideoCallStatus.UNINITIALIZED,
-      retryCount: 0,
-    },
-  ],
 };
 
 export type VideoRequestInputOptions = {
@@ -175,15 +150,12 @@ export class Video {
   constructor({
     pgpPrivateKey,
     setData,
-  }: // userMedia,
-  {
+  }: {
     pgpPrivateKey: string;
     setData: (fn: (data: VideoCallData) => VideoCallData) => void;
-    // userMedia: MediaStream;
   }) {
     this.chainId = envConfig.CHAIN_ID;
     this.pgpPrivateKey = pgpPrivateKey;
-    // this.userMedia = userMedia;
 
     // init the react state
     setData(() => initVideoCallData);
