@@ -153,8 +153,7 @@ export const getInbox = async (did: string): Promise<Feeds[] | undefined> => {
   let retry = 0;
   for (let i = 0; i < 3; i++) {
     try {
-      const path = BASE_URL + '/v1/w2w/users/eip155:' + did + '/messages';
-
+      const path = `${BASE_URL}/v1/chat/users/eip155:${did}/messages`;
       const response = await fetch(path, {
         method: 'GET',
       });
@@ -205,7 +204,7 @@ export const postMessage = async ({
   sigType: string;
   encryptedSecret: string;
 }): Promise<MessageIPFSWithCID | string> => {
-  const response = await fetch(BASE_URL + '/v1/w2w/messages', {
+  const response = await fetch(BASE_URL + '/v1/chat/message', {
     method: 'POST',
     headers: {
       'content-Type': 'application/json',
