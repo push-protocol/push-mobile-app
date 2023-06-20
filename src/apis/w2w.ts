@@ -78,7 +78,7 @@ export const createUser = async ({
   signature: string;
   sigType: string;
 }): Promise<User> => {
-  const url = BASE_URL + '/v1/w2w/users';
+  const url = BASE_URL + '/v1/users';
   const body = JSON.stringify({
     caip10,
     did,
@@ -279,8 +279,9 @@ export const postIntent = async ({
   encryptedSecret: string;
 }): Promise<MessageIPFSWithCID | string> => {
   let data: MessageIPFSWithCID | string;
+  const apiUrl = `${BASE_URL}/v1/chat/request`;
   if (messageContent.length > 0) {
-    const response = await fetch(BASE_URL + '/v1/w2w/intents', {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'content-Type': 'application/json',
@@ -300,7 +301,7 @@ export const postIntent = async ({
     });
     data = await response.json();
   } else {
-    const response = await fetch(BASE_URL + '/v1/w2w/intents', {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'content-Type': 'application/json',
@@ -346,7 +347,7 @@ export const createNewPgpPair = async (
 };
 
 export const isIntentAccepted = async (addrs: string, senderAddrs: string) => {
-  const uri = `${BASE_URL}/v1/w2w/users/${addrs}/messages`;
+  const uri = `${BASE_URL}/v1/chat/users/${addrs}/messages`;
   const res = await fetch(uri)
     .then(r => r.json())
     .then(arr =>
@@ -363,7 +364,7 @@ export const isIntentAccepted = async (addrs: string, senderAddrs: string) => {
 };
 
 export const getIntentStatus = async (addrs: string, senderAddrs: string) => {
-  const uri = `${BASE_URL}/v1/w2w/users/${addrs}/messages`;
+  const uri = `${BASE_URL}/v1/chat/users/${addrs}/messages`;
   const res = await fetch(uri)
     .then(r => r.json())
     .then(arr =>
