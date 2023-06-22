@@ -12,7 +12,7 @@ const ServerHelper = {
   // Associate a device token to server
   associateTokenToServerNoAuth: async wallet => {
     // Associate token with server
-    const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_REGISTER;
+    const apiURL = ENV_CONFIG.DELIVERY_NODE + ENV_CONFIG.ENDPOINT_REGISTER;
 
     // prepare payloads
     const token = await MetaStorage.instance.getPushToken();
@@ -101,7 +101,7 @@ const ServerHelper = {
   },
   // Register device token to server
   registerDeviceTokenToServer: async (server_token, secret) => {
-    const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_REGISTER;
+    const apiURL = ENV_CONFIG.DELIVERY_NODE + ENV_CONFIG.ENDPOINT_REGISTER;
     console.log('** calling', apiURL);
 
     // prepare payloads
