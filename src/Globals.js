@@ -20,6 +20,7 @@ export default {
     ENDPOINT_FETCH_SUBSCRIPTION: '/channels/_is_user_subscribed',
     ENDPOINT_SUBSCRIBE_OFFCHAIN: '/channels/subscribe_offchain',
     ENDPOINT_UNSUBSCRIBE_OFFCHAIN: '/channels/unsubscribe_offchain',
+    ENDPOINT_ICE_SERVERS: '/v1/turnserver/iceconfig',
 
     DELIVERY_NODE_STAGING: 'https://delivery-staging.epns.io/apis',
     DELIVERY_NODE_PROD: 'https://delivery-prod.epns.io/apis',

@@ -12,7 +12,6 @@ import {
 } from 'react-native-webrtc';
 import {mediaDevices} from 'react-native-webrtc';
 import {initVideoCallData} from 'src/contexts/VideoContext';
-// import Peer from 'simple-peer';
 import envConfig from 'src/env.config';
 import JsonHelper from 'src/helpers/JsonHelper';
 import {sendVideoCallNotification} from 'src/push_video/payloads';
@@ -133,13 +132,19 @@ const getMediaStream = async () => {
   return devices;
 };
 
+const getIceServers = async () => {
+  const apiUrl = envConfig.EPNS_SERVER + envConfig.ENDPOINT_ICE_SERVERS;
+  const response = await fetch(apiUrl);
+  const json = await response.json();
+  return json;
+};
+
 export class Video {
   // user, call related info
   private signer = '';
   private chainId: number;
   private pgpPrivateKey: string;
   private env: ENV = envConfig.ENV as ENV;
-  // private userMedia: MediaStream;
 
   // storing the peer instance
   private peerInstance: any = null;
@@ -219,22 +224,13 @@ export class Video {
         });
       }
 
-      console.log('Sending stream', this.data.local.stream);
+      const iceServers = await getIceServers();
       this.peerInstance = new RNPeer({
         initiator: true,
         trickle: false,
         debugConsole: false,
         config: {
-          iceServers: [
-            {
-              url: 'stun:13.51.108.204',
-            },
-            {
-              url: 'turn:13.51.108.204',
-              username: 'admin',
-              credential: 'admin',
-            },
-          ],
+          iceServers: iceServers,
         },
         webRTC: {
           RTCPeerConnection,
@@ -392,22 +388,13 @@ export class Video {
         });
       }
 
-      console.log('sending stream', this.data.local.stream);
+      const iceServers = await getIceServers();
       this.peerInstance = new RNPeer({
         initiator: false,
         trickle: false,
         debugConsole: false,
         config: {
-          iceServers: [
-            {
-              url: 'stun:13.51.108.204',
-            },
-            {
-              url: 'turn:13.51.108.204',
-              username: 'admin',
-              credential: 'admin',
-            },
-          ],
+          iceServers: iceServers,
         },
         webRTC: {
           RTCPeerConnection,
