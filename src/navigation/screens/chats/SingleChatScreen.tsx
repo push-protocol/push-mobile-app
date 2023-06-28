@@ -34,6 +34,7 @@ import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {VideoCallContext} from 'src/contexts/VideoContext';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
+import {walletToPCAIP10} from 'src/push_video/helpers';
 import {VideoCallStatus} from 'src/push_video/payloads';
 
 import {AcceptIntent, MessageComponent} from './components';
@@ -41,6 +42,7 @@ import {CustomScroll} from './components/CustomScroll';
 import './giphy/giphy.setup';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {ChatMessage} from './helpers/chatResolver';
+import {pgpSignBody} from './helpers/signatureHelper';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
 import {useSendMessage} from './helpers/useSendMessage';
 
@@ -139,18 +141,24 @@ const SingleChatScreen = ({route}: any) => {
     setIsAccepting(true);
 
     const APPROVED_INTENT = 'Approved';
+
+    const bodyToBeHashed = {
+      fromDID: walletToPCAIP10(senderAddress),
+      toDID: connectedUser.wallets,
+      status: APPROVED_INTENT,
+    };
+
+    const signature = await pgpSignBody({bodyToBeHashed});
+
     const body = approveRequestPayload(
       senderAddress,
       connectedUser.wallets,
       APPROVED_INTENT,
+      'pgp',
+      signature,
     );
 
-    const sig = 'xyz';
-    const sigType = 'a';
-
-    body.verificationProof = sig;
-    body.sigType = sigType;
-    body.signature = sig;
+    body.fromDID = walletToPCAIP10(body.fromDID);
 
     const res = await PushNodeClient.approveIntent2(body);
     console.log('approved intent', res);
