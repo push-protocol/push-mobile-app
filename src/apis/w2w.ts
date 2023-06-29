@@ -1,6 +1,10 @@
+import {ISendMessagePayload} from '@pushprotocol/restapi/src/lib/chat';
+import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import envConfig from 'src/env.config';
 import {encryptWithRPCEncryptionPublicKeyReturnRawData} from 'src/helpers/w2w/metamaskSigUtil';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
+import {sendMessagePayload} from 'src/helpers/w2w/sendMessagePayload';
+import {pgpSignBody} from 'src/navigation/screens/chats/helpers/signatureHelper';
 
 import {MessageIPFS} from './ipfs';
 
@@ -15,9 +19,12 @@ export interface User {
   sigType: string;
   about: string | null;
   name: string | null;
+  encryptedPassword: string | null;
+  nftOwner: string | null;
   numMsg: number;
   allowedNumMsg: number;
   linkedListHash?: string | null;
+  nfts?: [] | null;
 }
 
 export interface InboxChat {
@@ -58,6 +65,8 @@ export interface Feeds {
 export interface ConnectedUser extends User {
   privateKey: string;
 }
+
+export type MessageReciver = {ethAddress: string; pgpAddress: string};
 
 const BASE_URL = envConfig.EPNS_SERVER;
 
@@ -102,6 +111,18 @@ export const createUser = async ({
 
   const data: User = await response.json();
   return data;
+};
+
+export const createEmptyUser = async (rec: MessageReciver) => {
+  await createUser({
+    caip10: rec.ethAddress,
+    did: rec.ethAddress,
+    publicKey: '',
+    encryptedPrivateKey: '',
+    encryptionType: '',
+    signature: 'pgp',
+    sigType: 'pgp',
+  });
 };
 
 export const getUser = async (caip10: string): Promise<User | undefined> => {
@@ -257,66 +278,46 @@ export const approveIntent = async (
 
 export const postIntent = async ({
   toDID,
-  fromDID,
-  fromCAIP10,
-  toCAIP10,
   messageContent,
   messageType,
-  signature,
-  encType,
   sigType,
-  encryptedSecret,
+  connectedUser,
 }: {
   toDID: string;
-  fromDID: string;
-  fromCAIP10: string;
-  toCAIP10: string;
   messageContent: string;
   messageType: string;
-  signature: string;
-  encType: string;
   sigType: string;
-  encryptedSecret: string;
+  connectedUser: ConnectedUser;
 }): Promise<MessageIPFSWithCID | string> => {
   let data: MessageIPFSWithCID | string;
   const apiUrl = `${BASE_URL}/v1/chat/request`;
-  if (messageContent.length > 0) {
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        toDID,
-        fromDID,
-        fromCAIP10,
-        toCAIP10,
-        messageContent,
-        messageType,
-        signature,
-        encType,
-        encryptedSecret,
-        sigType,
-      }),
-    });
-    data = await response.json();
-  } else {
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        toDID,
-        fromDID,
-        fromCAIP10,
-        messageType,
-        signature,
-        encType,
-      }),
-    });
-    data = await response.json();
-  }
+
+  const body: ISendMessagePayload = await sendMessagePayload(
+    toDID,
+    connectedUser,
+    messageContent,
+    messageType,
+    envConfig.ENV as ENV,
+  );
+
+  const bodyToBeHashed = {
+    fromDID: body.fromDID,
+    toDID: body.toDID,
+    messageContent: body.messageContent,
+    messageType: messageType,
+  };
+
+  const verificationProof = await pgpSignBody({bodyToBeHashed});
+  body.verificationProof = sigType + ':' + verificationProof;
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  data = await response.json();
   return data;
 };
 

@@ -48,16 +48,20 @@ export const encryptAndSign = async ({
 }> => {
   const secretKey: string = CryptoHelper.generateRandomSecret(15);
   const cipherText: string = CryptoHelper.encryptWithAES(plainText, secretKey);
-  const encryptedSecret = await OpenPGP.encrypt(
+  let encryptedSecret = await OpenPGP.encrypt(
     secretKey,
     concatPublicKeys(fromPublicKeyArmored, toPublicKeyArmored),
   );
-  const signature: string = await OpenPGP.sign(
+  let signature: string = await OpenPGP.sign(
     cipherText,
     fromPublicKeyArmored,
     privateKeyArmored,
     '',
   );
+
+  // Removing metadata from signature and encryptedSecret
+  signature = signature.replace('\nVersion: openpgp-mobile', '');
+  encryptedSecret = encryptedSecret.replace('\nVersion: openpgp-mobile', '');
   return {
     cipherText,
     encryptedSecret, // enc AES key here
