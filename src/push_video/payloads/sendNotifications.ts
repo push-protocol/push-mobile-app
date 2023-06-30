@@ -3,6 +3,8 @@ import {getWallet} from '@pushprotocol/restapi/src/lib/chat/helpers';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import axios from 'axios';
 import envConfig from 'src/env.config';
+import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
+import MetaStorage from 'src/singletons/MetaStorage';
 
 import {
   getCAIPAddress,
@@ -153,7 +155,6 @@ export const sendVideoCallNotification = async (
           type: `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`,
           data: JSON.stringify(videoData),
         },
-        // additionalMeta: JSON.stringify(videoData),
       },
       recipients: recipientAddressInCaip,
       channel: senderAddressInCaip,
@@ -182,9 +183,17 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       ipfsHash,
       env = envConfig.ENV as ENV,
       chatId,
-      pgpPrivateKey,
+      pgpPrivateKey: pgpPrivateKeyArg,
     } = options || {};
+    let pgpPrivateKey = pgpPrivateKeyArg;
 
+    if (pgpPrivateKey === undefined) {
+      const chatData: UserChatCredentials =
+        await MetaStorage.instance.getUserChatData();
+      pgpPrivateKey = chatData.pgpPrivateKey;
+    }
+
+    options.pgpPrivateKey = pgpPrivateKey;
     validateOptions(options);
 
     if (
@@ -197,19 +206,19 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     }
 
     if (signer === undefined) {
-      throw new Error(`Signer is necessary!`);
+      throw new Error('Signer is necessary!');
     }
 
     const wallet = getWallet({account: null, signer});
     const _channelAddress = getCAIPAddress(env, channel, 'Channel');
-    // console.log('got channel addrs', _channelAddress);
 
     const channelCAIPDetails = getCAIPDetails(_channelAddress);
 
-    if (!channelCAIPDetails) throw Error('Invalid Channel CAIP!');
+    if (!channelCAIPDetails) {
+      throw Error('Invalid Channel CAIP!');
+    }
 
     const uuid = getUUID();
-    // console.log('got uuid', uuid);
 
     const chainId = parseInt(channelCAIPDetails.networkId, 10);
 
@@ -226,13 +235,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       secretType: payload?.sectype,
     });
 
-    // console.log('got chain id', chainId);
-    // console.log('got recipients', _recipients);
-
     const notificationPayload = getPayloadForAPIInput(options, _recipients);
-
-    // console.log('notificationPayload', notificationPayload);
-    // payloadCopy = notificationPayload;
 
     const verificationProof = await getVerificationProof({
       senderType,
@@ -280,20 +283,15 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     };
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;
-    // console.log('api', requestURL);
-    // console.log('load', apiPayload);
 
     const res = await axios.post(requestURL, apiPayload, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    // console.log('payloadcopy works', payloadCopy);
     return res;
   } catch (err: any) {
     console.error('Send notification error -', err);
-    // console.log(err.response?.data);
-    // console.log('payloadcopy fails', payloadCopy);
     throw err;
   }
 }
