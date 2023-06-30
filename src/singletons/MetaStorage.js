@@ -597,7 +597,21 @@ export default class MetaStorage {
         return false;
       }
 
-      return JSON.parse(userChatData);
+      let userInfoJSON = JSON.parse(userChatData);
+      let userPublicKey = userInfoJSON.encryptionPublicKey;
+
+      try {
+        // New pgp public key
+        JSON.parse(userPublicKey);
+        return userInfoJSON;
+      } catch {
+        // Old pgp public key
+        let res = {
+          encryptionPublicKey: JSON.stringify({key: userPublicKey}),
+          pgpPrivateKey: userInfoJSON.pgpPrivateKey,
+        };
+        return res;
+      }
     } catch (error) {
       console.warn(error);
       return false;
