@@ -1,4 +1,10 @@
 import {getEncryptionPublicKey} from '@metamask/eth-sig-util';
+import {
+  getEip191Signature,
+  getEip712Signature,
+} from '@pushprotocol/restapi/src/lib/chat/helpers';
+import {ENCRYPTION_TYPE} from '@pushprotocol/restapi/src/lib/constants';
+import {ethers} from 'ethers';
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
@@ -9,6 +15,8 @@ import Blockies from 'src/components/web3/Blockies';
 import * as CaipHelper from 'src/helpers/CAIPHelper';
 import {decryptWithWalletRPCMethod} from 'src/helpers/w2w/metamaskSigUtil';
 import MetaStorage from 'src/singletons/MetaStorage';
+import {decryptV2} from 'src/walletconnect/chat/aes';
+import {hexToBytes} from 'src/walletconnect/chat/utils';
 
 const ChatProfileBuilder = ({style, wallet, pkey, setProfileComplete}) => {
   // Setup state
@@ -30,11 +38,77 @@ const ChatProfileBuilder = ({style, wallet, pkey, setProfileComplete}) => {
           );
         }
 
-        // decript pgp from server
-        const decryptedPrivateKey = decryptWithWalletRPCMethod(
-          JSON.parse(user.encryptedPrivateKey),
-          pkey,
-        );
+        const {version: encryptionType} = JSON.parse(user.encryptedPrivateKey);
+
+        let decryptedPrivateKey;
+        const signer = new ethers.Wallet(pkey);
+        const walletSigner = {
+          address: signer.address,
+          signer: signer,
+        };
+
+        switch (encryptionType) {
+          case ENCRYPTION_TYPE.PGP_V1: {
+            // decript pgp from server
+            decryptedPrivateKey = decryptWithWalletRPCMethod(
+              JSON.parse(user.encryptedPrivateKey),
+              pkey,
+            );
+            break;
+          }
+          case ENCRYPTION_TYPE.PGP_V2: {
+            const {preKey: input} = JSON.parse(user.encryptedPrivateKey);
+            const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
+            let encodedPrivateKey;
+            try {
+              const {verificationProof: secret} = await getEip712Signature(
+                walletSigner,
+                enableProfileMessage,
+                true,
+              );
+              encodedPrivateKey = await decryptV2(
+                JSON.parse(user.encryptedPrivateKey),
+                hexToBytes(secret || ''),
+              );
+            } catch (err) {
+              const {verificationProof: secret} = await getEip712Signature(
+                walletSigner,
+                enableProfileMessage,
+                false,
+              );
+              encodedPrivateKey = await decryptV2(
+                JSON.parse(user.encryptedPrivateKey),
+                hexToBytes(secret || ''),
+              );
+            }
+            const dec = new TextDecoder();
+            decryptedPrivateKey = dec.decode(encodedPrivateKey);
+            break;
+          }
+          case ENCRYPTION_TYPE.PGP_V3: {
+            const {preKey: input} = JSON.parse(user.encryptedPrivateKey);
+            const enableProfileMessage = 'Enable Push Profile \n' + input;
+            const {verificationProof: secret} = await getEip191Signature(
+              walletSigner,
+              enableProfileMessage,
+              'v1',
+            );
+            const encodedPrivateKey = await decryptV2(
+              JSON.parse(user.encryptedPrivateKey),
+              hexToBytes(secret || ''),
+            );
+            const dec = new TextDecoder();
+            decryptedPrivateKey = dec.decode(encodedPrivateKey);
+            break;
+          }
+          default: {
+            throw new Error(`Encryption type ${encryptionType} not supported`);
+          }
+        }
+
+        if (decryptedPrivateKey === undefined) {
+          throw new Error('Could not decrypt private key');
+        }
 
         // store the user chatinfo
         await MetaStorage.instance.setUserChatData({
