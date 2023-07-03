@@ -39,7 +39,7 @@ const ChatProfileBuilder = ({style, wallet, pkey, setProfileComplete}) => {
         // store the user chatinfo
         await MetaStorage.instance.setUserChatData({
           pgpPrivateKey: decryptedPrivateKey,
-          encryptionPublicKey: encryptionPublicKey,
+          encryptionPublicKey: user.publicKey,
         });
 
         setIndicator(false);
