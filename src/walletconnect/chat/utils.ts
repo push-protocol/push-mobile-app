@@ -1,21 +1,12 @@
-import WalletConnect from '@walletconnect/client';
-import WalletConnectProvider from '@walletconnect/web3-provider';
+import {IProvider} from '@walletconnect/modal-react-native';
 import {ethers} from 'ethers';
-import ENV_CONFIG from 'src/env.config';
+
+// import ENV_CONFIG from 'src/env.config';
 
 export const getSigner = async (
-  connector: WalletConnect,
+  wcProvider: IProvider,
 ): Promise<[ethers.providers.JsonRpcSigner, string]> => {
-  const provider = new WalletConnectProvider({
-    connector,
-    rpc: {
-      [ENV_CONFIG.CHAIN_ID]: ENV_CONFIG.INFURA_API || '',
-    },
-    chainId: ENV_CONFIG.CHAIN_ID,
-    qrcode: false,
-    pollingInterval: 6000000,
-  });
-  await provider.enable();
+  const provider = wcProvider;
   const ethers_provider = new ethers.providers.Web3Provider(provider);
   const signer = ethers_provider.getSigner();
 

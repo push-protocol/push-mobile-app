@@ -16,6 +16,9 @@ export const pgpSignBody = async ({
 
   const user: UserChatCredentials =
     await MetaStorage.instance.getUserChatData();
+
+  console.log('got user', user);
+
   let userEncryptionPublicKey;
   try {
     userEncryptionPublicKey = JSON.parse(user.encryptionPublicKey).key;

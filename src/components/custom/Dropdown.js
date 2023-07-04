@@ -150,7 +150,6 @@ const styles = StyleSheet.create({
     marginTop: 3,
     margin: 10,
     fontSize: 14,
-    fontWeight: '400',
     fontWeight: '200',
   },
   icon: {

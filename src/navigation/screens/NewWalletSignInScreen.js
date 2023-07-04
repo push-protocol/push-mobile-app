@@ -1,5 +1,5 @@
 import {useFocusEffect} from '@react-navigation/native';
-import {useWalletConnect} from '@walletconnect/react-native-dapp';
+import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import * as Permissions from 'expo-permissions';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -73,7 +73,7 @@ const SignInScreen = ({route, navigation}) => {
 
   // Wallet Connect functionality
 
-  const connector = useWalletConnect();
+  const wc_connector = useWalletConnectModal();
 
   // Setup Refs
   const QRScannerRef = useRef(null);
@@ -140,8 +140,8 @@ const SignInScreen = ({route, navigation}) => {
   // Reset PK Code
   const resetWalletAddress = () => {
     // Kill Wallet Conenct
-    if (connector.connected) {
-      connector.killSession();
+    if (wc_connector.close) {
+      wc_connector.provider.disconnect();
     }
 
     setWalletAddress('');
@@ -172,10 +172,10 @@ const SignInScreen = ({route, navigation}) => {
   }, [walletAddress, walletAddressVerified]);
 
   useEffect(() => {
-    if (connector.connected) {
-      setWalletAddress(connector.accounts[0]);
+    if (wc_connector.isConnected) {
+      setWalletAddress(wc_connector.address);
     }
-  }, [connector.connected]);
+  }, [wc_connector.address]);
 
   // When Animation is Finished
   const animationFinished = () => {
@@ -273,17 +273,19 @@ const SignInScreen = ({route, navigation}) => {
                 iconFactory="Image"
                 icon={require('assets/ui/walletConnect.png')}
                 iconSize={24}
-                title={!connector.connected ? 'WalletConnect' : 'Disconnect'}
+                title={
+                  !wc_connector.isConnected ? 'WalletConnect' : 'Disconnect'
+                }
                 fontSize={16}
                 fontColor={GLOBALS.COLORS.WHITE}
                 bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
                 setHeight={60}
                 disabled={false}
                 onPress={() => {
-                  if (connector.connected) {
-                    connector.killSession();
+                  if (wc_connector.isConnected) {
+                    wc_connector.provider.disconnect();
                   } else {
-                    connector.connect();
+                    wc_connector.open();
                   }
                 }}
               />

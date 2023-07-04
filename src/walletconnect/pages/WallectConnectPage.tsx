@@ -1,15 +1,17 @@
-import {useWalletConnect} from '@walletconnect/react-native-dapp';
+import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 import {handleWalletConnectChatLogin} from '../chat/loginUser';
 
 const WallectConnectPage = ({initalizate}: any) => {
-  const connector = useWalletConnect();
+  const wc_connector = useWalletConnectModal();
   const handle = async () => {
     let chatInfoLoaded = false;
     try {
-      chatInfoLoaded = await handleWalletConnectChatLogin(connector);
+      chatInfoLoaded = await handleWalletConnectChatLogin(
+        wc_connector.provider!,
+      );
     } catch (error) {
       console.log(error);
     }
