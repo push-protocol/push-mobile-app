@@ -4,8 +4,7 @@ import {
   getGroup,
 } from '@pushprotocol/restapi/src/lib/chat';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
-import {get} from '@pushprotocol/restapi/src/lib/user';
-import {ConnectedUser, User} from 'src/apis';
+import * as PushNodeClient from 'src/apis';
 import {isValidETHAddress, walletToPCAIP10} from 'src/push_video/helpers';
 
 import {encryptAndSign, pgpSign} from './pgp';
@@ -19,24 +18,25 @@ interface IEncryptedRequest {
 
 const getEncryptedRequest = async (
   receiverAddress: string,
-  senderCreatedUser: ConnectedUser,
+  senderCreatedUser: PushNodeClient.ConnectedUser,
   message: string,
   isGroup: boolean,
   env: ENV,
   group: GroupDTO | null,
 ): Promise<IEncryptedRequest | void> => {
   if (!isGroup) {
-    const receiverCreatedUser: User = await get({
-      account: receiverAddress,
-      env,
-    });
+    const receiverCreatedUser = await PushNodeClient.getUser(receiverAddress);
+    if (!receiverCreatedUser) {
+      throw new Error('Receiver not found!');
+    }
     if (!isValidETHAddress(receiverAddress)) {
       throw new Error('Invalid receiver address!');
     }
 
     const senderPublicKey = JSON.parse(senderCreatedUser.publicKey).key;
+    const receiverPublicKey = JSON.parse(receiverCreatedUser.publicKey).key;
 
-    if (!receiverCreatedUser?.publicKey) {
+    if (!receiverPublicKey) {
       if (!isValidETHAddress(receiverAddress)) {
         throw new Error('Invalid receiver address!');
       }
@@ -54,11 +54,7 @@ const getEncryptedRequest = async (
         signature: signature,
       };
     } else {
-      if (
-        !receiverCreatedUser.publicKey.includes(
-          '-----BEGIN PGP PUBLIC KEY BLOCK-----',
-        )
-      ) {
+      if (!receiverPublicKey.includes('-----BEGIN PGP PUBLIC KEY BLOCK-----')) {
         const signature = await pgpSign(
           message,
           senderPublicKey,
@@ -74,7 +70,7 @@ const getEncryptedRequest = async (
       } else {
         const {cipherText, encryptedSecret, signature} = await encryptAndSign({
           fromPublicKeyArmored: senderPublicKey,
-          toPublicKeyArmored: receiverCreatedUser.publicKey,
+          toPublicKeyArmored: receiverPublicKey,
           privateKeyArmored: senderCreatedUser.privateKey!,
           plainText: message,
         });
@@ -94,7 +90,7 @@ const getEncryptedRequest = async (
 
 export const sendMessagePayload = async (
   receiverAddress: string,
-  senderCreatedUser: ConnectedUser,
+  senderCreatedUser: PushNodeClient.ConnectedUser,
   messageContent: string,
   messageType: string,
   env: ENV,

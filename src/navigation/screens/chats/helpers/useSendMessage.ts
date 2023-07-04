@@ -132,7 +132,7 @@ const useSendMessage = (
   }: MessageFormat): Promise<[string, ChatMessage]> => {
     if (messageReceiver.current.pgpAddress === '') {
       showToast(
-        'Wait for the user to accpet the intent',
+        'Wait for the user to accept the intent',
         '',
         ToasterOptions.TYPE.GRADIENT_PRIMARY,
       );
