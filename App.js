@@ -18,9 +18,6 @@ import {WalletConnectConfig} from 'src/walletconnect';
 
 import appConfig from './app.json';
 
-// TODO keep this in env file
-const projectId = '028e95fd1676bc57218811d6846caf34';
-
 let persistor = persistStore(store);
 
 const handleAppNotificationBadge = async () => {
@@ -56,7 +53,7 @@ const App = ({isCallAccepted}) => {
     <SafeAreaProvider>
       <WebviewCrypto />
       <WalletConnectModal
-        projectId={projectId}
+        projectId={WalletConnectConfig.projectId}
         providerMetadata={WalletConnectConfig.providerMetadata(
           `${appConfig.expo.scheme}://`,
         )}

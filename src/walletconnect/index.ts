@@ -22,6 +22,7 @@ const WalletConnectConfig = {
       native: scheme,
     },
   }),
+  projectId: envConfig.WALLET_CONNECT_PROJECT_ID,
 };
 
 export {WalletConnectConfig};
