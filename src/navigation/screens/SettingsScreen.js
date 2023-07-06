@@ -1,4 +1,4 @@
-import {useWalletConnect} from '@walletconnect/react-native-dapp';
+import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import React, {useRef, useState} from 'react';
 import {FlatList, Image, StatusBar, StyleSheet, Text, View} from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
@@ -21,7 +21,7 @@ const SettingsScreen = ({}) => {
   const users = useSelector(selectUsers);
 
   // Wallet Connect functionality
-  const connector = useWalletConnect();
+  const wc_connector = useWalletConnectModal();
 
   // Setup Refs
   const OverlayBlurRef = useRef(null);
@@ -92,6 +92,11 @@ const SettingsScreen = ({}) => {
   };
 
   const clearUserData = async () => {
+    // do wallet connect disconnect
+    if (wc_connector.isConnected) {
+      wc_connector.provider.disconnect();
+    }
+
     await AuthenticationHelper.resetSignedInUser();
     await MetaStorage.instance.clearStorage();
     await clearStorage();
@@ -142,13 +147,13 @@ const SettingsScreen = ({}) => {
     });
 
   // Wallet Connect Disconnect
-  if (connector.connected) {
+  if (wc_connector.isConnected) {
     // Add Wallet Connect Disconnect Link
     settingsOptions.push({
       title: 'Disconnect WalletConnect',
       img: require('assets/ui/wcsettings.png'),
       func: () => {
-        connector.killSession();
+        wc_connector.provider.disconnect();
       },
       type: 'button',
     });

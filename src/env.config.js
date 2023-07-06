@@ -8,6 +8,7 @@ const {
   YOUTUBE_API_KEY,
   INFURA_PROJECT_ID,
   PROD_ENV,
+  WALLET_CONNECT_PROJECT_ID,
 } = Config;
 
 const IS_PROD_ENV = PROD_ENV === 'true' ? true : false;
@@ -80,4 +81,5 @@ export default {
     : `https://goerli.infura.io/v3/${INFURA_PROJECT_ID}`,
   ENV: IS_PROD_ENV ? 'prod' : 'staging',
   INFURA_PROJECT_ID: INFURA_PROJECT_ID,
+  WALLET_CONNECT_PROJECT_ID: WALLET_CONNECT_PROJECT_ID,
 };

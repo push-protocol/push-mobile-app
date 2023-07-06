@@ -13,9 +13,14 @@ export const generateKeyPair = async (): Promise<{
     },
   });
 
+  let publicKey = keys.publicKey;
+
+  // remove version info from pgp
+  publicKey = publicKey.replace(/^Version:.*\n/m, '');
+
   return {
     privateKeyArmored: keys.privateKey,
-    publicKeyArmored: keys.publicKey,
+    publicKeyArmored: publicKey,
   };
 };
 

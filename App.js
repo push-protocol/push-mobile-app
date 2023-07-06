@@ -1,6 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
-import WalletConnectProvider from '@walletconnect/react-native-dapp';
+import {WalletConnectModal} from '@walletconnect/modal-react-native';
+import '@walletconnect/react-native-compat';
 import React, {useEffect, useState} from 'react';
 import RNCallKeep from 'react-native-callkeep';
 import 'react-native-gesture-handler';
@@ -14,6 +14,7 @@ import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import AppScreens from 'src/navigation';
 import store from 'src/redux';
 import Notify from 'src/singletons/Notify';
+import {WalletConnectConfig} from 'src/walletconnect';
 
 import appConfig from './app.json';
 
@@ -51,29 +52,19 @@ const App = ({isCallAccepted}) => {
   return (
     <SafeAreaProvider>
       <WebviewCrypto />
+      <WalletConnectModal
+        projectId={WalletConnectConfig.projectId}
+        providerMetadata={WalletConnectConfig.providerMetadata(
+          `${appConfig.expo.scheme}://`,
+        )}
+        sessionParams={WalletConnectConfig.sessionParams}
+        relayUrl="wss://relay.walletconnect.com"
+      />
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <WalletConnectProvider
-            redirectUrl={
-              Platform.OS === 'web'
-                ? window.location.origin
-                : `${appConfig.expo.scheme}://`
-            }
-            bridge="https://bridge.walletconnect.org"
-            clientMeta={{
-              description: 'Connect with WalletConnect',
-              url: 'https://walletconnect.org',
-              icons: ['https://walletconnect.org/walletconnect-logo.png'],
-              name: 'WalletConnect',
-            }}
-            storageOptions={{
-              asyncStorage: AsyncStorage,
-            }}>
-            {/* TODO: Improve this */}
-            <VideoCallContextProvider>
-              <AppScreens callAccepted={isCallLocal || isCallAccepted} />
-            </VideoCallContextProvider>
-          </WalletConnectProvider>
+          <VideoCallContextProvider>
+            <AppScreens callAccepted={isCallLocal || isCallAccepted} />
+          </VideoCallContextProvider>
         </PersistGate>
       </Provider>
     </SafeAreaProvider>
