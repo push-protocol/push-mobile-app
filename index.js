@@ -65,7 +65,7 @@ if (isCallAccepted) {
   AppRegistry.registerComponent(appName, () => HeadlessCheck);
 }
 
-AppRegistry.registerHeadlessTask(
-  'RNCallKeepBackgroundMessage',
-  () => bgCalling,
-);
+// AppRegistry.registerHeadlessTask(
+//   'RNCallKeepBackgroundMessage',
+//   () => bgCalling,
+// );
