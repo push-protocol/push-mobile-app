@@ -16,9 +16,9 @@ import OnboardingNavigator from './OnboardingNavigator';
 import useVideoSocket from './screens/video/helpers/useVideoSocket';
 
 const NavGlobalSocket = ({callAccepted, connectedUser}) => {
-  useVideoSocket(connectedUser.wallet, callAccepted);
-  useGlobalSocket(connectedUser.wallet);
-  useEffect(() => {}, []);
+  // useVideoSocket(connectedUser.wallet, callAccepted);
+  // useGlobalSocket(connectedUser.wallet);
+  // useEffect(() => {}, []);
 };
 
 const Screens = ({callAccepted}) => {
@@ -27,7 +27,7 @@ const Screens = ({callAccepted}) => {
   console.log('auth state was', authState);
 
   const dispatch = useDispatch();
-  const {isReceivingCall} = useSelector(selectVideoCall);
+  // const {isReceivingCall} = useSelector(selectVideoCall);
 
   // reset user login
   useEffect(() => {
@@ -44,7 +44,7 @@ const Screens = ({callAccepted}) => {
           />
         )}
 
-        {isReceivingCall && <IncomingCall />}
+        {/* {isReceivingCall && <IncomingCall />} */}
 
         {authState === GLOBALS.AUTH_STATE.INITIALIZING && (
           <InitializingNavigator />

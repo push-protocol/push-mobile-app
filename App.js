@@ -41,13 +41,13 @@ const App = ({isCallAccepted}) => {
     };
   }, []);
 
-  useEffect(() => {
-    RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
-      RNCallKeep.backToForeground();
-      RNCallKeep.endCall(callUUID);
-      setCallAccepted(true);
-    });
-  }, []);
+  // useEffect(() => {
+  //   RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
+  //     RNCallKeep.backToForeground();
+  //     RNCallKeep.endCall(callUUID);
+  //     setCallAccepted(true);
+  //   });
+  // }, []);
 
   return (
     <SafeAreaProvider>
@@ -62,9 +62,9 @@ const App = ({isCallAccepted}) => {
       />
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <VideoCallContextProvider>
-            <AppScreens callAccepted={isCallLocal || isCallAccepted} />
-          </VideoCallContextProvider>
+          {/* <VideoCallContextProvider> */}
+          <AppScreens callAccepted={isCallLocal || isCallAccepted} />
+          {/* </VideoCallContextProvider> */}
         </PersistGate>
       </Provider>
     </SafeAreaProvider>

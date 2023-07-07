@@ -6,27 +6,15 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    ​
+
     <!-- OPTIONAL PERMISSIONS, REMOVE WHATEVER YOU DO NOT NEED -->
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    ​
+
     <!-- These require runtime permissions on M -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!-- END OPTIONAL PERMISSIONS -->
-
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
-    <uses-feature android:name="android.hardware.audio.output" />
-    <uses-feature android:name="android.hardware.microphone" />
-
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-
-
 
     <queries>
         <intent>
@@ -43,17 +31,6 @@
     android:allowBackup="false"
     android:theme="@style/AppTheme"
   >
-      <service
-      android:name="io.wazo.callkeep.VoiceConnectionService"
-      android:label="Wazo"
-      android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
-      android:foregroundServiceType="camera|microphone"
-      android:exported="true"
-    >  
-        <intent-filter>
-            <action android:name="android.telecom.ConnectionService" />
-        </intent-filter>
-      </service>
       <activity
       android:name=".MainActivity"
       android:label="@string/app_name"

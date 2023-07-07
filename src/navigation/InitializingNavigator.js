@@ -18,14 +18,14 @@ const InitializingNavigator = () => {
           headerTintColor: GLOBALS.COLORS.MID_GRAY,
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name={GLOBALS.SCREENS.VIDEOCALL}
         component={VideoScreen}
         options={{
           headerShown: false,
           headerTintColor: GLOBALS.COLORS.MID_GRAY,
         }}
-      />
+      /> */}
     </Stack.Navigator>
   );
 };
