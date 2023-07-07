@@ -369,7 +369,7 @@ PODS:
     - React-Core
   - react-native-fast-openpgp (2.5.1):
     - React-Core
-  - react-native-get-random-values (1.8.0):
+  - react-native-get-random-values (1.9.0):
     - React-Core
   - react-native-hash (3.0.3):
     - React
@@ -496,11 +496,7 @@ PODS:
     - React-logger (= 0.69.4)
     - React-perflogger (= 0.69.4)
     - ReactCommon/turbomodule/core (= 0.69.4)
-  - ReactNativeIncallManager (4.0.1):
-    - React-Core
-  - RNCallKeep (4.3.8):
-    - React
-  - RNCAsyncStorage (1.17.11):
+  - RNCAsyncStorage (1.18.2):
     - React-Core
   - RNCClipboard (1.11.1):
     - React-Core
@@ -530,8 +526,8 @@ PODS:
   - RNScreens (3.18.2):
     - React-Core
     - React-RCTImage
-  - RNSVG (9.6.4):
-    - React
+  - RNSVG (13.9.0):
+    - React-Core
   - TcpSockets (3.3.2):
     - React
   - Toast (4.0.0)
@@ -611,8 +607,6 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - ReactNativeIncallManager (from `../node_modules/react-native-incall-manager`)
-  - RNCallKeep (from `../node_modules/react-native-callkeep`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
@@ -781,10 +775,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/runtimeexecutor"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
-  ReactNativeIncallManager:
-    :path: "../node_modules/react-native-incall-manager"
-  RNCallKeep:
-    :path: "../node_modules/react-native-callkeep"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCClipboard:
@@ -873,8 +863,8 @@ SPEC CHECKSUMS:
   React-logger: 1088859f145b8f6dd0d3ed051a647ef0e3e80fad
   react-native-config: 5330c8258265c1e5fdb8c009d2cabd6badd96727
   react-native-encrypted-storage: db300a3f2f0aba1e818417c1c0a6be549038deb7
-  react-native-fast-openpgp: 791dd8a91f78eab43f83f86ac157e82a6624f282
-  react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
+  react-native-fast-openpgp: e743241cf9c7cea3877fdbd48e053770f52e053b
+  react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-hash: 4664516df1834e1293b30e711c63f61f7f801b6a
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
@@ -896,9 +886,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 9adb4a3cbb598d1bbd46a05256f445e4b8c70603
   React-runtimeexecutor: 61ee22a8cdf8b6bb2a7fb7b4ba2cc763e5285196
   ReactCommon: 8f67bd7e0a6afade0f20718f859dc8c2275f2e83
-  ReactNativeIncallManager: 0d2cf9f4d50359728a30c08549762fe67a2efb81
-  RNCallKeep: bf4040e9e5785469cd581d95c386fd2ca7e0507f
-  RNCAsyncStorage: 8616bd5a58af409453ea4e1b246521bb76578d60
+  RNCAsyncStorage: ddc4ee162bfd41b0d2c68bf2d95acd81dd7f1f93
   RNCClipboard: 2834e1c4af68697089cdd455ee4a4cdd198fa7dd
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNFBApp: a6fca2cd8f392b5efc1f2ab7bd4b3b64a6039abf
@@ -909,7 +897,7 @@ SPEC CHECKSUMS:
   RNNotifee: 5155e0a5e0a97d0c839030d8192783cd63053999
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
-  RNSVG: a53a5de0d90ec96a6502cc3a4534dfcc0c130622
+  RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   Yoga: ff994563b2fd98c982ca58e8cd9db2cdaf4dda74
