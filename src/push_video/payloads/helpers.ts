@@ -4,13 +4,7 @@ import {
   ISendNotificationInputOptions,
   walletType,
 } from '@pushprotocol/restapi/src/lib/types';
-import * as PushNodeClient from 'src/apis';
-import * as CaipHelper from 'src/helpers/CAIPHelper';
-import CryptoHelper from 'src/helpers/CryptoHelper';
-import JsonHelper from 'src/helpers/JsonHelper';
-import {pgpSign, pgpVerify} from 'src/helpers/w2w/pgp';
-import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
-import MetaStorage from 'src/singletons/MetaStorage';
+import {pgpSignBody} from 'src/navigation/screens/chats/helpers/signatureHelper';
 import {v4 as uuidv4} from 'uuid';
 
 import {getCAIPAddress} from '../helpers/address';
@@ -250,57 +244,15 @@ export async function getVerificationProof({
       break;
     }
     case 1: {
-      const connectedUser: UserChatCredentials =
-        await MetaStorage.instance.getUserChatData();
-      // console.log('got connected users', connectedUser);
-
-      let userEncryptionPublicKey;
-      try {
-        userEncryptionPublicKey = JSON.parse(
-          connectedUser.encryptionPublicKey,
-        ).key;
-      } catch (e) {
-        const wallets = await MetaStorage.instance.getStoredWallet();
-        if (!wallets.length) {
-          throw new Error('No wallet found');
-        }
-        const {wallet} = wallets[0];
-        const user = await PushNodeClient.getUser(
-          CaipHelper.walletToCAIP10(wallet),
-        );
-        userEncryptionPublicKey = user?.publicKey;
-      }
-
-      // console.log('my message', message);
-      // TODO:
-      const hash = await CryptoHelper.hashWithSha256(JSON.stringify(message));
-      // console.log('got hash', hash);
-
-      try {
-        const encKey = JSON.parse(userEncryptionPublicKey).key;
-        userEncryptionPublicKey = encKey;
-        console.log('got userEncryptionPublicKey', userEncryptionPublicKey);
-      } catch (e) {}
-
-      // console.log('pgpSigning params', {
-      //   hash,
-      //   userEncryptionPublicKey,
-      //   connectedUser: connectedUser.pgpPrivateKey,
-      // });
-
-      const signature = await pgpSign(
-        hash,
-        userEncryptionPublicKey,
-        connectedUser.pgpPrivateKey,
-      );
-      // console.log('got sig', signature);
+      const signature = await pgpSignBody({
+        bodyToBeHashed: message,
+      });
 
       verificationProof = `pgpv2:${signature}:meta:${chatId}::uid::${uuid}`;
       verificationProof = verificationProof.replace(
         '\nVersion: openpgp-mobile',
         '',
       );
-
       break;
     }
     default: {
