@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import {useWalletConnect} from '@walletconnect/react-native-dapp';
+import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
@@ -46,7 +46,7 @@ const ChatScreen = (props: any) => {
   const [isPrivateKeyUser, setIsPrivateKeyUser] = useState(true);
   const [isWCUser, setIsWCUser] = useState(false);
   const [chatCredentials, setChatCredentials] = useState<UserChatCredentials>();
-  const connector = useWalletConnect();
+  const wc_connector = useWalletConnectModal();
 
   const onPress = (value: string) => {
     setTab(value);
@@ -88,9 +88,7 @@ const ChatScreen = (props: any) => {
   };
 
   const isWcConnected = () => {
-    console.log(connector.accounts);
-
-    return connector.accounts.length > 0;
+    return wc_connector.isConnected;
   };
 
   useEffect(() => {

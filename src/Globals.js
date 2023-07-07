@@ -20,6 +20,10 @@ export default {
     ENDPOINT_FETCH_SUBSCRIPTION: '/channels/_is_user_subscribed',
     ENDPOINT_SUBSCRIBE_OFFCHAIN: '/channels/subscribe_offchain',
     ENDPOINT_UNSUBSCRIBE_OFFCHAIN: '/channels/unsubscribe_offchain',
+    ENDPOINT_ICE_SERVERS: '/v1/turnserver/iceconfig',
+
+    DELIVERY_NODE_STAGING: 'https://delivery-staging.epns.io/apis',
+    DELIVERY_NODE_PROD: 'https://delivery-prod.epns.io/apis',
 
     DAPP_LINK: {
       PROD: 'app.push.org',
@@ -111,6 +115,7 @@ export default {
     BLACK: '#000000',
 
     CONFIRM_GREEN: 'rgba(50.0, 205.0, 50.0, 1.0)',
+    CONFIRM_GREEN_LIGHT: 'rgba(48.0, 204.0, 139.0, 1.0)',
 
     CONFIRM: 'rgba(34.0, 139.0, 34.0, 1.0)',
     WARNING: 'rgba(255.0, 153.0, 0.0, 1.0)',
@@ -151,6 +156,7 @@ export default {
     QRScanScreen: 'QRScanScreen',
     QRScanScreenFromLogin: 'QRScanScreenFromLogin',
     NewChatScreen: 'NewChatScreen',
+    VIDEOCALL: 'VideoCall',
   },
   APP_AUTH_STATES: {
     INITIALIZING: 1,

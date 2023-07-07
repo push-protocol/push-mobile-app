@@ -1,7 +1,7 @@
 import {FontAwesome} from '@expo/vector-icons';
 import React from 'react';
 import {Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import SvgUri from 'react-native-svg-uri';
+import {SvgUri} from 'react-native-svg';
 
 import {ChatMessage} from '../../helpers/chatResolver';
 
@@ -42,7 +42,7 @@ export const FileMessageComponent = ({
     <View style={styles.container}>
       <View style={{width: 32}}>
         <SvgUri
-          source={{uri: FILE_ICON(name.split('.').slice(-1)[0])}}
+          uri={FILE_ICON(name.split('.').slice(-1)[0])}
           width="100%"
           height="40"
         />

@@ -5,7 +5,7 @@ import {
   getWallet,
 } from '@pushprotocol/restapi/src/lib/chat/helpers';
 import Constants from '@pushprotocol/restapi/src/lib/constants';
-import WalletConnect from '@walletconnect/client';
+import {IProvider} from '@walletconnect/modal-react-native';
 import * as PushNodeClient from 'src/apis';
 import MetaStorage from 'src/singletons/MetaStorage';
 
@@ -13,10 +13,8 @@ import {decryptV2} from './aes';
 import {createUser} from './createUser';
 import {getSigner, hexToBytes, walletToPCAIP10} from './utils';
 
-export const handleWalletConnectChatLogin = async (
-  connector: WalletConnect,
-) => {
-  const [signer, account] = await getSigner(connector);
+export const handleWalletConnectChatLogin = async (wcProvider: IProvider) => {
+  const [signer, account] = await getSigner(wcProvider);
   const caipAddrs = walletToPCAIP10(account);
   const wallet = getWallet({account, signer: signer as any});
 
@@ -25,11 +23,11 @@ export const handleWalletConnectChatLogin = async (
   // user is new
   // create the pgp pair
   if (!user || !user.publicKey) {
-    const [success, privKey] = await createUser(connector);
+    const [success, privKey, pubKey] = await createUser(wcProvider);
     if (success) {
       await MetaStorage.instance.setUserChatData({
         pgpPrivateKey: privKey,
-        encryptionPublicKey: '',
+        encryptionPublicKey: pubKey,
       });
       return true;
     } else {
@@ -55,7 +53,7 @@ export const handleWalletConnectChatLogin = async (
     const decryptedPrivateKey = dec.decode(encodedPrivateKey);
     await MetaStorage.instance.setUserChatData({
       pgpPrivateKey: decryptedPrivateKey,
-      encryptionPublicKey: '',
+      encryptionPublicKey: user.publicKey,
     });
     return true;
   } else if (user.encryptionType === Constants.ENC_TYPE_V3) {
@@ -64,18 +62,23 @@ export const handleWalletConnectChatLogin = async (
     const {verificationProof: secret} = await getEip191Signature(
       wallet,
       enableProfileMessage,
+      'v1',
     );
+
     const encodedPrivateKey = await decryptV2(
       JSON.parse(user.encryptedPrivateKey),
       hexToBytes(secret || ''),
     );
     const dec = new TextDecoder();
     const decryptedPrivateKey = dec.decode(encodedPrivateKey);
+
     await MetaStorage.instance.setUserChatData({
       pgpPrivateKey: decryptedPrivateKey,
-      encryptionPublicKey: '',
+      encryptionPublicKey: user.publicKey,
     });
     return true;
+  } else {
+    console.log('Unsupported ENC Type');
   }
 
   return false;

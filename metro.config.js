@@ -11,6 +11,6 @@ module.exports = {
   },
   resolver: {
     extraNodeModules,
-    sourceExts: ['jsx', 'js', 'json', 'ts', 'tsx'],
+    sourceExts: ['jsx', 'js', 'json', 'ts', 'tsx', 'mjs'],
   },
 };

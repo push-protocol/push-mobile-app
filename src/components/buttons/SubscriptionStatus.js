@@ -1,5 +1,8 @@
 import {FontAwesome5} from '@expo/vector-icons';
-import {useWalletConnect} from '@walletconnect/react-native-dapp';
+import {
+  IProvider,
+  useWalletConnectModal,
+} from '@walletconnect/modal-react-native';
 import {ethers} from 'ethers';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -22,10 +25,12 @@ import {handleChannelSub, isWalletConnectEnabled} from 'src/walletconnect';
 const CHANNEL_OPT_IN = 1;
 const CHANNEL_OPT_OUT = 2;
 
+const useWalletConnect = {};
+
 const SubscriptionStatus = ({channel, user, style, pKey}) => {
   const [subscribed, setSubscribed] = useState(null);
 
-  const connector = useWalletConnect();
+  const wc_connector = useWalletConnectModal();
   const [modal, setModal] = useState(false);
   const [action, setAction] = useState('');
 
@@ -145,10 +150,6 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
     fetchSubscriptionStatus(user, channel);
   };
 
-  // Wallet Connect functionality
-  const {createSession, killSession, session, signTransaction} =
-    useWalletConnect();
-
   // Setup Refs
   const OverlayBlurRef = useRef(null);
   const NoticePromptRef = useRef(null);
@@ -165,11 +166,15 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   const handleOpts = async action => {
     // Check signin flow
     setProcessing(true);
-    const isWalletConnect = await isWalletConnectEnabled(connector, action);
+    const isWalletConnect = wc_connector.isConnected;
     const signedInType = await MetaStorage.instance.getSignedInType();
     if (isWalletConnect) {
       try {
-        const done = await handleChannelSub(connector, action, channel);
+        const done = await handleChannelSub(
+          wc_connector.provider,
+          action,
+          channel,
+        );
         if (done) {
           setSubscribed(prev => !prev);
         }

@@ -13,9 +13,14 @@ export const generateKeyPair = async (): Promise<{
     },
   });
 
+  let publicKey = keys.publicKey;
+
+  // remove version info from pgp
+  publicKey = publicKey.replace(/^Version:.*\n/m, '');
+
   return {
     privateKeyArmored: keys.privateKey,
-    publicKeyArmored: keys.publicKey,
+    publicKeyArmored: publicKey,
   };
 };
 
@@ -46,32 +51,29 @@ export const encryptAndSign = async ({
   sigType: string;
   encType: string;
 }> => {
-  try {
-    const secretKey: string = CryptoHelper.generateRandomSecret(15);
-    const cipherText: string = CryptoHelper.encryptWithAES(
-      plainText,
-      secretKey,
-    );
-    const encryptedSecret = await OpenPGP.encrypt(
-      secretKey,
-      concatPublicKeys(fromPublicKeyArmored, toPublicKeyArmored),
-    );
-    const signature: string = await OpenPGP.sign(
-      cipherText,
-      fromPublicKeyArmored,
-      privateKeyArmored,
-      '',
-    );
-    return {
-      cipherText,
-      encryptedSecret, // enc AES key here
-      signature,
-      sigType: 'pgp',
-      encType: 'pgp',
-    };
-  } catch (error) {
-    console.log('got err', error);
-  }
+  const secretKey: string = CryptoHelper.generateRandomSecret(15);
+  const cipherText: string = CryptoHelper.encryptWithAES(plainText, secretKey);
+  let encryptedSecret = await OpenPGP.encrypt(
+    secretKey,
+    concatPublicKeys(fromPublicKeyArmored, toPublicKeyArmored),
+  );
+  let signature: string = await OpenPGP.sign(
+    cipherText,
+    fromPublicKeyArmored,
+    privateKeyArmored,
+    '',
+  );
+
+  // Removing metadata from signature and encryptedSecret
+  signature = signature.replace('\nVersion: openpgp-mobile', '');
+  encryptedSecret = encryptedSecret.replace('\nVersion: openpgp-mobile', '');
+  return {
+    cipherText,
+    encryptedSecret, // enc AES key here
+    signature,
+    sigType: 'pgp',
+    encType: 'pgp',
+  };
 };
 
 export const pgpSign = async (
@@ -87,4 +89,12 @@ export const pgpSign = async (
   );
 
   return signature;
+};
+
+export const pgpVerify = async (
+  plainText: string,
+  signature: string,
+  publicKeyArmored: string,
+) => {
+  return await OpenPGP.verify(signature, plainText, publicKeyArmored);
 };

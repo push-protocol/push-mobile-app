@@ -21,6 +21,7 @@ const Requests = ({requests, isIntentReceivePage}: RequestProps) => {
             wallet={caip10ToWallet(item.wallets)}
             text={item.threadhash ? item.threadhash : ''}
             combinedDID={item.combinedDID}
+            chatId={item.chatId}
             isIntentReceivePage={isIntentReceivePage}
             isIntentSendPage={false}
             clearSearch={() => {}}

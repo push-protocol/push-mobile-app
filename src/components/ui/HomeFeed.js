@@ -100,7 +100,7 @@ export default function InboxFeed(props) {
         const apiURL = `${ENV_CONFIG.EPNS_SERVER}/v1/users/${getCAIPAddress(
           wallet,
         )}/feeds?page=${refresh ? 1 : page}&limit=10&spam=false`;
-        console.log('calling api', apiURL);
+
         const resJson = await fetch(apiURL).then(response => response.json());
 
         if (resJson.itemcount !== 0 && resJson.feeds !== []) {

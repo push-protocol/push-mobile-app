@@ -1,5 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { ToasterOptions } from 'src/components/indicators/Toaster';
+import {createSlice} from '@reduxjs/toolkit';
 import ENV_CONFIG from 'src/env.config';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 

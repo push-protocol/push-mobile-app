@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {ConnectedUser, createUser} from 'src/apis';
+import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {caip10ToWallet, getCAIPAddress} from 'src/helpers/CAIPHelper';
@@ -24,11 +24,10 @@ type useSendMessageReturnType = [
   boolean,
   ChatMessage,
 ];
-type MessageReciver = {ethAddress: string; pgpAddress: string};
 
 const getEncryptedMessage = async (
   connectedUser: ConnectedUser,
-  messageReceiver: MessageReciver,
+  messageReceiver: PushNodeClient.MessageReciver,
   message: string,
 ) => {
   // if pgpAddress null then no need to encrypt
@@ -60,8 +59,6 @@ const getEncryptedMessage = async (
     toPublicKeyArmored: messageReceiver.pgpAddress,
     privateKeyArmored: connectedUser.privateKey,
   });
-
-  console.log('i was dioe', encryptedMessage);
 
   return encryptedMessage;
 };
@@ -96,7 +93,7 @@ const useSendMessage = (
     generateNullChatMessage(),
   );
 
-  const messageReceiver = useRef<MessageReciver>({
+  const messageReceiver = useRef<PushNodeClient.MessageReciver>({
     ethAddress: getCAIPAddress(receiverAddress),
     pgpAddress: '',
   });
@@ -135,7 +132,7 @@ const useSendMessage = (
   }: MessageFormat): Promise<[string, ChatMessage]> => {
     if (messageReceiver.current.pgpAddress === '') {
       showToast(
-        'Wait for the user to accpet the intent',
+        'Wait for the user to accept the intent',
         '',
         ToasterOptions.TYPE.GRADIENT_PRIMARY,
       );
@@ -201,20 +198,8 @@ const useSendMessage = (
     return generateNullRespose();
   };
 
-  const checkIsUserNew = (rec: MessageReciver) => {
+  const checkIsUserNew = (rec: PushNodeClient.MessageReciver) => {
     return rec.pgpAddress === '';
-  };
-
-  const createEmptyUser = async (rec: MessageReciver) => {
-    await createUser({
-      caip10: rec.ethAddress,
-      did: rec.ethAddress,
-      publicKey: '',
-      encryptedPrivateKey: '',
-      encryptionType: '',
-      signature: 'pgp',
-      sigType: 'pgp',
-    });
   };
 
   const sendIntent = async ({
@@ -228,7 +213,7 @@ const useSendMessage = (
     const receiver = messageReceiver.current;
     const isUserNew = checkIsUserNew(receiver);
     if (isUserNew) {
-      await createEmptyUser(receiver);
+      await PushNodeClient.createEmptyUser(receiver);
     }
 
     // if (messageReceiver.current.pgpAddress === '') {
@@ -243,23 +228,14 @@ const useSendMessage = (
 
     setIsSending(true);
     console.log('**** send intent');
-    const msg = await getEncryptedMessage(
-      connectedUser,
-      messageReceiver.current,
-      message,
-    );
-
     const postBody = {
       fromCAIP10: connectedUser.wallets,
-      fromDID: connectedUser.wallets,
       toDID: messageReceiver.current.ethAddress,
       toCAIP10: messageReceiver.current.ethAddress,
-      messageContent: msg.cipherText,
+      messageContent: message,
       messageType: messageType,
-      signature: msg.signature,
-      encType: msg.encType,
-      sigType: msg.sigType,
-      encryptedSecret: msg.encryptedSecret,
+      sigType: 'pgp',
+      connectedUser: connectedUser,
     };
 
     const res = await PushNodeClient.postIntent(postBody);

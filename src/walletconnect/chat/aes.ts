@@ -12,13 +12,14 @@ const hkdf = async (secret: Uint8Array, salt: Uint8Array): Promise<any> => {
   ]);
 
   //@ts-ignore
-  const res = crypto.subtle.deriveKey(
+  const res = await crypto.subtle.deriveKey(
     {name: 'HKDF', hash: 'SHA-256', salt, info: new ArrayBuffer(0)},
     key,
     {name: 'AES-GCM', length: 256},
     true, // false
     ['encrypt', 'decrypt'],
   );
+
   return res;
 };
 
@@ -64,7 +65,8 @@ export const decryptV2 = async (
   secret: Uint8Array,
   additionalData?: Uint8Array,
 ): Promise<Uint8Array> => {
-  const key = await hkdf(secret, hexToBytes(encryptedData.salt));
+  
+  const key = await hkdf(secret, hexToBytes(encryptedData.salt!));
   const aesGcmParams: any = {
     name: 'AES-GCM',
     iv: hexToBytes(encryptedData.nonce),
@@ -72,15 +74,12 @@ export const decryptV2 = async (
   if (additionalData) {
     aesGcmParams.additionalData = additionalData;
   }
-  console.log('2');
-
   // @ts-ignore
   const decrypted: ArrayBuffer = await crypto.subtle.decrypt(
     aesGcmParams,
     key,
     hexToBytes(encryptedData.ciphertext),
   );
-  console.log('3');
   return new Uint8Array(decrypted);
 };
 

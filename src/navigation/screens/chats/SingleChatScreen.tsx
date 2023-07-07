@@ -8,7 +8,8 @@ import {approveRequestPayload} from '@pushprotocol/restapi/src/lib/chat';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useNavigation} from '@react-navigation/native';
 import {FlashList} from '@shopify/flash-list';
-import React, {useEffect, useRef, useState} from 'react';
+import {produce} from 'immer';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
   Animated,
   Dimensions,
@@ -30,13 +31,18 @@ import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
+import {VideoCallContext} from 'src/contexts/VideoContext';
+import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
+import {walletToPCAIP10} from 'src/push_video/helpers';
+import {VideoCallStatus} from 'src/push_video/payloads';
 
 import {AcceptIntent, MessageComponent} from './components';
 import {CustomScroll} from './components/CustomScroll';
 import './giphy/giphy.setup';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {ChatMessage} from './helpers/chatResolver';
+import {pgpSignBody} from './helpers/signatureHelper';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
 import {useSendMessage} from './helpers/useSendMessage';
 
@@ -47,6 +53,7 @@ interface ChatScreenParam {
   combinedDID: string;
   isIntentSendPage: boolean;
   isIntentReceivePage: boolean;
+  chatId?: string;
 }
 
 const windowHeight = Dimensions.get('window').height;
@@ -63,6 +70,7 @@ const SingleChatScreen = ({route}: any) => {
     connectedUser,
     isIntentSendPage,
     combinedDID,
+    chatId,
   }: ChatScreenParam = route.params;
 
   const [isIntentReceivePage, setisIntentReceivePage] = useState<boolean>(
@@ -125,7 +133,10 @@ const SingleChatScreen = ({route}: any) => {
 
     if (_cid && msg) {
       console.log('_after sending got', _cid);
-      pushChatDataDirect(_cid, msg);
+      // No need to push intent to chat, will receive from socket
+      if (!isIntentSendPage) {
+        pushChatDataDirect(_cid, msg);
+      }
     }
   };
 
@@ -133,18 +144,24 @@ const SingleChatScreen = ({route}: any) => {
     setIsAccepting(true);
 
     const APPROVED_INTENT = 'Approved';
+
+    const bodyToBeHashed = {
+      fromDID: walletToPCAIP10(senderAddress),
+      toDID: connectedUser.wallets,
+      status: APPROVED_INTENT,
+    };
+
+    const signature = await pgpSignBody({bodyToBeHashed});
+
     const body = approveRequestPayload(
       senderAddress,
       connectedUser.wallets,
       APPROVED_INTENT,
+      'pgp',
+      signature,
     );
 
-    const sig = 'xyz';
-    const sigType = 'a';
-
-    body.verificationProof = sig;
-    body.sigType = sigType;
-    body.signature = sig;
+    body.fromDID = walletToPCAIP10(body.fromDID);
 
     const res = await PushNodeClient.approveIntent2(body);
     console.log('approved intent', res);
@@ -161,6 +178,24 @@ const SingleChatScreen = ({route}: any) => {
       '',
       ToasterOptions.TYPE.GRADIENT_PRIMARY,
     );
+  };
+
+  // const dispatch = useDispatch();
+  const {setVideoCallData} = useContext(VideoCallContext);
+
+  const startVideoCall = () => {
+    setVideoCallData((oldData: any) => {
+      return produce(oldData, (draft: any) => {
+        draft.local.address = caip10ToWallet(connectedUser.wallets);
+        draft.incoming[0].address = senderAddress;
+        draft.incoming[0].status = VideoCallStatus.INITIALIZED;
+        draft.meta.chatId = chatId;
+        draft.meta.initiator.address = caip10ToWallet(connectedUser.wallets);
+      });
+    });
+
+    // @ts-ignore
+    navigation.navigate(Globals.SCREENS.VIDEOCALL);
   };
 
   // giphy listener
@@ -219,7 +254,6 @@ const SingleChatScreen = ({route}: any) => {
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', e => {
       setKeyboardStatus(true);
-      console.log('aaaaa \n\nset', e.endCoordinates.height);
       setKeyboardHeight(e.endCoordinates.height);
     });
     const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
@@ -294,6 +328,14 @@ const SingleChatScreen = ({route}: any) => {
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* <Ionicons
+          name="videocam"
+          size={35}
+          style={styles.videoIcon}
+          color={Globals.COLORS.PINK}
+          onPress={() => startVideoCall()}
+        /> */}
       </View>
 
       <KeyboardAvoidingView
@@ -577,7 +619,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     marginLeft: 20,
-    width: '85%',
     justifyContent: 'space-between',
   },
 
@@ -655,5 +696,8 @@ const styles = StyleSheet.create({
   menuItemText: {
     marginLeft: 10,
     marginTop: 5,
+  },
+  videoIcon: {
+    marginLeft: 'auto',
   },
 });

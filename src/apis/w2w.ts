@@ -1,6 +1,10 @@
+import {ISendMessagePayload} from '@pushprotocol/restapi/src/lib/chat';
+import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import envConfig from 'src/env.config';
 import {encryptWithRPCEncryptionPublicKeyReturnRawData} from 'src/helpers/w2w/metamaskSigUtil';
 import {generateKeyPair} from 'src/helpers/w2w/pgp';
+import {sendMessagePayload} from 'src/helpers/w2w/sendMessagePayload';
+import {pgpSignBody} from 'src/navigation/screens/chats/helpers/signatureHelper';
 
 import {MessageIPFS} from './ipfs';
 
@@ -15,9 +19,12 @@ export interface User {
   sigType: string;
   about: string | null;
   name: string | null;
+  encryptedPassword: string | null;
+  nftOwner: string | null;
   numMsg: number;
   allowedNumMsg: number;
   linkedListHash?: string | null;
+  nfts?: [] | null;
 }
 
 export interface InboxChat {
@@ -52,11 +59,14 @@ export interface Feeds {
   intentTimestamp: string;
   combinedDID: string;
   cid: string;
+  chatId?: string;
 }
 
 export interface ConnectedUser extends User {
   privateKey: string;
 }
+
+export type MessageReciver = {ethAddress: string; pgpAddress: string};
 
 const BASE_URL = envConfig.EPNS_SERVER;
 
@@ -77,7 +87,7 @@ export const createUser = async ({
   signature: string;
   sigType: string;
 }): Promise<User> => {
-  const url = BASE_URL + '/v1/w2w/users';
+  const url = BASE_URL + '/v1/users';
   const body = JSON.stringify({
     caip10,
     did,
@@ -103,12 +113,24 @@ export const createUser = async ({
   return data;
 };
 
+export const createEmptyUser = async (rec: MessageReciver) => {
+  await createUser({
+    caip10: rec.ethAddress,
+    did: rec.ethAddress,
+    publicKey: '',
+    encryptedPrivateKey: '',
+    encryptionType: '',
+    signature: 'pgp',
+    sigType: 'pgp',
+  });
+};
+
 export const getUser = async (caip10: string): Promise<User | undefined> => {
   let retry = 0;
 
   for (let i = 0; i < 3; i++) {
     try {
-      let path = '/v1/w2w/users';
+      let path = '/v1/users';
       if (caip10) {
         path += `?caip10=${caip10}`;
       }
@@ -121,6 +143,15 @@ export const getUser = async (caip10: string): Promise<User | undefined> => {
       });
 
       const data: User = await response.json();
+
+      try {
+        JSON.parse(data.publicKey);
+      } catch {
+        data.publicKey = JSON.stringify({
+          key: data.publicKey,
+        });
+      }
+
       return data;
     } catch (err) {
       if (retry > 1) {
@@ -152,8 +183,7 @@ export const getInbox = async (did: string): Promise<Feeds[] | undefined> => {
   let retry = 0;
   for (let i = 0; i < 3; i++) {
     try {
-      const path = BASE_URL + '/v1/w2w/users/eip155:' + did + '/messages';
-
+      const path = `${BASE_URL}/v1/chat/users/eip155:${did}/messages`;
       const response = await fetch(path, {
         method: 'GET',
       });
@@ -204,7 +234,7 @@ export const postMessage = async ({
   sigType: string;
   encryptedSecret: string;
 }): Promise<MessageIPFSWithCID | string> => {
-  const response = await fetch(BASE_URL + '/v1/w2w/messages', {
+  const response = await fetch(BASE_URL + '/v1/chat/message', {
     method: 'POST',
     headers: {
       'content-Type': 'application/json',
@@ -257,65 +287,46 @@ export const approveIntent = async (
 
 export const postIntent = async ({
   toDID,
-  fromDID,
-  fromCAIP10,
-  toCAIP10,
   messageContent,
   messageType,
-  signature,
-  encType,
   sigType,
-  encryptedSecret,
+  connectedUser,
 }: {
   toDID: string;
-  fromDID: string;
-  fromCAIP10: string;
-  toCAIP10: string;
   messageContent: string;
   messageType: string;
-  signature: string;
-  encType: string;
   sigType: string;
-  encryptedSecret: string;
+  connectedUser: ConnectedUser;
 }): Promise<MessageIPFSWithCID | string> => {
   let data: MessageIPFSWithCID | string;
-  if (messageContent.length > 0) {
-    const response = await fetch(BASE_URL + '/v1/w2w/intents', {
-      method: 'POST',
-      headers: {
-        'content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        toDID,
-        fromDID,
-        fromCAIP10,
-        toCAIP10,
-        messageContent,
-        messageType,
-        signature,
-        encType,
-        encryptedSecret,
-        sigType,
-      }),
-    });
-    data = await response.json();
-  } else {
-    const response = await fetch(BASE_URL + '/v1/w2w/intents', {
-      method: 'POST',
-      headers: {
-        'content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        toDID,
-        fromDID,
-        fromCAIP10,
-        messageType,
-        signature,
-        encType,
-      }),
-    });
-    data = await response.json();
-  }
+  const apiUrl = `${BASE_URL}/v1/chat/request`;
+
+  const body: ISendMessagePayload = await sendMessagePayload(
+    toDID,
+    connectedUser,
+    messageContent,
+    messageType,
+    envConfig.ENV as ENV,
+  );
+
+  const bodyToBeHashed = {
+    fromDID: body.fromDID,
+    toDID: body.toDID,
+    messageContent: body.messageContent,
+    messageType: messageType,
+  };
+
+  const verificationProof = await pgpSignBody({bodyToBeHashed});
+  body.verificationProof = sigType + ':' + verificationProof;
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  data = await response.json();
   return data;
 };
 
@@ -346,7 +357,7 @@ export const createNewPgpPair = async (
 };
 
 export const isIntentAccepted = async (addrs: string, senderAddrs: string) => {
-  const uri = `${BASE_URL}/v1/w2w/users/${addrs}/messages`;
+  const uri = `${BASE_URL}/v1/chat/users/${addrs}/messages`;
   const res = await fetch(uri)
     .then(r => r.json())
     .then(arr =>
@@ -363,7 +374,7 @@ export const isIntentAccepted = async (addrs: string, senderAddrs: string) => {
 };
 
 export const getIntentStatus = async (addrs: string, senderAddrs: string) => {
-  const uri = `${BASE_URL}/v1/w2w/users/${addrs}/messages`;
+  const uri = `${BASE_URL}/v1/chat/users/${addrs}/messages`;
   const res = await fetch(uri)
     .then(r => r.json())
     .then(arr =>

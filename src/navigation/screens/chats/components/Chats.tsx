@@ -142,6 +142,7 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
               isIntentReceivePage={isIntentReceivePage}
               isIntentSendPage={false}
               clearSearch={handleClearSearch}
+              chatId={matchedItem.chatId}
             />
           </View>
         ) : (
@@ -157,6 +158,7 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
               isIntentReceivePage={isIntentReceivePage}
               isIntentSendPage={true}
               clearSearch={handleClearSearch}
+              chatId={undefined}
             />
           </View>
         ))}
@@ -173,6 +175,7 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
               isIntentReceivePage={isIntentReceivePage}
               isIntentSendPage={false}
               clearSearch={handleClearSearch}
+              chatId={item.chatId}
             />
           ))}
         </View>

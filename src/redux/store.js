@@ -13,18 +13,21 @@ import {
 
 import authSlice from './authSlice';
 import feedSlice from './feedSlice';
+import videoSlice from './videoSlice';
 
 const persistConfig = {
   key: 'root',
   version: 1,
   storage: AsyncStorage,
   whitelist: ['feed', 'auth'],
+  blacklist: ['video'],
   // blacklist: ['feed', 'auth'],
 };
 
 const rootReducer = combineReducers({
   auth: authSlice,
   feed: feedSlice,
+  video: videoSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
