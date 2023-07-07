@@ -1,8 +1,8 @@
 // @ts-ignore
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {produce} from 'immer';
-import {DeviceEventEmitter, Platform} from 'react-native';
-import InCallManager from 'react-native-incall-manager';
+// import {DeviceEventEmitter, Platform} from 'react-native';
+// import InCallManager from 'react-native-incall-manager';
 import RNPeer from 'react-native-simple-peer';
 import {
   MediaStream,
@@ -107,27 +107,27 @@ const getMediaStream = async () => {
     video: true,
   });
 
-  if (Platform.OS === 'ios') {
-    InCallManager.setForceSpeakerphoneOn(
-      !InCallManager.getIsWiredHeadsetPluggedIn(),
-    );
-  } else if (Platform.OS === 'android') {
-    InCallManager.setSpeakerphoneOn(true);
-  }
+  // if (Platform.OS === 'ios') {
+  //   InCallManager.setForceSpeakerphoneOn(
+  //     !InCallManager.getIsWiredHeadsetPluggedIn(),
+  //   );
+  // } else if (Platform.OS === 'android') {
+  //   InCallManager.setSpeakerphoneOn(true);
+  // }
 
-  DeviceEventEmitter.addListener(
-    'WiredHeadset',
-    ({isPlugged, hasMic}: {isPlugged: boolean; hasMic: boolean}) => {
-      console.log('WiredHeadset', isPlugged, hasMic);
-      if (isPlugged && hasMic) {
-        InCallManager.setForceSpeakerphoneOn(false);
-      } else if (Platform.OS === 'ios') {
-        InCallManager.setForceSpeakerphoneOn(!isPlugged);
-      } else if (Platform.OS === 'android') {
-        InCallManager.setSpeakerphoneOn(!isPlugged);
-      }
-    },
-  );
+  // DeviceEventEmitter.addListener(
+  //   'WiredHeadset',
+  //   ({isPlugged, hasMic}: {isPlugged: boolean; hasMic: boolean}) => {
+  //     console.log('WiredHeadset', isPlugged, hasMic);
+  //     if (isPlugged && hasMic) {
+  //       InCallManager.setForceSpeakerphoneOn(false);
+  //     } else if (Platform.OS === 'ios') {
+  //       InCallManager.setForceSpeakerphoneOn(!isPlugged);
+  //     } else if (Platform.OS === 'android') {
+  //       InCallManager.setSpeakerphoneOn(!isPlugged);
+  //     }
+  //   },
+  // );
 
   return devices;
 };
