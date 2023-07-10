@@ -3070,6 +3070,11 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.5.tgz#5f19d2b85a98e9558036f6a3cacc8819420f05cf"
   integrity sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==
 
+"@types/react-native-incall-manager@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@types/react-native-incall-manager/-/react-native-incall-manager-3.2.1.tgz#1f1194d9029101c3bac408fa69216321047ab693"
+  integrity sha512-M+Ffgw1A7nPZSxvEdK/enCdfHhS8/oQ1QDZ6w9+6IwR3RHE3EDywMuHy8BiDJ7oM3q6yU6uSWSvhsCI/hrxGlQ==
+
 "@types/react-native-webrtc@^1.75.5":
   version "1.75.5"
   resolved "https://registry.yarnpkg.com/@types/react-native-webrtc/-/react-native-webrtc-1.75.5.tgz#3993f097152d25f3d9daf2b09b97e79552709584"
@@ -11366,6 +11371,11 @@ react-native-animatable@1.3.3:
   dependencies:
     prop-types "^15.7.2"
 
+react-native-callkeep@4.3.8:
+  version "4.3.8"
+  resolved "https://registry.yarnpkg.com/react-native-callkeep/-/react-native-callkeep-4.3.8.tgz#8f164fa2c1998b228a0676102bb848192821779e"
+  integrity sha512-xGw5SDZfOIwB5XfUwd5wBycyHrfnN5cp0F/iEjYvsupAzrSqQ14ljzNy3MNZr1nVqv7r/MdthIGh8uu7RsxOBA==
+
 react-native-codegen@^0.69.1:
   version "0.69.2"
   resolved "https://registry.yarnpkg.com/react-native-codegen/-/react-native-codegen-0.69.2.tgz#e33ac3b1486de59ddae687b731ddbfcef8af0e4e"
@@ -11442,6 +11452,11 @@ react-native-image-viewing@^0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/react-native-image-viewing/-/react-native-image-viewing-0.2.2.tgz#fb26e57d7d3d9ce4559a3af3d244387c0367242b"
   integrity sha512-osWieG+p/d2NPbAyonOMubttajtYEYiRGQaJA54slFxZ69j1V4/dCmcrVQry47ktVKy8/qpFwCpW1eT6MH5T2Q==
+
+react-native-incall-manager@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-incall-manager/-/react-native-incall-manager-4.0.1.tgz#7dae419433383ed31262d811fd549bba7951b2f2"
+  integrity sha512-Bqq7C+p7vCmCTpM8Xv6l4DJ3UJYzVr60IvkHMw1Ugs0KJswh3veBJrpk+hUPSETPT6J/5oUwxChXlNsymsh7fg==
 
 react-native-iphone-x-helper@^1.3.1:
   version "1.3.1"

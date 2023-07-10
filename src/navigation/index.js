@@ -1,9 +1,8 @@
 import {NavigationContainer} from '@react-navigation/native';
-import React, {useContext, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import IncomingCall from 'src/components/modals/IncomingCall';
-import {VideoCallContext} from 'src/contexts/VideoContext';
 import {selectAuthState, setLogout} from 'src/redux/authSlice';
 import {selectUsers} from 'src/redux/authSlice';
 import {selectVideoCall} from 'src/redux/videoSlice';
@@ -16,9 +15,9 @@ import OnboardingNavigator from './OnboardingNavigator';
 import useVideoSocket from './screens/video/helpers/useVideoSocket';
 
 const NavGlobalSocket = ({callAccepted, connectedUser}) => {
-  // useVideoSocket(connectedUser.wallet, callAccepted);
-  // useGlobalSocket(connectedUser.wallet);
-  // useEffect(() => {}, []);
+  useVideoSocket(connectedUser.wallet, callAccepted);
+  useGlobalSocket(connectedUser.wallet);
+  useEffect(() => {}, []);
 };
 
 const Screens = ({callAccepted}) => {
@@ -27,7 +26,7 @@ const Screens = ({callAccepted}) => {
   console.log('auth state was', authState);
 
   const dispatch = useDispatch();
-  // const {isReceivingCall} = useSelector(selectVideoCall);
+  const {isReceivingCall} = useSelector(selectVideoCall);
 
   // reset user login
   useEffect(() => {
@@ -44,7 +43,7 @@ const Screens = ({callAccepted}) => {
           />
         )}
 
-        {/* {isReceivingCall && <IncomingCall />} */}
+        {isReceivingCall && <IncomingCall />}
 
         {authState === GLOBALS.AUTH_STATE.INITIALIZING && (
           <InitializingNavigator />

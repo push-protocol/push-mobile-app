@@ -2,14 +2,14 @@ import messaging from '@react-native-firebase/messaging';
 import {WalletConnectModal} from '@walletconnect/modal-react-native';
 import '@walletconnect/react-native-compat';
 import React, {useEffect, useState} from 'react';
-// import RNCallKeep from 'react-native-callkeep';
+import RNCallKeep from 'react-native-callkeep';
 import 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import WebviewCrypto from 'react-native-webview-crypto';
 import {Provider} from 'react-redux';
 import {persistStore} from 'redux-persist';
 import {PersistGate} from 'redux-persist/integration/react';
-// import VideoCallContextProvider from 'src/contexts/VideoContext';
+import VideoCallContextProvider from 'src/contexts/VideoContext';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import AppScreens from 'src/navigation';
 import store from 'src/redux';
@@ -41,13 +41,13 @@ const App = ({isCallAccepted}) => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
-  //     RNCallKeep.backToForeground();
-  //     RNCallKeep.endCall(callUUID);
-  //     setCallAccepted(true);
-  //   });
-  // }, []);
+  useEffect(() => {
+    RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
+      RNCallKeep.backToForeground();
+      RNCallKeep.endCall(callUUID);
+      setCallAccepted(true);
+    });
+  }, []);
 
   return (
     <SafeAreaProvider>
@@ -62,9 +62,9 @@ const App = ({isCallAccepted}) => {
       />
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          {/* <VideoCallContextProvider> */}
-          <AppScreens callAccepted={isCallLocal || isCallAccepted} />
-          {/* </VideoCallContextProvider> */}
+          <VideoCallContextProvider>
+            <AppScreens callAccepted={isCallLocal || isCallAccepted} />
+          </VideoCallContextProvider>
         </PersistGate>
       </Provider>
     </SafeAreaProvider>
