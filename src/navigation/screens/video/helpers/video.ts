@@ -13,6 +13,7 @@ import {
 import {mediaDevices} from 'react-native-webrtc';
 import {initVideoCallData} from 'src/contexts/VideoContext';
 import envConfig from 'src/env.config';
+import CryptoHelper from 'src/helpers/CryptoHelper';
 import JsonHelper from 'src/helpers/JsonHelper';
 import {sendVideoCallNotification} from 'src/push_video/payloads';
 import {
@@ -133,10 +134,20 @@ const getMediaStream = async () => {
 };
 
 const getIceServers = async () => {
-  const apiUrl = envConfig.EPNS_SERVER + envConfig.ENDPOINT_ICE_SERVERS;
+  // const apiUrl = envConfig.EPNS_SERVER + envConfig.ENDPOINT_ICE_SERVERS;
+  // const response = await fetch(apiUrl);
+  // const json = await response.json();
+  // return json;
+  const apiUrl = 'https://backend-dev.epns.io/apis/v1/turnserver/iceconfig';
   const response = await fetch(apiUrl);
-  const json = await response.json();
-  return json;
+  const encryptedRes = await response.text();
+  const decryptedServers = CryptoHelper.decryptWithAES(
+    encryptedRes,
+    'turnserversecret',
+  );
+  const config = JSON.parse(decryptedServers).config;
+  console.log('ICE SERVERS', config);
+  return config;
 };
 
 export class Video {
