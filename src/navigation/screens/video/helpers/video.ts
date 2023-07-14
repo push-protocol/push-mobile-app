@@ -134,11 +134,7 @@ const getMediaStream = async () => {
 };
 
 const getIceServers = async () => {
-  // const apiUrl = envConfig.EPNS_SERVER + envConfig.ENDPOINT_ICE_SERVERS;
-  // const response = await fetch(apiUrl);
-  // const json = await response.json();
-  // return json;
-  const apiUrl = 'https://backend-dev.epns.io/apis/v1/turnserver/iceconfig';
+  const apiUrl = envConfig.EPNS_SERVER + envConfig.ENDPOINT_ICE_SERVERS;
   const response = await fetch(apiUrl);
   const encryptedRes = await response.text();
   const decryptedServers = CryptoHelper.decryptWithAES(

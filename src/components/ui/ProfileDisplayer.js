@@ -1,13 +1,33 @@
-import React from 'react';
-import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import GLOBALS from 'src/Globals';
+import * as PushNodeClient from 'src/apis';
 import ENSButton from 'src/components/buttons/ENSButton';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 import Blockies from 'src/components/web3/Blockies';
+import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 
 const MARGIN_RIGHT = 120;
 const ProfileDisplayer = props => {
+  const [profilePicture, setProfilePicture] = useState(null);
+  const wallet = props.currentUser?.wallet?.toLowerCase() || null;
+
+  useEffect(() => {
+    if (!profilePicture && wallet) {
+      (async () => {
+        const user = await PushNodeClient.getUser(walletToCAIP10(wallet));
+        setProfilePicture(user.profilePicture);
+      })();
+    }
+  }, []);
+
   const {style} = props;
   return (
     <View style={[styles.container, style]} pointerEvents="box-none">
@@ -19,11 +39,19 @@ const ProfileDisplayer = props => {
               props.toggleShow();
             }}
             pointerEvents="auto">
-            <Blockies
-              style={styles.blockies}
-              seed={props.wallet ? props.wallet.toLowerCase() : null} //string content to generate icon
-              dimension={40} // blocky icon size
-            />
+            {profilePicture ? (
+              <Image
+                source={{uri: profilePicture}}
+                style={styles.image}
+                resizeMode={'cover'}
+              />
+            ) : (
+              <Blockies
+                style={styles.blockies}
+                seed={wallet} //string content to generate icon
+                dimension={40} // blocky icon size
+              />
+            )}
             <ENSButton
               style={styles.ens}
               innerStyle={styles.ensbox}
@@ -141,6 +169,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: '#fff',
     top: 50,
+  },
+  image: {
+    width: 40,
+    height: 40,
+    borderWidth: 1,
+    marginRight: 10,
+    overflow: 'hidden',
+    resizeMode: 'contain',
+    borderRadius: 40 / 2,
+    borderColor: GLOBALS.COLORS.LIGHT_GRAY,
   },
 });
 

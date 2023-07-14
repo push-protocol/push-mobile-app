@@ -13,15 +13,13 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {RTCView} from 'react-native-webrtc';
-// import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {VideoCallContext} from 'src/contexts/VideoContext';
 import {DEFAULT_AVATAR} from 'src/navigation/screens/chats/constants';
 import VideoPlaceholder from 'src/navigation/screens/video/components/VideoPlaceholder';
+import {selectVideoCall} from 'src/redux/videoSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
-
-// import {setCall} from 'src/redux/videoSlice';
-// import {selectVideoCall} from 'src/redux/videoSlice';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -34,19 +32,13 @@ const formattedAddress = address => {
 
 const IncomingCall = ({stream}) => {
   const [fader] = useState(new Animated.Value(0));
-  // const dispatch = useDispatch();
-  // const {call} = useSelector(selectVideoCall);
   const navigation = useNavigation();
 
   const {videoCallData, acceptRequestWrapper, disconnectWrapper} =
     useContext(VideoCallContext);
-
-  // const handleCancel = () => {
-  //   dispatch(setCall({isReceivingCall: false, signal: null}));
-  // };
+  const {otherUserProfilePicture} = useSelector(selectVideoCall);
 
   const handleAnswer = () => {
-    // dispatch(setCall({...call, isReceivingCall: false, calling: false}));
     (async () => {
       const {pgpPrivateKey} = await MetaStorage.instance.getUserChatData();
       acceptRequestWrapper({
@@ -90,7 +82,10 @@ const IncomingCall = ({stream}) => {
             onPress={disconnectWrapper}
           />
           <View style={styles.detailsContainer}>
-            <Image source={{uri: DEFAULT_AVATAR}} style={styles.image} />
+            <Image
+              source={{uri: otherUserProfilePicture || DEFAULT_AVATAR}}
+              style={styles.image}
+            />
             <View style={styles.textContainer}>
               <Text style={styles.name}>
                 {formattedAddress(videoCallData.incoming[0].address)}
@@ -107,7 +102,9 @@ const IncomingCall = ({stream}) => {
                   objectFit="cover"
                 />
               ) : (
-                <VideoPlaceholder uri={DEFAULT_AVATAR} />
+                <VideoPlaceholder
+                  uri={otherUserProfilePicture || DEFAULT_AVATAR}
+                />
               )}
             </View>
             <View style={styles.options}>

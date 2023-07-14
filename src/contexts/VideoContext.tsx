@@ -1,10 +1,15 @@
 import {produce} from 'immer';
 import React, {createContext, useEffect, useRef, useState} from 'react';
 import {useDispatch} from 'react-redux';
+import * as PushNodeClient from 'src/apis';
+import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
 import {Video, VideoCallData} from 'src/navigation/screens/video/helpers/video';
 import {VideoCallStatus} from 'src/push_video/payloads';
-import {setIsReceivingCall} from 'src/redux/videoSlice';
+import {
+  setIsReceivingCall,
+  setOtherUserProfilePicture,
+} from 'src/redux/videoSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 interface RequestWrapperOptionsType {
@@ -192,6 +197,10 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
       console.log('videoObjectRef.current', videoObjectRef.current);
       return;
     }
+    const otherUserDetails = await PushNodeClient.getUser(
+      walletToCAIP10(videoCallMetaData.senderAddress),
+    );
+    dispatch(setOtherUserProfilePicture(otherUserDetails?.profilePicture));
     console.log('INCOMING CALL', {
       senderAddress: videoCallMetaData.senderAddress,
       recipientAddress: videoCallMetaData.recipientAddress,
