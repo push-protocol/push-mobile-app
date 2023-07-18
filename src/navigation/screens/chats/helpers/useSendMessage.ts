@@ -3,9 +3,10 @@ import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {caip10ToWallet, getCAIPAddress} from 'src/helpers/CAIPHelper';
-import {encryptAndSign} from 'src/helpers/w2w/pgp';
+import {encryptAndSign, pgpSign} from 'src/helpers/w2w/pgp';
 
 import {ChatMessage} from './chatResolver';
+import {pgpSignBody} from './signatureHelper';
 
 export interface MessageFormat {
   message: string;
@@ -30,17 +31,6 @@ const getEncryptedMessage = async (
   messageReceiver: PushNodeClient.MessageReciver,
   message: string,
 ) => {
-  // if pgpAddress null then no need to encrypt
-  if (messageReceiver.pgpAddress === '') {
-    return {
-      cipherText: message,
-      encryptedSecret: '',
-      signature: '',
-      sigType: 'pgp',
-      encType: 'PlainText',
-    };
-  }
-
   // TODO: update to support pgpv2
   let fromPublicKeyArmored = connectedUser.publicKey;
   try {
@@ -51,6 +41,23 @@ const getEncryptedMessage = async (
     }
   } catch {
     console.log('pgp_v1 sender');
+  }
+
+  // if pgpAddress null then no need to encrypt
+  if (messageReceiver.pgpAddress === '') {
+    const signature = await pgpSign(
+      message,
+      fromPublicKeyArmored,
+      connectedUser.privateKey,
+    );
+
+    return {
+      cipherText: message,
+      encryptedSecret: '',
+      signature: signature,
+      sigType: 'pgp',
+      encType: 'PlainText',
+    };
   }
 
   const encryptedMessage = await encryptAndSign({
@@ -110,9 +117,7 @@ const useSendMessage = (
         // TODO: support pgpv2
         let pubKey = res.publicKey;
         try {
-          if (JSON.parse(pubKey).key) {
-            pubKey = JSON.parse(pubKey).key;
-          }
+          pubKey = JSON.parse(pubKey).key;
         } catch {
           console.log('pgpv1 receiver');
         }
@@ -130,14 +135,17 @@ const useSendMessage = (
     messageType,
     combinedDID,
   }: MessageFormat): Promise<[string, ChatMessage]> => {
-    if (messageReceiver.current.pgpAddress === '') {
-      showToast(
-        'Wait for the user to accept the intent',
-        '',
-        ToasterOptions.TYPE.GRADIENT_PRIMARY,
-      );
-      return generateNullRespose();
-    }
+    // if (messageReceiver.current.pgpAddress === '') {
+    //   try {
+    //     let user = await PushNodeClient.getUser(connectedUser.wallets);
+    //     if (!user?.publicKey) {
+    //       user = await PushNodeClient.createEmptyUser(messageReceiver.current);
+    //       console.log('**** empty user created');
+    //     }
+    //   } catch (error) {
+    //     console.log('error while creating user', error);
+    //   }
+    // }
 
     setIsSending(true);
     console.log('**** send message to', combinedDID);
@@ -146,7 +154,6 @@ const useSendMessage = (
       messageReceiver.current,
       message,
     );
-    console.log('i was never called');
 
     const postBody = {
       fromCAIP10: connectedUser.wallets,
@@ -159,7 +166,23 @@ const useSendMessage = (
       encType: msg.encType,
       sigType: msg.sigType,
       encryptedSecret: msg.encryptedSecret,
+      verificationProof: '',
     };
+
+    const bodyToBeHashed = {
+      fromDID: postBody.fromDID,
+      toDID: postBody.fromDID,
+      fromCAIP10: postBody.fromCAIP10,
+      toCAIP10: postBody.toCAIP10,
+      messageType: postBody.messageType,
+      encType: postBody.encType,
+      encryptedSecret: postBody.encryptedSecret,
+    };
+
+    const signature = await pgpSignBody({
+      bodyToBeHashed,
+    });
+    postBody.verificationProof = `pgpv2:${signature}`;
 
     const chatMessage: ChatMessage = {
       to: caip10ToWallet(postBody.toCAIP10),
@@ -185,13 +208,9 @@ const useSendMessage = (
       // await storeConversationData(combinedDID, cid, [chatMessage]);
       console.log('**** message successfully sent');
       return [cid, chatMessage];
-    } catch (error) {
+    } catch (error: any) {
       console.log('error', error);
-      showToast(
-        'Intent already sent',
-        '',
-        ToasterOptions.TYPE.GRADIENT_PRIMARY,
-      );
+      showToast(error.message, '', ToasterOptions.TYPE.GRADIENT_PRIMARY);
     } finally {
       setIsSending(false);
     }
