@@ -130,7 +130,7 @@ const VideoScreen = () => {
                 zOrder={1}
               />
             ) : (
-              <>{profilePicture && <VideoPlaceholder uri={profilePicture} />}</>
+              <VideoPlaceholder uri={profilePicture || DEFAULT_AVATAR} />
             )}
           </View>
         </View>
