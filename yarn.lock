@@ -6503,11 +6503,6 @@ event-target-shim@6.0.2:
   resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-6.0.2.tgz#ea5348c3618ee8b62ff1d344f01908ee2b8a2b71"
   integrity sha512-8q3LsZjRezbFZ2PN+uP+Q7pnHUMmAOziU2vA2OwoFaKIXxlxl38IylhSSgUorWu/rf4er67w0ikBqjBFk/pomA==
 
-event-target-shim@^1.0.5:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-1.1.1.tgz#a86e5ee6bdaa16054475da797ccddf0c55698491"
-  integrity sha512-9hnrQp9HNLexUaxXvgV83/DNrZET6Yjr5wFZowmv2sfbxYrpGT4YB4pmgvoJ6NmUUr/CDQbC1l99v9EaX3mO5w==
-
 event-target-shim@^5.0.0, event-target-shim@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-5.0.1.tgz#5d4d3ebdf9583d63a5333ce2deb7480ab2b05789"
@@ -11278,7 +11273,7 @@ prompts@^2.0.1, prompts@^2.3.2, prompts@^2.4.0:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@*, prop-types@15.8.1, prop-types@^15.5.0, prop-types@^15.5.10, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.7.x, prop-types@^15.8.1:
+prop-types@*, prop-types@15.8.1, prop-types@^15.5.0, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.7.x, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -11775,15 +11770,14 @@ react-native-webrtc@*:
     event-target-shim "6.0.2"
     tar "6.1.11"
 
-react-native-webrtc@1.84.1:
-  version "1.84.1"
-  resolved "https://registry.yarnpkg.com/react-native-webrtc/-/react-native-webrtc-1.84.1.tgz#0287e50edfcf0a3d13fda3d8854a8adbbcb0be4f"
-  integrity sha512-ewZBgKE+YhLaivo9Wh6aiaEp8ZRvFMqblrkDl1nptQiNNH6CungoAzSOxGDnHWAxepRfiUrW5qnADrsYKmaNeQ==
+react-native-webrtc@^111.0.3:
+  version "111.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-webrtc/-/react-native-webrtc-111.0.3.tgz#909d313f5181e9dc571ff72f1223016eb168942c"
+  integrity sha512-flharkWM5QTSlik+ppK5tf5W86IeabHnrMI7bKkhUJJyibDDMz6X3ReH3dtHWFbiRjDGLktZ4FGwqOCGhL68DA==
   dependencies:
-    base64-js "^1.1.2"
-    event-target-shim "^1.0.5"
-    prop-types "^15.5.10"
-    uuid "^3.3.2"
+    base64-js "1.5.1"
+    debug "4.3.4"
+    event-target-shim "6.0.2"
 
 react-native-webview-crypto@^0.0.25:
   version "0.0.25"

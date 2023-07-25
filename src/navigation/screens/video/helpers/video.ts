@@ -585,6 +585,8 @@ export class Video {
         });
       });
     } catch (err) {
+      console.log('connect err', err);
+
       //   console.log('error in connect', err);
       //   if (this.data.incoming[0].retryCount >= 5) {
       //     console.log('Max retries exceeded, please try again.');

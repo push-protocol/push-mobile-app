@@ -1,8 +1,7 @@
 import {VideoCallStatus} from '@pushprotocol/restapi';
 import {ADDITIONAL_META_TYPE} from '@pushprotocol/restapi/src/lib/payloads';
-import {createSocketConnection} from '@pushprotocol/socket';
-import {EVENTS} from '@pushprotocol/socket/src/lib/constants';
-import {useContext, useState} from 'react';
+import {EVENTS, createSocketConnection} from '@pushprotocol/socket';
+import {useContext, useEffect, useRef, useState} from 'react';
 import InCallManager from 'react-native-incall-manager';
 import {VideoCallContext} from 'src/contexts/VideoContext';
 import {SocketConfig} from 'src/navigation/screens/chats/helpers/socketHelper';
@@ -47,7 +46,8 @@ const newSocket = (userAddress: string) => {
 };
 
 const useGlobalSocket = (userAddress: string) => {
-  const [socket, setSocket] = useState(newSocket(userAddress));
+  // const [socket, setSocket] = useState(newSocket(userAddress));
+  const socket = useRef<any>() as React.MutableRefObject<any>;
 
   const {
     isVideoCallInitiator,
@@ -63,86 +63,104 @@ const useGlobalSocket = (userAddress: string) => {
     return null;
   }
 
-  socket.on('connect', () => {
-    console.log('***//###@@@@ Connected to video socket');
-  });
+  useEffect(() => {
+    if (!socket.current) {
+      socket.current = newSocket(userAddress);
 
-  socket.on('disconnect', () => {
-    console.log('Disconnected from video socket');
-    console.log('connecting agin...');
+      // @ts-ignore
+      socket.current.on(EVENTS.CONNECT, () => {
+        console.log('---PUSHSOcker inited');
+      });
 
-    setTimeout(() => {
-      setSocket(newSocket(userAddress));
-    }, 10000);
-  });
+      // @ts-ignore
+      socket.current.on(EVENTS.DISCONNECT, () => {
+        console.log('Disconnected from video socket');
+        // console.log('connecting agin...');
 
-  socket.on(EVENTS.USER_FEEDS, (feedItem: any) => {
-    try {
-      const {payload} = feedItem || {};
+        // setTimeout(() => {
+        //   setSocket(newSocket(userAddress));
+        //   socket
+        // }, 10000);
+      });
 
-      // check for additionalMeta
-      if (
-        payload &&
-        payload.hasOwnProperty('data') &&
-        payload.data.hasOwnProperty('additionalMeta')
-      ) {
-        // console.log('RECEIVED PAYLOAD', payload);
-        const additionalMeta = payload.data.additionalMeta;
-        // console.log('RECEIVED ADDITIONAL META', additionalMeta);
+      // @ts-ignore
+      socket.current.on(EVENTS.USER_FEEDS, (feedItem: any) => {
+        console.log('abishek got feeds');
 
-        // check for PUSH_VIDEO
-        if (
-          additionalMeta !== null &&
-          additionalMeta.type === `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`
-        ) {
-          const videoCallMetaData = JSON.parse(additionalMeta.data);
-          console.log(
-            'RECIEVED VIDEO DATA',
-            videoCallMetaData.status,
-            isVideoCallInitiator(),
-          );
+        try {
+          const {payload} = feedItem || {};
 
-          console.log('status is', VideoCallStatus[videoCallMetaData.status]);
-
-          if (videoCallMetaData.status === VideoCallStatus.INITIALIZED) {
-            incomingCall(videoCallMetaData);
-          } else if (
-            videoCallMetaData.status === VideoCallStatus.RECEIVED ||
-            videoCallMetaData.status === VideoCallStatus.RETRY_RECEIVED
+          // check for additionalMeta
+          if (
+            payload &&
+            payload.hasOwnProperty('data') &&
+            payload.data.hasOwnProperty('additionalMeta')
           ) {
-            connectWrapper(videoCallMetaData);
-          } else if (
-            videoCallMetaData.status === VideoCallStatus.DISCONNECTED
-          ) {
-            disconnectWrapper();
-          } else if (
-            videoCallMetaData.status === VideoCallStatus.RETRY_INITIALIZED &&
-            isVideoCallInitiator()
-          ) {
-            requestWrapper({
-              senderAddress: videoCallMetaData.recipientAddress,
-              recipientAddress: videoCallMetaData.senderAddress,
-              chatId: videoCallMetaData.chatId,
-              retry: true,
-            });
-          } else if (
-            videoCallMetaData.status === VideoCallStatus.RETRY_INITIALIZED &&
-            !isVideoCallInitiator()
-          ) {
-            acceptRequestWrapper({
-              signalData: videoCallMetaData.signalData,
-              senderAddress: videoCallMetaData.recipientAddress,
-              recipientAddress: videoCallMetaData.senderAddress,
-              chatId: videoCallMetaData.chatId,
-              retry: true,
-            });
+            // console.log('RECEIVED PAYLOAD', payload);
+            const additionalMeta = payload.data.additionalMeta;
+            // console.log('RECEIVED ADDITIONAL META', additionalMeta);
+
+            // check for PUSH_VIDEO
+            if (
+              additionalMeta !== null &&
+              additionalMeta.type === `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`
+            ) {
+              const videoCallMetaData = JSON.parse(additionalMeta.data);
+              console.log(
+                payload.data,
+                'RECIEVED VIDEO DATA',
+                videoCallMetaData.status,
+                isVideoCallInitiator(),
+              );
+
+              console.log(
+                'status is',
+                VideoCallStatus[videoCallMetaData.status],
+              );
+
+              if (videoCallMetaData.status === VideoCallStatus.INITIALIZED) {
+                incomingCall(videoCallMetaData);
+              } else if (
+                videoCallMetaData.status === VideoCallStatus.RECEIVED ||
+                videoCallMetaData.status === VideoCallStatus.RETRY_RECEIVED
+              ) {
+                connectWrapper(videoCallMetaData);
+              } else if (
+                videoCallMetaData.status === VideoCallStatus.DISCONNECTED
+              ) {
+                disconnectWrapper();
+              } else if (
+                videoCallMetaData.status ===
+                  VideoCallStatus.RETRY_INITIALIZED &&
+                isVideoCallInitiator()
+              ) {
+                requestWrapper({
+                  senderAddress: videoCallMetaData.recipientAddress,
+                  recipientAddress: videoCallMetaData.senderAddress,
+                  chatId: videoCallMetaData.chatId,
+                  retry: true,
+                });
+              } else if (
+                videoCallMetaData.status ===
+                  VideoCallStatus.RETRY_INITIALIZED &&
+                !isVideoCallInitiator()
+              ) {
+                acceptRequestWrapper({
+                  signalData: videoCallMetaData.signalData,
+                  senderAddress: videoCallMetaData.recipientAddress,
+                  recipientAddress: videoCallMetaData.senderAddress,
+                  chatId: videoCallMetaData.chatId,
+                  retry: true,
+                });
+              }
+            }
           }
+        } catch (e) {
+          console.error('Error while diplaying received Notification: ', e);
         }
-      }
-    } catch (e) {
-      console.error('Error while diplaying received Notification: ', e);
+      });
     }
-  });
+  }, []);
 
   return socket;
 };
