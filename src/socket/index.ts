@@ -1,7 +1,7 @@
 import {VideoCallStatus} from '@pushprotocol/restapi';
 import {ADDITIONAL_META_TYPE} from '@pushprotocol/restapi/src/lib/payloads';
 import {EVENTS, createSocketConnection} from '@pushprotocol/socket';
-import {useContext, useEffect, useRef, useState} from 'react';
+import {useContext, useEffect, useRef} from 'react';
 import InCallManager from 'react-native-incall-manager';
 import {VideoCallContext} from 'src/contexts/VideoContext';
 import {SocketConfig} from 'src/navigation/screens/chats/helpers/socketHelper';
@@ -64,23 +64,17 @@ const useGlobalSocket = (userAddress: string) => {
   }
 
   useEffect(() => {
-    if (!socket.current) {
+    if (socket.current === undefined) {
       socket.current = newSocket(userAddress);
 
       // @ts-ignore
       socket.current.on(EVENTS.CONNECT, () => {
-        console.log('---PUSHSOcker inited');
+        console.log('---------- CONNECTED TO PUSH SOCKET ----------');
       });
 
       // @ts-ignore
       socket.current.on(EVENTS.DISCONNECT, () => {
-        console.log('Disconnected from video socket');
-        // console.log('connecting agin...');
-
-        // setTimeout(() => {
-        //   setSocket(newSocket(userAddress));
-        //   socket
-        // }, 10000);
+        console.log('---------- DISCONNECTED FROM PUSH SOCKET ----------');
       });
 
       // @ts-ignore
@@ -96,9 +90,7 @@ const useGlobalSocket = (userAddress: string) => {
             payload.hasOwnProperty('data') &&
             payload.data.hasOwnProperty('additionalMeta')
           ) {
-            // console.log('RECEIVED PAYLOAD', payload);
             const additionalMeta = payload.data.additionalMeta;
-            // console.log('RECEIVED ADDITIONAL META', additionalMeta);
 
             // check for PUSH_VIDEO
             if (
@@ -160,6 +152,10 @@ const useGlobalSocket = (userAddress: string) => {
         }
       });
     }
+
+    return () => {
+      socket.current.disconnect();
+    };
   }, []);
 
   return socket;

@@ -164,10 +164,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     console.log('Sent Notification successfully!');
     return res;
   } catch (err: any) {
-    console.error(
-      '[Push SDK] - Error - sendNotification() - ',
-      err.response.data,
-    );
+    console.error('[Push SDK] - Error - sendNotification() - ', err);
     throw err;
   }
 }
