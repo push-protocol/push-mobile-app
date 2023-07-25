@@ -15,7 +15,7 @@ import {initVideoCallData} from 'src/contexts/VideoContext';
 import envConfig from 'src/env.config';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import JsonHelper from 'src/helpers/JsonHelper';
-import {sendVideoCallNotification} from 'src/push_video/payloads';
+import {sendVideoCallNotification} from 'src/push_video/video';
 import {
   endStream,
   enableAudio as restartAudioStream,
@@ -148,7 +148,7 @@ const getIceServers = async () => {
 
 export class Video {
   // user, call related info
-  private signer = '';
+  private signer: any = '';
   private chainId: number;
   private pgpPrivateKey: string;
   private env: ENV = envConfig.ENV as ENV;

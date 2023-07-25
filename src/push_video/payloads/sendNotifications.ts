@@ -1,30 +1,25 @@
-import {ISendNotificationInputOptions, SignerType} from '@pushprotocol/restapi';
-import {getWallet} from '@pushprotocol/restapi/src/lib/chat/helpers';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
-import axios from 'axios';
-import envConfig from 'src/env.config';
-import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
-import MetaStorage from 'src/singletons/MetaStorage';
-
 import {
+  getAPIBaseUrls,
   getCAIPAddress,
   getCAIPDetails,
-  getCAIPWithChainId,
   getConfig,
+  isValidCAIP10NFTAddress,
   isValidETHAddress,
-} from '../helpers';
-import {IDENTITY_TYPE} from './constants';
+} from '@pushprotocol/restapi/src/lib/helpers';
+import {IDENTITY_TYPE} from '@pushprotocol/restapi/src/lib/payloads';
+import {DEFAULT_DOMAIN} from '@pushprotocol/restapi/src/lib/payloads/constants';
 import {
   getPayloadForAPIInput,
   getPayloadIdentity,
   getRecipientFieldForAPIPayload,
   getRecipients,
   getSource,
-  getUUID,
-  getVerificationProof,
-} from './helpers';
+} from '@pushprotocol/restapi/src/lib/payloads/helpers';
+import {ISendNotificationInputOptions} from '@pushprotocol/restapi/src/lib/types';
+import axios from 'axios';
 
-const DEFAULT_DOMAIN = 'push.org';
+import {getUUID, getVerificationProof} from './helpers';
 
 /**
  * Validate options for some scenarios
@@ -59,112 +54,6 @@ function validateOptions(options: any) {
   }
 }
 
-export enum VideoCallStatus {
-  UNINITIALIZED,
-  INITIALIZED,
-  RECEIVED,
-  CONNECTED,
-  DISCONNECTED,
-  RETRY_INITIALIZED,
-  RETRY_RECEIVED,
-}
-
-export enum ADDITIONAL_META_TYPE {
-  CUSTOM = 0,
-  PUSH_VIDEO = 1,
-}
-
-interface VideoCallInfoType {
-  recipientAddress: string;
-  senderAddress: string;
-  chatId: string;
-  signalData: any;
-  status: VideoCallStatus;
-  env: ENV;
-}
-
-interface UserInfoType {
-  signer: SignerType | string; // updated to string for now
-  chainId: number;
-  pgpPrivateKey: string;
-}
-
-interface VideoDataType {
-  recipientAddress: string;
-  senderAddress: string;
-  chatId: string;
-  signalData?: any;
-  status: VideoCallStatus;
-}
-
-export const sendVideoCallNotification = async (
-  {signer, chainId, pgpPrivateKey}: UserInfoType,
-  {
-    recipientAddress,
-    senderAddress,
-    chatId,
-    signalData = null,
-    status,
-    env,
-  }: VideoCallInfoType,
-) => {
-  try {
-    const videoData: VideoDataType = {
-      recipientAddress,
-      senderAddress,
-      chatId,
-      signalData,
-      status,
-    };
-
-    // console.log('sendVideoCallNotification', 'videoData', videoData);
-
-    // console.log('senderAddress', senderAddress);
-    // console.log('recipientAddress', recipientAddress);
-    const senderAddressInCaip = getCAIPWithChainId(senderAddress, chainId);
-    const recipientAddressInCaip = getCAIPWithChainId(
-      recipientAddress,
-      chainId,
-    );
-
-    // console.log(
-    //   'sendVideoCallNotification',
-    //   'senderAddressInCaip',
-    //   senderAddressInCaip,
-    // );
-
-    const notificationText = `Video Call from ${senderAddress}`;
-
-    await sendNotification({
-      senderType: 1, // for chat notification
-      signer,
-      pgpPrivateKey,
-      chatId,
-      type: 3,
-      identityType: 2,
-      notification: {
-        title: notificationText,
-        body: notificationText,
-      },
-      payload: {
-        title: 'VideoCall',
-        body: 'VideoCall',
-        cta: '',
-        img: '',
-        additionalMeta: {
-          type: `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`,
-          data: JSON.stringify(videoData),
-        },
-      },
-      recipients: recipientAddressInCaip,
-      channel: senderAddressInCaip,
-      env,
-    });
-  } catch (err) {
-    console.log('Error occured while sending notification for video call', err);
-  }
-};
-
 export async function sendNotification(options: ISendNotificationInputOptions) {
   try {
     const {
@@ -181,19 +70,11 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       channel,
       graph,
       ipfsHash,
-      env = envConfig.ENV as ENV,
+      env = ENV.PROD,
       chatId,
-      pgpPrivateKey: pgpPrivateKeyArg,
+      pgpPrivateKey,
     } = options || {};
-    let pgpPrivateKey = pgpPrivateKeyArg;
 
-    if (pgpPrivateKey === undefined) {
-      const chatData: UserChatCredentials =
-        await MetaStorage.instance.getUserChatData();
-      pgpPrivateKey = chatData.pgpPrivateKey;
-    }
-
-    options.pgpPrivateKey = pgpPrivateKey;
     validateOptions(options);
 
     if (
@@ -204,28 +85,20 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     ) {
       payload.additionalMeta.domain = DEFAULT_DOMAIN;
     }
-
-    if (signer === undefined) {
-      throw new Error('Signer is necessary!');
-    }
-
-    const wallet = getWallet({account: null, signer});
-    const _channelAddress = getCAIPAddress(env, channel, 'Channel');
-
+    const _channelAddress = await getCAIPAddress(env, channel, 'Channel');
     const channelCAIPDetails = getCAIPDetails(_channelAddress);
 
-    if (!channelCAIPDetails) {
-      throw Error('Invalid Channel CAIP!');
-    }
+    if (!channelCAIPDetails) throw Error('Invalid Channel CAIP!');
 
     const uuid = getUUID();
-
     const chainId = parseInt(channelCAIPDetails.networkId, 10);
 
-    const {API_BASE_URL, EPNS_COMMUNICATOR_CONTRACT} = getConfig(
-      envConfig.ENV as ENV,
-      channelCAIPDetails,
-    );
+    const API_BASE_URL = getAPIBaseUrls(env);
+    let COMMUNICATOR_CONTRACT = '';
+    if (senderType === 0) {
+      const {EPNS_COMMUNICATOR_CONTRACT} = getConfig(env, channelCAIPDetails);
+      COMMUNICATOR_CONTRACT = EPNS_COMMUNICATOR_CONTRACT;
+    }
 
     const _recipients = await getRecipients({
       env,
@@ -243,16 +116,14 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       chainId,
       identityType,
       notificationType: type,
-      verifyingContract: EPNS_COMMUNICATOR_CONTRACT,
+      verifyingContract: COMMUNICATOR_CONTRACT,
       payload: notificationPayload,
       graph,
       ipfsHash,
       uuid,
       // for the pgpv2 verfication proof
       chatId,
-      wallet,
       pgpPrivateKey,
-      env,
     });
 
     const identity = getPayloadIdentity({
@@ -269,12 +140,12 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       verificationProof,
       identity,
       sender:
-        senderType === 1
+        senderType === 1 && !isValidCAIP10NFTAddress(_channelAddress)
           ? `${channelCAIPDetails?.blockchain}:${channelCAIPDetails?.address}`
           : _channelAddress,
       source,
       /** note this recipient key has a different expectation from the BE API, see the funciton for more */
-      recipient: getRecipientFieldForAPIPayload({
+      recipient: await getRecipientFieldForAPIPayload({
         env,
         notificationType: type,
         recipients: recipients || '',
@@ -283,15 +154,20 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     };
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;
+    console.log('Sending Notification...', requestURL, apiPayload);
 
     const res = await axios.post(requestURL, apiPayload, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
+    console.log('Sent Notification successfully!');
     return res;
   } catch (err: any) {
-    console.error('Send notification error -', err);
+    console.error(
+      '[Push SDK] - Error - sendNotification() - ',
+      err.response.data,
+    );
     throw err;
   }
 }

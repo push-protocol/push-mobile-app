@@ -28,7 +28,7 @@
     "@giphy/react-native-sdk": "^1.11.1",
     "@metamask/eth-sig-util": "^5.0.0",
     "@notifee/react-native": "^5.7.0",
-    "@pushprotocol/restapi": "1.2.15",
+    "@pushprotocol/restapi": "1.4.3",
     "@pushprotocol/socket": "latest",
     "@react-native-async-storage/async-storage": "^1.18.2",
     "@react-native-clipboard/clipboard": "^1.11.1",

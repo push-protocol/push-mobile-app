@@ -1,166 +1,18 @@
+import {walletType} from '@pushprotocol/restapi';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {
-  INotificationPayload,
-  ISendNotificationInputOptions,
-  walletType,
-} from '@pushprotocol/restapi/src/lib/types';
-import {pgpSignBody} from 'src/navigation/screens/chats/helpers/signatureHelper';
-import {v4 as uuidv4} from 'uuid';
-
-import {getCAIPAddress} from '../helpers/address';
-import {
-  CHAIN_ID_TO_SOURCE,
   IDENTITY_TYPE,
   NOTIFICATION_TYPE,
-  SOURCE_TYPES,
-} from './constants';
+} from '@pushprotocol/restapi/src/lib/payloads/constants';
+import OpenPGP from 'react-native-fast-openpgp';
+import {v4 as uuidv4} from 'uuid';
 
-/**
- * This function will map the Input options passed to the SDK to the "payload" structure
- * needed by the API input
- *
- * We need notificationPayload only for identityType
- *  - DIRECT_PAYLOAD
- *  - MINIMAL
- */
-export function getPayloadForAPIInput(
-  inputOptions: ISendNotificationInputOptions,
-  recipients: any,
-): INotificationPayload | null {
-  if (inputOptions?.notification && inputOptions?.payload) {
-    return {
-      notification: {
-        title: inputOptions?.notification?.title,
-        body: inputOptions?.notification?.body,
-      },
-      data: {
-        acta: inputOptions?.payload?.cta || '',
-        aimg: inputOptions?.payload?.img || '',
-        amsg: inputOptions?.payload?.body || '',
-        asub: inputOptions?.payload?.title || '',
-        type: inputOptions?.type?.toString() || '',
-        ...(inputOptions?.expiry && {etime: inputOptions?.expiry}),
-        ...(inputOptions?.hidden && {hidden: inputOptions?.hidden}),
-        ...(inputOptions?.payload?.sectype && {
-          sectype: inputOptions?.payload?.sectype,
-        }),
-        ...(inputOptions?.payload?.metadata && {
-          metadata: inputOptions?.payload?.metadata,
-        }),
-        ...(inputOptions?.payload?.additionalMeta && {
-          additionalMeta: inputOptions?.payload?.additionalMeta,
-        }),
-      },
-      recipients: recipients,
-    };
-  }
+import {sign} from '../chat/helpers';
 
-  return null;
-}
+const CryptoJS = require('crypto-js');
 
 export function getUUID() {
   return uuidv4();
-}
-
-/**
- * This function returns the recipient format accepted by the API for different notification types
- */
-export async function getRecipients({
-  env,
-  notificationType,
-  channel,
-  recipients,
-  secretType,
-}: {
-  env: ENV;
-  notificationType: NOTIFICATION_TYPE;
-  channel: string;
-  recipients?: string | string[];
-  secretType?: string;
-}) {
-  let addressInCAIP = '';
-
-  if (secretType) {
-    let secret = '';
-    // return '';
-    /**
-     * Currently SECRET FLOW is yet to be finalized on the backend, so will revisit this later.
-     * But in secret flow we basically generate secret for the address
-     * and send it in { 0xtarget: secret_generated_for_0xtarget } format for all
-     */
-    if (notificationType === NOTIFICATION_TYPE.TARGETTED) {
-      if (typeof recipients === 'string') {
-        addressInCAIP = getCAIPAddress(env, recipients, 'Recipient');
-        secret = ''; // do secret stuff // TODO
-
-        return {
-          [addressInCAIP]: secret,
-        };
-      }
-    } else if (notificationType === NOTIFICATION_TYPE.SUBSET) {
-      if (Array.isArray(recipients)) {
-        const recipientObject = recipients.reduce((_recipients, _rAddress) => {
-          addressInCAIP = getCAIPAddress(env, _rAddress, 'Recipient');
-          secret = ''; // do secret stuff // TODO
-
-          return {
-            ..._recipients,
-            [addressInCAIP]: secret,
-          };
-        }, {});
-
-        return recipientObject;
-      }
-    }
-  } else {
-    /**
-     * NON-SECRET FLOW
-     */
-
-    if (notificationType === NOTIFICATION_TYPE.BROADCAST) {
-      if (!recipients) {
-        // return getCAIPFormat(chainId, channel || '');
-        return getCAIPAddress(env, channel, 'Recipient');
-      }
-    } else if (notificationType === NOTIFICATION_TYPE.TARGETTED) {
-      if (typeof recipients === 'string') {
-        return getCAIPAddress(env, recipients, 'Recipient');
-      }
-    } else if (notificationType === NOTIFICATION_TYPE.SUBSET) {
-      if (Array.isArray(recipients)) {
-        const recipientObject = recipients.reduce((_recipients, _rAddress) => {
-          addressInCAIP = getCAIPAddress(env, _rAddress, 'Recipient');
-          return {
-            ..._recipients,
-            [addressInCAIP]: null,
-          };
-        }, {});
-        return recipientObject;
-      }
-    }
-  }
-  return recipients;
-}
-
-export function getRecipientFieldForAPIPayload({
-  env,
-  notificationType,
-  recipients,
-  channel,
-}: {
-  env: ENV;
-  notificationType: NOTIFICATION_TYPE;
-  recipients: string | string[];
-  channel: string;
-}) {
-  if (
-    notificationType === NOTIFICATION_TYPE.TARGETTED &&
-    typeof recipients === 'string'
-  ) {
-    return getCAIPAddress(env, recipients, 'Recipient');
-  }
-
-  return getCAIPAddress(env, channel, 'Recipient');
 }
 
 export async function getVerificationProof({
@@ -175,10 +27,8 @@ export async function getVerificationProof({
   graph = {},
   uuid,
   chatId,
-}: // wallet,
-// pgpPrivateKey,
-// env,
-{
+  pgpPrivateKey,
+}: {
   senderType: 0 | 1;
   signer: any;
   chainId: number;
@@ -244,73 +94,63 @@ export async function getVerificationProof({
       break;
     }
     case 1: {
-      const signature = await pgpSignBody({
-        bodyToBeHashed: message,
-      });
-
-      verificationProof = `pgpv2:${signature}:meta:${chatId}::uid::${uuid}`;
-      verificationProof = verificationProof.replace(
-        '\nVersion: openpgp-mobile',
-        '',
+      const hash = CryptoJS.SHA256(JSON.stringify(message)).toString();
+      const publicKey = await OpenPGP.convertPrivateKeyToPublicKey(
+        pgpPrivateKey!,
       );
+      const signature = await sign({
+        message: hash,
+        privateKey: pgpPrivateKey!,
+        publicKey: publicKey!,
+      });
+      verificationProof = `pgpv2:${signature}:meta:${chatId}::uid::${uuid}`;
       break;
     }
     default: {
       throw new Error('Invalid SenderType');
     }
   }
-  // console.log('got the verifcaition profo', verificationProof);
-
   return verificationProof;
 }
 
-export function getPayloadIdentity({
-  identityType,
-  payload,
-  notificationType,
-  ipfsHash,
-  graph = {},
-}: {
-  identityType: IDENTITY_TYPE;
-  payload: any;
-  notificationType?: NOTIFICATION_TYPE;
-  ipfsHash?: string;
-  graph?: any;
-}) {
-  if (identityType === IDENTITY_TYPE.MINIMAL) {
-    return `0+${notificationType}+${payload.notification.title}+${payload.notification.body}`;
-  } else if (identityType === IDENTITY_TYPE.IPFS) {
-    return `1+${ipfsHash}`;
-  } else if (identityType === IDENTITY_TYPE.DIRECT_PAYLOAD) {
-    const payloadJSON = JSON.stringify(payload);
-    return `2+${payloadJSON}`;
-  } else if (identityType === IDENTITY_TYPE.SUBGRAPH) {
-    return `3+graph:${graph?.id}+${graph?.counter}`;
-  }
+const twilioIceServers = [
+  {
+    url: 'stun:global.stun.twilio.com:3478',
+    urls: 'stun:global.stun.twilio.com:3478',
+  },
+  {
+    url: 'turn:global.turn.twilio.com:3478?transport=udp',
+    username:
+      '536dd50e769bb617d90a4b44df05959f4bd1c6bbd4031ec995752571588dc275',
+    urls: 'turn:global.turn.twilio.com:3478?transport=udp',
+    credential: 'dNtN2rI2HRB/X+NacRghko0RBiUDjGtw+EdUqMLBLyY=',
+  },
+  {
+    url: 'turn:global.turn.twilio.com:3478?transport=tcp',
+    username:
+      '536dd50e769bb617d90a4b44df05959f4bd1c6bbd4031ec995752571588dc275',
+    urls: 'turn:global.turn.twilio.com:3478?transport=tcp',
+    credential: 'dNtN2rI2HRB/X+NacRghko0RBiUDjGtw+EdUqMLBLyY=',
+  },
+  {
+    url: 'turn:global.turn.twilio.com:443?transport=tcp',
+    username:
+      '536dd50e769bb617d90a4b44df05959f4bd1c6bbd4031ec995752571588dc275',
+    urls: 'turn:global.turn.twilio.com:443?transport=tcp',
+    credential: 'dNtN2rI2HRB/X+NacRghko0RBiUDjGtw+EdUqMLBLyY=',
+  },
+];
 
-  return null;
-}
-
-export function getSource(
-  chainId: number,
-  identityType: IDENTITY_TYPE,
-  senderType: 0 | 1,
-) {
-  if (senderType === 1) {
-    return SOURCE_TYPES.PUSH_VIDEO;
+export const getIceServers = async ({useTwilio}: {useTwilio: boolean}) => {
+  if (useTwilio) {
+    return twilioIceServers;
   }
-  if (identityType === IDENTITY_TYPE.SUBGRAPH) {
-    return SOURCE_TYPES.THE_GRAPH;
-  }
-  return CHAIN_ID_TO_SOURCE[chainId];
-}
-
-export function getCAIPFormat(chainId: number, address: string) {
-  // EVM based chains
-  if ([1, 5, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101].includes(chainId)) {
-    return `eip155:${chainId}:${address}`;
-  }
-
-  return address;
-  // TODO: add support for other non-EVM based chains
-}
+  const res = await fetch(
+    'https://backend-dev.epns.io/apis/v1/turnserver/iceconfig',
+  );
+  const text = await res.text();
+  const {config: decryptedData} = JSON.parse(
+    CryptoJS.AES.decrypt(text, 'turnserversecret').toString(CryptoJS.enc.Utf8),
+  );
+  return decryptedData;
+};
