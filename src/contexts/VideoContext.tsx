@@ -4,8 +4,11 @@ import {useDispatch} from 'react-redux';
 import * as PushNodeClient from 'src/apis';
 import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
-import {Video, VideoCallData} from 'src/navigation/screens/video/helpers/video';
-import {VideoCallStatus} from 'src/push_video/payloads';
+import {
+  Video,
+  VideoCallData,
+  VideoCallStatus,
+} from 'src/navigation/screens/video/helpers/video';
 import {
   setIsReceivingCall,
   setOtherUserProfilePicture,

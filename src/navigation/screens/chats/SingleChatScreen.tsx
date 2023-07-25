@@ -4,7 +4,9 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
 import {GiphyDialog, GiphyDialogEvent} from '@giphy/react-native-sdk';
+import {VideoCallStatus} from '@pushprotocol/restapi';
 import {approveRequestPayload} from '@pushprotocol/restapi/src/lib/chat';
+import {walletToPCAIP10} from '@pushprotocol/restapi/src/lib/helpers';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useNavigation} from '@react-navigation/native';
 import {FlashList} from '@shopify/flash-list';
@@ -35,8 +37,6 @@ import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {VideoCallContext} from 'src/contexts/VideoContext';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
-import {walletToPCAIP10} from 'src/push_video/helpers';
-import {VideoCallStatus} from 'src/push_video/payloads';
 import {setOtherUserProfilePicture} from 'src/redux/videoSlice';
 
 import {AcceptIntent, MessageComponent} from './components';

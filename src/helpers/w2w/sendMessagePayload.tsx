@@ -4,8 +4,11 @@ import {
   getGroup,
 } from '@pushprotocol/restapi/src/lib/chat';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
+import {
+  isValidETHAddress,
+  walletToPCAIP10,
+} from '@pushprotocol/restapi/src/lib/helpers';
 import * as PushNodeClient from 'src/apis';
-import {isValidETHAddress, walletToPCAIP10} from 'src/push_video/helpers';
 
 import {encryptAndSign, pgpSign} from './pgp';
 
@@ -123,7 +126,8 @@ export const sendMessagePayload = async (
       group,
     )) || {};
 
-  const body: ISendMessagePayload = {
+  // TODO: fix later
+  const body: any = {
     fromDID: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),
     toDID: isGroup ? receiverAddress : walletToPCAIP10(receiverAddress),
     fromCAIP10: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),

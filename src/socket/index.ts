@@ -1,10 +1,11 @@
+import {VideoCallStatus} from '@pushprotocol/restapi';
+import {ADDITIONAL_META_TYPE} from '@pushprotocol/restapi/src/lib/payloads';
 import {createSocketConnection} from '@pushprotocol/socket';
 import {EVENTS} from '@pushprotocol/socket/src/lib/constants';
 import {useContext, useState} from 'react';
 import InCallManager from 'react-native-incall-manager';
 import {VideoCallContext} from 'src/contexts/VideoContext';
 import {SocketConfig} from 'src/navigation/screens/chats/helpers/socketHelper';
-import {ADDITIONAL_META_TYPE, VideoCallStatus} from 'src/push_video/payloads';
 
 const enableAudio = (stream: any) => {
   stream.getAudioTracks().forEach((track: any) => (track.enabled = true));
