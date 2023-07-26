@@ -41,7 +41,7 @@ const VideoScreen = () => {
       navigation.goBack();
     } else {
       // @ts-ignore
-      navigation.navigate(Globals.SCREENS.BIOMETRIC);
+      navigation.navigate(Globals.SCREENS.SPLASH);
     }
   };
 

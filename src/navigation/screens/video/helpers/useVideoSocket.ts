@@ -36,7 +36,7 @@ const useVideoSocket = (userAddress: string, callAccepted: boolean) => {
         // fetch the caller info from the backend
         const [success, videoMeta] = await getCallInfoFromServer(userAddress);
         if (success) {
-          await incomingCall(videoMeta);
+          await incomingCall(videoMeta, false);
           acceptRequestWrapper({
             senderAddress: videoMeta.recipientAddress,
             recipientAddress: videoMeta.senderAddress,

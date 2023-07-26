@@ -14,7 +14,7 @@ import OnboardedNavigator from './OnboardedNavigator';
 import OnboardingNavigator from './OnboardingNavigator';
 import useVideoSocket from './screens/video/helpers/useVideoSocket';
 
-const NavGlobalSocket = ({callAccepted, connectedUser, authState}) => {
+const NavGlobalSocket = ({callAccepted, connectedUser}) => {
   useVideoSocket(connectedUser.wallet, callAccepted);
   useGlobalSocket(connectedUser.wallet);
 };
@@ -49,7 +49,6 @@ const Screens = ({callAccepted}) => {
               <NavGlobalSocket
                 callAccepted={callAccepted}
                 connectedUser={connectedUser}
-                authState={authState}
               />
             )}
             <AuthenticatedNavigator />

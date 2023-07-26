@@ -16,7 +16,7 @@ import './shim';
 let isCallAccepted = false;
 
 // listen to the user answer
-if (AppState.currentState === 'background') {
+if (AppState.currentState !== 'active') {
   RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
     console.log('got call', callUUID);
     RNCallKeep.backToForeground();
