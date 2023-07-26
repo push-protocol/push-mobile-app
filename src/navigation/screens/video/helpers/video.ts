@@ -494,6 +494,19 @@ export class Video {
           }
         } else {
           onReceiveMessage(data);
+          // Hacky fix for the acceptor on connect event not running
+          this.peerInstance?.send(
+            JSON.stringify({
+              type: 'isVideoOn',
+              isVideoOn: this.data.local.video,
+            }),
+          );
+          this.peerInstance?.send(
+            JSON.stringify({
+              type: 'isAudioOn',
+              isAudioOn: this.data.local.audio,
+            }),
+          );
         }
       });
 
@@ -649,14 +662,9 @@ export class Video {
     if (this.data.local.video !== state) {
       // need to change the video state
 
-      if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
-        this.peerInstance?.send(
-          JSON.stringify({
-            type: 'isVideoOn',
-            isVideoOn: state,
-          }),
-        );
-      }
+      this.peerInstance?.send(
+        JSON.stringify({type: 'isVideoOn', isVideoOn: state}),
+      );
       if (this.data.local.stream) {
         this.setData(oldData => {
           return produce(oldData, draft => {
@@ -664,8 +672,10 @@ export class Video {
           });
         });
         if (state) {
+          console.log('restarting video stream');
           restartVideoStream(this.data.local.stream);
         } else {
+          console.log('stopping video stream');
           stopVideoStream(this.data.local.stream);
         }
       }
@@ -678,11 +688,9 @@ export class Video {
     if (this.data.local.audio !== state) {
       // need to change the audio state
 
-      if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
-        this.peerInstance?.send(
-          JSON.stringify({type: 'isAudioOn', isAudioOn: state}),
-        );
-      }
+      this.peerInstance?.send(
+        JSON.stringify({type: 'isAudioOn', isAudioOn: state}),
+      );
       if (this.data.local.stream) {
         this.setData(oldData => {
           return produce(oldData, draft => {

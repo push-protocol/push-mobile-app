@@ -79,8 +79,6 @@ const useGlobalSocket = (userAddress: string) => {
 
       // @ts-ignore
       socket.current.on(EVENTS.USER_FEEDS, (feedItem: any) => {
-        console.log('abishek got feeds');
-
         try {
           const {payload} = feedItem || {};
 

@@ -73,7 +73,10 @@ type VideoCallContextType = {
   ) => Promise<void>;
   connectWrapper: (options: VideoCallMetaDataType) => void;
   disconnectWrapper: () => void;
-  incomingCall: (options: VideoCallMetaDataType) => Promise<void>;
+  incomingCall: (
+    options: VideoCallMetaDataType,
+    showModal?: boolean,
+  ) => Promise<void>;
   setVideoCallData: any;
   toggleVideoWrapper: () => void;
   toggleAudioWrapper: () => void;
@@ -194,8 +197,13 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
     videoObjectRef.current.disconnect();
   };
 
-  const incomingCall = async (videoCallMetaData: VideoCallMetaDataType) => {
-    dispatch(setIsReceivingCall(true));
+  const incomingCall = async (
+    videoCallMetaData: VideoCallMetaDataType,
+    showModal = true,
+  ) => {
+    if (showModal) {
+      dispatch(setIsReceivingCall(true));
+    }
     if (!videoObjectRef.current) {
       console.log('videoObjectRef.current', videoObjectRef.current);
       return;
