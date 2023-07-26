@@ -34,9 +34,6 @@ function validateOptions(options: any) {
   if (options.senderType === 0 && options.signer === undefined) {
     throw '[Push SDK] - Error - sendNotification() - "signer" is mandatory!';
   }
-  if (options.senderType === 1 && options.pgpPrivateKey === undefined) {
-    throw '[Push SDK] - Error - sendNotification() - "pgpPrivateKey" is mandatory!';
-  }
 
   /**
    * Apart from IPFS, GRAPH use cases "notification", "payload" is mandatory
@@ -154,7 +151,6 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     };
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;
-    console.log('Sending Notification...', requestURL, apiPayload);
 
     const res = await axios.post(requestURL, apiPayload, {
       headers: {

@@ -142,7 +142,6 @@ const getIceServers = async () => {
     'turnserversecret',
   );
   const config = JSON.parse(decryptedServers).config;
-  console.log('ICE SERVERS', config);
   return config;
 };
 
@@ -238,13 +237,13 @@ export class Video {
         debugConsole: false,
         config: {
           iceServers: iceServers,
-        },
+        } as any,
         webRTC: {
           RTCPeerConnection,
           RTCIceCandidate,
           RTCSessionDescription,
         },
-        stream: this.data.local.stream,
+        stream: this.data.local.stream!,
       });
 
       this.peerInstance.on('signal', (data: any) => {
@@ -402,13 +401,13 @@ export class Video {
         debugConsole: false,
         config: {
           iceServers: iceServers,
-        },
+        } as any,
         webRTC: {
           RTCPeerConnection,
           RTCIceCandidate,
           RTCSessionDescription,
         },
-        stream: this.data.local.stream,
+        stream: this.data.local.stream!,
       });
 
       this.peerInstance.signal(signalData);

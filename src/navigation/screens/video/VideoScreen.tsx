@@ -110,8 +110,7 @@ const VideoScreen = () => {
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
       <View style={styles.videoViewContainer}>
         <View style={styles.videoViewWrapper}>
-          {data.incoming[0].stream ? (
-            // {data.incoming[0].stream && data.incoming[0].video ? (
+          {data.incoming[0].stream && data.incoming[0].video ? (
             <RTCView
               style={styles.videoView}
               objectFit="cover"

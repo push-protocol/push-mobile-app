@@ -4,10 +4,8 @@ import {
   IDENTITY_TYPE,
   NOTIFICATION_TYPE,
 } from '@pushprotocol/restapi/src/lib/payloads/constants';
-import OpenPGP from 'react-native-fast-openpgp';
+import {pgpSignBody} from 'src/navigation/screens/chats/helpers/signatureHelper';
 import {v4 as uuidv4} from 'uuid';
-
-import {sign} from '../chat/helpers';
 
 const CryptoJS = require('crypto-js');
 
@@ -94,15 +92,7 @@ export async function getVerificationProof({
       break;
     }
     case 1: {
-      const hash = CryptoJS.SHA256(JSON.stringify(message)).toString();
-      const publicKey = await OpenPGP.convertPrivateKeyToPublicKey(
-        pgpPrivateKey!,
-      );
-      const signature = await sign({
-        message: hash,
-        privateKey: pgpPrivateKey!,
-        publicKey: publicKey!,
-      });
+      const signature = await pgpSignBody({bodyToBeHashed: message});
       verificationProof = `pgpv2:${signature}:meta:${chatId}::uid::${uuid}`;
       break;
     }
