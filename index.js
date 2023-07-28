@@ -7,6 +7,7 @@ import 'react-native-crypto';
 import 'react-native-get-random-values';
 import {callKeepHelper} from 'src/callkeep';
 import {NotifeClearBadge} from 'src/notifee';
+import MetaStorage from 'src/singletons/MetaStorage';
 import 'text-encoding';
 
 import App from './App';
@@ -22,6 +23,7 @@ if (AppState.currentState !== 'active') {
     RNCallKeep.backToForeground();
     RNCallKeep.endCall(callUUID);
     isCallAccepted = true;
+    MetaStorage.instance.setBackgroundCallAccepted(false);
   });
 }
 

@@ -57,6 +57,8 @@ export default {
 
     // W2W chat
     USER_CHAT_DATA: 'UserChatData',
+
+    IS_BACKGROUND_CALL_ACCEPTED: 'IsBackgroundCallAccepted',
   },
 
   CONSTANTS: {

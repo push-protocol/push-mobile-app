@@ -638,4 +638,30 @@ export default class MetaStorage {
       return false;
     }
   };
+
+  isBackgroundCallAccepted = async () => {
+    try {
+      const res = await AsyncStorage.getItem(
+        GLOBALS.STORAGE.IS_BACKGROUND_CALL_ACCEPTED,
+      );
+      return res !== null && res === 'true';
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  };
+
+  setBackgroundCallAccepted = async status => {
+    try {
+      await AsyncStorage.setItem(
+        GLOBALS.STORAGE.IS_BACKGROUND_CALL_ACCEPTED,
+        status ? 'true' : 'false',
+      );
+    } catch (error) {
+      // Error saving data
+      console.warn(error);
+      return false;
+    }
+  };
 }

@@ -13,6 +13,7 @@ import VideoCallContextProvider from 'src/contexts/VideoContext';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import AppScreens from 'src/navigation';
 import store from 'src/redux';
+import MetaStorage from 'src/singletons/MetaStorage';
 import Notify from 'src/singletons/Notify';
 import {WalletConnectConfig} from 'src/walletconnect';
 
@@ -45,6 +46,7 @@ const App = ({isCallAccepted}) => {
     RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
       RNCallKeep.backToForeground();
       RNCallKeep.endCall(callUUID);
+      MetaStorage.setBackgroundCallAccepted(false);
       setCallAccepted(true);
     });
   }, []);
