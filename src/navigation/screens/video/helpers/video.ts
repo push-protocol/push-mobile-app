@@ -507,6 +507,11 @@ export class Video {
               isAudioOn: this.data.local.audio,
             }),
           );
+          this.setData(oldData => {
+            return produce(oldData, draft => {
+              draft.incoming[0].status = VideoCallStatus.CONNECTED;
+            });
+          });
         }
       });
 
