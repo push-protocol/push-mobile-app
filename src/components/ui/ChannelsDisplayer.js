@@ -64,6 +64,8 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
   useEffect(() => {
     if (
       wc_connector.isConnected &&
+      walletAddress !== '' &&
+      wc_connector.address !== undefined &&
       wc_connector.address.toLowerCase() !== walletAddress.toLowerCase()
     ) {
       wc_connector.provider.disconnect();
