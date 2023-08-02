@@ -31,7 +31,7 @@ const Requests = ({requests, isIntentReceivePage}: RequestProps) => {
         {requests.length === 0 && (
           <View style={styles.emptyRequests}>
             <Text style={styles.emptyRequestsText}>
-              No pending requests at the movement
+              No pending requests at the moment
             </Text>
           </View>
         )}
