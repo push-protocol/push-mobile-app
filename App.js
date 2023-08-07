@@ -46,7 +46,7 @@ const App = ({isCallAccepted}) => {
     RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
       RNCallKeep.backToForeground();
       RNCallKeep.endCall(callUUID);
-      MetaStorage.setBackgroundCallAccepted(false);
+      MetaStorage.instance.setBackgroundCallAccepted(false);
       setCallAccepted(true);
     });
   }, []);

@@ -7,6 +7,7 @@ import 'react-native-crypto';
 import 'react-native-get-random-values';
 import {callKeepHelper} from 'src/callkeep';
 import {NotifeClearBadge} from 'src/notifee';
+import {getUUID} from 'src/push_video/payloads/helpers';
 import MetaStorage from 'src/singletons/MetaStorage';
 import 'text-encoding';
 
@@ -46,13 +47,14 @@ RNCallKeep.setAvailable(true);
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('got msg', remoteMessage);
   if (callKeepHelper.isVideoCall(remoteMessage)) {
-    RNCallKeep.setup(callKeepHelper.options);
+    await RNCallKeep.setup(callKeepHelper.options);
     RNCallKeep.setAvailable(true);
 
     const caller = callKeepHelper.getCaller(remoteMessage);
     const addressTrimmed = callKeepHelper.formatEthAddress(caller);
+    const uuid = getUUID();
     RNCallKeep.displayIncomingCall(
-      caller,
+      uuid,
       addressTrimmed,
       addressTrimmed,
       'generic',
