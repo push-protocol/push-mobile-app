@@ -17,7 +17,7 @@ const callKeepHelper = {
         notificationTitle: 'My app is running on background',
         notificationIcon: 'Path to the resource icon of the notification',
       },
-      additionalPermissions: [],
+      // additionalPermissions: [],
     },
   },
   getCaller: (jsonObj: any) => {

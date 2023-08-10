@@ -19,7 +19,7 @@ const NavGlobalSocket = ({callAccepted, connectedUser}) => {
   useGlobalSocket(connectedUser.wallet);
 };
 
-const Screens = ({callAccepted}) => {
+const Screens = ({callAccepted, toggleAccepted}) => {
   const authState = useSelector(selectAuthState);
   const [connectedUser] = useSelector(selectUsers);
 

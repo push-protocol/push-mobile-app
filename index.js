@@ -17,16 +17,19 @@ import './shim';
 
 let isCallAccepted = false;
 
-// listen to the user answer
+// this is supposed to be called wiz
 if (AppState.currentState !== 'active') {
   RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
-    console.log('got call', callUUID);
     RNCallKeep.backToForeground();
     RNCallKeep.endCall(callUUID);
     isCallAccepted = true;
     MetaStorage.instance.setBackgroundCallAccepted(false);
   });
 }
+
+const toggleAccepted = value => {
+  isCallAccepted = value;
+};
 
 function HeadlessCheck({isHeadless}) {
   useEffect(() => {
@@ -38,16 +41,17 @@ function HeadlessCheck({isHeadless}) {
     return null;
   }
 
-  return <App isCallAccepted={isCallAccepted} />;
+  return (
+    <App isCallAccepted={isCallAccepted} toggleAccepted={toggleAccepted} />
+  );
 }
 
 RNCallKeep.setup(callKeepHelper.options);
 RNCallKeep.setAvailable(true);
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log('got msg', remoteMessage);
   if (callKeepHelper.isVideoCall(remoteMessage)) {
-    await RNCallKeep.setup(callKeepHelper.options);
+    RNCallKeep.setup(callKeepHelper.options);
     RNCallKeep.setAvailable(true);
 
     const caller = callKeepHelper.getCaller(remoteMessage);

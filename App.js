@@ -25,8 +25,8 @@ const handleAppNotificationBadge = async () => {
   await AppBadgeHelper.setAppBadgeCount(0);
 };
 
-const App = ({isCallAccepted}) => {
-  const [isCallLocal, setCallAccepted] = useState(false);
+const App = ({isCallAccepted, toggleAccepted}) => {
+  const [numBgCallAccepted, setNumBgCallAccepted] = useState(0);
   useEffect(() => {
     // PUSH NOTIFICATIONS HANDLING
     Notify.instance.requestDeviceToken(true);
@@ -42,12 +42,13 @@ const App = ({isCallAccepted}) => {
     };
   }, []);
 
+  // this is supposed to be called when app is at bg
   useEffect(() => {
     RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
       RNCallKeep.backToForeground();
       RNCallKeep.endCall(callUUID);
       MetaStorage.instance.setBackgroundCallAccepted(false);
-      setCallAccepted(true);
+      setNumBgCallAccepted(prev => prev + 1);
     });
   }, []);
 
@@ -65,7 +66,10 @@ const App = ({isCallAccepted}) => {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <VideoCallContextProvider>
-            <AppScreens callAccepted={isCallLocal || isCallAccepted} />
+            <AppScreens
+              callAccepted={numBgCallAccepted || isCallAccepted}
+              toggleAccepted={toggleAccepted}
+            />
           </VideoCallContextProvider>
         </PersistGate>
       </Provider>
