@@ -113,7 +113,9 @@ const getMediaStream = async () => {
       !InCallManager.getIsWiredHeadsetPluggedIn(),
     );
   } else if (Platform.OS === 'android') {
-    InCallManager.setSpeakerphoneOn(true);
+    InCallManager.setSpeakerphoneOn(
+      !InCallManager.getIsWiredHeadsetPluggedIn(),
+    );
   }
 
   DeviceEventEmitter.addListener(
@@ -123,6 +125,7 @@ const getMediaStream = async () => {
       if (isPlugged && hasMic) {
         InCallManager.setForceSpeakerphoneOn(false);
       } else if (Platform.OS === 'ios') {
+        InCallManager.setSpeakerphoneOn(!isPlugged);
         InCallManager.setForceSpeakerphoneOn(!isPlugged);
       } else if (Platform.OS === 'android') {
         InCallManager.setSpeakerphoneOn(!isPlugged);
@@ -667,9 +670,11 @@ export class Video {
     if (this.data.local.video !== state) {
       // need to change the video state
 
-      this.peerInstance?.send(
-        JSON.stringify({type: 'isVideoOn', isVideoOn: state}),
-      );
+      if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
+        this.peerInstance?.send(
+          JSON.stringify({type: 'isVideoOn', isVideoOn: state}),
+        );
+      }
       if (this.data.local.stream) {
         this.setData(oldData => {
           return produce(oldData, draft => {
@@ -693,9 +698,11 @@ export class Video {
     if (this.data.local.audio !== state) {
       // need to change the audio state
 
-      this.peerInstance?.send(
-        JSON.stringify({type: 'isAudioOn', isAudioOn: state}),
-      );
+      if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
+        this.peerInstance?.send(
+          JSON.stringify({type: 'isAudioOn', isAudioOn: state}),
+        );
+      }
       if (this.data.local.stream) {
         this.setData(oldData => {
           return produce(oldData, draft => {

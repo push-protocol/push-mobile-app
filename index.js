@@ -27,10 +27,6 @@ if (AppState.currentState !== 'active') {
   });
 }
 
-const toggleAccepted = value => {
-  isCallAccepted = value;
-};
-
 function HeadlessCheck({isHeadless}) {
   useEffect(() => {
     NotifeClearBadge();
@@ -41,9 +37,7 @@ function HeadlessCheck({isHeadless}) {
     return null;
   }
 
-  return (
-    <App isCallAccepted={isCallAccepted} toggleAccepted={toggleAccepted} />
-  );
+  return <App isCallAccepted={isCallAccepted} />;
 }
 
 RNCallKeep.setup(callKeepHelper.options);

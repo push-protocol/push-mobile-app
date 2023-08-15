@@ -147,6 +147,9 @@ const VideoScreen = () => {
           onPress={toggleVideo}>
           <Feather
             name={data.local.video ? 'video' : 'video-off'}
+            color={
+              data.local.video ? Globals.COLORS.BLACK : Globals.COLORS.WHITE
+            }
             style={styles.featherIcon}
           />
         </TouchableOpacity>
@@ -158,6 +161,9 @@ const VideoScreen = () => {
           onPress={toggleAudio}>
           <Feather
             name={data.local.audio ? 'mic' : 'mic-off'}
+            color={
+              data.local.audio ? Globals.COLORS.BLACK : Globals.COLORS.WHITE
+            }
             style={styles.featherIcon}
           />
         </TouchableOpacity>
@@ -215,7 +221,6 @@ const styles = StyleSheet.create({
   },
   featherIcon: {
     fontSize: 20,
-    color: Globals.COLORS.BLACK,
   },
   callendContainer: {
     width: 80,

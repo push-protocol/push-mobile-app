@@ -25,7 +25,7 @@ const handleAppNotificationBadge = async () => {
   await AppBadgeHelper.setAppBadgeCount(0);
 };
 
-const App = ({isCallAccepted, toggleAccepted}) => {
+const App = ({isCallAccepted}) => {
   const [numBgCallAccepted, setNumBgCallAccepted] = useState(0);
   useEffect(() => {
     // PUSH NOTIFICATIONS HANDLING
@@ -66,10 +66,7 @@ const App = ({isCallAccepted, toggleAccepted}) => {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <VideoCallContextProvider>
-            <AppScreens
-              callAccepted={numBgCallAccepted || isCallAccepted}
-              toggleAccepted={toggleAccepted}
-            />
+            <AppScreens callAccepted={numBgCallAccepted || isCallAccepted} />
           </VideoCallContextProvider>
         </PersistGate>
       </Provider>
