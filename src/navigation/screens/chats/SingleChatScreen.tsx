@@ -334,13 +334,14 @@ const SingleChatScreen = ({route}: any) => {
           </View>
         </View>
 
-        <Ionicons
-          name="videocam"
-          size={35}
-          style={styles.videoIcon}
-          color={Globals.COLORS.PINK}
-          onPress={() => startVideoCall()}
-        />
+        <TouchableOpacity onPress={startVideoCall}>
+          <Ionicons
+            name="videocam"
+            size={35}
+            style={styles.videoIcon}
+            color={Globals.COLORS.PINK}
+          />
+        </TouchableOpacity>
       </View>
 
       <KeyboardAvoidingView

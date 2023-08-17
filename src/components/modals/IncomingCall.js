@@ -108,13 +108,10 @@ const IncomingCall = ({stream}) => {
               )}
             </View>
             <View style={styles.options}>
-              <TouchableOpacity style={styles.callAccept}>
-                <Ionicons
-                  name="videocam"
-                  size={24}
-                  color="white"
-                  onPress={handleAnswer}
-                />
+              <TouchableOpacity
+                style={styles.callAccept}
+                onPress={handleAnswer}>
+                <Ionicons name="videocam" size={24} color="white" />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.callReject}
