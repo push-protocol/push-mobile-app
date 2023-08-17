@@ -281,13 +281,13 @@ export class Video {
         this.peerInstance.send(
           JSON.stringify({
             type: 'isVideoOn',
-            isVideoOn: this.data.local.video,
+            value: this.data.local.video,
           }),
         );
         this.peerInstance.send(
           JSON.stringify({
             type: 'isAudioOn',
-            isAudioOn: this.data.local.audio,
+            value: this.data.local.audio,
           }),
         );
       });
@@ -296,25 +296,25 @@ export class Video {
         if (JsonHelper.isJSON(data)) {
           const parsedData = JSON.parse(data);
           if (parsedData.type === 'isVideoOn') {
-            console.log('IS VIDEO ON', parsedData.isVideoOn);
+            console.log('IS VIDEO ON', parsedData.value);
             this.setData(oldData => {
               return produce(oldData, draft => {
-                draft.incoming[0].video = parsedData.isVideoOn;
+                draft.incoming[0].video = parsedData.value;
               });
             });
           }
 
           if (parsedData.type === 'isAudioOn') {
-            console.log('IS AUDIO ON', parsedData.isAudioOn);
+            console.log('IS AUDIO ON', parsedData.value);
             this.setData(oldData => {
               return produce(oldData, draft => {
-                draft.incoming[0].audio = parsedData.isAudioOn;
+                draft.incoming[0].audio = parsedData.value;
               });
             });
           }
 
           if (parsedData.type === 'endCall') {
-            console.log('END CALL', parsedData.endCall);
+            console.log('END CALL', parsedData.value);
             // destroy the local stream
             if (this.data.local.stream) {
               endStream(this.data.local.stream);
@@ -446,13 +446,13 @@ export class Video {
         this.peerInstance.send(
           JSON.stringify({
             type: 'isVideoOn',
-            isVideoOn: this.data.local.video,
+            value: this.data.local.video,
           }),
         );
         this.peerInstance.send(
           JSON.stringify({
             type: 'isAudioOn',
-            isAudioOn: this.data.local.audio,
+            value: this.data.local.audio,
           }),
         );
 
@@ -468,25 +468,25 @@ export class Video {
         if (JsonHelper.isJSON(data)) {
           const parsedData = JSON.parse(data);
           if (parsedData.type === 'isVideoOn') {
-            console.log('IS VIDEO ON', parsedData.isVideoOn);
+            console.log('IS VIDEO ON', parsedData.value);
             this.setData(oldData => {
               return produce(oldData, draft => {
-                draft.incoming[0].video = parsedData.isVideoOn;
+                draft.incoming[0].video = parsedData.value;
               });
             });
           }
 
           if (parsedData.type === 'isAudioOn') {
-            console.log('IS AUDIO ON', parsedData.isAudioOn);
+            console.log('IS AUDIO ON', parsedData.value);
             this.setData(oldData => {
               return produce(oldData, draft => {
-                draft.incoming[0].audio = parsedData.isAudioOn;
+                draft.incoming[0].audio = parsedData.value;
               });
             });
           }
 
           if (parsedData.type === 'endCall') {
-            console.log('END CALL', parsedData.endCall);
+            console.log('END CALL', parsedData.value);
             // destroy the local stream
             if (this.data.local.stream) {
               endStream(this.data.local.stream);
@@ -501,13 +501,13 @@ export class Video {
           this.peerInstance?.send(
             JSON.stringify({
               type: 'isVideoOn',
-              isVideoOn: this.data.local.video,
+              value: this.data.local.video,
             }),
           );
           this.peerInstance?.send(
             JSON.stringify({
               type: 'isAudioOn',
-              isAudioOn: this.data.local.audio,
+              value: this.data.local.audio,
             }),
           );
           this.setData(oldData => {
@@ -626,9 +626,7 @@ export class Video {
     try {
       console.log('disconnect', 'status', this.data.incoming[0].status);
       if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
-        this.peerInstance?.send(
-          JSON.stringify({type: 'endCall', endCall: true}),
-        );
+        this.peerInstance?.send(JSON.stringify({type: 'endCall', value: true}));
         this.peerInstance?.destroy();
       } else {
         // for disconnecting during status INITIALIZED, RECEIVED, RETRY_INITIALIZED, RETRY_RECEIVED
@@ -672,7 +670,7 @@ export class Video {
 
       if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
         this.peerInstance?.send(
-          JSON.stringify({type: 'isVideoOn', isVideoOn: state}),
+          JSON.stringify({type: 'isVideoOn', value: state}),
         );
       }
       if (this.data.local.stream) {
@@ -700,7 +698,7 @@ export class Video {
 
       if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
         this.peerInstance?.send(
-          JSON.stringify({type: 'isAudioOn', isAudioOn: state}),
+          JSON.stringify({type: 'isAudioOn', value: state}),
         );
       }
       if (this.data.local.stream) {
