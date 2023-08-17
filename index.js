@@ -5,7 +5,7 @@ import {AppState} from 'react-native';
 import RNCallKeep from 'react-native-callkeep';
 import 'react-native-crypto';
 import 'react-native-get-random-values';
-import {callKeepHelper} from 'src/callkeep';
+import CallKeepHelper from 'src/callkeep';
 import {NotifeClearBadge} from 'src/notifee';
 import {getUUID} from 'src/push_video/payloads/helpers';
 import MetaStorage from 'src/singletons/MetaStorage';
@@ -40,16 +40,16 @@ function HeadlessCheck({isHeadless}) {
   return <App isCallAccepted={isCallAccepted} />;
 }
 
-RNCallKeep.setup(callKeepHelper.options);
+RNCallKeep.setup(CallKeepHelper.options);
 RNCallKeep.setAvailable(true);
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  if (callKeepHelper.isVideoCall(remoteMessage)) {
-    RNCallKeep.setup(callKeepHelper.options);
+  if (CallKeepHelper.isVideoCall(remoteMessage)) {
+    RNCallKeep.setup(CallKeepHelper.options);
     RNCallKeep.setAvailable(true);
 
-    const caller = callKeepHelper.getCaller(remoteMessage);
-    const addressTrimmed = callKeepHelper.formatEthAddress(caller);
+    const caller = CallKeepHelper.getCaller(remoteMessage);
+    const addressTrimmed = CallKeepHelper.formatEthAddress(caller);
     const uuid = getUUID();
     RNCallKeep.displayIncomingCall(
       uuid,

@@ -534,6 +534,8 @@ PODS:
     - React-RCTImage
   - RNSVG (13.9.0):
     - React-Core
+  - RNVoipPushNotification (3.3.2):
+    - React-Core
   - TcpSockets (3.3.2):
     - React
   - Toast (4.0.0)
@@ -627,6 +629,7 @@ DEPENDENCIES:
   - RNOS (from `../node_modules/react-native-os`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
+  - RNVoipPushNotification (from `../node_modules/react-native-voip-push-notification`)
   - TcpSockets (from `../node_modules/react-native-tcp`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -812,6 +815,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNSVG:
     :path: "../node_modules/react-native-svg"
+  RNVoipPushNotification:
+    :path: "../node_modules/react-native-voip-push-notification"
   TcpSockets:
     :path: "../node_modules/react-native-tcp"
   Yoga:
@@ -914,6 +919,7 @@ SPEC CHECKSUMS:
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
   RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
+  RNVoipPushNotification: 543e18f83089134a35e7f1d2eba4c8b1f7776b08
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   Yoga: 7a4d48cfb35dfa542151e615fa73c1a0d88caf21

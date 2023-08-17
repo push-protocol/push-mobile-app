@@ -11759,6 +11759,11 @@ react-native-video@^6.0.0-alpha.1:
     keymirror "^0.1.1"
     prop-types "^15.7.2"
 
+react-native-voip-push-notification@^3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/react-native-voip-push-notification/-/react-native-voip-push-notification-3.3.2.tgz#59ec95348f6a336763d79dd6fb9242e509ff35e8"
+  integrity sha512-O5oNRmlL4iEAYr9os1PJZPetIxZ5j4qy9xLzF/A3/6x94gRmXihIT9o26jtGnuJfijUm5aM8GvNqcLnOAwtjXA==
+
 react-native-webrtc@*:
   version "111.0.0"
   resolved "https://registry.yarnpkg.com/react-native-webrtc/-/react-native-webrtc-111.0.0.tgz#60a44d32207e4dce7b038d2056a3760fc5e21861"
