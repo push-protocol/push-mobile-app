@@ -5,7 +5,9 @@ import {VideoCallContext} from 'src/contexts/VideoContext';
 import ENV_CONFIG from 'src/env.config';
 import MetaStorage from 'src/singletons/MetaStorage';
 
-const getCallInfoFromServer = async (userAddress: string): Promise<any> => {
+export const getCallInfoFromServer = async (
+  userAddress: string,
+): Promise<any> => {
   try {
     console.log('getting call info from server');
     const URI = `${ENV_CONFIG.EPNS_SERVER}/v1/users/eip155:${userAddress}/feeds?page=1&limit=1&spam=false&showHidden=true`;
