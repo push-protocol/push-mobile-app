@@ -316,7 +316,6 @@ const SingleChatScreen = ({route}: any) => {
           color={Globals.COLORS.CHAT_LIGHT_DARK}
           onPress={() => navigation.goBack()}
         />
-
         <View style={styles.info}>
           <View style={styles.user}>
             <Image
@@ -334,13 +333,8 @@ const SingleChatScreen = ({route}: any) => {
           </View>
         </View>
 
-        <TouchableOpacity onPress={startVideoCall}>
-          <Ionicons
-            name="videocam"
-            size={35}
-            style={styles.videoIcon}
-            color={Globals.COLORS.PINK}
-          />
+        <TouchableOpacity onPress={startVideoCall} style={styles.videoIcon}>
+          <Ionicons name="videocam" size={35} color={Globals.COLORS.PINK} />
         </TouchableOpacity>
       </View>
 
