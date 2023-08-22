@@ -18,14 +18,14 @@ import './shim';
 let isCallAccepted = false;
 
 // this is supposed to be called wiz
-if (AppState.currentState !== 'active') {
-  RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
-    RNCallKeep.backToForeground();
-    RNCallKeep.endCall(callUUID);
-    isCallAccepted = true;
-    MetaStorage.instance.setBackgroundCallAccepted(false);
-  });
-}
+// if (AppState.currentState !== 'active') {
+//   RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
+//     RNCallKeep.backToForeground();
+//     RNCallKeep.endCall(callUUID);
+//     isCallAccepted = true;
+//     MetaStorage.instance.setBackgroundCallAccepted(false);
+//   });
+// }
 
 function HeadlessCheck({isHeadless}) {
   useEffect(() => {
@@ -40,26 +40,26 @@ function HeadlessCheck({isHeadless}) {
   return <App isCallAccepted={isCallAccepted} />;
 }
 
-RNCallKeep.setup(CallKeepHelper.options);
-RNCallKeep.setAvailable(true);
+// RNCallKeep.setup(CallKeepHelper.options);
+// RNCallKeep.setAvailable(true);
 
-messaging().setBackgroundMessageHandler(async remoteMessage => {
-  if (CallKeepHelper.isVideoCall(remoteMessage)) {
-    RNCallKeep.setup(CallKeepHelper.options);
-    RNCallKeep.setAvailable(true);
+// messaging().setBackgroundMessageHandler(async remoteMessage => {
+//   if (CallKeepHelper.isVideoCall(remoteMessage)) {
+//     RNCallKeep.setup(CallKeepHelper.options);
+//     RNCallKeep.setAvailable(true);
 
-    const caller = CallKeepHelper.getCaller(remoteMessage);
-    const addressTrimmed = CallKeepHelper.formatEthAddress(caller);
-    const uuid = getUUID();
-    RNCallKeep.displayIncomingCall(
-      uuid,
-      addressTrimmed,
-      addressTrimmed,
-      'generic',
-      true,
-    );
-  }
-});
+//     const caller = CallKeepHelper.getCaller(remoteMessage);
+//     const addressTrimmed = CallKeepHelper.formatEthAddress(caller);
+//     const uuid = getUUID();
+//     RNCallKeep.displayIncomingCall(
+//       uuid,
+//       addressTrimmed,
+//       addressTrimmed,
+//       'generic',
+//       true,
+//     );
+//   }
+// });
 
 if (isCallAccepted) {
   AppRegistry.registerComponent(appName, () => HeadlessCheck);
@@ -67,7 +67,7 @@ if (isCallAccepted) {
   AppRegistry.registerComponent(appName, () => HeadlessCheck);
 }
 
-AppRegistry.registerHeadlessTask(
-  'RNCallKeepBackgroundMessage',
-  () => bgCalling,
-);
+// AppRegistry.registerHeadlessTask(
+//   'RNCallKeepBackgroundMessage',
+//   () => bgCalling,
+// );

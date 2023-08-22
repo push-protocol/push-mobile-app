@@ -49,14 +49,15 @@ const App = ({isCallAccepted}) => {
   }, []);
 
   // this is supposed to be called when app is at bg
-  useEffect(() => {
-    RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
-      RNCallKeep.backToForeground();
-      RNCallKeep.endCall(callUUID);
-      MetaStorage.instance.setBackgroundCallAccepted(false);
-      setNumBgCallAccepted(prev => prev + 1);
-    });
-  }, []);
+  // android only
+  // useEffect(() => {
+  //   RNCallKeep.addEventListener('answerCall', async ({callUUID}) => {
+  //     RNCallKeep.backToForeground();
+  //     RNCallKeep.endCall(callUUID);
+  //     MetaStorage.instance.setBackgroundCallAccepted(false);
+  //     setNumBgCallAccepted(prev => prev + 1);
+  //   });
+  // }, []);
 
   useEffect(() => {
     VoipPushNotification.addEventListener('register', token => {
