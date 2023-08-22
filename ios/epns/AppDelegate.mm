@@ -40,6 +40,13 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   [RNVoipPushNotificationManager voipRegistration]; // RNVoipPushNotification addon
   RCTAppSetupPrepareApp(application);
 
+  [RNCallKeep setup:@{
+    @"appName": @"Push (EPNS)",
+    @"maximumCallGroups": @1,
+    @"maximumCallsPerCallGroup": @1,
+    @"supportsVideo": @YES,
+  }];
+
   RCTBridge *bridge = [self.reactDelegate createBridgeWithDelegate:self launchOptions:launchOptions];
 
 #if RCT_NEW_ARCH_ENABLED
@@ -66,6 +73,16 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   [self.window makeKeyAndVisible];
   [super application:application didFinishLaunchingWithOptions:launchOptions];
   return YES;
+}
+
+//Add below delegate to handle invocking of call
+ - (BOOL)application:(UIApplication *)application
+ continueUserActivity:(NSUserActivity *)userActivity
+   restorationHandler:(void(^)(NSArray * __nullable restorableObjects))restorationHandler
+{
+  return [RNCallKeep application:application
+           continueUserActivity:userActivity
+             restorationHandler:restorationHandler];
 }
 
 /// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
@@ -165,6 +182,8 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 
   // --- this is optional, only required if you want to call `completion()` on the js side
   [RNVoipPushNotificationManager addCompletionHandler:uuid completionHandler:completion];
+
+  NSLog(@"VoIP message received: %@, %@, %@", uuid, callerName, handle);
 
   // --- Process the received push
   [RNVoipPushNotificationManager didReceiveIncomingPushWithPayload:payload forType:(NSString *)type];

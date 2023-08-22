@@ -882,7 +882,7 @@ SPEC CHECKSUMS:
   React-logger: 96d904c5bc87c2660d48e6a36fb2edf65f9cfb11
   react-native-config: 5330c8258265c1e5fdb8c009d2cabd6badd96727
   react-native-encrypted-storage: db300a3f2f0aba1e818417c1c0a6be549038deb7
-  react-native-fast-openpgp: 791dd8a91f78eab43f83f86ac157e82a6624f282
+  react-native-fast-openpgp: 83e0dd664bbf91c05e066321a4a70060ba8271de
   react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-hash: 4664516df1834e1293b30e711c63f61f7f801b6a
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846

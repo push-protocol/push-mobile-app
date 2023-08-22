@@ -9,15 +9,16 @@ class CallKeepHelper {
     this.currentCallId = null;
   }
 
-  configure = (
+  configure = async (
     incomingcallAnswer: EventHandlers['answerCall'],
     endIncomingCall: EventHandlers['endCall'],
   ) => {
     try {
-      this.setupCallKeep();
+      await this.setupCallKeep();
       Platform.OS === 'android' && RNCallKeep.setAvailable(true);
       RNCallKeep.addEventListener('answerCall', incomingcallAnswer);
       RNCallKeep.addEventListener('endCall', endIncomingCall);
+      console.log('callkeep configured');
     } catch (error: any) {
       console.error('Error initializing callkeep:', error?.message);
     }
