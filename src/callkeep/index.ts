@@ -10,15 +10,16 @@ class CallKeepHelper {
   }
 
   configure = async (
-    incomingcallAnswer: EventHandlers['answerCall'],
-    endIncomingCall: EventHandlers['endCall'],
+    answerCall: EventHandlers['answerCall'],
+    endCall: EventHandlers['endCall'],
   ) => {
     try {
-      await this.setupCallKeep();
-      Platform.OS === 'android' && RNCallKeep.setAvailable(true);
-      RNCallKeep.addEventListener('answerCall', incomingcallAnswer);
-      RNCallKeep.addEventListener('endCall', endIncomingCall);
-      console.log('callkeep configured');
+      if (Platform.OS === 'android') {
+        await this.setupCallKeep();
+        RNCallKeep.setAvailable(true);
+      }
+      RNCallKeep.addEventListener('answerCall', answerCall);
+      RNCallKeep.addEventListener('endCall', endCall);
     } catch (error: any) {
       console.error('Error initializing callkeep:', error?.message);
     }
@@ -26,7 +27,7 @@ class CallKeepHelper {
 
   setupCallKeep = async () => {
     try {
-      await RNCallKeep.setup({
+      return await RNCallKeep.setup({
         ios: {
           appName: 'Push (EPNS)',
           supportsVideo: true,

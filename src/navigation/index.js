@@ -1,5 +1,6 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect} from 'react';
+import {Platform} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import IncomingCall from 'src/components/modals/IncomingCall';
@@ -34,7 +35,7 @@ const Screens = ({callAccepted}) => {
   return (
     <>
       <NavigationContainer>
-        {isReceivingCall && <IncomingCall />}
+        {isReceivingCall && Platform.OS === 'android' && <IncomingCall />}
 
         {authState === GLOBALS.AUTH_STATE.INITIALIZING && (
           <InitializingNavigator />
