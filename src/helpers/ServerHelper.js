@@ -1,11 +1,9 @@
-import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import {Platform} from 'react-native';
 import ENV_CONFIG from 'src/env.config';
 import {getCAIPAddress} from 'src/helpers/CAIPHelper';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
-import Notify from 'src/singletons/Notify';
 
 // Download Helper Function
 const ServerHelper = {
@@ -16,14 +14,23 @@ const ServerHelper = {
 
     // prepare payloads
     const token = await MetaStorage.instance.getPushToken();
+    const apnsToken = await MetaStorage.instance.getApnsVoipToken();
     const platform = Platform.OS;
     console.log('doing logs', token);
 
-    const body = JSON.stringify({
+    const body = {
       device_token: token,
       wallet: getCAIPAddress(wallet),
       platform: platform,
-    });
+    };
+
+    if (Platform.OS === 'ios' && apnsToken !== '') {
+      // iOS device, need to register the token on the server
+      console.log('apns token is', apnsToken);
+      body.apn_token = apnsToken;
+    }
+
+    console.log('sending this body, ' + JSON.stringify(body));
 
     try {
       const res = await fetch(apiURL, {
@@ -32,7 +39,7 @@ const ServerHelper = {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: body,
+        body: JSON.stringify(body),
       });
 
       await MetaStorage.instance.setTokenServerSynced(true);

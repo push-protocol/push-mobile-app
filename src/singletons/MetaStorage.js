@@ -31,6 +31,16 @@ export default class MetaStorage {
     }
   };
 
+  getApnsVoipToken = async () => {
+    try {
+      let token = await AsyncStorage.getItem(GLOBALS.STORAGE.APNS_VOIP_TOKEN);
+      return token || '';
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
+  };
+
   setPushToken = async newToken => {
     try {
       let token = newToken;
@@ -41,6 +51,16 @@ export default class MetaStorage {
       await AsyncStorage.setItem(GLOBALS.STORAGE.PUSH_TOKEN, token);
     } catch (error) {
       // Error saving data
+      console.warn(error);
+      return false;
+    }
+  };
+
+  setApnsVoipToken = async newToken => {
+    try {
+      let token = newToken || '';
+      await AsyncStorage.setItem(GLOBALS.STORAGE.APNS_VOIP_TOKEN, token);
+    } catch (error) {
       console.warn(error);
       return false;
     }
