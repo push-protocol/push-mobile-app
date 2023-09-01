@@ -127,7 +127,7 @@ class CallKeepHelper {
 
   getCaller(jsonObj: any) {
     try {
-      const bodyStr = jsonObj.notification.body;
+      const bodyStr = jsonObj.data.body;
       const regex = /0x[\w]+/;
       const match = bodyStr.match(regex);
       return match[0];
@@ -145,7 +145,7 @@ class CallKeepHelper {
 
   isVideoCall(jsonObj: any) {
     try {
-      const bodyStr = jsonObj.notification.title;
+      const bodyStr = jsonObj.data.title;
       const regex = /Push Video - Video Call from/;
       const match = bodyStr.match(regex);
       console.log('is a video call', match !== null);
