@@ -27,17 +27,19 @@ export const useNotification = () => {
 
   // Background call handling for android
   useEffect(() => {
-    RNCallKeep.addEventListener('answerCall', async () => {
-      if (Platform.OS === 'android') {
-        CallkeepHelper.backToForeground();
-        CallkeepHelper.endAllCall();
-      }
-      answerIncomingCall();
-    });
+    if (Platform.OS === 'android') {
+      RNCallKeep.addEventListener('answerCall', async () => {
+        if (Platform.OS === 'android') {
+          CallkeepHelper.backToForeground();
+          CallkeepHelper.endAllCall();
+        }
+        answerIncomingCall();
+      });
 
-    RNCallKeep.addEventListener('endCall', async () => {
-      endIncomingCall();
-    });
+      RNCallKeep.addEventListener('endCall', async () => {
+        endIncomingCall();
+      });
+    }
   }, []);
 
   // Background call handling for ios

@@ -38,6 +38,7 @@ const useVideoSocket = (userAddress: string, callAccepted: boolean) => {
       const alreadyNavigated =
         await MetaStorage.instance.isBackgroundCallAccepted();
       if (callAccepted && !alreadyNavigated) {
+        await MetaStorage.instance.setBackgroundCallAccepted(true);
         // fetch the caller info from the backend
         const [success, videoMeta] = await getCallInfoFromServer(userAddress);
         if (success) {
@@ -49,7 +50,6 @@ const useVideoSocket = (userAddress: string, callAccepted: boolean) => {
             signalData: videoMeta.signalData,
           });
 
-          MetaStorage.instance.setBackgroundCallAccepted(true);
           // @ts-ignore
           navigation.navigate(GLOBALS.SCREENS.VIDEOCALL);
         }
