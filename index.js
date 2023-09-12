@@ -43,11 +43,12 @@ function HeadlessCheck({isHeadless}) {
   return <App isCallAccepted={isCallAccepted} />;
 }
 
+if (Platform.OS === 'android') {
+  CallKeepHelper.setupCallKeep();
+  RNCallKeep.setAvailable(true);
+}
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   if (Platform.OS === 'android' && CallKeepHelper.isVideoCall(remoteMessage)) {
-    await CallKeepHelper.setupCallKeep();
-    RNCallKeep.setAvailable(true);
-
     const caller = CallKeepHelper.getCaller(remoteMessage);
     const addressTrimmed = CallKeepHelper.formatEthAddress(caller);
     const uuid = getUUID();
