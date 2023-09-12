@@ -1,8 +1,8 @@
 // @ts-ignore
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {produce} from 'immer';
-// import {DeviceEventEmitter, Platform} from 'react-native';
-// import InCallManager from 'react-native-incall-manager';
+import {DeviceEventEmitter, Platform} from 'react-native';
+import InCallManager from 'react-native-incall-manager';
 import RNPeer from 'react-native-simple-peer';
 import {
   MediaStream,
@@ -11,10 +11,12 @@ import {
   RTCSessionDescription,
 } from 'react-native-webrtc';
 import {mediaDevices} from 'react-native-webrtc';
+import CallKeepHelper from 'src/callkeep';
 import {initVideoCallData} from 'src/contexts/VideoContext';
 import envConfig from 'src/env.config';
+import CryptoHelper from 'src/helpers/CryptoHelper';
 import JsonHelper from 'src/helpers/JsonHelper';
-import {sendVideoCallNotification} from 'src/push_video/payloads';
+import {sendVideoCallNotification} from 'src/push_video/video';
 import {
   endStream,
   enableAudio as restartAudioStream,
@@ -107,27 +109,30 @@ const getMediaStream = async () => {
     video: true,
   });
 
-  // if (Platform.OS === 'ios') {
-  //   InCallManager.setForceSpeakerphoneOn(
-  //     !InCallManager.getIsWiredHeadsetPluggedIn(),
-  //   );
-  // } else if (Platform.OS === 'android') {
-  //   InCallManager.setSpeakerphoneOn(true);
-  // }
+  if (Platform.OS === 'ios') {
+    InCallManager.setForceSpeakerphoneOn(
+      !InCallManager.getIsWiredHeadsetPluggedIn(),
+    );
+  } else if (Platform.OS === 'android') {
+    InCallManager.setSpeakerphoneOn(
+      !InCallManager.getIsWiredHeadsetPluggedIn(),
+    );
+  }
 
-  // DeviceEventEmitter.addListener(
-  //   'WiredHeadset',
-  //   ({isPlugged, hasMic}: {isPlugged: boolean; hasMic: boolean}) => {
-  //     console.log('WiredHeadset', isPlugged, hasMic);
-  //     if (isPlugged && hasMic) {
-  //       InCallManager.setForceSpeakerphoneOn(false);
-  //     } else if (Platform.OS === 'ios') {
-  //       InCallManager.setForceSpeakerphoneOn(!isPlugged);
-  //     } else if (Platform.OS === 'android') {
-  //       InCallManager.setSpeakerphoneOn(!isPlugged);
-  //     }
-  //   },
-  // );
+  DeviceEventEmitter.addListener(
+    'WiredHeadset',
+    ({isPlugged, hasMic}: {isPlugged: boolean; hasMic: boolean}) => {
+      console.log('WiredHeadset', isPlugged, hasMic);
+      if (isPlugged && hasMic) {
+        InCallManager.setForceSpeakerphoneOn(false);
+      } else if (Platform.OS === 'ios') {
+        InCallManager.setSpeakerphoneOn(!isPlugged);
+        InCallManager.setForceSpeakerphoneOn(!isPlugged);
+      } else if (Platform.OS === 'android') {
+        InCallManager.setSpeakerphoneOn(!isPlugged);
+      }
+    },
+  );
 
   return devices;
 };
@@ -135,13 +140,18 @@ const getMediaStream = async () => {
 const getIceServers = async () => {
   const apiUrl = envConfig.EPNS_SERVER + envConfig.ENDPOINT_ICE_SERVERS;
   const response = await fetch(apiUrl);
-  const json = await response.json();
-  return json;
+  const encryptedRes = await response.text();
+  const decryptedServers = CryptoHelper.decryptWithAES(
+    encryptedRes,
+    'turnserversecret',
+  );
+  const config = JSON.parse(decryptedServers).config;
+  return config;
 };
 
 export class Video {
   // user, call related info
-  private signer = '';
+  private signer: any = '';
   private chainId: number;
   private pgpPrivateKey: string;
   private env: ENV = envConfig.ENV as ENV;
@@ -231,13 +241,13 @@ export class Video {
         debugConsole: false,
         config: {
           iceServers: iceServers,
-        },
+        } as any,
         webRTC: {
           RTCPeerConnection,
           RTCIceCandidate,
           RTCSessionDescription,
         },
-        stream: this.data.local.stream,
+        stream: this.data.local.stream!,
       });
 
       this.peerInstance.on('signal', (data: any) => {
@@ -272,13 +282,13 @@ export class Video {
         this.peerInstance.send(
           JSON.stringify({
             type: 'isVideoOn',
-            isVideoOn: this.data.local.video,
+            value: this.data.local.video,
           }),
         );
         this.peerInstance.send(
           JSON.stringify({
             type: 'isAudioOn',
-            isAudioOn: this.data.local.audio,
+            value: this.data.local.audio,
           }),
         );
       });
@@ -287,25 +297,25 @@ export class Video {
         if (JsonHelper.isJSON(data)) {
           const parsedData = JSON.parse(data);
           if (parsedData.type === 'isVideoOn') {
-            console.log('IS VIDEO ON', parsedData.isVideoOn);
+            console.log('IS VIDEO ON', parsedData.value);
             this.setData(oldData => {
               return produce(oldData, draft => {
-                draft.incoming[0].video = parsedData.isVideoOn;
+                draft.incoming[0].video = parsedData.value;
               });
             });
           }
 
           if (parsedData.type === 'isAudioOn') {
-            console.log('IS AUDIO ON', parsedData.isAudioOn);
+            console.log('IS AUDIO ON', parsedData.value);
             this.setData(oldData => {
               return produce(oldData, draft => {
-                draft.incoming[0].audio = parsedData.isAudioOn;
+                draft.incoming[0].audio = parsedData.value;
               });
             });
           }
 
           if (parsedData.type === 'endCall') {
-            console.log('END CALL', parsedData.endCall);
+            console.log('END CALL', parsedData.value);
             // destroy the local stream
             if (this.data.local.stream) {
               endStream(this.data.local.stream);
@@ -395,13 +405,13 @@ export class Video {
         debugConsole: false,
         config: {
           iceServers: iceServers,
-        },
+        } as any,
         webRTC: {
           RTCPeerConnection,
           RTCIceCandidate,
           RTCSessionDescription,
         },
-        stream: this.data.local.stream,
+        stream: this.data.local.stream!,
       });
 
       this.peerInstance.signal(signalData);
@@ -437,13 +447,13 @@ export class Video {
         this.peerInstance.send(
           JSON.stringify({
             type: 'isVideoOn',
-            isVideoOn: this.data.local.video,
+            value: this.data.local.video,
           }),
         );
         this.peerInstance.send(
           JSON.stringify({
             type: 'isAudioOn',
-            isAudioOn: this.data.local.audio,
+            value: this.data.local.audio,
           }),
         );
 
@@ -459,25 +469,25 @@ export class Video {
         if (JsonHelper.isJSON(data)) {
           const parsedData = JSON.parse(data);
           if (parsedData.type === 'isVideoOn') {
-            console.log('IS VIDEO ON', parsedData.isVideoOn);
+            console.log('IS VIDEO ON', parsedData.value);
             this.setData(oldData => {
               return produce(oldData, draft => {
-                draft.incoming[0].video = parsedData.isVideoOn;
+                draft.incoming[0].video = parsedData.value;
               });
             });
           }
 
           if (parsedData.type === 'isAudioOn') {
-            console.log('IS AUDIO ON', parsedData.isAudioOn);
+            console.log('IS AUDIO ON', parsedData.value);
             this.setData(oldData => {
               return produce(oldData, draft => {
-                draft.incoming[0].audio = parsedData.isAudioOn;
+                draft.incoming[0].audio = parsedData.value;
               });
             });
           }
 
           if (parsedData.type === 'endCall') {
-            console.log('END CALL', parsedData.endCall);
+            console.log('END CALL', parsedData.value);
             // destroy the local stream
             if (this.data.local.stream) {
               endStream(this.data.local.stream);
@@ -488,6 +498,24 @@ export class Video {
           }
         } else {
           onReceiveMessage(data);
+          // Hacky fix for the acceptor on connect event not running
+          this.peerInstance?.send(
+            JSON.stringify({
+              type: 'isVideoOn',
+              value: this.data.local.video,
+            }),
+          );
+          this.peerInstance?.send(
+            JSON.stringify({
+              type: 'isAudioOn',
+              value: this.data.local.audio,
+            }),
+          );
+          this.setData(oldData => {
+            return produce(oldData, draft => {
+              draft.incoming[0].status = VideoCallStatus.CONNECTED;
+            });
+          });
         }
       });
 
@@ -578,6 +606,8 @@ export class Video {
         });
       });
     } catch (err) {
+      console.log('connect err', err);
+
       //   console.log('error in connect', err);
       //   if (this.data.incoming[0].retryCount >= 5) {
       //     console.log('Max retries exceeded, please try again.');
@@ -597,9 +627,7 @@ export class Video {
     try {
       console.log('disconnect', 'status', this.data.incoming[0].status);
       if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
-        this.peerInstance?.send(
-          JSON.stringify({type: 'endCall', endCall: true}),
-        );
+        this.peerInstance?.send(JSON.stringify({type: 'endCall', value: true}));
         this.peerInstance?.destroy();
       } else {
         // for disconnecting during status INITIALIZED, RECEIVED, RETRY_INITIALIZED, RETRY_RECEIVED
@@ -626,6 +654,8 @@ export class Video {
         endStream(this.data.local.stream);
       }
 
+      // end the native call
+      CallKeepHelper.endAllCall();
       // reset the state
       this.setData(() => initVideoCallData);
     } catch (err) {
@@ -643,10 +673,7 @@ export class Video {
 
       if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
         this.peerInstance?.send(
-          JSON.stringify({
-            type: 'isVideoOn',
-            isVideoOn: state,
-          }),
+          JSON.stringify({type: 'isVideoOn', value: state}),
         );
       }
       if (this.data.local.stream) {
@@ -656,8 +683,10 @@ export class Video {
           });
         });
         if (state) {
+          console.log('restarting video stream');
           restartVideoStream(this.data.local.stream);
         } else {
+          console.log('stopping video stream');
           stopVideoStream(this.data.local.stream);
         }
       }
@@ -672,7 +701,7 @@ export class Video {
 
       if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
         this.peerInstance?.send(
-          JSON.stringify({type: 'isAudioOn', isAudioOn: state}),
+          JSON.stringify({type: 'isAudioOn', value: state}),
         );
       }
       if (this.data.local.stream) {

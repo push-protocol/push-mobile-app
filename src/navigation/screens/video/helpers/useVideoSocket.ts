@@ -3,8 +3,11 @@ import {useContext, useEffect} from 'react';
 import GLOBALS from 'src/Globals';
 import {VideoCallContext} from 'src/contexts/VideoContext';
 import ENV_CONFIG from 'src/env.config';
+import MetaStorage from 'src/singletons/MetaStorage';
 
-const getCallInfoFromServer = async (userAddress: string): Promise<any> => {
+export const getCallInfoFromServer = async (
+  userAddress: string,
+): Promise<any> => {
   try {
     console.log('getting call info from server');
     const URI = `${ENV_CONFIG.EPNS_SERVER}/v1/users/eip155:${userAddress}/feeds?page=1&limit=1&spam=false&showHidden=true`;
@@ -32,11 +35,14 @@ const useVideoSocket = (userAddress: string, callAccepted: boolean) => {
 
   useEffect(() => {
     (async () => {
-      if (callAccepted) {
+      const alreadyNavigated =
+        await MetaStorage.instance.isBackgroundCallAccepted();
+      if (callAccepted && !alreadyNavigated) {
+        await MetaStorage.instance.setBackgroundCallAccepted(true);
         // fetch the caller info from the backend
         const [success, videoMeta] = await getCallInfoFromServer(userAddress);
         if (success) {
-          await incomingCall(videoMeta);
+          await incomingCall(videoMeta, false);
           acceptRequestWrapper({
             senderAddress: videoMeta.recipientAddress,
             recipientAddress: videoMeta.senderAddress,

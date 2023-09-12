@@ -1,10 +1,18 @@
 import {produce} from 'immer';
 import React, {createContext, useEffect, useRef, useState} from 'react';
 import {useDispatch} from 'react-redux';
+import * as PushNodeClient from 'src/apis';
+import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
-import {Video, VideoCallData} from 'src/navigation/screens/video/helpers/video';
-import {VideoCallStatus} from 'src/push_video/payloads';
-import {setIsReceivingCall} from 'src/redux/videoSlice';
+import {
+  Video,
+  VideoCallData,
+  VideoCallStatus,
+} from 'src/navigation/screens/video/helpers/video';
+import {
+  setIsReceivingCall,
+  setOtherUserProfilePicture,
+} from 'src/redux/videoSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 interface RequestWrapperOptionsType {
@@ -65,7 +73,10 @@ type VideoCallContextType = {
   ) => Promise<void>;
   connectWrapper: (options: VideoCallMetaDataType) => void;
   disconnectWrapper: () => void;
-  incomingCall: (options: VideoCallMetaDataType) => Promise<void>;
+  incomingCall: (
+    options: VideoCallMetaDataType,
+    showModal?: boolean,
+  ) => Promise<void>;
   setVideoCallData: any;
   toggleVideoWrapper: () => void;
   toggleAudioWrapper: () => void;
@@ -186,12 +197,21 @@ const VideoCallContextProvider = ({children}: {children: React.ReactNode}) => {
     videoObjectRef.current.disconnect();
   };
 
-  const incomingCall = async (videoCallMetaData: VideoCallMetaDataType) => {
-    dispatch(setIsReceivingCall(true));
+  const incomingCall = async (
+    videoCallMetaData: VideoCallMetaDataType,
+    showModal = true,
+  ) => {
+    if (showModal) {
+      dispatch(setIsReceivingCall(true));
+    }
     if (!videoObjectRef.current) {
       console.log('videoObjectRef.current', videoObjectRef.current);
       return;
     }
+    const otherUserDetails = await PushNodeClient.getUser(
+      walletToCAIP10(videoCallMetaData.senderAddress),
+    );
+    dispatch(setOtherUserProfilePicture(otherUserDetails?.profilePicture));
     console.log('INCOMING CALL', {
       senderAddress: videoCallMetaData.senderAddress,
       recipientAddress: videoCallMetaData.recipientAddress,

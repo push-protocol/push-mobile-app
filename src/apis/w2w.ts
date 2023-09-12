@@ -114,7 +114,7 @@ export const createUser = async ({
 };
 
 export const createEmptyUser = async (rec: MessageReciver) => {
-  await createUser({
+  return await createUser({
     caip10: rec.ethAddress,
     did: rec.ethAddress,
     publicKey: '',
@@ -211,18 +211,7 @@ export interface MessageIPFSWithCID extends MessageIPFS {
   cid: string;
 }
 
-export const postMessage = async ({
-  fromCAIP10,
-  fromDID,
-  toDID,
-  toCAIP10,
-  messageContent,
-  messageType,
-  signature,
-  encType,
-  sigType,
-  encryptedSecret,
-}: {
+export const postMessage = async (body: {
   fromCAIP10: string;
   fromDID: string;
   toCAIP10: string;
@@ -233,24 +222,14 @@ export const postMessage = async ({
   encType: string;
   sigType: string;
   encryptedSecret: string;
+  verificationProof: string;
 }): Promise<MessageIPFSWithCID | string> => {
   const response = await fetch(BASE_URL + '/v1/chat/message', {
     method: 'POST',
     headers: {
       'content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      fromCAIP10,
-      toCAIP10,
-      fromDID,
-      toDID,
-      messageContent,
-      messageType,
-      signature,
-      encType,
-      encryptedSecret,
-      sigType,
-    }),
+    body: JSON.stringify(body),
   });
   if (response.status > 299) {
     throw new Error('Error posting message');

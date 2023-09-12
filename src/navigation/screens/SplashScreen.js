@@ -12,6 +12,8 @@ import {
   Vibration,
   View,
 } from 'react-native';
+import {Dimensions} from 'react-native';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import * as Keychain from 'react-native-keychain';
 import {connect} from 'react-redux';
 import GLOBALS from 'src/Globals';
@@ -23,6 +25,8 @@ import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
 import BiometricHelper from 'src/helpers/BiometricHelper';
 import {setAllUsers, setAuthState, switchUser} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
+
+const WIDTH = Dimensions.get('window').width;
 
 // FOR SLIDING UP ANIMATION
 const SLIDE_UP_THRESHOLD = 100;
@@ -530,16 +534,30 @@ class SplashScreen extends Component {
                             title={prompt}
                           />
 
-                          <TextInput
-                            ref={this.PasscodeInput}
-                            style={styles.input}
-                            maxLength={6}
-                            contextMenuHidden={true}
-                            keyboardType={'numeric'}
-                            autoCorrect={false}
-                            onChangeText={value => this.changePassCode(value)}
-                            value={this.state.passcode}
-                          />
+                          <TouchableWithoutFeedback
+                            style={styles.inputWrapper}
+                            onPress={() => {
+                              this.PasscodeInput.current.blur();
+                              setTimeout(
+                                () => this.PasscodeInput.current.focus(),
+                                100,
+                              );
+                            }}>
+                            <View pointerEvents="none">
+                              <TextInput
+                                ref={this.PasscodeInput}
+                                style={styles.input}
+                                maxLength={6}
+                                contextMenuHidden={true}
+                                keyboardType={'numeric'}
+                                autoCorrect={false}
+                                onChangeText={value =>
+                                  this.changePassCode(value)
+                                }
+                                value={this.state.passcode}
+                              />
+                            </View>
+                          </TouchableWithoutFeedback>
 
                           <View
                             style={styles.fancyTextContainer}
@@ -793,10 +811,16 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     paddingHorizontal: 15,
-    paddingVertical: 40,
     borderBottomWidth: 2,
     borderColor: GLOBALS.COLORS.BLACK,
     opacity: 0,
+  },
+  inputWrapper: {
+    paddingVertical: 60,
+    width: WIDTH - 60,
+    paddingHorizontal: 15,
+    height: 50,
+    marginTop: -20,
   },
   fancyTextContainer: {
     ...StyleSheet.absoluteFill,

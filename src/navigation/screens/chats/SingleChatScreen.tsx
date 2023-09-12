@@ -4,7 +4,9 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
 import {GiphyDialog, GiphyDialogEvent} from '@giphy/react-native-sdk';
+import {VideoCallStatus} from '@pushprotocol/restapi';
 import {approveRequestPayload} from '@pushprotocol/restapi/src/lib/chat';
+import {walletToPCAIP10} from '@pushprotocol/restapi/src/lib/helpers';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useNavigation} from '@react-navigation/native';
 import {FlashList} from '@shopify/flash-list';
@@ -26,6 +28,7 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import {useDispatch} from 'react-redux';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
@@ -34,8 +37,7 @@ import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {VideoCallContext} from 'src/contexts/VideoContext';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
-import {walletToPCAIP10} from 'src/push_video/helpers';
-import {VideoCallStatus} from 'src/push_video/payloads';
+import {setOtherUserProfilePicture} from 'src/redux/videoSlice';
 
 import {AcceptIntent, MessageComponent} from './components';
 import {CustomScroll} from './components/CustomScroll';
@@ -108,6 +110,8 @@ const SingleChatScreen = ({route}: any) => {
     isIntentSendPage,
     toastRef.current ? toastRef.current.showToast : null,
   );
+
+  const dispatch = useDispatch();
 
   const senderAddressFormatted = getFormattedAddress(senderAddress);
   const handleSend = async () => {
@@ -184,6 +188,7 @@ const SingleChatScreen = ({route}: any) => {
   const {setVideoCallData} = useContext(VideoCallContext);
 
   const startVideoCall = () => {
+    dispatch(setOtherUserProfilePicture(route.params.image));
     setVideoCallData((oldData: any) => {
       return produce(oldData, (draft: any) => {
         draft.local.address = caip10ToWallet(connectedUser.wallets);
@@ -311,7 +316,6 @@ const SingleChatScreen = ({route}: any) => {
           color={Globals.COLORS.CHAT_LIGHT_DARK}
           onPress={() => navigation.goBack()}
         />
-
         <View style={styles.info}>
           <View style={styles.user}>
             <Image
@@ -329,13 +333,9 @@ const SingleChatScreen = ({route}: any) => {
           </View>
         </View>
 
-        {/* <Ionicons
-          name="videocam"
-          size={35}
-          style={styles.videoIcon}
-          color={Globals.COLORS.PINK}
-          onPress={() => startVideoCall()}
-        /> */}
+        <TouchableOpacity onPress={startVideoCall} style={styles.videoIcon}>
+          <Ionicons name="videocam" size={35} color={Globals.COLORS.PINK} />
+        </TouchableOpacity>
       </View>
 
       <KeyboardAvoidingView

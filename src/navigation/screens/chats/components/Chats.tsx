@@ -167,7 +167,7 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
         <View style={styles.content}>
           {feeds.map((item, index) => (
             <SingleChatItem
-              key={index}
+              key={item.chatId || index}
               image={item.profilePicture}
               wallet={caip10ToWallet(item.wallets)}
               text={item.threadhash ? item.threadhash : ''}

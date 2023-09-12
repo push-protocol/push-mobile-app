@@ -1,11 +1,18 @@
 import {Feather, Ionicons, MaterialIcons} from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {RTCView} from 'react-native-webrtc';
+import {useDispatch, useSelector} from 'react-redux';
 import Globals from 'src/Globals';
+import * as PushNodeClient from 'src/apis';
 import {VideoCallContext, initVideoCallData} from 'src/contexts/VideoContext';
+import {walletToCAIP10} from 'src/helpers/CAIPHelper';
+import {
+  selectVideoCall,
+  setOtherUserProfilePicture,
+} from 'src/redux/videoSlice';
 import {endStream, toggleCamera} from 'src/socket';
 
 import {DEFAULT_AVATAR} from '../chats/constants';
@@ -16,6 +23,9 @@ const windowWidth = Dimensions.get('window').width;
 
 const VideoScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const {otherUserProfilePicture} = useSelector(selectVideoCall);
+  const [profilePicture, setProfilePicture] = useState<string>();
 
   const {
     videoCallData: data,
@@ -65,6 +75,7 @@ const VideoScreen = () => {
       if (data.local.stream) {
         endStream(data.local.stream);
       }
+      setOtherUserProfilePicture(undefined);
     };
   }, []);
 
@@ -73,6 +84,27 @@ const VideoScreen = () => {
       handleGoBack();
     }
   }, [data]);
+
+  useEffect(() => {
+    (async () => {
+      if (otherUserProfilePicture === undefined) {
+        const otherUser = await PushNodeClient.getUser(
+          walletToCAIP10(data.incoming[0].address),
+        );
+        dispatch(
+          setOtherUserProfilePicture(
+            otherUser?.profilePicture || DEFAULT_AVATAR,
+          ),
+        );
+      }
+      if (profilePicture === undefined) {
+        const profile = await PushNodeClient.getUser(
+          walletToCAIP10(data.local.address),
+        );
+        setProfilePicture(profile?.profilePicture || DEFAULT_AVATAR);
+      }
+    })();
+  }, []);
 
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
@@ -85,7 +117,7 @@ const VideoScreen = () => {
               streamURL={data.incoming[0].stream.toURL()}
             />
           ) : (
-            <VideoPlaceholder uri={DEFAULT_AVATAR} />
+            <VideoPlaceholder uri={otherUserProfilePicture || DEFAULT_AVATAR} />
           )}
         </View>
         <View style={styles.smallVideoViewContainer}>
@@ -98,7 +130,7 @@ const VideoScreen = () => {
                 zOrder={1}
               />
             ) : (
-              <VideoPlaceholder uri={DEFAULT_AVATAR} />
+              <VideoPlaceholder uri={profilePicture || DEFAULT_AVATAR} />
             )}
           </View>
         </View>
@@ -115,6 +147,9 @@ const VideoScreen = () => {
           onPress={toggleVideo}>
           <Feather
             name={data.local.video ? 'video' : 'video-off'}
+            color={
+              data.local.video ? Globals.COLORS.BLACK : Globals.COLORS.WHITE
+            }
             style={styles.featherIcon}
           />
         </TouchableOpacity>
@@ -126,6 +161,9 @@ const VideoScreen = () => {
           onPress={toggleAudio}>
           <Feather
             name={data.local.audio ? 'mic' : 'mic-off'}
+            color={
+              data.local.audio ? Globals.COLORS.BLACK : Globals.COLORS.WHITE
+            }
             style={styles.featherIcon}
           />
         </TouchableOpacity>
@@ -183,7 +221,6 @@ const styles = StyleSheet.create({
   },
   featherIcon: {
     fontSize: 20,
-    color: Globals.COLORS.BLACK,
   },
   callendContainer: {
     width: 80,

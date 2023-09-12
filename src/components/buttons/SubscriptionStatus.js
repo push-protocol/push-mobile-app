@@ -188,8 +188,8 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
         handleUnsubscribe();
       }
     } else {
-      // Give Options
-      showPopUp(action);
+      console.log('Not connected, opening wallet connect modal');
+      wc_connector.open();
     }
   };
 

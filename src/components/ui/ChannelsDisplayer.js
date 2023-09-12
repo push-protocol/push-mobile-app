@@ -1,5 +1,6 @@
 import '@ethersproject/shims';
-import React, {useEffect, useState} from 'react';
+import {useWalletConnectModal} from '@walletconnect/modal-react-native';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -8,12 +9,15 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import {useSelector} from 'react-redux';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ChannelItem from 'src/components/ui/ChannelItem';
 import ENV_CONFIG from 'src/env.config';
+import {selectUsers} from 'src/redux/authSlice';
 
 import Globals from '../../Globals';
+import {Toaster, ToasterOptions} from '../indicators/Toaster';
 
 const ChannelsDisplayer = ({style, wallet, pKey}) => {
   const [channels, setChannels] = useState([]);
@@ -29,9 +33,15 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
 
   const DEBOUNCE_TIMEOUT = 500; //time in millisecond which we want to wait for then to finish typing
   const [search, setSearch] = React.useState('');
+  const [walletAddress, setWalletAddress] = useState('');
+  const toastRef = useRef(null);
+
+  const wc_connector = useWalletConnectModal();
+  const users = useSelector(selectUsers);
 
   useEffect(() => {
     setRefreshing(true);
+    setWalletAddress(users[0].wallet);
   }, []);
 
   const fetchChannels = async () => {
@@ -50,6 +60,24 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
       fetchChannels();
     }
   }, [refreshing]);
+
+  useEffect(() => {
+    if (
+      wc_connector.isConnected &&
+      walletAddress !== '' &&
+      wc_connector.address !== undefined &&
+      wc_connector.address.toLowerCase() !== walletAddress.toLowerCase()
+    ) {
+      wc_connector.provider.disconnect();
+      toastRef.current.showToast(
+        'Please use the same wallet\nyou used to sign in',
+        '',
+        ToasterOptions.TYPE.GRADIENT_PRIMARY,
+        '',
+        ToasterOptions.DELAY.LONGER,
+      );
+    }
+  }, [wc_connector.isConnected]);
 
   const searchForChannel = async channelName => {
     setChannels([]);
@@ -147,6 +175,7 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
           }}
         />
       )}
+      <Toaster ref={toastRef} />
     </SafeAreaView>
   );
 };

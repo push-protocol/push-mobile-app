@@ -50,6 +50,7 @@ export default {
     HASHED_PASSCODE: 'HashedPasscode',
 
     PUSH_TOKEN: 'PushToken',
+    APNS_VOIP_TOKEN: 'ApnsVOIPToken',
     PUSH_TOKEN_TO_REMOVE: 'PushTokenToRemove',
     PUSH_TOKEN_SERVER_SYNCED: 'PushTokenServerSynced',
     PUSH_BADGE_COUNT: 'PushBadgeCount',
@@ -57,6 +58,8 @@ export default {
 
     // W2W chat
     USER_CHAT_DATA: 'UserChatData',
+
+    IS_BACKGROUND_CALL_ACCEPTED: 'IsBackgroundCallAccepted',
   },
 
   CONSTANTS: {
