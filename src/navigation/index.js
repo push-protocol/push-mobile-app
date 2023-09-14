@@ -3,6 +3,7 @@ import React, {useEffect} from 'react';
 import {Platform} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
+import CallkeepHelper from 'src/callkeep';
 import IncomingCall from 'src/components/modals/IncomingCall';
 import {selectAuthState, setLogout} from 'src/redux/authSlice';
 import {selectUsers} from 'src/redux/authSlice';
@@ -35,7 +36,12 @@ const Screens = ({callAccepted}) => {
   return (
     <>
       <NavigationContainer>
-        {isReceivingCall && Platform.OS === 'android' && <IncomingCall />}
+        {/* Show Modal on Android devices and iOS devices in China */}
+        {isReceivingCall &&
+          (Platform.OS === 'android' ||
+            (Platform.OS === 'ios' && CallkeepHelper.isChina())) && (
+            <IncomingCall />
+          )}
 
         {authState === GLOBALS.AUTH_STATE.INITIALIZING && (
           <InitializingNavigator />

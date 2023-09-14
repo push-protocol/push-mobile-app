@@ -1,5 +1,6 @@
 import {Platform} from 'react-native';
 import RNCallKeep, {EventHandlers} from 'react-native-callkeep';
+import {getCountry} from 'react-native-localize';
 import {getUUID} from 'src/push_video/payloads/helpers';
 
 class CallKeepHelper {
@@ -154,6 +155,10 @@ class CallKeepHelper {
       console.log('got err', error);
     }
     return false;
+  }
+
+  isChina() {
+    return getCountry() === 'CN';
   }
 }
 
