@@ -1,8 +1,5 @@
 import {FontAwesome5} from '@expo/vector-icons';
-import {
-  IProvider,
-  useWalletConnectModal,
-} from '@walletconnect/modal-react-native';
+import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import {ethers} from 'ethers';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -14,18 +11,17 @@ import {
   TouchableHighlight,
   View,
 } from 'react-native';
+import Globals from 'src/Globals';
 import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import NoticePrompt from 'src/components/modals/NoticePrompt';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 import ENV_CONFIG from 'src/env.config';
 import MetaStorage from 'src/singletons/MetaStorage';
-import {handleChannelSub, isWalletConnectEnabled} from 'src/walletconnect';
+import {handleChannelSub} from 'src/walletconnect';
 
 const CHANNEL_OPT_IN = 1;
 const CHANNEL_OPT_OUT = 2;
-
-const useWalletConnect = {};
 
 const SubscriptionStatus = ({channel, user, style, pKey}) => {
   const [subscribed, setSubscribed] = useState(null);
@@ -39,12 +35,10 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   const apiURL =
     ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_SUBSCRIPTION;
 
-  var wallet = '';
-
   const EPNS_DOMAIN = {
     name: 'EPNS COMM V1',
-    chainId: 42,
-    verifyingContract: '0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC',
+    chainId: ENV_CONFIG.CHAIN_ID,
+    verifyingContract: Globals.CONTRACTS.COMM_CONTRACT,
   };
 
   const subType = {
@@ -76,7 +70,8 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
 
   const handleSubscribe = async () => {
     if (pKey !== '') {
-      wallet._signTypedData(EPNS_DOMAIN, subType, subMessage).then(res => {
+      const signer = new ethers.Wallet(pKey);
+      signer._signTypedData(EPNS_DOMAIN, subType, subMessage).then(res => {
         offChainSubscribe(res);
       });
     } else {
@@ -86,7 +81,8 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
 
   const handleUnsubscribe = async () => {
     if (pKey !== '') {
-      wallet._signTypedData(EPNS_DOMAIN, unsubType, unsubMessage).then(res => {
+      const signer = new ethers.Wallet(pKey);
+      signer._signTypedData(EPNS_DOMAIN, unsubType, unsubMessage).then(res => {
         offChainUnsubscribe(res);
       });
     } else {
@@ -101,8 +97,8 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
     const body = {
       signature: signature,
       message: subMessage,
-      contractAddress: '0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC',
-      chainId: 42,
+      contractAddress: Globals.CONTRACTS.COMM_CONTRACT,
+      chainId: ENV_CONFIG.CHAIN_ID,
       op: 'write',
     };
 
@@ -114,8 +110,6 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
       },
       body: JSON.stringify(body),
     });
-
-    console.log('calling subscribe with body ->', body);
 
     const subscribeResponse = await response.json();
     console.log('subscribeResponse', subscribeResponse);
@@ -136,13 +130,11 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
       body: JSON.stringify({
         signature: signature,
         message: unsubMessage,
-        contractAddress: '0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC',
-        chainId: 42,
+        contractAddress: Globals.CONTRACTS.COMM_CONTRACT,
+        chainId: ENV_CONFIG.CHAIN_ID,
         op: 'write',
       }),
     });
-
-    console.log('signature', signature);
 
     const unsubscribeResponse = await response.json();
     console.log('unsubscribeRespone', unsubscribeResponse);
@@ -197,9 +189,9 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
     // Check if Wallet Connect
     setModal(true);
 
-    if (action == 1) {
+    if (action === 1) {
       setAction('Opt-In');
-    } else if (action == 2) {
+    } else if (action === 2) {
       setAction('Opt-Out');
     }
   };

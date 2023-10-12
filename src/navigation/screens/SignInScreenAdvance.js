@@ -181,6 +181,7 @@ export default props => {
         cns: cns,
         ens: ens,
         index: 0,
+        userPKey: privateKey,
       }),
     );
     // Goto Next Screen
