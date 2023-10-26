@@ -4,12 +4,14 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
 import {GiphyDialog, GiphyDialogEvent} from '@giphy/react-native-sdk';
+// import {approve} from '@kalashshah/react-native-sdk';
 import {VideoCallStatus} from '@pushprotocol/restapi';
 import {approveRequestPayload} from '@pushprotocol/restapi/src/lib/chat';
 import {walletToPCAIP10} from '@pushprotocol/restapi/src/lib/helpers';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useNavigation} from '@react-navigation/native';
 import {FlashList} from '@shopify/flash-list';
+import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import {produce} from 'immer';
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
@@ -38,6 +40,8 @@ import {VideoCallContext} from 'src/contexts/VideoContext';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
 import {setOtherUserProfilePicture} from 'src/redux/videoSlice';
+import MetaStorage from 'src/singletons/MetaStorage';
+import {getSigner} from 'src/walletconnect/chat/utils';
 
 import {AcceptIntent, MessageComponent} from './components';
 import {CustomScroll} from './components/CustomScroll';
@@ -89,6 +93,8 @@ const SingleChatScreen = ({route}: any) => {
   const [indicatorSize, setIndicatorSize] = useState(0);
   // const [indicatorDiff, setIndicatorDiff] = useState(0);
   const SCORLL_OFF_SET = 250;
+
+  const wc_connector = useWalletConnectModal();
 
   const [
     isLoading,
@@ -149,27 +155,19 @@ const SingleChatScreen = ({route}: any) => {
 
     const APPROVED_INTENT = 'Approved';
 
-    const bodyToBeHashed = {
-      fromDID: walletToPCAIP10(senderAddress),
-      toDID: connectedUser.wallets,
-      status: APPROVED_INTENT,
-    };
-
-    const signature = await pgpSignBody({bodyToBeHashed});
-
-    const body = approveRequestPayload(
-      senderAddress,
-      connectedUser.wallets,
-      APPROVED_INTENT,
-      'pgp',
-      signature,
-    );
-
-    body.fromDID = walletToPCAIP10(body.fromDID);
-
-    const res = await PushNodeClient.approveIntent2(body);
-    console.log('approved intent', res);
-    setisIntentReceivePage(false);
+    const user = await MetaStorage.instance.getUserChatData();
+    if (wc_connector.provider) {
+      const [signer, account] = await getSigner(wc_connector.provider);
+      // await approve({
+      //   senderAddress: walletToPCAIP10(senderAddress),
+      //   pgpPrivateKey: user.pgpPrivateKey,
+      //   status: APPROVED_INTENT,
+      //   account,
+      //   signer,
+      // });
+      console.log('approved intent');
+      setisIntentReceivePage(false);
+    }
     setIsAccepting(false);
   };
 
