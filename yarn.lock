@@ -2852,10 +2852,10 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@kalashshah/react-native-sdk@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@kalashshah/react-native-sdk/-/react-native-sdk-0.1.5.tgz#80907045c07ea159cb22d392562c74f4391575af"
-  integrity sha512-pE01zZMO/ZaW8zr6Aatcser95rDyLv1S5PBimbx2kpFjFhIIJrCFOTy27DCUiNJJGfqYNyawBDHUBPGZqeFNdQ==
+"@kalashshah/react-native-sdk@^0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@kalashshah/react-native-sdk/-/react-native-sdk-0.1.9.tgz#4c4d3a1ce29ca00d230d0ef34af20c3786a39b6a"
+  integrity sha512-TWlSVNWiRzWPxgYM8O2rqytbQdXDmSQoVroZyud4IsUNnDedAkZt1kU7eyZNAkueTVsDbtOI14imwHyBGNXQiw==
   dependencies:
     "@pushprotocol/restapi" "1.4.28"
     "@tradle/react-native-http" "^2.0.1"
@@ -2867,7 +2867,7 @@
     https-browserify "^0.0.1"
     process "^0.11.10"
     react-native-crypto "^2.2.0"
-    react-native-fast-openpgp "^2.6.0"
+    react-native-fast-openpgp "2.7.0"
     react-native-get-random-values "^1.9.0"
     react-native-level-fs "^3.0.1"
     react-native-os "^1.2.6"
@@ -12164,7 +12164,7 @@ react-native-encrypted-storage@^4.0.3:
   resolved "https://registry.yarnpkg.com/react-native-encrypted-storage/-/react-native-encrypted-storage-4.0.3.tgz#2a4d65459870511e8f4ccd22f02433dab7fa5e91"
   integrity sha512-0pJA4Aj2S1PIJEbU7pN/Qvf7JIJx3hFywx+i+bLHtgK0/6Zryf1V2xVsWcrD50dfiu3jY1eN2gesQ5osGxE7jA==
 
-react-native-fast-openpgp@^2.6.0, react-native-fast-openpgp@^2.7.0:
+react-native-fast-openpgp@2.7.0, react-native-fast-openpgp@^2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/react-native-fast-openpgp/-/react-native-fast-openpgp-2.7.0.tgz#05a9fc358eabb3310b90be12689b79c28abdf4b3"
   integrity sha512-osXGcbcLlNIEPae50aF/HiCqPhykSrrw+dYx95UFn/b2vEYGmHRboU0hb1LpihzSGHMvREW04sgbVC8KycH27g==
