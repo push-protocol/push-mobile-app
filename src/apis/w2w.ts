@@ -70,61 +70,6 @@ export type MessageReciver = {ethAddress: string; pgpAddress: string};
 
 const BASE_URL = envConfig.EPNS_SERVER;
 
-export const createUser = async ({
-  caip10,
-  did,
-  publicKey,
-  encryptedPrivateKey,
-  encryptionType,
-  signature,
-  sigType,
-}: {
-  caip10: string;
-  did: string;
-  publicKey: string;
-  encryptedPrivateKey: string;
-  encryptionType: string;
-  signature: string;
-  sigType: string;
-}): Promise<User> => {
-  const url = BASE_URL + '/v1/users';
-  const body = JSON.stringify({
-    caip10,
-    did,
-    publicKey,
-    encryptedPrivateKey,
-    encryptionType,
-    signature,
-    sigType,
-  });
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'content-Type': 'application/json',
-    },
-    body: body,
-  }).catch(e => {
-    console.log(e);
-    throw new Error(e);
-  });
-
-  const data: User = await response.json();
-  return data;
-};
-
-export const createEmptyUser = async (rec: MessageReciver) => {
-  return await createUser({
-    caip10: rec.ethAddress,
-    did: rec.ethAddress,
-    publicKey: '',
-    encryptedPrivateKey: '',
-    encryptionType: '',
-    signature: 'pgp',
-    sigType: 'pgp',
-  });
-};
-
 export const getUser = async (caip10: string): Promise<User | undefined> => {
   let retry = 0;
 
@@ -307,32 +252,6 @@ export const postIntent = async ({
   });
   data = await response.json();
   return data;
-};
-
-export const createNewPgpPair = async (
-  caip10: string,
-  encryptionPublicKey: string,
-) => {
-  // Obtain pgp key
-  const keyPairs = await generateKeyPair();
-
-  const encryptedPgpKey = encryptWithRPCEncryptionPublicKeyReturnRawData(
-    keyPairs.privateKeyArmored,
-    encryptionPublicKey,
-  );
-
-  const createdUser = await createUser({
-    caip10,
-    did: caip10,
-    publicKey: keyPairs.publicKeyArmored,
-    encryptedPrivateKey: JSON.stringify(encryptedPgpKey),
-    encryptionType: 'x25519-xsalsa20-poly1305',
-    signature: 'xyz',
-    sigType: 'a',
-  });
-
-  console.log('create new user');
-  return createdUser;
 };
 
 export const isIntentAccepted = async (addrs: string, senderAddrs: string) => {

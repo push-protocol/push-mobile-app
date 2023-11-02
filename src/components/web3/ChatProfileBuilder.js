@@ -1,9 +1,4 @@
-import {getEncryptionPublicKey} from '@metamask/eth-sig-util';
-import {
-  getEip191Signature,
-  getEip712Signature,
-} from '@pushprotocol/restapi/src/lib/chat/helpers';
-import {ENCRYPTION_TYPE} from '@pushprotocol/restapi/src/lib/constants';
+import {decryptPGPKey} from '@kalashshah/react-native-sdk/src';
 import {ethers} from 'ethers';
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
@@ -12,99 +7,36 @@ import GLOBALS from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
 import ENSButton from 'src/components/buttons/ENSButton';
 import Blockies from 'src/components/web3/Blockies';
+import envConfig from 'src/env.config';
 import * as CaipHelper from 'src/helpers/CAIPHelper';
-import {decryptWithWalletRPCMethod} from 'src/helpers/w2w/metamaskSigUtil';
+import useChat from 'src/navigation/screens/chats/helpers/useChat';
 import MetaStorage from 'src/singletons/MetaStorage';
-import {decryptV2} from 'src/walletconnect/chat/aes';
-import {hexToBytes} from 'src/walletconnect/chat/utils';
 
 const ChatProfileBuilder = ({style, wallet, pkey, setProfileComplete}) => {
   // Setup state
   const [indicator, setIndicator] = useState(true);
+  const {createNewPgpPair} = useChat();
 
   useEffect(() => {
     (async () => {
       try {
         const caipAddress = CaipHelper.getCAIPAddress(wallet);
-        const encryptionPublicKey = getEncryptionPublicKey(pkey);
 
         let user = await PushNodeClient.getUser(caipAddress);
 
         // register if not reigistered
         if (!user || user.encryptedPrivateKey === '') {
-          user = await PushNodeClient.createNewPgpPair(
-            caipAddress,
-            encryptionPublicKey,
-          );
+          user = await createNewPgpPair(caipAddress);
         }
 
-        const {version: encryptionType} = JSON.parse(user.encryptedPrivateKey);
-
-        let decryptedPrivateKey;
         const signer = new ethers.Wallet(pkey);
-        const walletSigner = {
-          address: signer.address,
-          signer: signer,
-        };
 
-        switch (encryptionType) {
-          case ENCRYPTION_TYPE.PGP_V1: {
-            // decript pgp from server
-            decryptedPrivateKey = decryptWithWalletRPCMethod(
-              JSON.parse(user.encryptedPrivateKey),
-              pkey,
-            );
-            break;
-          }
-          case ENCRYPTION_TYPE.PGP_V2: {
-            const {preKey: input} = JSON.parse(user.encryptedPrivateKey);
-            const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
-            let encodedPrivateKey;
-            try {
-              const {verificationProof: secret} = await getEip712Signature(
-                walletSigner,
-                enableProfileMessage,
-                true,
-              );
-              encodedPrivateKey = await decryptV2(
-                JSON.parse(user.encryptedPrivateKey),
-                hexToBytes(secret || ''),
-              );
-            } catch (err) {
-              const {verificationProof: secret} = await getEip712Signature(
-                walletSigner,
-                enableProfileMessage,
-                false,
-              );
-              encodedPrivateKey = await decryptV2(
-                JSON.parse(user.encryptedPrivateKey),
-                hexToBytes(secret || ''),
-              );
-            }
-            const dec = new TextDecoder();
-            decryptedPrivateKey = dec.decode(encodedPrivateKey);
-            break;
-          }
-          case ENCRYPTION_TYPE.PGP_V3: {
-            const {preKey: input} = JSON.parse(user.encryptedPrivateKey);
-            const enableProfileMessage = 'Enable Push Profile \n' + input;
-            const {verificationProof: secret} = await getEip191Signature(
-              walletSigner,
-              enableProfileMessage,
-              'v1',
-            );
-            const encodedPrivateKey = await decryptV2(
-              JSON.parse(user.encryptedPrivateKey),
-              hexToBytes(secret || ''),
-            );
-            const dec = new TextDecoder();
-            decryptedPrivateKey = dec.decode(encodedPrivateKey);
-            break;
-          }
-          default: {
-            throw new Error(`Encryption type ${encryptionType} not supported`);
-          }
-        }
+        const decryptedPrivateKey = await decryptPGPKey({
+          encryptedPGPPrivateKey: user.encryptedPrivateKey,
+          account: signer.address,
+          signer: signer,
+          env: envConfig.ENV,
+        });
 
         if (decryptedPrivateKey === undefined) {
           throw new Error('Could not decrypt private key');
