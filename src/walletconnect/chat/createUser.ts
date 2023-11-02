@@ -1,14 +1,7 @@
-import {createUserService} from '@pushprotocol/restapi/src/lib/chat/helpers';
-import {getWallet} from '@pushprotocol/restapi/src/lib/chat/helpers/wallet';
-import Constants from '@pushprotocol/restapi/src/lib/constants';
-import {
-  encryptPGPKey,
-  preparePGPPublicKey,
-} from '@pushprotocol/restapi/src/lib/helpers/crypto';
-import {encryptedPrivateKeyType} from '@pushprotocol/restapi/src/lib/types';
+import {createUser as createNewUser} from '@kalashshah/react-native-sdk/src';
+import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {IProvider} from '@walletconnect/modal-react-native';
 import envConfig from 'src/env.config';
-import {generateKeyPair} from 'src/helpers/w2w/pgp';
 
 import {getSigner, walletToPCAIP10} from './utils';
 
@@ -17,34 +10,14 @@ export const createUser = async (
 ): Promise<[boolean, string, string]> => {
   const [signer, account] = await getSigner(wcProvider);
 
-  const keyPairs = await generateKeyPair();
-  const wallet = getWallet({account, signer: signer as any});
+  const caip10: string = walletToPCAIP10(account);
 
-  const encryptionType = Constants.ENC_TYPE_V3;
-  const address = account;
+  const user = await createNewUser({
+    account: caip10,
+    env: envConfig.ENV as ENV,
+    signer,
+  });
 
-  const publicKey: string = await preparePGPPublicKey(
-    encryptionType,
-    keyPairs.publicKeyArmored,
-    wallet,
-  );
-
-  const encryptedPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(
-    encryptionType,
-    keyPairs.privateKeyArmored,
-    wallet,
-  );
-
-  const caip10: string = walletToPCAIP10(address);
-  const body: any = {
-    user: caip10,
-    wallet,
-    publicKey: publicKey,
-    encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
-    env: envConfig.ENV,
-  };
-
-  await createUserService(body);
-
-  return [true, keyPairs.privateKeyArmored, keyPairs.publicKeyArmored];
+  return [true, user.encryptedPrivateKey, user.publicKey];
+  // return [true, keyPairs.privateKeyArmored, keyPairs.publicKeyArmored];
 };
