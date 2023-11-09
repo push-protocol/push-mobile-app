@@ -1,9 +1,11 @@
+import * as PushSdk from '@kalashshah/react-native-sdk/src';
 import {EVENTS, createSocketConnection} from '@pushprotocol/socket';
 import {useEffect, useState} from 'react';
 import {useRef} from 'react';
 import {useSelector} from 'react-redux';
 import {Socket} from 'socket.io-client';
 import * as PushNodeClient from 'src/apis';
+import envConfig from 'src/env.config';
 import * as CaipHelper from 'src/helpers/CAIPHelper';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
@@ -13,21 +15,21 @@ import {filterChatAndRequestFeeds} from './userChatLoaderHelper';
 
 export interface ChatData {
   connectedUserData: PushNodeClient.ConnectedUser | undefined;
-  feeds: PushNodeClient.Feeds[];
-  requests: PushNodeClient.Feeds[];
+  feeds: PushSdk.PushApi.IFeeds[];
+  requests: PushSdk.PushApi.IFeeds[];
 }
 
 export interface ChatFeedCache {
   [key: string]: string;
 }
 
-type chatLoaderReturnType = [boolean, ChatData, () => void];
+type chatLoaderReturnType = [boolean, ChatData, () => void, fetchInboxPage: (ethAddress: string) => Promise<void>];
 
 const useChatLoader = (
   userChatCredentials: UserChatCredentials | undefined,
 ): chatLoaderReturnType => {
   const [isLoading, setIsLoading] = useState(true);
-
+  const [currentPage, setCurrentPage] = useState(1);
   const [chatData, setChatData] = useState<ChatData>({
     connectedUserData: undefined,
     feeds: [],
@@ -59,33 +61,22 @@ const useChatLoader = (
   };
 
   const loadInbox = async (ethAddress: string) => {
-    console.log('loading inbox @');
-    const feeds = await PushNodeClient.getInbox(ethAddress);
+    const feeds = await PushSdk.chats({
+      account: ethAddress,
+      toDecrypt: true,
+      pgpPrivateKey: userChatCredentials?.pgpPrivateKey,
+      page: currentPage,
+      limit: 10,
+      env: envConfig.ENV as PushSdk.ENV,
+    });
 
     if (!feeds) {
       return;
     }
 
-    setIboxData(feeds, ethAddress);
-  };
-
-  const setIboxData = (feeds: PushNodeClient.Feeds[], ethAddress: string) => {
-    // sort message based on time
-    // latest chat shown at first
-    feeds.sort(
-      (c1, c2) =>
-        Date.parse(c2.intentTimestamp) - Date.parse(c1.intentTimestamp),
-    );
-
-    const [newChatFeeds, newRequestFeeds] = filterChatAndRequestFeeds(
-      ethAddress,
-      feeds,
-    );
-
     setChatData(prev => ({
       ...prev,
-      feeds: newChatFeeds,
-      requests: newRequestFeeds,
+      feeds: feeds,
     }));
 
     setIsLoading(false);
@@ -114,7 +105,7 @@ const useChatLoader = (
           console.log('new socket created');
           pushSDKSocket.current = createSocketConnection({
             user: derivedAddress,
-            env: SocketConfig.url,
+            env: SocketConfig.url as any,
             apiKey: SocketConfig.key,
             socketType: 'chat',
             socketOptions: {autoConnect: true, reconnectionAttempts: 3},
@@ -136,9 +127,9 @@ const useChatLoader = (
             loadInbox(derivedAddress);
           });
 
-          pushSDKSocket.current.on(EVENTS.CHAT_UPDATE_INTENT, _ => {
-            loadInbox(derivedAddress);
-          });
+          // pushSDKSocket.current.on(EVENTS.CHAT_UPDATE_INTENT, _ => {
+          //   loadInbox(derivedAddress);
+          // });
         }
       } else {
         fetchNewMessages = setInterval(async () => {
@@ -163,6 +154,23 @@ const useChatLoader = (
     await loadInbox(users[currentUser].wallet);
   };
 
-  return [isLoading, chatData, refresh];
+  const fetchInboxPage = async(ethAddress: string)=>{
+    const feeds: any = await PushSdk.chats({
+      account: ethAddress,
+      toDecrypt: true,
+      pgpPrivateKey: userChatCredentials?.pgpPrivateKey,
+      page: currentPage+1,
+      limit: 10,
+      env: envConfig.ENV as PushSdk.ENV,
+    }); 
+
+    setChatData(prev => ({
+      ...prev,
+      feeds: [...prev.feeds, feeds],
+    }));
+    setCurrentPage(prev => prev + 1)
+  }
+
+  return [isLoading, chatData, refresh, fetchInboxPage];
 };
 export {useChatLoader};

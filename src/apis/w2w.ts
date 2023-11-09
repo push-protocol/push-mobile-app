@@ -44,24 +44,6 @@ export interface InboxChat {
   messageContent?: string;
 }
 
-export interface Feeds {
-  // This property contains all the info to be displayed on the sidebar for the other peer's information
-  // Such as the decrypted message content and peer's profilePicture
-  msg: InboxChat;
-  did: string;
-  wallets: string;
-  profilePicture: string | null;
-  publicKey: string | null;
-  about: string | null;
-  threadhash: string | null;
-  intent: string | null;
-  intentSentBy: string | null;
-  intentTimestamp: string;
-  combinedDID: string;
-  cid: string;
-  chatId?: string;
-}
-
 export interface ConnectedUser extends User {
   privateKey: string;
 }
@@ -122,34 +104,6 @@ export const approveIntent2 = async (body: any) => {
     throw new Error('Error changing intent status');
   }
   return true;
-};
-
-export const getInbox = async (did: string): Promise<Feeds[] | undefined> => {
-  let retry = 0;
-  for (let i = 0; i < 3; i++) {
-    try {
-      const path = `${BASE_URL}/v1/chat/users/eip155:${did}/messages`;
-      const response = await fetch(path, {
-        method: 'GET',
-      });
-      if (response.status >= 500) {
-        continue;
-      }
-      // const data: Feeds[] = await response.json();
-      const raw_data: any = await response.json();
-      const data: Feeds[] = raw_data.filter(
-        (el: any) => !('groupInformation' in el),
-      );
-      return data;
-    } catch (err) {
-      if (retry > 1) {
-        console.log('An Error Occurred! Please Reload the Page');
-      }
-      console.log('Error in the API call', err);
-      retry++;
-      continue;
-    }
-  }
 };
 
 export interface MessageIPFSWithCID extends MessageIPFS {
