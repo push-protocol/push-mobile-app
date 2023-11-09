@@ -21,7 +21,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "postinstall": "node_modules/.bin/rn-nodeify --install crypto,assert,url,stream,events,http,https,os,url,net,fs --hack && patch-package"
+    "postinstall": "node_modules/.bin/rn-nodeify --install crypto,assert,url,stream,events,http,https,os,url,net,fs --hack && patch-package && npx jetify"
   },
   "dependencies": {
     "@ethersproject/shims": "^5.7.0",
