@@ -103,7 +103,6 @@ const ChatItem = (props: SingleChatItemProps) => {
               {messageType === 'Image' && 'Image'}
             </Text>
           </View>
-
           <View>
             <Text style={props.count ? styles.activeTime : styles.time}>
               {timeStamp}

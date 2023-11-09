@@ -1,3 +1,4 @@
+import * as PushSdk from '@kalashshah/react-native-sdk/src';
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {formatAMPM, formatDate} from 'src/helpers/DateTimeHelper';
@@ -9,7 +10,7 @@ import {ImageMessage} from './messageTypes/ImageMessage';
 export type MessageComponentType = 'SENDER' | 'RECEIVER';
 
 type MessageComponentProps = {
-  chatMessage: ChatMessage;
+  chatMessage: PushSdk.PushApi.IMessageIPFS;
   componentType: MessageComponentType;
   includeDate: boolean;
 };
@@ -19,13 +20,14 @@ const MessageComponent = ({
   componentType,
   includeDate,
 }: MessageComponentProps) => {
-  const time = formatAMPM(chatMessage.time);
-  const date = formatDate(chatMessage.time);
+  const time = formatAMPM(chatMessage.timestamp || 0);
+  const date = formatDate(chatMessage.timestamp || 0);
 
   const styles = componentType === 'SENDER' ? SenderStyle : RecipientStyle;
-  const {message, messageType} = chatMessage;
+  const {messageContent, messageType} = chatMessage;
 
-  // console.log('mmsage', chatMessage.message, 'add date', includeDate);
+  console.log('got message content', messageContent);
+  console.log('message type', messageType);
 
   return (
     <View style={{marginHorizontal: 22}}>
@@ -44,21 +46,24 @@ const MessageComponent = ({
       )}
       <View style={styles.container}>
         {messageType === 'GIF' && (
-          <ImageMessage imageSource={chatMessage.message} time={time} />
+          <ImageMessage imageSource={messageContent} time={time} />
         )}
         {messageType === 'Image' && (
-          <ImageMessage imageSource={JSON.parse(message).content} time={time} />
+          <ImageMessage
+            imageSource={JSON.parse(messageContent).content}
+            time={time}
+          />
         )}
         {messageType === 'Text' && (
           <TextMessage
-            chatMessage={chatMessage}
+            chatMessage={messageContent}
             componentType={componentType}
             time={time}
           />
         )}
-        {messageType === 'File' && (
+        {/* {messageType === 'File' && (
           <FileMessageComponent chatMessage={chatMessage} />
-        )}
+        )} */}
       </View>
     </View>
   );

@@ -2,7 +2,6 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import Globals from 'src/Globals';
 
-import {ChatMessage} from '../../helpers/chatResolver';
 import {MessageComponentType} from '../MessageComponent';
 
 export const TextMessage = ({
@@ -10,7 +9,7 @@ export const TextMessage = ({
   componentType,
   time,
 }: {
-  chatMessage: ChatMessage;
+  chatMessage: string;
   componentType: MessageComponentType;
   time: string;
 }) => {
@@ -18,7 +17,7 @@ export const TextMessage = ({
   return (
     <View style={styles.container}>
       <View>
-        <Text style={styles.text}>{chatMessage.message}</Text>
+        <Text style={styles.text}>{chatMessage}</Text>
         <Text style={styles.time}>{time}</Text>
       </View>
     </View>
