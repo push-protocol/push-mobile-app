@@ -2852,12 +2852,12 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@kalashshah/react-native-sdk@^0.1.11":
-  version "0.1.11"
-  resolved "https://registry.yarnpkg.com/@kalashshah/react-native-sdk/-/react-native-sdk-0.1.11.tgz#4a11cfa4b54844cf5bbc9c3d64648f5e722fd6b8"
-  integrity sha512-jcVziKTPnsFsngN/sFRWgz1wqKk98Q+2kJUoREbtKo+YnvIM0cikDucTkHVdAVV1zzQ84cvEn6cbAFxvw4QB8g==
+"@kalashshah/react-native-sdk@0.1.15":
+  version "0.1.15"
+  resolved "https://registry.yarnpkg.com/@kalashshah/react-native-sdk/-/react-native-sdk-0.1.15.tgz#831a0c15197eea0ff3adff6d5f8337b44756bd13"
+  integrity sha512-2VAF+jvJ72KTJNfk+kRNB/p4cs6s4FpDHZiZMUOoR3TU0GfbXL/HlvwWzOAVjWMndacJOIUcnj36mRHJK8WjyA==
   dependencies:
-    "@kalashshah/restapi" "0.1.1"
+    "@kalashshah/restapi" "0.1.2"
     "@tradle/react-native-http" "^2.0.1"
     assert "^1.5.0"
     crypto "^1.0.1"
@@ -2882,10 +2882,10 @@
     text-encoding "0.7.0"
     url "^0.10.3"
 
-"@kalashshah/restapi@0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@kalashshah/restapi/-/restapi-0.1.1.tgz#3b64ecfe8d75368866bca8100e30e99bf3b81412"
-  integrity sha512-QU7+6dS0bajwElz6ICF9zVY4FeCbCrfBuMYgxiXSmvn+Gdk8G9uLdCDq6JYsRDnU1osaCVZhLjBDqb1TNriNxg==
+"@kalashshah/restapi@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@kalashshah/restapi/-/restapi-0.1.2.tgz#347db1994f61703578344bea45c6461c80befcb1"
+  integrity sha512-HMIrv/AKnNZlwyYwJgoiUL9/VVJbgjBuStmxJBolZOcKEGMLT0e1kiSbtpbshP9hhbbwwdt6vQaHPwGaPE0YuQ==
   dependencies:
     "@ambire/signature-validator" "^1.3.1"
     "@metamask/eth-sig-util" "^5.0.2"

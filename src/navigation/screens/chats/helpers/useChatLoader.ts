@@ -61,14 +61,26 @@ const useChatLoader = (
   };
 
   const loadInbox = async (ethAddress: string) => {
-    const feeds = await PushSdk.chats({
-      account: ethAddress,
-      toDecrypt: true,
-      pgpPrivateKey: userChatCredentials?.pgpPrivateKey,
-      page: currentPage,
-      limit: 10,
-      env: envConfig.ENV as PushSdk.ENV,
-    });
+    
+
+    const [feeds, requests]:[any, any] = await Promise.all([
+      PushSdk.chats({
+        account: ethAddress,
+        toDecrypt: true,
+        pgpPrivateKey: userChatCredentials?.pgpPrivateKey,
+        page: currentPage,
+        limit: 15,
+        env: envConfig.ENV as PushSdk.ENV,
+      }),
+      PushSdk.requests({
+        account:ethAddress,
+        toDecrypt: true,
+        pgpPrivateKey: userChatCredentials?.pgpPrivateKey,
+        page: 1,
+        limit: 10,
+        env: envConfig.ENV as PushSdk.ENV,
+      })
+    ])
 
     if (!feeds) {
       return;
@@ -77,6 +89,7 @@ const useChatLoader = (
     setChatData(prev => ({
       ...prev,
       feeds: feeds,
+      requests:requests
     }));
 
     setIsLoading(false);
@@ -155,19 +168,36 @@ const useChatLoader = (
   };
 
   const fetchInboxPage = async(ethAddress: string)=>{
-    const feeds: any = await PushSdk.chats({
-      account: ethAddress,
-      toDecrypt: true,
-      pgpPrivateKey: userChatCredentials?.pgpPrivateKey,
-      page: currentPage+1,
-      limit: 10,
-      env: envConfig.ENV as PushSdk.ENV,
-    }); 
+    console.log("loading inbox");
+    
+    const [feeds, requests]:[any, any] = await Promise.all([
+      PushSdk.chats({
+        account: ethAddress,
+        toDecrypt: true,
+        pgpPrivateKey: userChatCredentials?.pgpPrivateKey,
+        page: currentPage+1,
+        limit: 10,
+        env: envConfig.ENV as PushSdk.ENV,
+      }),
+      PushSdk.requests({
+        account:ethAddress,
+        toDecrypt: true,
+        pgpPrivateKey: userChatCredentials?.pgpPrivateKey,
+        page: 1,
+        limit: 5,
+        env: envConfig.ENV as PushSdk.ENV,
+      })
+    ])
+
+    console.log("got reqs",requests);
+    
 
     setChatData(prev => ({
       ...prev,
       feeds: [...prev.feeds, feeds],
+      requests:[...prev.requests, requests]
     }));
+    
     setCurrentPage(prev => prev + 1)
   }
 
