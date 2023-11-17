@@ -5,6 +5,7 @@ import {
 } from '@expo/vector-icons';
 import {GiphyDialog, GiphyDialogEvent} from '@giphy/react-native-sdk';
 import {ENV, approve} from '@kalashshah/react-native-sdk/src';
+import * as PushSdk from '@kalashshah/react-native-sdk/src';
 import {VideoCallStatus} from '@pushprotocol/restapi';
 import {walletToPCAIP10} from '@pushprotocol/restapi/src/lib/helpers';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -271,8 +272,10 @@ const SingleChatScreen = ({route}: any) => {
     }
 
     try {
-      const prevDate = new Date(chatMessages[index + 1].time).getDate();
-      const thisDate = new Date(chatMessages[index].time).getDate();
+      const prevDate = new Date(
+        chatMessages[index + 1].timestamp || 0,
+      ).getDate();
+      const thisDate = new Date(chatMessages[index].timestamp || 0).getDate();
 
       return prevDate !== thisDate;
     } catch (error) {
@@ -281,8 +284,16 @@ const SingleChatScreen = ({route}: any) => {
     }
   };
 
-  const renderItem = ({item, index}: {item: ChatMessage; index: number}) => {
-    const componentType = item.to === senderAddress ? 'SENDER' : 'RECEIVER';
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: PushSdk.PushApi.IMessageIPFS;
+    index: number;
+  }) => {
+    const componentType = item.toCAIP10.includes(senderAddress)
+      ? 'SENDER'
+      : 'RECEIVER';
     return (
       <MessageComponent
         chatMessage={item}
@@ -360,7 +371,9 @@ const SingleChatScreen = ({route}: any) => {
                   ref={scrollViewRef}
                   data={chatMessages}
                   renderItem={({item, index}) => renderItem({item, index})}
-                  keyExtractor={(msg, index) => msg.time.toString() + index}
+                  keyExtractor={(msg, index) =>
+                    msg.timestamp!.toString() + index
+                  }
                   showsHorizontalScrollIndicator={false}
                   showsVerticalScrollIndicator={false}
                   overScrollMode={'never'}

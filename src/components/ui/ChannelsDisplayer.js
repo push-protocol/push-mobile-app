@@ -1,4 +1,5 @@
 import '@ethersproject/shims';
+import * as PushApi from '@pushprotocol/restapi';
 import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -89,9 +90,14 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
     }
 
     setIsSearchEnded(false);
-    const apiURL = `${ENV_CONFIG.EPNS_SERVER}${ENV_CONFIG.ENDPOINT_SEARCH_CHANNELS}?page=1&limit=20&query=${channelName}`;
-    const resJson = await fetch(apiURL).then(response => response.json());
-    setChannels(resJson.channels);
+    const channels = await PushApi.channels.search({
+      query: channelName,
+      limit: 20,
+      page: 1,
+      env: ENV_CONFIG.ENV,
+    });
+
+    setChannels(channels);
     setIsSearchEnded(true);
   };
 
