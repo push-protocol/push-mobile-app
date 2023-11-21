@@ -26,9 +26,6 @@ const MessageComponent = ({
   const styles = componentType === 'SENDER' ? SenderStyle : RecipientStyle;
   const {messageContent, messageType} = chatMessage;
 
-  console.log('got message content', messageContent);
-  console.log('message type', messageType);
-
   return (
     <View style={{marginHorizontal: 22}}>
       {includeDate && (

@@ -221,11 +221,9 @@ const Web3Helper = {
       });
   },
   getUDRev: async function (wallet) {
-    console.log('**** callled');
     try {
       const resolution = getResolution();
       const name = await resolution.reverse(wallet, 'ETH');
-      console.log('got rev', name, 'for wallet', wallet);
       if (name) {
         return [true, name];
       }
