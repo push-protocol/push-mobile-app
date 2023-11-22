@@ -50,9 +50,7 @@ const ChatProfileBuilder = ({style, wallet, pkey, setProfileComplete}) => {
 
         setIndicator(false);
         setProfileComplete(true);
-      } catch (error) {
-        console.log('got errosr', error);
-      }
+      } catch (error) {}
     })();
   }, []);
 

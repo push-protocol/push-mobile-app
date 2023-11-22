@@ -227,9 +227,7 @@ const Web3Helper = {
       if (name) {
         return [true, name];
       }
-    } catch (error) {
-      console.log('got err', error);
-    }
+    } catch (error) {}
     return [false, ''];
   },
   // Update CNS Record
@@ -303,7 +301,6 @@ const Web3Helper = {
             resolve(address);
           })
           .catch(err => {
-            console.log('got error');
             console.log(err);
             reject(err);
           });
@@ -319,7 +316,6 @@ const Web3Helper = {
           resolve(address);
         })
         .catch(err => {
-          console.log('got error');
           console.log(err);
           reject(err);
         });

@@ -25,7 +25,6 @@ const ProfileFromDappBuilder = ({
   const peer = new Peer();
 
   const handleError = error => {
-    console.log('got error', error);
     if (!toastRef.current) {
       return;
     }

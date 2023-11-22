@@ -7,7 +7,7 @@ const WalletConnectConfig = {
     namespaces: {
       eip155: {
         methods: ['personal_sign', 'eth_signTypedData'],
-        chains: [envConfig.PROD_ENV ? 'eip155:1' : 'eip155:5'],
+        chains: [`eip155:${envConfig.CHAIN_ID}`],
         events: ['chainChanged', 'accountsChanged'],
         rpcMap: {},
       },

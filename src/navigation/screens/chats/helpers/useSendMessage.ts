@@ -137,7 +137,6 @@ const useSendMessage = (
       return [res.cid, chatMessage];
     } catch (e) {
       showToast('error', 'Message was not sent');
-      console.log('got err', e);
     } finally {
       setIsSending(false);
     }
