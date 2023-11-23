@@ -80,18 +80,22 @@ const useConversationLoader = (
 
   const fetchChats = async (_pgpPrivateKey: string, currentCid: string) => {
     isFetching.current = true;
-    const chats = await PushSdk.history({
-      account: userAddress,
-      threadhash: currentCid,
-      limit: pageBatchSize,
-      toDecrypt: true,
-      pgpPrivateKey: _pgpPrivateKey,
-      env: envConfig.ENV as PushSdk.ENV,
-    });
+    try {
+      const chats = await PushSdk.history({
+        account: userAddress,
+        threadhash: currentCid,
+        limit: pageBatchSize,
+        toDecrypt: true,
+        pgpPrivateKey: _pgpPrivateKey,
+        env: envConfig.ENV as PushSdk.ENV,
+      });
 
-    isFetching.current = false;
-
-    return chats;
+      isFetching.current = false;
+      return chats;
+    } catch (err) {
+      isFetching.current = false;
+      return [];
+    }
   };
 
   const pushChatDataDirect = (
