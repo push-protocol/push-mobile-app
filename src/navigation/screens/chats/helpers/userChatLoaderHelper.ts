@@ -1,10 +1,10 @@
-import * as PushNodeClient from 'src/apis';
+import * as PushSdk from '@kalashshah/react-native-sdk/src';
 
 import {ChatFeedCache} from './useChatLoader';
 
 export const checkIfItemInCache = (
   cache: ChatFeedCache,
-  feeds: PushNodeClient.Feeds[],
+  feeds: PushSdk.PushApi.IFeeds[],
 ) => {
   let isInCache = true;
   for (let i = 0; i < feeds.length; i++) {
@@ -21,10 +21,10 @@ export const checkIfItemInCache = (
 
 export const filterChatAndRequestFeeds = (
   userAddress: string,
-  feeds: PushNodeClient.Feeds[],
+  feeds: PushSdk.PushApi.IFeeds[],
 ) => {
-  const chatFeeds: PushNodeClient.Feeds[] = [];
-  const requestFeeds: PushNodeClient.Feeds[] = [];
+  const chatFeeds: PushSdk.PushApi.IFeeds[] = [];
+  const requestFeeds: PushSdk.PushApi.IFeeds[] = [];
 
   feeds.forEach(element => {
     if (element.intent?.includes(userAddress)) {

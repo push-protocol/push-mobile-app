@@ -1,4 +1,4 @@
-import {Asset} from 'expo-asset';
+import {PushApi} from '@kalashshah/react-native-sdk/src';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
@@ -14,11 +14,11 @@ import {ToasterOptions} from 'src/components/indicators/Toaster';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
-import FeedItemComponent from 'src/components/ui/testFeed/FeedItemComponents.js';
-import ENV_CONFIG from 'src/env.config';
+import envConfig from 'src/env.config';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
-import {getCAIPAddress} from 'src/helpers/CAIPHelper';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
+
+import NotificationItem from './NotificationItem';
 
 export default function InboxFeed(props) {
   const users = useSelector(selectUsers);
@@ -72,50 +72,31 @@ export default function InboxFeed(props) {
     );
   };
 
-  const showImagePreview = async fileURL => {
-    let validPaths = [];
-    let fileIndex = -1;
-
-    // Add Image
-    // Download the file if not done already
-    await Asset.loadAsync(fileURL);
-
-    // Push to valid path
-    validPaths.push({
-      uri: Asset.fromModule(fileURL).uri,
-      id: fileURL,
-    });
-
-    fileIndex = validPaths.length - 1;
-
-    setLoadedImages(validPaths);
-    setRenderGallery(true);
-    setStartFromIndex(fileIndex);
-  };
-
   const fetchFeed = async (rewrite, refresh = false) => {
     if (!endReached || rewrite === true) {
       if (!loading) {
         setloading(true);
-        const apiURL = `${ENV_CONFIG.EPNS_SERVER}/v1/users/${getCAIPAddress(
-          wallet,
-        )}/feeds?page=${refresh ? 1 : page}&limit=10&spam=false`;
+        const feeds = await PushApi.user.getFeeds({
+          user: wallet,
+          env: envConfig.ENV,
+          limit: 10,
+          spam: false,
+          page: refresh ? 1 : page,
+        });
 
-        const resJson = await fetch(apiURL).then(response => response.json());
-
-        if (resJson.itemcount !== 0 && resJson.feeds !== []) {
-          const oldMsg = feed.length > 0 ? feed[0].epoch : '';
-          const newMsg = resJson.feeds[0].epoch;
+        if (feeds && feeds.length > 0) {
+          const oldMsg = feed.length > 0 ? feed[0].sid : '';
+          const newMsg = feeds[0].sid;
           const isMsgNew = oldMsg !== newMsg;
 
           // clear the notifs if present
           AppBadgeHelper.setAppBadgeCount(0);
 
           if (rewrite) {
-            setFeed([...resJson.feeds]);
+            setFeed([...feeds]);
             setEndReached(false);
           } else {
-            setFeed(prev => [...prev, ...resJson.feeds]);
+            setFeed(prev => [...prev, ...feeds]);
           }
 
           if (!refresh) {
@@ -152,18 +133,28 @@ export default function InboxFeed(props) {
           <FlatList
             ref={FlatListFeedsRef}
             data={feed}
-            keyExtractor={item => item.payload_id.toString()}
+            keyExtractor={item => item.sid.toString()}
             initialNumToRender={10}
             style={{flex: 1}}
             showsVerticalScrollIndicator={false}
-            renderItem={({item}) => (
-              <FeedItemComponent
-                loading={loading}
-                item={item}
-                onImagePreview={fileURL => showImagePreview(fileURL)}
-                privateKey={props.privateKey}
-              />
-            )}
+            renderItem={({item}) => {
+              return (
+                <NotificationItem
+                  app={item.app}
+                  chainName={item.blockchain}
+                  cta={item.cta}
+                  icon={item.icon}
+                  image={item.image}
+                  notificationTitle={
+                    item.secret ? item.notification['title'] : item.title
+                  }
+                  notificationBody={
+                    item.secret ? item.notification['body'] : item.message
+                  }
+                  url={item.url}
+                />
+              );
+            }}
             onEndReached={async () => (!endReached ? fetchFeed(false) : null)}
             refreshControl={
               <RefreshControl

@@ -80,6 +80,97 @@ export default class CalendarEvents extends Component {
     Linking.openURL(matchingString);
   }
 
+  newLineStyles() {
+    return '\n';
+  }
+
+  renderTextStyles(matchingString) {
+    const pattern =
+      /<span color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?>(.*?)<\/span>/i;
+    const match = matchingString.match(pattern);
+
+    if (match) {
+      const colorName = match[1].toLowerCase();
+      let color;
+      switch (colorName) {
+        case 'primary':
+          color = GLOBALS.COLORS.PRIMARY;
+          break;
+        case 'secondary':
+          color = GLOBALS.COLORS.GRADIENT_SECONDARY;
+          break;
+        case 'white':
+          color = GLOBALS.COLORS.WHITE;
+          break;
+        // can add more custom color names if needed, couldn't find the tertiary color
+        default:
+          color = colorName;
+      }
+      let textContent = match[2];
+      return <Text style={{color: color}}>{textContent}</Text>;
+    }
+
+    return matchingString;
+  }
+
+  renderLinkWithColor(matchingString) {
+    const pattern =
+      /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?\s+link=["'](https?:\/\/[^"']+)["']>(.*?)<\/PUSHText>/i;
+    const linkPattern = /\[([^\]]+)]\((https?:\/\/[^)]+)/;
+    const match = matchingString.match(pattern);
+    const markdownLinkPattern = matchingString.match(linkPattern);
+
+    const tryLink = url => {
+      Linking.canOpenURL(url).then(supported => {
+        if (supported) Linking.openURL(url);
+        else console.log("Don't know how to open URI: " + url);
+      });
+    };
+
+    if (match) {
+      const colorName = match[1].toLowerCase();
+      let color;
+      // Map custom color names to specific values
+      switch (colorName) {
+        case 'primary':
+          color = GLOBALS.COLORS.PRIMARY;
+          break;
+        case 'secondary':
+          color = GLOBALS.COLORS.GRADIENT_SECONDARY;
+          break;
+        case 'tertiary':
+          color = GLOBALS.COLORS.GRADIENT_THIRD;
+          break;
+        case 'white':
+          color = GLOBALS.COLORS.WHITE;
+          break;
+        // Add more custom color names if needed
+        default:
+          color = colorName;
+      }
+
+      const link = match[2];
+      let textContent = match[3];
+      return (
+        <Text style={{color: color}} onPress={() => tryLink(link)}>
+          {textContent}
+        </Text>
+      );
+    } else if (markdownLinkPattern) {
+      const linkText = markdownLinkPattern[1];
+      const linkUrl = markdownLinkPattern[2];
+      return (
+        <Text
+          onPress={() => tryLink(linkUrl)}
+          style={{color: GLOBALS.COLORS.PINK, flex: 0}}>
+          {linkText}
+        </Text>
+      );
+    }
+
+    return matchingString;
+  }
+
   // RENDER
   render() {
     const {style, title, fontSize, textStyle} = this.props;
@@ -93,6 +184,11 @@ export default class CalendarEvents extends Component {
         type: 'email',
         style: [styles.link, styles.underline],
         onPress: this.handleEmailPress,
+      },
+      {
+        pattern: /\[([^\]]+)]\((https?:\/\/[^)]+)\)/g,
+        style: {},
+        renderText: this.renderLinkWithColor,
       },
       {
         pattern: /\[(u):([^\]]+)\]/i, // url
@@ -130,6 +226,12 @@ export default class CalendarEvents extends Component {
         renderText: this.renderThreeStyles,
       },
       {
+        pattern:
+          /<span color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?>(.*?)<\/span>/gi,
+        style: {}, // we can add aditional styles here if needed
+        renderText: this.renderTextStyles,
+      },
+      {
         pattern: /\[(d):([^\]]+)\]/i, // default or primary gradient color
         style: [styles.primary, styles.bold],
         renderText: this.renderStyles,
@@ -150,9 +252,29 @@ export default class CalendarEvents extends Component {
         renderText: this.renderStyles,
       },
       {
+        pattern: /\[(bi):([^\]]+)\]/i, // bolditalics
+        style: [styles.bold, styles.italics],
+        renderText: this.renderStyles,
+      },
+      {
+        pattern: /\*\*\*(.*?)\*\*\*/g, // bolditalics ***text***
+        style: {
+          ...styles.bold,
+          ...styles.italics,
+        },
+        renderText: matchingString =>
+          matchingString.replace(/\*\*\*(.*?)\*\*\*/g, '$1'),
+      },
+      {
         pattern: /\[(b):([^\]]+)\]/i, // bold
         style: styles.bold,
         renderText: this.renderStyles,
+      },
+      {
+        pattern: /\*\*(.*?)\*\*/g, // bold **text**
+        style: styles.bold,
+        renderText: matchingString =>
+          matchingString.replace(/\*\*(.*?)\*\*/g, '$1'),
       },
       {
         pattern: /\[(i):([^\]]+)\]/i, // italics
@@ -160,9 +282,12 @@ export default class CalendarEvents extends Component {
         renderText: this.renderStyles,
       },
       {
-        pattern: /\[(bi):([^\]]+)\]/i, // bolditalics
-        style: [styles.bold, styles.italics],
-        renderText: this.renderStyles,
+        pattern: /\*(.*?)\*/g, // italic *some text*
+        style: {
+          ...styles.italics,
+        },
+        renderText: matchingString =>
+          matchingString.replace(/\*(.*?)\*/g, '$1'),
       },
       {
         pattern: /\[(w):([^\]]+)\]/i, // white
@@ -193,6 +318,11 @@ export default class CalendarEvents extends Component {
         type: 'url',
         style: [styles.link, styles.underline],
         onPress: this.handelUrlPress,
+      },
+      {
+        pattern: /\\n/g,
+        style: {},
+        renderText: this.newLineStyles,
       },
     ];
 

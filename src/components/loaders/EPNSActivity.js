@@ -4,7 +4,7 @@ import React from 'react';
 import {ActivityIndicator, Platform, StyleSheet, View} from 'react-native';
 import GLOBALS from 'src/Globals';
 
-const EPNSActivity = ({style, size, color}) => {
+const EPNSActivity = ({style, size, color = GLOBALS.COLORS.GRADIENT_THIRD}) => {
   return (
     <View
       style={[
@@ -13,11 +13,7 @@ const EPNSActivity = ({style, size, color}) => {
         size === 'small' ? styles.small : styles.big,
       ]}>
       {Platform.OS == 'android' || color ? (
-        <ActivityIndicator
-          style={styles.activity}
-          size={size}
-          color={color ? color : GLOBALS.COLORS.GRADIENT_THIRD}
-        />
+        <ActivityIndicator style={styles.activity} size={size} color={color} />
       ) : (
         <MaskedView
           style={styles.maskedView}
