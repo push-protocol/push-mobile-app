@@ -6,7 +6,6 @@ import * as PushNodeClient from 'src/apis';
 import envConfig from 'src/env.config';
 
 import {SocketConfig} from './socketHelper';
-import {getStoredConversationData} from './storage';
 
 type pushChatDataDirectFunc = (
   cid: string,
@@ -175,7 +174,6 @@ const useConversationLoader = (
     return () => {
       if (SocketConfig.useSocket) {
         if (pushSDKSocket) {
-          console.log('clearning socket screen');
           pushSDKSocket.disconnect();
         }
       } else {
@@ -193,14 +191,9 @@ const useConversationLoader = (
           env: envConfig.ENV as PushSdk.ENV,
         });
 
-        if (threadHash === currentHash.current) {
-          console.log('no new conversation');
-        } else {
+        if (threadHash !== currentHash.current) {
           // got new message
-          console.log('got new conversation');
           const newMsgs = await fetchChats(pgpPrivateKey, threadHash);
-          console.log('new message palced');
-          // await storeConversationData(combinedDID, newCid, newMsgs);
           setChatData(prev => [...prev, ...newMsgs].reverse());
         }
       }

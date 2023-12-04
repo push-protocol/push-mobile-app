@@ -19,5 +19,4 @@ export const createUser = async (
   });
 
   return [true, user.encryptedPrivateKey, user.publicKey];
-  // return [true, keyPairs.privateKeyArmored, keyPairs.publicKeyArmored];
 };

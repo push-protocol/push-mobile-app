@@ -45,7 +45,6 @@ import {AcceptIntent, MessageComponent} from './components';
 import {CustomScroll} from './components/CustomScroll';
 import './giphy/giphy.setup';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
-import {ChatMessage} from './helpers/chatResolver';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
 import {useSendMessage} from './helpers/useSendMessage';
 

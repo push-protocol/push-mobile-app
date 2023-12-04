@@ -1,7 +1,5 @@
 import envConfig from 'src/env.config';
 
-import './chat/createUser';
-
 const WalletConnectConfig = {
   sessionParams: {
     namespaces: {

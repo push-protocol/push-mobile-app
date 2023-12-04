@@ -11,7 +11,6 @@ import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 import {UserChatCredentials} from '../ChatScreen';
 import {SocketConfig} from './socketHelper';
-import {filterChatAndRequestFeeds} from './userChatLoaderHelper';
 
 export interface ChatData {
   connectedUserData: PushNodeClient.ConnectedUser | undefined;
@@ -106,7 +105,6 @@ const useChatLoader = (
 
     let fetchNewMessages: NodeJS.Timer;
 
-    let time = Date.now();
     (async () => {
       await setUpChatProfile(caipAddress, pgpPrivateKey);
       // await loadCachedInbox();
@@ -130,11 +128,11 @@ const useChatLoader = (
           }
 
           pushSDKSocket.current.on(EVENTS.CONNECT, () => {
-            console.log('connection done', time);
+            console.log('connection done');
           });
 
           pushSDKSocket.current.on(EVENTS.DISCONNECT, () => {
-            console.log('disconnected :(', time);
+            console.log('disconnected :(');
           });
           pushSDKSocket.current.on(EVENTS.CHAT_RECEIVED_MESSAGE, _ => {
             loadInbox(derivedAddress);
