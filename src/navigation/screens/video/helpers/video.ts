@@ -11,9 +11,9 @@ import {
   RTCSessionDescription,
 } from 'react-native-webrtc';
 import {mediaDevices} from 'react-native-webrtc';
-import CallKeepHelper from 'src/callkeep';
 import {initVideoCallData} from 'src/contexts/VideoContext';
 import envConfig from 'src/env.config';
+import CallkeepHelper from 'src/helpers/CallkeepHelper';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import JsonHelper from 'src/helpers/JsonHelper';
 import {sendVideoCallNotification} from 'src/push_video/video';
@@ -655,7 +655,7 @@ export class Video {
       }
 
       // end the native call
-      CallKeepHelper.endAllCall();
+      CallkeepHelper.endAllCall();
       // reset the state
       this.setData(() => initVideoCallData);
     } catch (err) {

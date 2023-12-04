@@ -3,7 +3,6 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {formatAMPM, formatDate} from 'src/helpers/DateTimeHelper';
 
-import {ChatMessage} from '../helpers/chatResolver';
 import {FileMessageComponent, TextMessage} from './messageTypes';
 import {ImageMessage} from './messageTypes/ImageMessage';
 

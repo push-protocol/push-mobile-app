@@ -1,12 +1,10 @@
 import {ISendMessagePayload} from '@pushprotocol/restapi/src/lib/chat';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import envConfig from 'src/env.config';
-import {encryptWithRPCEncryptionPublicKeyReturnRawData} from 'src/helpers/w2w/metamaskSigUtil';
-import {generateKeyPair} from 'src/helpers/w2w/pgp';
 import {sendMessagePayload} from 'src/helpers/w2w/sendMessagePayload';
 import {pgpSignBody} from 'src/navigation/screens/chats/helpers/signatureHelper';
 
-import {MessageIPFS} from './ipfs';
+import {MessageIPFSWithCID} from './ipfs';
 
 export interface User {
   did: string;
@@ -105,10 +103,6 @@ export const approveIntent2 = async (body: any) => {
   }
   return true;
 };
-
-export interface MessageIPFSWithCID extends MessageIPFS {
-  cid: string;
-}
 
 export const postMessage = async (body: {
   fromCAIP10: string;

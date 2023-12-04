@@ -6,7 +6,6 @@ import {formatAMPM} from 'src/helpers/DateTimeHelper';
 import {Context} from 'src/navigation/screens/chats/ChatScreen';
 
 import {getFormattedAddress} from '../helpers/chatAddressFormatter';
-import {resolveCID} from '../helpers/chatResolver';
 import {SingleChatItemProps} from '../types';
 
 const formatTextData = (rawText: string) => {
