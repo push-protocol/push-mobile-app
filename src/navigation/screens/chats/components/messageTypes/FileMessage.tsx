@@ -1,9 +1,9 @@
 import {FontAwesome} from '@expo/vector-icons';
+import {PushApi} from '@kalashshah/react-native-sdk/src';
 import React from 'react';
 import {Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {SvgUri} from 'react-native-svg';
-
-import {ChatMessage} from '../../helpers/chatResolver';
+import {formatAMPM} from 'src/helpers/DateTimeHelper';
 
 export interface FileMessageContent {
   content: string;
@@ -25,9 +25,11 @@ const formatFileSize = (size: number): string => {
 export const FileMessageComponent = ({
   chatMessage,
 }: {
-  chatMessage: ChatMessage;
+  chatMessage: PushApi.IMessageIPFS;
 }) => {
-  const fileContent: FileMessageContent = JSON.parse(chatMessage.message);
+  const fileContent: FileMessageContent = JSON.parse(
+    chatMessage.messageContent,
+  );
   const name = fileContent.name;
   let modifiedName: string;
   if (name.length > 11) {
@@ -58,7 +60,7 @@ export const FileMessageComponent = ({
         <FontAwesome name="download" size={24} color="gray" />
       </TouchableOpacity>
 
-      <Text style={styles.time}>{chatMessage.time}</Text>
+      <Text style={styles.time}>{formatAMPM(chatMessage.timestamp!)}</Text>
     </View>
   );
 };
@@ -74,7 +76,6 @@ const styles = StyleSheet.create({
     height: 90,
     borderRadius: 8,
     padding: 15,
-    marginHorizontal: 8,
   },
   text: {
     color: 'white',

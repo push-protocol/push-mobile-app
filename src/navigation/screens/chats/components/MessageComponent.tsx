@@ -57,9 +57,9 @@ const MessageComponent = ({
             time={time}
           />
         )}
-        {/* {messageType === 'File' && (
+        {messageType === 'File' && (
           <FileMessageComponent chatMessage={chatMessage} />
-        )} */}
+        )}
       </View>
     </View>
   );
