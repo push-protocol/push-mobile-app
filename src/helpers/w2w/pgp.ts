@@ -76,14 +76,9 @@ export const encryptAndSign = async ({
   };
 };
 
-export const pgpSign = async (
-  plainText: string,
-  fromPublicKeyArmored: string,
-  privateKeyArmored: string,
-) => {
+export const pgpSign = async (plainText: string, privateKeyArmored: string) => {
   const signature: string = await OpenPGP.sign(
     plainText,
-    fromPublicKeyArmored,
     privateKeyArmored,
     '',
   );

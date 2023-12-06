@@ -24,6 +24,7 @@ const Requests = ({requests, isIntentReceivePage}: RequestProps) => {
             chatId={item.chatId}
             isIntentReceivePage={isIntentReceivePage}
             isIntentSendPage={false}
+            feed={item}
             clearSearch={() => {}}
           />
         ))}

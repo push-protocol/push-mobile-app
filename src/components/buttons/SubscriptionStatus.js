@@ -11,7 +11,6 @@ import {
   TouchableHighlight,
   View,
 } from 'react-native';
-import Globals from 'src/Globals';
 import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import NoticePrompt from 'src/components/modals/NoticePrompt';
@@ -38,7 +37,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
   const EPNS_DOMAIN = {
     name: 'EPNS COMM V1',
     chainId: ENV_CONFIG.CHAIN_ID,
-    verifyingContract: Globals.CONTRACTS.COMM_CONTRACT,
+    verifyingContract: ENV_CONFIG.CONTRACTS.COMM_CONTRACT,
   };
 
   const subType = {
@@ -97,7 +96,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
     const body = {
       signature: signature,
       message: subMessage,
-      contractAddress: Globals.CONTRACTS.COMM_CONTRACT,
+      contractAddress: ENV_CONFIG.CONTRACTS.COMM_CONTRACT,
       chainId: ENV_CONFIG.CHAIN_ID,
       op: 'write',
     };
@@ -130,7 +129,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
       body: JSON.stringify({
         signature: signature,
         message: unsubMessage,
-        contractAddress: Globals.CONTRACTS.COMM_CONTRACT,
+        contractAddress: ENV_CONFIG.CONTRACTS.COMM_CONTRACT,
         chainId: ENV_CONFIG.CHAIN_ID,
         op: 'write',
       }),

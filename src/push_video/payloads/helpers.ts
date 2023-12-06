@@ -7,8 +7,6 @@ import {
 import {pgpSignBody} from 'src/navigation/screens/chats/helpers/signatureHelper';
 import {v4 as uuidv4} from 'uuid';
 
-const CryptoJS = require('crypto-js');
-
 export function getUUID() {
   return uuidv4();
 }
@@ -102,45 +100,3 @@ export async function getVerificationProof({
   }
   return verificationProof;
 }
-
-const twilioIceServers = [
-  {
-    url: 'stun:global.stun.twilio.com:3478',
-    urls: 'stun:global.stun.twilio.com:3478',
-  },
-  {
-    url: 'turn:global.turn.twilio.com:3478?transport=udp',
-    username:
-      '536dd50e769bb617d90a4b44df05959f4bd1c6bbd4031ec995752571588dc275',
-    urls: 'turn:global.turn.twilio.com:3478?transport=udp',
-    credential: 'dNtN2rI2HRB/X+NacRghko0RBiUDjGtw+EdUqMLBLyY=',
-  },
-  {
-    url: 'turn:global.turn.twilio.com:3478?transport=tcp',
-    username:
-      '536dd50e769bb617d90a4b44df05959f4bd1c6bbd4031ec995752571588dc275',
-    urls: 'turn:global.turn.twilio.com:3478?transport=tcp',
-    credential: 'dNtN2rI2HRB/X+NacRghko0RBiUDjGtw+EdUqMLBLyY=',
-  },
-  {
-    url: 'turn:global.turn.twilio.com:443?transport=tcp',
-    username:
-      '536dd50e769bb617d90a4b44df05959f4bd1c6bbd4031ec995752571588dc275',
-    urls: 'turn:global.turn.twilio.com:443?transport=tcp',
-    credential: 'dNtN2rI2HRB/X+NacRghko0RBiUDjGtw+EdUqMLBLyY=',
-  },
-];
-
-export const getIceServers = async ({useTwilio}: {useTwilio: boolean}) => {
-  if (useTwilio) {
-    return twilioIceServers;
-  }
-  const res = await fetch(
-    'https://backend-dev.epns.io/apis/v1/turnserver/iceconfig',
-  );
-  const text = await res.text();
-  const {config: decryptedData} = JSON.parse(
-    CryptoJS.AES.decrypt(text, 'turnserversecret').toString(CryptoJS.enc.Utf8),
-  );
-  return decryptedData;
-};

@@ -44,11 +44,7 @@ const getEncryptedRequest = async (
         throw new Error('Invalid receiver address!');
       }
 
-      const signature = await pgpSign(
-        message,
-        senderPublicKey,
-        senderCreatedUser.privateKey!,
-      );
+      const signature = await pgpSign(message, senderCreatedUser.privateKey!);
 
       return {
         message: message,
@@ -58,11 +54,7 @@ const getEncryptedRequest = async (
       };
     } else {
       if (!receiverPublicKey.includes('-----BEGIN PGP PUBLIC KEY BLOCK-----')) {
-        const signature = await pgpSign(
-          message,
-          senderPublicKey,
-          senderCreatedUser.privateKey!,
-        );
+        const signature = await pgpSign(message, senderCreatedUser.privateKey!);
 
         return {
           message: message,

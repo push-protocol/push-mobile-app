@@ -47,7 +47,6 @@ const newSocket = (userAddress: string) => {
 };
 
 const useGlobalSocket = (userAddress: string) => {
-  // const [socket, setSocket] = useState(newSocket(userAddress));
   const socket = useRef<any>() as React.MutableRefObject<any>;
 
   const {

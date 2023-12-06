@@ -1,3 +1,4 @@
+import {PushApi} from '@kalashshah/react-native-sdk/src';
 import {Asset} from 'expo-asset';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -13,10 +14,10 @@ import {useSelector} from 'react-redux';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
-import FeedItemComponent from 'src/components/ui/testFeed/FeedItemComponents.js';
 import ENV_CONFIG from 'src/env.config';
-import {getCAIPAddress} from 'src/helpers/CAIPHelper';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
+
+import NotificationItem from './NotificationItem';
 
 export default function SpamFeed(props) {
   const users = useSelector(selectUsers);
@@ -85,19 +86,21 @@ export default function SpamFeed(props) {
     if (!endReached || rewrite === true) {
       if (!loading) {
         setloading(true);
-        const apiURL = `${ENV_CONFIG.EPNS_SERVER}/v1/users/${getCAIPAddress(
-          wallet,
-        )}/feeds?page=${page}&limit=10&spam=true`;
+        const feeds = await PushApi.user.getFeeds({
+          user: wallet,
+          env: ENV_CONFIG.ENV,
+          limit: 10,
+          page: page,
+          spam: true,
+        });
 
-        const resJson = await fetch(apiURL).then(response => response.json());
-
-        if (resJson.itemcount !== 0 && resJson.feeds !== []) {
+        if (feeds && feeds.length > 0) {
           // clear the notifs if present
           if (rewrite) {
-            setFeed([...resJson.feeds]);
+            setFeed([...feeds]);
             setEndReached(false);
           } else {
-            setFeed(prev => [...prev, ...resJson.feeds]);
+            setFeed(prev => [...prev, ...feeds]);
           }
           setPage(prev => prev + 1);
           setEndReached(true);
@@ -109,84 +112,91 @@ export default function SpamFeed(props) {
   };
 
   return (
-    <>
-      <SafeAreaView style={styles.container}>
-        <View style={{flex: 1}}>
-          <FlatList
-            ref={FlatListFeedsRef}
-            data={feed}
-            keyExtractor={item => item.payload_id.toString()}
-            initialNumToRender={10}
-            style={{flex: 1}}
-            showsVerticalScrollIndicator={false}
-            renderItem={({item}) => (
-              <FeedItemComponent
-                loading={loading}
-                item={item}
-                onImagePreview={fileURL => showImagePreview(fileURL)}
-                privateKey={props.privateKey}
+    <SafeAreaView style={styles.container}>
+      <View style={{flex: 1}}>
+        <FlatList
+          ref={FlatListFeedsRef}
+          data={feed}
+          keyExtractor={item => item.sid.toString()}
+          initialNumToRender={10}
+          style={{flex: 1}}
+          showsVerticalScrollIndicator={false}
+          renderItem={({item}) => {
+            return (
+              <NotificationItem
+                app={item.app}
+                chainName={item.blockchain}
+                cta={item.cta}
+                icon={item.icon}
+                image={item.image}
+                url={item.url}
+                notificationTitle={
+                  item.secret ? item.notification['title'] : item.title
+                }
+                notificationBody={
+                  item.secret ? item.notification['body'] : item.message
+                }
               />
-            )}
-            onEndReached={async () => (!endReached ? fetchFeed(false) : null)}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={() => {
-                  setInitialized(false);
-                }}
-              />
-            }
-            ListEmptyComponent={
-              refreshing ? (
-                <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-                  <StylishLabel
-                    style={styles.infoText}
-                    fontSize={16}
-                    title="[dg:Please wait, Refreshing feed.!]"
-                  />
-                </View>
-              ) : (
-                <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-                  <Image
-                    style={styles.infoIcon}
-                    source={require('assets/ui/feed.png')}
-                  />
-                  <StylishLabel
-                    style={styles.infoText}
-                    fontSize={16}
-                    title="[dg:No Spams!]"
-                  />
-                </View>
-              )
-            }
-            ListFooterComponent={() => {
-              return loading ? (
-                <View style={{paddingBottom: 30, marginTop: 20}}>
-                  <EPNSActivity style={styles.activity} size="small" />
-                </View>
-              ) : null;
-            }}
-          />
-
-          <ImageView
-            images={loadedImages}
-            imageIndex={startFromIndex}
-            visible={renderGallery}
-            swipeToCloseEnabled={true}
-            onRequestClose={() => {
-              setRenderGallery(false);
-            }}
-            FooterComponent={({imageIndex}) => (
-              <ImagePreviewFooter
-                imageIndex={imageIndex}
-                imagesCount={loadedImages.length}
-                fileURI={loadedImages[imageIndex].uri}
-              />
-            )}
-          />
-        </View>
-      </SafeAreaView>
-    </>
+            );
+          }}
+          onEndReached={async () => (!endReached ? fetchFeed(false) : null)}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => {
+                setInitialized(false);
+              }}
+            />
+          }
+          ListEmptyComponent={
+            refreshing ? (
+              <View style={[styles.infodisplay, styles.noPendingFeeds]}>
+                <StylishLabel
+                  style={styles.infoText}
+                  fontSize={16}
+                  title="[dg:Please wait, Refreshing feed.!]"
+                />
+              </View>
+            ) : (
+              <View style={[styles.infodisplay, styles.noPendingFeeds]}>
+                <Image
+                  style={styles.infoIcon}
+                  source={require('assets/ui/feed.png')}
+                />
+                <StylishLabel
+                  style={styles.infoText}
+                  fontSize={16}
+                  title="[dg:No Spams!]"
+                />
+              </View>
+            )
+          }
+          ListFooterComponent={() => {
+            return loading ? (
+              <View style={{paddingBottom: 30, marginTop: 20}}>
+                <EPNSActivity style={styles.activity} size="small" />
+              </View>
+            ) : null;
+          }}
+        />
+        <ImageView
+          images={loadedImages}
+          imageIndex={startFromIndex}
+          visible={renderGallery}
+          swipeToCloseEnabled={true}
+          onRequestClose={() => {
+            setRenderGallery(false);
+          }}
+          FooterComponent={({imageIndex}) => (
+            <ImagePreviewFooter
+              imageIndex={imageIndex}
+              imagesCount={loadedImages.length}
+              fileURI={loadedImages[imageIndex].uri}
+            />
+          )}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 

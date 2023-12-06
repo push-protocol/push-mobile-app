@@ -4,8 +4,8 @@ import {useCallback, useEffect, useState} from 'react';
 import {Platform} from 'react-native';
 import RNCallKeep, {InitialEvents} from 'react-native-callkeep';
 import VoipPushNotification from 'react-native-voip-push-notification';
-import CallkeepHelper from 'src/callkeep';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
+import CallkeepHelper from 'src/helpers/CallkeepHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
 import Notify from 'src/singletons/Notify';
 
@@ -48,7 +48,6 @@ export const useNotification = () => {
       'didLoadWithEvents',
       // @ts-ignore Incorrect type definition
       (events: InitialEvents) => {
-        console.log('didLoadWithEvents', events);
         const answerCallEvent = events.find(
           event => event.name === 'RNCallKeepPerformAnswerCallAction',
         );
@@ -59,7 +58,6 @@ export const useNotification = () => {
     );
 
     VoipPushNotification.addEventListener('register', token => {
-      console.log('Registering APN token:', token);
       MetaStorage.instance.setApnsVoipToken(token);
     });
 
@@ -81,7 +79,6 @@ export const useNotification = () => {
       (events: any) => {
         // If loaded with notification received events
         if (events.length >= 2) {
-          console.log('events:', JSON.stringify(events));
           const status = events[0].data?.status || events[1].data?.status;
           const uuid = events[0].data?.uuid || events[1].data?.uuid;
           if (status === VideoCallStatus.INITIALIZED) {
@@ -94,7 +91,6 @@ export const useNotification = () => {
       },
     );
 
-    // console.log('Registering VoIP token');
     Platform.OS === 'ios' && VoipPushNotification.registerVoipToken();
 
     return () => {

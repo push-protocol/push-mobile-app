@@ -6,8 +6,17 @@
     "slug": "epns",
     "version": "0.8.6",
     "scheme": "epns",
-    "platforms": ["ios", "android", "web"],
-    "assetBundlePatterns": ["**/*"]
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "plugins": [
+      "expo-build-properties"
+    ]
   },
   "plugins": [
     [

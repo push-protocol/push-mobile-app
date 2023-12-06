@@ -1,5 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import {Image, Platform, StyleSheet, Text, View} from 'react-native';
+import React, {useState} from 'react';
+import {
+  Image,
+  ImageLoadEventData,
+  NativeSyntheticEvent,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 export const ImageMessage = ({
   imageSource,
@@ -11,33 +19,26 @@ export const ImageMessage = ({
   const [width, setWidth] = useState(1);
 
   const [aspectRatio, setAspectRatio] = useState(1);
-  const [ready, setIsReady] = useState(false);
   const MAX_WIDTH = Platform.OS === 'android' ? 240 : 280;
 
   const getWidth = (_width: number) => {
     return Math.min(_width, MAX_WIDTH);
   };
 
-  useEffect(() => {
-    try {
-      Image.getSize(imageSource, (_width, _height) => {
-        setWidth(_width);
-        setAspectRatio(_width / _height);
-        setIsReady(true);
-      });
-    } catch (error) {}
-  }, [imageSource]);
+  const handleImageLoad = ({
+    nativeEvent,
+  }: NativeSyntheticEvent<ImageLoadEventData>) => {
+    const {width: imgWidth, height: imgHeight} = nativeEvent.source;
 
-  if (!ready) {
-    return <View />;
-  }
+    setWidth(imgWidth);
+    setAspectRatio(imgWidth / imgHeight);
+  };
 
   return (
     <View style={[styles.content, {width: getWidth(width), aspectRatio}]}>
       <Image
-        source={{
-          uri: imageSource,
-        }}
+        source={{uri: imageSource}}
+        onLoad={handleImageLoad}
         style={[styles.image, {width: getWidth(width), aspectRatio}]}
         resizeMode="contain"
       />
