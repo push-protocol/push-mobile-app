@@ -554,6 +554,8 @@ PODS:
     - React-Core
   - RNKeychain (8.1.1):
     - React-Core
+  - RNLocalize (3.0.2):
+    - React-Core
   - RNNotifee (7.8.0):
     - React-Core
     - RNNotifee/NotifeeCore (= 7.8.0)
@@ -660,6 +662,7 @@ DEPENDENCIES:
   - "RNFlashList (from `../node_modules/@shopify/flash-list`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
+  - RNLocalize (from `../node_modules/react-native-localize`)
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNOS (from `../node_modules/react-native-os`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -846,6 +849,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
+  RNLocalize:
+    :path: "../node_modules/react-native-localize"
   RNNotifee:
     :path: "../node_modules/@notifee/react-native"
   RNOS:
@@ -956,6 +961,7 @@ SPEC CHECKSUMS:
   RNFlashList: 399bf6a0db68f594ad2c86aaff3ea39564f39f8a
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
+  RNLocalize: dbea38dcb344bf80ff18a1757b1becf11f70cae4
   RNNotifee: f3c01b391dd8e98e67f539f9a35a9cbcd3bae744
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f

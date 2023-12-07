@@ -110,8 +110,7 @@ const useGlobalSocket = (userAddress: string) => {
 
               if (videoCallMetaData.status === VideoCallStatus.INITIALIZED) {
                 const shouldOpenModal = AppState.currentState === 'active';
-                Platform.OS !== 'ios' &&
-                  incomingCall(videoCallMetaData, shouldOpenModal);
+                incomingCall(videoCallMetaData, shouldOpenModal);
               } else if (
                 videoCallMetaData.status === VideoCallStatus.RECEIVED ||
                 videoCallMetaData.status === VideoCallStatus.RETRY_RECEIVED

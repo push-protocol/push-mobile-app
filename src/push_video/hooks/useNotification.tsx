@@ -44,54 +44,58 @@ export const useNotification = () => {
 
   // Background call handling for ios
   useEffect(() => {
-    RNCallKeep.addEventListener(
-      'didLoadWithEvents',
-      // @ts-ignore Incorrect type definition
-      (events: InitialEvents) => {
-        const answerCallEvent = events.find(
-          event => event.name === 'RNCallKeepPerformAnswerCallAction',
-        );
-        if (answerCallEvent) {
-          answerIncomingCall();
-        }
-      },
-    );
-
-    VoipPushNotification.addEventListener('register', token => {
-      MetaStorage.instance.setApnsVoipToken(token);
-    });
-
-    VoipPushNotification.addEventListener('notification', notification => {
-      const {status, uuid} = notification as {
-        status: VideoCallStatus;
-        uuid: string;
-      };
-      if (status === VideoCallStatus.INITIALIZED) {
-        CallkeepHelper.configure(answerIncomingCall, endIncomingCall);
-      } else if (status === VideoCallStatus.DISCONNECTED) {
-        endIncomingCall();
-      }
-      VoipPushNotification.onVoipNotificationCompleted(uuid);
-    });
-
-    VoipPushNotification.addEventListener(
-      'didLoadWithEvents',
-      (events: any) => {
-        // If loaded with notification received events
-        if (events.length >= 2) {
-          const status = events[0].data?.status || events[1].data?.status;
-          const uuid = events[0].data?.uuid || events[1].data?.uuid;
-          if (status === VideoCallStatus.INITIALIZED) {
-            CallkeepHelper.configure(answerIncomingCall, endIncomingCall);
-          } else if (status === VideoCallStatus.DISCONNECTED) {
-            endIncomingCall();
+    // Disable bg call handling for iOS devices in China
+    if (!CallkeepHelper.isChina()) {
+      RNCallKeep.addEventListener(
+        'didLoadWithEvents',
+        // @ts-ignore Incorrect type definition
+        (events: InitialEvents) => {
+          const answerCallEvent = events.find(
+            event => event.name === 'RNCallKeepPerformAnswerCallAction',
+          );
+          if (answerCallEvent) {
+            answerIncomingCall();
           }
-          VoipPushNotification.onVoipNotificationCompleted(uuid);
-        }
-      },
-    );
+        },
+      );
 
-    Platform.OS === 'ios' && VoipPushNotification.registerVoipToken();
+      VoipPushNotification.addEventListener('register', token => {
+        console.log('Registering APN token:', token);
+        MetaStorage.instance.setApnsVoipToken(token);
+      });
+
+      VoipPushNotification.addEventListener('notification', notification => {
+        const {status, uuid} = notification as {
+          status: VideoCallStatus;
+          uuid: string;
+        };
+        if (status === VideoCallStatus.INITIALIZED) {
+          CallkeepHelper.configure(answerIncomingCall, endIncomingCall);
+        } else if (status === VideoCallStatus.DISCONNECTED) {
+          endIncomingCall();
+        }
+        VoipPushNotification.onVoipNotificationCompleted(uuid);
+      });
+
+      VoipPushNotification.addEventListener(
+        'didLoadWithEvents',
+        (events: any) => {
+          // If loaded with notification received events
+          if (events.length >= 2) {
+            const status = events[0].data?.status || events[1].data?.status;
+            const uuid = events[0].data?.uuid || events[1].data?.uuid;
+            if (status === VideoCallStatus.INITIALIZED) {
+              CallkeepHelper.configure(answerIncomingCall, endIncomingCall);
+            } else if (status === VideoCallStatus.DISCONNECTED) {
+              endIncomingCall();
+            }
+            VoipPushNotification.onVoipNotificationCompleted(uuid);
+          }
+        },
+      );
+
+      Platform.OS === 'ios' && VoipPushNotification.registerVoipToken();
+    }
 
     return () => {
       VoipPushNotification.removeEventListener('didLoadWithEvents');
