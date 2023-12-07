@@ -2,7 +2,6 @@ import * as PushAPI from '@pushprotocol/restapi';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {IProvider} from '@walletconnect/modal-react-native';
 import {ethers} from 'ethers';
-import Globals from 'src/Globals';
 import ENV_CONFIG from 'src/env.config';
 
 import {getSigner} from '../chat/utils';
@@ -54,7 +53,7 @@ const getSubConfig = (
     signer,
     userAddress: user,
     env: ENV_CONFIG.ENV === 'prod' ? ENV.PROD : ENV.STAGING,
-    verifyingContractAddress: Globals.CONTRACTS.COMM_CONTRACT,
+    verifyingContractAddress: ENV_CONFIG.CONTRACTS.COMM_CONTRACT,
   };
 
   return config;

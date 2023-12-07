@@ -1,3 +1,4 @@
+import envConfig from 'src/env.config';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
 export interface videoPayloadType {
@@ -45,8 +46,8 @@ export const sendCallPayload = (from: string, to: string, data: any) => {
   const identity: string = `${identityType}+${stringifiedData}`;
 
   const payload: payloadType = {
-    sender: `eip155:5:${videoPayload.fromUser}`,
-    recipient: `eip155:5:${videoPayload.userToCall}`,
+    sender: `eip155:${envConfig.CHAIN_ID}:${videoPayload.fromUser}`,
+    recipient: `eip155:${envConfig.CHAIN_ID}:${videoPayload.userToCall}`,
     identity: identity,
     source: 'PUSH_VIDEO',
   };

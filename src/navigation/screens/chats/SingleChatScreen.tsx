@@ -4,8 +4,9 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
 import {GiphyDialog, GiphyDialogEvent} from '@giphy/react-native-sdk';
+import {ENV, approve} from '@kalashshah/react-native-sdk/src';
+import * as PushSdk from '@kalashshah/react-native-sdk/src';
 import {VideoCallStatus} from '@pushprotocol/restapi';
-import {approveRequestPayload} from '@pushprotocol/restapi/src/lib/chat';
 import {walletToPCAIP10} from '@pushprotocol/restapi/src/lib/helpers';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useNavigation} from '@react-navigation/native';
@@ -31,20 +32,19 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch} from 'react-redux';
 import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
-import * as PushNodeClient from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {VideoCallContext} from 'src/contexts/VideoContext';
+import envConfig from 'src/env.config';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
 import {setOtherUserProfilePicture} from 'src/redux/videoSlice';
+import MetaStorage from 'src/singletons/MetaStorage';
 
 import {AcceptIntent, MessageComponent} from './components';
 import {CustomScroll} from './components/CustomScroll';
 import './giphy/giphy.setup';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
-import {ChatMessage} from './helpers/chatResolver';
-import {pgpSignBody} from './helpers/signatureHelper';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
 import {useSendMessage} from './helpers/useSendMessage';
 
@@ -87,7 +87,6 @@ const SingleChatScreen = ({route}: any) => {
   const [listHeight, setListHeight] = useState(0);
   const [indicatorPos] = useState(() => new Animated.Value(0));
   const [indicatorSize, setIndicatorSize] = useState(0);
-  // const [indicatorDiff, setIndicatorDiff] = useState(0);
   const SCORLL_OFF_SET = 250;
 
   const [
@@ -114,6 +113,7 @@ const SingleChatScreen = ({route}: any) => {
   const dispatch = useDispatch();
 
   const senderAddressFormatted = getFormattedAddress(senderAddress);
+
   const handleSend = async () => {
     const _text = text;
     setText('');
@@ -126,7 +126,6 @@ const SingleChatScreen = ({route}: any) => {
     const res = await sendMessage({
       messageType: 'Text',
       message: _text,
-      combinedDID: combinedDID,
     });
 
     if (!res) {
@@ -134,7 +133,6 @@ const SingleChatScreen = ({route}: any) => {
     }
 
     const [_cid, msg] = res;
-
     if (_cid && msg) {
       console.log('_after sending got', _cid);
       // No need to push intent to chat, will receive from socket
@@ -145,32 +143,23 @@ const SingleChatScreen = ({route}: any) => {
   };
 
   const onAccept = async () => {
-    setIsAccepting(true);
-
-    const APPROVED_INTENT = 'Approved';
-
-    const bodyToBeHashed = {
-      fromDID: walletToPCAIP10(senderAddress),
-      toDID: connectedUser.wallets,
-      status: APPROVED_INTENT,
-    };
-
-    const signature = await pgpSignBody({bodyToBeHashed});
-
-    const body = approveRequestPayload(
-      senderAddress,
-      connectedUser.wallets,
-      APPROVED_INTENT,
-      'pgp',
-      signature,
-    );
-
-    body.fromDID = walletToPCAIP10(body.fromDID);
-
-    const res = await PushNodeClient.approveIntent2(body);
-    console.log('approved intent', res);
-    setisIntentReceivePage(false);
-    setIsAccepting(false);
+    try {
+      setIsAccepting(true);
+      const user = await MetaStorage.instance.getUserChatData();
+      const APPROVED_INTENT = 'Approved';
+      await approve({
+        account: connectedUser.wallets,
+        senderAddress: walletToPCAIP10(senderAddress),
+        pgpPrivateKey: user.pgpPrivateKey,
+        status: APPROVED_INTENT,
+        env: envConfig.ENV as ENV,
+      });
+      setisIntentReceivePage(false);
+    } catch (error) {
+      console.log('error accepting req ', error);
+    } finally {
+      setIsAccepting(false);
+    }
   };
 
   const onDecline = () => {};
@@ -220,7 +209,6 @@ const SingleChatScreen = ({route}: any) => {
         const res = sendMessage({
           messageType: 'GIF',
           message: gifUrl,
-          combinedDID: combinedDID,
         }).then(_res => {
           if (_res) {
             const [_cid, msg] = _res;
@@ -247,11 +235,8 @@ const SingleChatScreen = ({route}: any) => {
       listHeight > visibleHeight
         ? (visibleHeight * visibleHeight) / listHeight
         : visibleHeight;
-    // const difference =
-    //   visibleHeight > _indicatorSize ? visibleHeight - _indicatorSize : 1;
 
     setIndicatorSize(_indicatorSize);
-    // setIndicatorDiff(difference);
   }, [listHeight, indicatorPos]);
 
   const [keyboardStatus, setKeyboardStatus] = useState(false);
@@ -286,8 +271,10 @@ const SingleChatScreen = ({route}: any) => {
     }
 
     try {
-      const prevDate = new Date(chatMessages[index + 1].time).getDate();
-      const thisDate = new Date(chatMessages[index].time).getDate();
+      const prevDate = new Date(
+        chatMessages[index + 1].timestamp || 0,
+      ).getDate();
+      const thisDate = new Date(chatMessages[index].timestamp || 0).getDate();
 
       return prevDate !== thisDate;
     } catch (error) {
@@ -296,8 +283,16 @@ const SingleChatScreen = ({route}: any) => {
     }
   };
 
-  const renderItem = ({item, index}: {item: ChatMessage; index: number}) => {
-    const componentType = item.to === senderAddress ? 'SENDER' : 'RECEIVER';
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: PushSdk.PushApi.IMessageIPFS;
+    index: number;
+  }) => {
+    const componentType = item.toCAIP10.includes(senderAddress)
+      ? 'SENDER'
+      : 'RECEIVER';
     return (
       <MessageComponent
         chatMessage={item}
@@ -375,7 +370,9 @@ const SingleChatScreen = ({route}: any) => {
                   ref={scrollViewRef}
                   data={chatMessages}
                   renderItem={({item, index}) => renderItem({item, index})}
-                  keyExtractor={(msg, index) => msg.time.toString() + index}
+                  keyExtractor={(msg, index) =>
+                    msg.timestamp!.toString() + index
+                  }
                   showsHorizontalScrollIndicator={false}
                   showsVerticalScrollIndicator={false}
                   overScrollMode={'never'}

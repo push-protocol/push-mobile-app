@@ -132,9 +132,7 @@ class CallKeepHelper {
       const regex = /0x[\w]+/;
       const match = bodyStr.match(regex);
       return match[0];
-    } catch (error) {
-      console.log('got err', error);
-    }
+    } catch (error) {}
     return 'abishek';
   }
 
@@ -151,9 +149,7 @@ class CallKeepHelper {
       const match = bodyStr.match(regex);
       console.log('is a video call', match !== null);
       return match !== null;
-    } catch (error) {
-      console.log('got err', error);
-    }
+    } catch (error) {}
     return false;
   }
 

@@ -1,0 +1,32 @@
+diff --git a/node_modules/react-native/index.js b/node_modules/react-native/index.js
+index f556fa3..5790fff 100644
+--- a/node_modules/react-native/index.js
++++ b/node_modules/react-native/index.js
+@@ -441,13 +441,13 @@ module.exports = {
+     return require('deprecated-react-native-prop-types').PointPropType;
+   },
+   get ViewPropTypes(): $FlowFixMe {
+-    console.error(
+-      'ViewPropTypes will be removed from React Native, along with all ' +
+-        'other PropTypes. We recommend that you migrate away from PropTypes ' +
+-        'and switch to a type system like TypeScript. If you need to ' +
+-        'continue using ViewPropTypes, migrate to the ' +
+-        "'deprecated-react-native-prop-types' package.",
+-    );
++    // console.error(
++    //   'ViewPropTypes will be removed from React Native, along with all ' +
++    //     'other PropTypes. We recommend that you migrate away from PropTypes ' +
++    //     'and switch to a type system like TypeScript. If you need to ' +
++    //     'continue using ViewPropTypes, migrate to the ' +
++    //     "'deprecated-react-native-prop-types' package.",
++    // );
+     return require('deprecated-react-native-prop-types').ViewPropTypes;
+   },
+ };
+diff --git a/node_modules/react-native/scripts/.packager.env b/node_modules/react-native/scripts/.packager.env
+new file mode 100644
+index 0000000..361f5fb
+--- /dev/null
++++ b/node_modules/react-native/scripts/.packager.env
+@@ -0,0 +1 @@
++export RCT_METRO_PORT=8081

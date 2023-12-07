@@ -5,7 +5,7 @@ import {AppState} from 'react-native';
 import RNCallKeep from 'react-native-callkeep';
 import 'react-native-crypto';
 import 'react-native-get-random-values';
-import CallKeepHelper from 'src/callkeep';
+import CallKeepHelper from 'src/helpers/CallkeepHelper';
 import {NotifeClearBadge} from 'src/notifee';
 import {getUUID} from 'src/push_video/payloads/helpers';
 import MetaStorage from 'src/singletons/MetaStorage';

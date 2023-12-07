@@ -162,6 +162,14 @@ const SignInScreen = ({route, navigation}) => {
     setWalletAddressVerified(true);
   };
 
+  const walletConnectHandler = async () => {
+    if (wc_connector.isConnected) {
+      wc_connector.provider.disconnect();
+    } else {
+      await wc_connector.open();
+    }
+  };
+
   useEffect(() => {
     if (walletAddressVerified && walletAddress) {
       Animated.timing(fader, {
@@ -177,6 +185,13 @@ const SignInScreen = ({route, navigation}) => {
       setWalletAddress(wc_connector.address);
     }
   }, [wc_connector.isConnected]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      /** @dev Open wallet connect modal automatically */
+      walletConnectHandler();
+    }, 1000);
+  }, []);
 
   // When Animation is Finished
   const animationFinished = () => {
@@ -280,14 +295,7 @@ const SignInScreen = ({route, navigation}) => {
                 bgColor={GLOBALS.COLORS.BLACK}
                 setHeight={55}
                 disabled={false}
-                onPress={async () => {
-                  if (wc_connector.isConnected) {
-                    wc_connector.provider.disconnect();
-                  } else {
-                    console.log('I was called');
-                    await wc_connector.open();
-                  }
-                }}
+                onPress={walletConnectHandler}
                 iconFirst
               />
 

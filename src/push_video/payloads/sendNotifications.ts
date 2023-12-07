@@ -18,6 +18,7 @@ import {
 } from '@pushprotocol/restapi/src/lib/payloads/helpers';
 import {ISendNotificationInputOptions} from '@pushprotocol/restapi/src/lib/types';
 import axios from 'axios';
+import envConfig from 'src/env.config';
 
 import {getUUID, getVerificationProof} from './helpers';
 
@@ -93,8 +94,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     const API_BASE_URL = getAPIBaseUrls(env);
     let COMMUNICATOR_CONTRACT = '';
     if (senderType === 0) {
-      const {EPNS_COMMUNICATOR_CONTRACT} = getConfig(env, channelCAIPDetails);
-      COMMUNICATOR_CONTRACT = EPNS_COMMUNICATOR_CONTRACT;
+      COMMUNICATOR_CONTRACT = envConfig.CONTRACTS.COMM_CONTRACT;
     }
 
     const _recipients = await getRecipients({

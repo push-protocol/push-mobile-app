@@ -1,22 +1,17 @@
+import {decryptPGPKey} from '@kalashshah/react-native-sdk/src';
 import * as PushAPI from '@pushprotocol/restapi';
-import {
-  getEip191Signature,
-  getEip712Signature,
-  getWallet,
-} from '@pushprotocol/restapi/src/lib/chat/helpers';
-import Constants from '@pushprotocol/restapi/src/lib/constants';
+import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {IProvider} from '@walletconnect/modal-react-native';
 import * as PushNodeClient from 'src/apis';
+import envConfig from 'src/env.config';
 import MetaStorage from 'src/singletons/MetaStorage';
 
-import {decryptV2} from './aes';
 import {createUser} from './createUser';
-import {getSigner, hexToBytes, walletToPCAIP10} from './utils';
+import {getSigner, walletToPCAIP10} from './utils';
 
 export const handleWalletConnectChatLogin = async (wcProvider: IProvider) => {
   const [signer, account] = await getSigner(wcProvider);
   const caipAddrs = walletToPCAIP10(account);
-  const wallet = getWallet({account, signer: signer as any});
 
   let user = (await PushNodeClient.getUser(caipAddrs)) as PushAPI.IUser;
 
@@ -35,50 +30,22 @@ export const handleWalletConnectChatLogin = async (wcProvider: IProvider) => {
     }
   }
 
-  // Get the private key for the v2
-  if (user.encryptionType === Constants.ENC_TYPE_V2) {
-    const {preKey: input} = JSON.parse(user.encryptedPrivateKey);
-    const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
-    const {verificationProof: secret} = await getEip712Signature(
-      wallet,
-      enableProfileMessage,
-      false,
-    );
-
-    const encodedPrivateKey = await decryptV2(
-      JSON.parse(user.encryptedPrivateKey),
-      hexToBytes(secret || ''),
-    );
-    const dec = new TextDecoder();
-    const decryptedPrivateKey = dec.decode(encodedPrivateKey);
-    await MetaStorage.instance.setUserChatData({
-      pgpPrivateKey: decryptedPrivateKey,
-      encryptionPublicKey: user.publicKey,
+  try {
+    const pgpKey = await decryptPGPKey({
+      encryptedPGPPrivateKey: user.encryptedPrivateKey,
+      account: caipAddrs,
+      env: envConfig.ENV as ENV,
+      signer: signer,
     });
-    return true;
-  } else if (user.encryptionType === Constants.ENC_TYPE_V3) {
-    const {preKey: input} = JSON.parse(user.encryptedPrivateKey);
-    const enableProfileMessage = 'Enable Push Profile \n' + input;
-    const {verificationProof: secret} = await getEip191Signature(
-      wallet,
-      enableProfileMessage,
-      'v1',
-    );
-
-    const encodedPrivateKey = await decryptV2(
-      JSON.parse(user.encryptedPrivateKey),
-      hexToBytes(secret || ''),
-    );
-    const dec = new TextDecoder();
-    const decryptedPrivateKey = dec.decode(encodedPrivateKey);
 
     await MetaStorage.instance.setUserChatData({
-      pgpPrivateKey: decryptedPrivateKey,
+      pgpPrivateKey: pgpKey,
       encryptionPublicKey: user.publicKey,
     });
+
     return true;
-  } else {
-    console.log('Unsupported ENC Type');
+  } catch (error) {
+    console.log('Error while decrypting pgp key', error);
   }
 
   return false;

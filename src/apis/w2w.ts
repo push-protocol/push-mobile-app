@@ -1,12 +1,10 @@
 import {ISendMessagePayload} from '@pushprotocol/restapi/src/lib/chat';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import envConfig from 'src/env.config';
-import {encryptWithRPCEncryptionPublicKeyReturnRawData} from 'src/helpers/w2w/metamaskSigUtil';
-import {generateKeyPair} from 'src/helpers/w2w/pgp';
 import {sendMessagePayload} from 'src/helpers/w2w/sendMessagePayload';
 import {pgpSignBody} from 'src/navigation/screens/chats/helpers/signatureHelper';
 
-import {MessageIPFS} from './ipfs';
+import {MessageIPFSWithCID} from './ipfs';
 
 export interface User {
   did: string;
@@ -44,24 +42,6 @@ export interface InboxChat {
   messageContent?: string;
 }
 
-export interface Feeds {
-  // This property contains all the info to be displayed on the sidebar for the other peer's information
-  // Such as the decrypted message content and peer's profilePicture
-  msg: InboxChat;
-  did: string;
-  wallets: string;
-  profilePicture: string | null;
-  publicKey: string | null;
-  about: string | null;
-  threadhash: string | null;
-  intent: string | null;
-  intentSentBy: string | null;
-  intentTimestamp: string;
-  combinedDID: string;
-  cid: string;
-  chatId?: string;
-}
-
 export interface ConnectedUser extends User {
   privateKey: string;
 }
@@ -69,61 +49,6 @@ export interface ConnectedUser extends User {
 export type MessageReciver = {ethAddress: string; pgpAddress: string};
 
 const BASE_URL = envConfig.EPNS_SERVER;
-
-export const createUser = async ({
-  caip10,
-  did,
-  publicKey,
-  encryptedPrivateKey,
-  encryptionType,
-  signature,
-  sigType,
-}: {
-  caip10: string;
-  did: string;
-  publicKey: string;
-  encryptedPrivateKey: string;
-  encryptionType: string;
-  signature: string;
-  sigType: string;
-}): Promise<User> => {
-  const url = BASE_URL + '/v1/users';
-  const body = JSON.stringify({
-    caip10,
-    did,
-    publicKey,
-    encryptedPrivateKey,
-    encryptionType,
-    signature,
-    sigType,
-  });
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'content-Type': 'application/json',
-    },
-    body: body,
-  }).catch(e => {
-    console.log(e);
-    throw new Error(e);
-  });
-
-  const data: User = await response.json();
-  return data;
-};
-
-export const createEmptyUser = async (rec: MessageReciver) => {
-  return await createUser({
-    caip10: rec.ethAddress,
-    did: rec.ethAddress,
-    publicKey: '',
-    encryptedPrivateKey: '',
-    encryptionType: '',
-    signature: 'pgp',
-    sigType: 'pgp',
-  });
-};
 
 export const getUser = async (caip10: string): Promise<User | undefined> => {
   let retry = 0;
@@ -178,38 +103,6 @@ export const approveIntent2 = async (body: any) => {
   }
   return true;
 };
-
-export const getInbox = async (did: string): Promise<Feeds[] | undefined> => {
-  let retry = 0;
-  for (let i = 0; i < 3; i++) {
-    try {
-      const path = `${BASE_URL}/v1/chat/users/eip155:${did}/messages`;
-      const response = await fetch(path, {
-        method: 'GET',
-      });
-      if (response.status >= 500) {
-        continue;
-      }
-      // const data: Feeds[] = await response.json();
-      const raw_data: any = await response.json();
-      const data: Feeds[] = raw_data.filter(
-        (el: any) => !('groupInformation' in el),
-      );
-      return data;
-    } catch (err) {
-      if (retry > 1) {
-        console.log('An Error Occurred! Please Reload the Page');
-      }
-      console.log('Error in the API call', err);
-      retry++;
-      continue;
-    }
-  }
-};
-
-export interface MessageIPFSWithCID extends MessageIPFS {
-  cid: string;
-}
 
 export const postMessage = async (body: {
   fromCAIP10: string;
@@ -307,32 +200,6 @@ export const postIntent = async ({
   });
   data = await response.json();
   return data;
-};
-
-export const createNewPgpPair = async (
-  caip10: string,
-  encryptionPublicKey: string,
-) => {
-  // Obtain pgp key
-  const keyPairs = await generateKeyPair();
-
-  const encryptedPgpKey = encryptWithRPCEncryptionPublicKeyReturnRawData(
-    keyPairs.privateKeyArmored,
-    encryptionPublicKey,
-  );
-
-  const createdUser = await createUser({
-    caip10,
-    did: caip10,
-    publicKey: keyPairs.publicKeyArmored,
-    encryptedPrivateKey: JSON.stringify(encryptedPgpKey),
-    encryptionType: 'x25519-xsalsa20-poly1305',
-    signature: 'xyz',
-    sigType: 'a',
-  });
-
-  console.log('create new user');
-  return createdUser;
 };
 
 export const isIntentAccepted = async (addrs: string, senderAddrs: string) => {

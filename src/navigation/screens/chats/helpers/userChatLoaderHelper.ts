@@ -1,37 +1,10 @@
-import * as PushNodeClient from 'src/apis';
-import {encryptWithRPCEncryptionPublicKeyReturnRawData} from 'src/helpers/w2w/metamaskSigUtil';
-import {generateKeyPair} from 'src/helpers/w2w/pgp';
+import * as PushSdk from '@kalashshah/react-native-sdk/src';
 
 import {ChatFeedCache} from './useChatLoader';
 
-// TODO remove from here
-export const createNewPgpPair = async (
-  caip10: string,
-  encryptionPublicKey: string,
-) => {
-  // Obtain pgp key
-  const keyPairs = await generateKeyPair();
-
-  const encryptedPgpKey = encryptWithRPCEncryptionPublicKeyReturnRawData(
-    keyPairs.privateKeyArmored,
-    encryptionPublicKey,
-  );
-
-  const createdUser = await PushNodeClient.createUser({
-    caip10,
-    did: caip10,
-    publicKey: keyPairs.publicKeyArmored,
-    encryptedPrivateKey: JSON.stringify(encryptedPgpKey),
-    encryptionType: 'x25519-xsalsa20-poly1305',
-    signature: 'xyz',
-    sigType: 'a',
-  });
-  console.log('create new user', createdUser);
-};
-
 export const checkIfItemInCache = (
   cache: ChatFeedCache,
-  feeds: PushNodeClient.Feeds[],
+  feeds: PushSdk.PushApi.IFeeds[],
 ) => {
   let isInCache = true;
   for (let i = 0; i < feeds.length; i++) {
@@ -48,10 +21,10 @@ export const checkIfItemInCache = (
 
 export const filterChatAndRequestFeeds = (
   userAddress: string,
-  feeds: PushNodeClient.Feeds[],
+  feeds: PushSdk.PushApi.IFeeds[],
 ) => {
-  const chatFeeds: PushNodeClient.Feeds[] = [];
-  const requestFeeds: PushNodeClient.Feeds[] = [];
+  const chatFeeds: PushSdk.PushApi.IFeeds[] = [];
+  const requestFeeds: PushSdk.PushApi.IFeeds[] = [];
 
   feeds.forEach(element => {
     if (element.intent?.includes(userAddress)) {

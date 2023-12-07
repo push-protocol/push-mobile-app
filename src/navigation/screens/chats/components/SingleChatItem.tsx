@@ -6,7 +6,6 @@ import {formatAMPM} from 'src/helpers/DateTimeHelper';
 import {Context} from 'src/navigation/screens/chats/ChatScreen';
 
 import {getFormattedAddress} from '../helpers/chatAddressFormatter';
-import {resolveCID} from '../helpers/chatResolver';
 import {SingleChatItemProps} from '../types';
 
 const formatTextData = (rawText: string) => {
@@ -23,6 +22,7 @@ const ChatItem = (props: SingleChatItemProps) => {
   const navigation = useNavigation();
   const appContext = useContext(Context);
   const cid = props.text;
+
   if (!appContext) {
     throw new Error('Invalid context');
   }
@@ -66,19 +66,17 @@ const ChatItem = (props: SingleChatItemProps) => {
 
   useEffect(() => {
     (async () => {
-      if (!cid) {
+      const {feed} = props;
+
+      if (!feed) {
         setLastMessage('Start new conversation');
         setLoading(false);
         return;
       }
-      const [chatMessage] = await resolveCID(
-        cid,
-        appContext.connectedUser.privateKey,
-      );
 
-      setLastMessage(chatMessage.message);
-      setTimeStamp(formatAMPM(chatMessage.time));
-      setMessageType(chatMessage.messageType);
+      setLastMessage(feed.msg.messageContent);
+      setTimeStamp(formatAMPM(feed.msg.timestamp || 0));
+      setMessageType(feed.msg.messageType);
       setLoading(false);
     })();
   });
@@ -104,7 +102,6 @@ const ChatItem = (props: SingleChatItemProps) => {
               {messageType === 'Image' && 'Image'}
             </Text>
           </View>
-
           <View>
             <Text style={props.count ? styles.activeTime : styles.time}>
               {timeStamp}

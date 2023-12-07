@@ -1,5 +1,6 @@
 import {Ionicons} from '@expo/vector-icons';
 import {EvilIcons} from '@expo/vector-icons';
+import {PushApi} from '@kalashshah/react-native-sdk/src';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   Image,
@@ -12,7 +13,6 @@ import {
   View,
 } from 'react-native';
 import Globals from 'src/Globals';
-import * as PushNodeClient from 'src/apis';
 import {Toaster, ToasterOptions} from 'src/components/indicators/Toaster';
 import {getCombinedDID} from 'src/helpers/CAIPHelper';
 import Web3Helper from 'src/helpers/Web3Helper';
@@ -30,11 +30,8 @@ const NewChatScreen = ({route, navigation}: any) => {
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchEnabled, setIsSearchEnabled] = useState(false);
   const [isIntentReceivePage, setIsIntentReceivePage] = useState(false);
-  const [matchedItem, setMatchedItem] = useState<PushNodeClient.Feeds | null>(
-    null,
-  );
+  const [matchedItem, setMatchedItem] = useState<PushApi.IFeeds | null>(null);
   const toastRef = useRef<any>();
-  //   const navigation = useNavigation();
 
   const chatCredentials: UserChatCredentials = route.params.chatCredentials;
   if (!chatCredentials) {
@@ -45,7 +42,7 @@ const NewChatScreen = ({route, navigation}: any) => {
 
   const checkIfAddressPresetInFeed = (
     addrs: string,
-  ): [PushNodeClient.Feeds | null, boolean] => {
+  ): [PushApi.IFeeds | null, boolean] => {
     const feeds = chatData.feeds;
 
     if (feeds) {
@@ -74,7 +71,7 @@ const NewChatScreen = ({route, navigation}: any) => {
 
   const checkIfAddressPresetInReq = (
     addrs: string,
-  ): [PushNodeClient.Feeds | null, boolean] => {
+  ): [PushApi.IFeeds | null, boolean] => {
     const feeds = chatData.requests;
     if (feeds) {
       for (let i = 0; i < feeds.length; i++) {

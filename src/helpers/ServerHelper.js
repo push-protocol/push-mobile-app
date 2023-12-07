@@ -16,7 +16,6 @@ const ServerHelper = {
     const token = await MetaStorage.instance.getPushToken();
     const apnsToken = await MetaStorage.instance.getApnsVoipToken();
     const platform = Platform.OS;
-    console.log('doing logs', token);
 
     const body = {
       device_token: token,
@@ -29,8 +28,6 @@ const ServerHelper = {
       console.log('apns token is', apnsToken);
       body.apn_token = apnsToken;
     }
-
-    console.log('sending this body, ' + JSON.stringify(body));
 
     try {
       const res = await fetch(apiURL, {
