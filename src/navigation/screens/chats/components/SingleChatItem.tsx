@@ -61,6 +61,7 @@ const ChatItem = (props: SingleChatItemProps) => {
       isIntentSendPage: isIntentSendPage,
       image: props.image,
       chatId: props.chatId,
+      feed: props.feed,
     });
   };
 

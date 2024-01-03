@@ -55,7 +55,8 @@ interface ChatScreenParam {
   combinedDID: string;
   isIntentSendPage: boolean;
   isIntentReceivePage: boolean;
-  chatId?: string;
+  chatId: string;
+  feed?: PushSdk.PushApi.IFeeds;
 }
 
 const windowHeight = Dimensions.get('window').height;
@@ -73,6 +74,7 @@ const SingleChatScreen = ({route}: any) => {
     isIntentSendPage,
     combinedDID,
     chatId,
+    feed,
   }: ChatScreenParam = route.params;
 
   const [isIntentReceivePage, setisIntentReceivePage] = useState<boolean>(
@@ -101,6 +103,7 @@ const SingleChatScreen = ({route}: any) => {
     connectedUser.wallets,
     senderAddress,
     combinedDID,
+    chatId,
   );
 
   const [isSending, sendMessage, isSendReady, tempChatMessage] = useSendMessage(
@@ -290,7 +293,7 @@ const SingleChatScreen = ({route}: any) => {
     item: PushSdk.PushApi.IMessageIPFS;
     index: number;
   }) => {
-    const componentType = item.toCAIP10.includes(senderAddress)
+    const componentType = item.fromCAIP10.includes(connectedUser.wallets)
       ? 'SENDER'
       : 'RECEIVER';
     return (
@@ -328,9 +331,11 @@ const SingleChatScreen = ({route}: any) => {
           </View>
         </View>
 
-        <TouchableOpacity onPress={startVideoCall} style={styles.videoIcon}>
-          <Ionicons name="videocam" size={35} color={Globals.COLORS.PINK} />
-        </TouchableOpacity>
+        {feed && !feed.groupInformation && (
+          <TouchableOpacity onPress={startVideoCall} style={styles.videoIcon}>
+            <Ionicons name="videocam" size={35} color={Globals.COLORS.PINK} />
+          </TouchableOpacity>
+        )}
       </View>
 
       <KeyboardAvoidingView
