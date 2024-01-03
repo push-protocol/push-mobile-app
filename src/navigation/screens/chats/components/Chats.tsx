@@ -167,22 +167,37 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
       {!isSearchEnabled && (
         <View style={styles.content}>
           {feeds.map((item, index) => {
-            // TODO: remove this check once we have support for group chat
-            if (item.groupInformation) return null;
-            return (
-              <SingleChatItem
-                key={item.chatId || index}
-                image={item.profilePicture}
-                wallet={caip10ToWallet(item.wallets)}
-                text={item.threadhash ? item.threadhash : ''}
-                combinedDID={item.combinedDID}
-                isIntentReceivePage={isIntentReceivePage}
-                isIntentSendPage={false}
-                clearSearch={handleClearSearch}
-                chatId={item.chatId}
-                feed={item}
-              />
-            );
+            if (item.groupInformation) {
+              return (
+                <SingleChatItem
+                  key={item.chatId || index}
+                  image={item.groupInformation.groupImage}
+                  wallet={item.groupInformation.groupName}
+                  clearSearch={handleClearSearch}
+                  chatId={item.groupInformation.chatId}
+                  isIntentReceivePage={isIntentReceivePage}
+                  isIntentSendPage={false}
+                  text={item.threadhash ? item.threadhash : ''}
+                  feed={item}
+                  combinedDID={item.combinedDID}
+                />
+              );
+            } else {
+              return (
+                <SingleChatItem
+                  key={item.chatId || index}
+                  image={item.profilePicture}
+                  wallet={caip10ToWallet(item.wallets)}
+                  text={item.threadhash ? item.threadhash : ''}
+                  combinedDID={item.combinedDID}
+                  isIntentReceivePage={isIntentReceivePage}
+                  isIntentSendPage={false}
+                  clearSearch={handleClearSearch}
+                  chatId={item.chatId}
+                  feed={item}
+                />
+              );
+            }
           })}
         </View>
       )}

@@ -208,7 +208,6 @@ export const isIntentAccepted = async (addrs: string, senderAddrs: string) => {
     .then(r => r.json())
     .then(arr =>
       arr.filter((e: any) => {
-        console.log(e.combinedDID);
         return e.combinedDID.indexOf(senderAddrs) !== -1;
       }),
     );
@@ -225,7 +224,6 @@ export const getIntentStatus = async (addrs: string, senderAddrs: string) => {
     .then(r => r.json())
     .then(arr =>
       arr.filter((e: any) => {
-        console.log(e.combinedDID);
         return e.combinedDID.indexOf(senderAddrs) !== -1;
       }),
     );

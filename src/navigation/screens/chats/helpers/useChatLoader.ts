@@ -44,7 +44,6 @@ const useChatLoader = (
     pgpPrivateKey: string,
   ) => {
     let user = await PushNodeClient.getUser(caipAddress);
-    console.log('got user');
 
     if (!user) {
       throw new Error('User info not found');

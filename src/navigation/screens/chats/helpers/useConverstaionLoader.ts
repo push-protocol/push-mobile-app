@@ -39,6 +39,7 @@ const useConversationLoader = (
   userAddress: string,
   senderAddress: string,
   combinedDID: string,
+  chatId: string,
 ): [
   boolean,
   PushSdk.PushApi.IMessageIPFS[],
@@ -114,7 +115,7 @@ const useConversationLoader = (
       try {
         const {threadHash} = await PushSdk.conversationHash({
           account: userAddress,
-          conversationId: senderAddress,
+          conversationId: chatId,
           env: envConfig.ENV as PushSdk.ENV,
         });
 
@@ -187,7 +188,7 @@ const useConversationLoader = (
       if (!isFetching.current) {
         const {threadHash} = await PushSdk.conversationHash({
           account: userAddress,
-          conversationId: senderAddress,
+          conversationId: chatId,
           env: envConfig.ENV as PushSdk.ENV,
         });
 
