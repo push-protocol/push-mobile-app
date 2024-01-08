@@ -1,4 +1,5 @@
 import {
+  Feather,
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
@@ -57,6 +58,7 @@ interface ChatScreenParam {
   isIntentReceivePage: boolean;
   chatId: string;
   feed?: PushSdk.PushApi.IFeeds;
+  title?: string;
 }
 
 const windowHeight = Dimensions.get('window').height;
@@ -75,6 +77,7 @@ const SingleChatScreen = ({route}: any) => {
     combinedDID,
     chatId,
     feed,
+    title,
   }: ChatScreenParam = route.params;
 
   const [isIntentReceivePage, setisIntentReceivePage] = useState<boolean>(
@@ -108,14 +111,16 @@ const SingleChatScreen = ({route}: any) => {
 
   const [isSending, sendMessage, isSendReady, tempChatMessage] = useSendMessage(
     connectedUser,
-    senderAddress,
+    senderAddress || chatId,
     isIntentSendPage,
     toastRef.current ? toastRef.current.showToast : null,
   );
 
   const dispatch = useDispatch();
 
-  const senderAddressFormatted = getFormattedAddress(senderAddress);
+  const senderAddressFormatted = senderAddress
+    ? getFormattedAddress(senderAddress)
+    : null;
 
   const handleSend = async () => {
     const _text = text;
@@ -152,7 +157,7 @@ const SingleChatScreen = ({route}: any) => {
       const APPROVED_INTENT = 'Approved';
       await approve({
         account: connectedUser.wallets,
-        senderAddress: walletToPCAIP10(senderAddress),
+        senderAddress: senderAddress ? walletToPCAIP10(senderAddress) : chatId,
         pgpPrivateKey: user.pgpPrivateKey,
         status: APPROVED_INTENT,
         env: envConfig.ENV as ENV,
@@ -293,7 +298,9 @@ const SingleChatScreen = ({route}: any) => {
     item: PushSdk.PushApi.IMessageIPFS;
     index: number;
   }) => {
-    const componentType = item.fromCAIP10.includes(connectedUser.wallets)
+    const componentType = item.fromCAIP10.includes(
+      caip10ToWallet(connectedUser.wallets),
+    )
       ? 'SENDER'
       : 'RECEIVER';
     return (
@@ -303,6 +310,13 @@ const SingleChatScreen = ({route}: any) => {
         includeDate={includeDate(index)}
       />
     );
+  };
+
+  const navigateToGroupInfo = () => {
+    // @ts-ignore
+    navigation.navigate(Globals.SCREENS.GROUP_INFO, {
+      groupInformation: feed?.groupInformation!,
+    });
   };
 
   return (
@@ -326,14 +340,32 @@ const SingleChatScreen = ({route}: any) => {
             />
 
             <TouchableOpacity onPress={handleAddressCopy}>
-              <Text style={styles.wallet}>{senderAddressFormatted}</Text>
+              <Text style={styles.wallet}>
+                {senderAddress ? senderAddressFormatted : title}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {feed && !feed.groupInformation && (
-          <TouchableOpacity onPress={startVideoCall} style={styles.videoIcon}>
-            <Ionicons name="videocam" size={35} color={Globals.COLORS.PINK} />
+        {feed && !feed.groupInformation ? (
+          <>
+            {!(isIntentSendPage || isIntentReceivePage) && (
+              <TouchableOpacity
+                onPress={startVideoCall}
+                style={styles.rightAligned}>
+                <Ionicons
+                  name="videocam"
+                  size={35}
+                  color={Globals.COLORS.PINK}
+                />
+              </TouchableOpacity>
+            )}
+          </>
+        ) : (
+          <TouchableOpacity
+            style={styles.rightAligned}
+            onPress={navigateToGroupInfo}>
+            <Feather name="info" size={20} color={Globals.COLORS.BLACK} />
           </TouchableOpacity>
         )}
       </View>
@@ -699,7 +731,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginTop: 5,
   },
-  videoIcon: {
+  rightAligned: {
     marginLeft: 'auto',
   },
 });

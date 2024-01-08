@@ -62,6 +62,7 @@ const ChatItem = (props: SingleChatItemProps) => {
       image: props.image,
       chatId: props.chatId,
       feed: props.feed,
+      title: props.title,
     });
   };
 
@@ -94,7 +95,7 @@ const ChatItem = (props: SingleChatItemProps) => {
         <View style={styles.chatContainer}>
           <View style={styles.chatDetails}>
             <Text style={styles.wallet}>
-              {getFormattedAddress(props.wallet)}
+              {props.wallet ? getFormattedAddress(props.wallet) : props.title}
             </Text>
             <Text style={props.count ? styles.activeText : styles.text}>
               {messageType === 'Text' && formatTextData(lastMessage)}
