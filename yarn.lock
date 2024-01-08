@@ -1721,9 +1721,9 @@
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
 "@callstack/react-theme-provider@^3.0.7":
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/@callstack/react-theme-provider/-/react-theme-provider-3.0.8.tgz#d0d7ac71e422133c5f7b78f4c4aa1bc57f156f50"
-  integrity sha512-5U231sYY2sqQOaELX0WBCn+iluV8bFaXIS7em03k4W5Xz0AhGvKlnpLIhDGFP8im/SvNW7/2XoR0BsClhn9t6Q==
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/@callstack/react-theme-provider/-/react-theme-provider-3.0.9.tgz#01035fa1231f1fffc1a806be1b55eb82716e80c1"
+  integrity sha512-tTQ0uDSCL0ypeMa8T/E9wAZRGKWj8kXP7+6RYgPTfOPs9N07C9xM8P02GJ3feETap4Ux5S69D9nteq9mEj86NA==
   dependencies:
     deepmerge "^3.2.0"
     hoist-non-react-statics "^3.3.0"
@@ -3428,10 +3428,10 @@
     component-type "^1.2.1"
     join-component "^1.1.0"
 
-"@shopify/flash-list@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@shopify/flash-list/-/flash-list-1.4.0.tgz#cf299486ec9a7c97b7a8b1e8b6bf144a78141ed6"
-  integrity sha512-PvPOyk353LuETFnNA038+QaJsAFlCQ2TYC7DHP3YnYqTX72g2BM6qLoLsPaptXKuoXX+dinOo0MbEm7HDjTy1g==
+"@shopify/flash-list@^1.6.3":
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/@shopify/flash-list/-/flash-list-1.6.3.tgz#463dc1703815bf916f8173afc22c852bf26337ad"
+  integrity sha512-XM2iu4CeD9SOEUxaGG3UkxfUxGPWG9yacga1yQSgskAjUsRDFTsD3y4Dyon9n8MfDwgrRpEwuijd+7NeQQoWaQ==
   dependencies:
     recyclerlistview "4.2.0"
     tslib "2.4.0"
@@ -12217,6 +12217,11 @@ react-native-hash@^3.0.0:
   resolved "https://registry.yarnpkg.com/react-native-hash/-/react-native-hash-3.0.3.tgz#fd53642a11e01cc069f49575760d4ed9cf4abddd"
   integrity sha512-ACHe793sUabwPrKNurEBBRJyP/xp4Ff4OfuEceFbVR8ny/PIMZCjlVVMhc6xHO8n3KDMUK54shv57HvqwduanQ==
 
+react-native-image-picker@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-7.1.0.tgz#1a41cc45ccdc177c2ebf7c7accee0ceadc36abd8"
+  integrity sha512-An0hn2mwqjGAA2mbsXdHRTyoMMklGPT9stIjE2zvkegU7CdoFhowqvVHfnELJNZnfAiSQuIaeY//z0r1R0lsgw==
+
 react-native-image-viewing@^0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/react-native-image-viewing/-/react-native-image-viewing-0.2.2.tgz#fb26e57d7d3d9ce4559a3af3d244387c0367242b"
@@ -12274,9 +12279,9 @@ react-native-os@^1.2.6:
   integrity sha512-OlT+xQAcvkcnf7imgXiu+myMkqDt4xw2bP5SlVo19hEn5XHBkPMLX7dk3sSGxxncH/ToMDsf1KLyrPabNVtadA==
 
 react-native-paper@^4.12.4:
-  version "4.12.5"
-  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-4.12.5.tgz#5ea4bbe02d416d17802a199de748700358c11d3a"
-  integrity sha512-gdUtJJf0bw/0xoCE1jR6qCQiQCQZ9ivZh0lbPghFFaGxX88WtTQpusnGON8WhLPeH5odEQ4dTBu99lnIQvSFow==
+  version "4.12.7"
+  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-4.12.7.tgz#ed2363c2f1322c10e54b838db10a46f66bc29afd"
+  integrity sha512-P0RNXJQYR+D3oUlB46T3AQTpQmAtKcm9qOK+CHXnQtVknCms/yQqHMOY5x1Oi1NoXOfXN+Y1w/FssYT80Nn6CQ==
   dependencies:
     "@callstack/react-theme-provider" "^3.0.7"
     color "^3.1.2"
@@ -12974,6 +12979,13 @@ rn-nodeify@^10.3.0:
     run-parallel "^1.1.2"
     semver "^5.0.1"
     xtend "^4.0.0"
+
+rn-tooltip@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/rn-tooltip/-/rn-tooltip-3.0.3.tgz#33232c76b90fc6d90ced565ddd5aab5517761a21"
+  integrity sha512-GWL4TCCPLu06CY/0aOYOx7GSbmwWZok9fYxrOcfE0OD3Z5hCY8lCJme0ivQj8ZnTk3IJyDAedc3fFH1I/J3NrQ==
+  dependencies:
+    deprecated-react-native-prop-types "^2.3.0"
 
 run-parallel@^1.1.2, run-parallel@^1.1.9:
   version "1.2.0"
