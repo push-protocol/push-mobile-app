@@ -16,6 +16,13 @@ import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
 import {getTrimmedAddress} from './helpers/chatAddressFormatter';
 
+const PADDING_TOP =
+  Platform.OS === 'android'
+    ? StatusBar.currentHeight
+      ? StatusBar.currentHeight + 10
+      : 30
+    : 50;
+
 const GroupInfo = ({route, navigation}: any) => {
   const {groupInformation}: {groupInformation: GroupDTO} = route.params;
   const memberCount = groupInformation.members.length;
@@ -73,8 +80,12 @@ const GroupInfo = ({route, navigation}: any) => {
       <ScrollView contentContainerStyle={styles.flexGrow}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={handleBack}>
-              <Ionicons name="arrow-back" size={24} color="black" />
+            <TouchableOpacity onPress={handleBack} style={styles.backBtn}>
+              <Ionicons
+                name="arrow-back"
+                size={35}
+                color={Globals.COLORS.CHAT_LIGHT_DARK}
+              />
             </TouchableOpacity>
             <Text style={styles.headerTxt}>Group info</Text>
           </View>
@@ -166,13 +177,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: Globals.COLORS.WHITE,
     paddingVertical: 10,
-    paddingTop:
-      Platform.OS === 'android'
-        ? StatusBar.currentHeight
-          ? StatusBar.currentHeight + 10
-          : 30
-        : 50,
-    paddingHorizontal: 17,
+    paddingTop: PADDING_TOP,
+    paddingHorizontal: 16,
+    position: 'relative',
+  },
+  backBtn: {
+    position: 'absolute',
+    left: 16,
+    top: PADDING_TOP,
+    zIndex: 1,
   },
   container: {
     flex: 1,

@@ -25,6 +25,13 @@ import {UserChatCredentials} from './ChatScreen';
 import CreateGroupDetails from './components/createGroup/CreateGroupDetails';
 import CreateGroupWallets from './components/createGroup/CreateGroupWallets';
 
+const PADDING_TOP =
+  Platform.OS === 'android'
+    ? StatusBar.currentHeight
+      ? StatusBar.currentHeight + 10
+      : 30
+    : 50;
+
 const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
   ADD_MEMBERS: 2,
@@ -121,8 +128,12 @@ const CreateGroup = () => {
       <ScrollView contentContainerStyle={styles.flexGrow}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={handleBack}>
-              <Ionicons name="arrow-back" size={24} color="black" />
+            <TouchableOpacity onPress={handleBack} style={styles.backBtn}>
+              <Ionicons
+                name="arrow-back"
+                size={35}
+                color={Globals.COLORS.CHAT_LIGHT_DARK}
+              />
             </TouchableOpacity>
             <Text style={styles.headerTxt}>Create Group</Text>
           </View>
@@ -173,13 +184,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: Globals.COLORS.WHITE,
     paddingVertical: 10,
-    paddingTop:
-      Platform.OS === 'android'
-        ? StatusBar.currentHeight
-          ? StatusBar.currentHeight + 10
-          : 30
-        : 50,
-    paddingHorizontal: 17,
+    paddingTop: PADDING_TOP,
+    paddingHorizontal: 16,
+    position: 'relative',
+  },
+  backBtn: {
+    position: 'absolute',
+    left: 16,
+    top: PADDING_TOP,
+    zIndex: 1,
   },
   container: {
     flex: 1,
