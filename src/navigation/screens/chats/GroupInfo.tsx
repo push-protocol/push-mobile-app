@@ -1,6 +1,6 @@
-import {FontAwesome5, Ionicons} from '@expo/vector-icons';
+import {Entypo, FontAwesome5, Ionicons} from '@expo/vector-icons';
 import {GroupDTO} from '@pushprotocol/restapi';
-import React from 'react';
+import React, {useState} from 'react';
 import {Image, KeyboardAvoidingView, ScrollView} from 'react-native';
 import {
   FlatList,
@@ -20,8 +20,50 @@ const GroupInfo = ({route, navigation}: any) => {
   const {groupInformation}: {groupInformation: GroupDTO} = route.params;
   const memberCount = groupInformation.members.length;
 
+  const [pendingMemberListOpen, setPendingMemberListOpen] = useState(false);
+
   const handleBack = () => {
     navigation.goBack();
+  };
+
+  const showMemberList = (
+    members: GroupDTO['members'] | GroupDTO['pendingMembers'],
+    showTags: boolean,
+  ) => {
+    return (
+      <FlatList
+        data={members}
+        keyExtractor={item => item.wallet}
+        scrollEnabled={false}
+        renderItem={({item}) => {
+          return (
+            <View style={styles.profileContainer}>
+              <View style={styles.flexRow}>
+                <Image
+                  style={styles.profilePic}
+                  source={{
+                    uri:
+                      item.image || Globals.CONSTANTS.DEFAULT_PROFILE_PICTURE,
+                  }}
+                />
+                <Text style={styles.profileAddr}>
+                  {getTrimmedAddress(caip10ToWallet(item.wallet))}
+                </Text>
+              </View>
+              {showTags && (
+                <View style={styles.flexRow}>
+                  {item.isAdmin && (
+                    <View style={styles.adminContainer}>
+                      <Text style={styles.adminTxt}>Admin</Text>
+                    </View>
+                  )}
+                </View>
+              )}
+            </View>
+          );
+        }}
+      />
+    );
   };
 
   return (
@@ -77,37 +119,23 @@ const GroupInfo = ({route, navigation}: any) => {
                 </Text>
               </View>
             </View>
-            <FlatList
-              data={groupInformation.members}
-              keyExtractor={item => item.wallet}
-              scrollEnabled={false}
-              renderItem={({item}) => {
-                return (
-                  <View style={styles.profileContainer}>
-                    <View style={styles.flexRow}>
-                      <Image
-                        style={styles.profilePic}
-                        source={{
-                          uri:
-                            item.image ||
-                            Globals.CONSTANTS.DEFAULT_PROFILE_PICTURE,
-                        }}
-                      />
-                      <Text style={styles.profileAddr}>
-                        {getTrimmedAddress(caip10ToWallet(item.wallet))}
-                      </Text>
-                    </View>
-                    <View style={styles.flexRow}>
-                      {item.isAdmin && (
-                        <View style={styles.adminContainer}>
-                          <Text style={styles.adminTxt}>Admin</Text>
-                        </View>
-                      )}
-                    </View>
-                  </View>
-                );
-              }}
-            />
+            {groupInformation.pendingMembers.length > 0 && (
+              <TouchableOpacity
+                style={styles.pendingReqContainer}
+                onPress={() => setPendingMemberListOpen(val => !val)}>
+                <View style={styles.pendingReqTopContainer}>
+                  <Text style={styles.pendingReq}>Pending Requests</Text>
+                  <Entypo
+                    name={pendingMemberListOpen ? 'chevron-up' : 'chevron-down'}
+                    size={24}
+                    color="black"
+                  />
+                </View>
+                {pendingMemberListOpen &&
+                  showMemberList(groupInformation.pendingMembers, false)}
+              </TouchableOpacity>
+            )}
+            {showMemberList(groupInformation.members, true)}
           </View>
         </View>
       </ScrollView>
@@ -227,6 +255,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  pendingReqTopContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    backgroundColor: Globals.COLORS.WHITE,
+    borderColor: Globals.COLORS.CHAT_LIGHT_GRAY,
+    borderRadius: 16,
+    width: '99.5%',
+    alignSelf: 'center',
+  },
   adminContainer: {
     backgroundColor: Globals.COLORS.CHAT_LIGHT_PINK,
     paddingHorizontal: 8,
@@ -236,5 +276,17 @@ const styles = StyleSheet.create({
   adminTxt: {
     fontSize: 12,
     color: Globals.COLORS.PINK,
+  },
+  pendingReq: {
+    fontSize: 18,
+    marginBottom: 5,
+  },
+  pendingReqContainer: {
+    borderWidth: 0.5,
+    borderColor: Globals.COLORS.CHAT_LIGHT_GRAY,
+    marginBottom: 16,
+    backgroundColor: Globals.COLORS.LIGHT_BLUE,
+    borderRadius: 16,
+    display: 'flex',
   },
 });
