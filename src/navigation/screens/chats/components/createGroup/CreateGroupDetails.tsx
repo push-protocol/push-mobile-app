@@ -33,7 +33,12 @@ const CreateGroupDetails = ({
   const handleImagePicker = () => {
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
-      quality: 0.5,
+      includeBase64: true,
+      selectionLimit: 1,
+      quality: 0.1,
+      presentationStyle: 'pageSheet',
+      maxWidth: 500,
+      maxHeight: 500,
     };
 
     launchImageLibrary(options, response => {
@@ -42,7 +47,7 @@ const CreateGroupDetails = ({
       } else if (response.errorMessage) {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else if (response.assets) {
-        setImageSource(response.assets[0].base64);
+        setImageSource(`data:image/png;base64,${response.assets[0].base64}`);
       }
     });
   };
@@ -51,10 +56,7 @@ const CreateGroupDetails = ({
     <>
       <TouchableOpacity style={styles.uploadButton} onPress={handleImagePicker}>
         {imageSource ? (
-          <Image
-            source={{uri: `data:image/png;base64,${imageSource}`}}
-            style={styles.previewImage}
-          />
+          <Image source={{uri: imageSource}} style={styles.previewImage} />
         ) : (
           <FontAwesome5 name="camera" size={38} color="#575D73" />
         )}
@@ -72,7 +74,6 @@ const CreateGroupDetails = ({
         <LimitInput
           title="Group Description"
           limit={150}
-          optional
           value={groupDescription}
           defaultValue={groupDescription}
           onChangeText={txt => setGroupDescription(txt)}

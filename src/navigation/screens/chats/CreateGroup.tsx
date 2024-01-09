@@ -1,7 +1,6 @@
 import {Ionicons} from '@expo/vector-icons';
 import {ENV, createGroup} from '@kalashshah/react-native-sdk/src';
 import {IUser} from '@pushprotocol/restapi';
-import {ChatCreateGroupType} from '@pushprotocol/restapi/src/lib/chat';
 import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {
@@ -25,7 +24,6 @@ import MetaStorage from 'src/singletons/MetaStorage';
 import {UserChatCredentials} from './ChatScreen';
 import CreateGroupDetails from './components/createGroup/CreateGroupDetails';
 import CreateGroupWallets from './components/createGroup/CreateGroupWallets';
-import useChat from './helpers/useChat';
 
 const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
@@ -45,7 +43,6 @@ const CreateGroup = () => {
     CREATE_GROUP_STEP_KEYS.INPUT_DETAILS,
   );
   const [members, setMembers] = useState<{user: IUser; isAdmin: boolean}[]>([]);
-  const {createSigner} = useChat();
   const navigation = useNavigation();
   const [connectedUser] = useSelector(selectUsers);
 
@@ -67,12 +64,11 @@ const CreateGroup = () => {
         const admins = members
           .filter(member => member.isAdmin)
           .map(member => caip10ToWallet(member.user.wallets));
-        const signer = await createSigner();
 
         const {pgpPrivateKey}: UserChatCredentials =
           await MetaStorage.instance.getUserChatData();
 
-        const options: ChatCreateGroupType = {
+        const grp = await createGroup({
           groupName,
           groupDescription,
           members: grpMembers,
@@ -82,11 +78,8 @@ const CreateGroup = () => {
           pgpPrivateKey,
           account: walletToCAIP10(connectedUser.wallet),
           env: envConfig.ENV as ENV,
-        };
+        });
 
-        console.log('Options', options);
-
-        const grp = await createGroup(options);
         console.log('Group created successfully', grp);
         // @ts-ignore
         navigation.navigate(Globals.SCREENS.CHATS);
@@ -96,7 +89,7 @@ const CreateGroup = () => {
         setIsLoading(false);
       }
     } else {
-      if (groupName === '') return;
+      if (groupName === '' || groupDescription === '' || !imageSource) return;
       setActiveComponent((activeComponent + 1) as CreateGroupStepKeys);
     }
   };
@@ -124,7 +117,7 @@ const CreateGroup = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.flex}>
+      style={styles.wrapper}>
       <ScrollView contentContainerStyle={styles.flexGrow}>
         <View style={styles.container}>
           <View style={styles.header}>
@@ -159,8 +152,9 @@ const CreateGroup = () => {
 export default CreateGroup;
 
 const styles = StyleSheet.create({
-  flex: {
+  wrapper: {
     flex: 1,
+    backgroundColor: Globals.COLORS.WHITE,
   },
   flexGrow: {
     flexGrow: 1,

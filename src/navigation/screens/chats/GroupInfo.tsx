@@ -27,7 +27,7 @@ const GroupInfo = ({route, navigation}: any) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.flex}>
+      style={styles.wrapper}>
       <ScrollView contentContainerStyle={styles.flexGrow}>
         <View style={styles.container}>
           <View style={styles.header}>
@@ -118,8 +118,9 @@ const GroupInfo = ({route, navigation}: any) => {
 export default GroupInfo;
 
 const styles = StyleSheet.create({
-  flex: {
+  wrapper: {
     flex: 1,
+    backgroundColor: Globals.COLORS.WHITE,
   },
   flexGrow: {
     flexGrow: 1,
