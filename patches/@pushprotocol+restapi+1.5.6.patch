@@ -1,0 +1,13 @@
+diff --git a/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/crypto.js b/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/crypto.js
+index 97d2459..aadc07a 100644
+--- a/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/crypto.js
++++ b/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/crypto.js
+@@ -316,7 +316,7 @@ const decryptAndVerifyMessage = (message, pgpPublicKey, pgpPrivateKey, env, pgpH
+         };
+         const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
+         const signature = message.verificationProof.split(':')[1];
+-        yield (0, pgp_1.verifySignature)({
++        yield (0, pgpHelper.verifySignature)({
+             messageContent: hash,
+             signatureArmored: signature,
+             publicKeyArmored: pgpPublicKey,
