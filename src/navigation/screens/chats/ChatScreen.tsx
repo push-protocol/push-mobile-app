@@ -200,11 +200,10 @@ const ChatScreen = (props: any) => {
 
       <TouchableWithoutFeedback
         onPress={() => {
-          console.log('dadda', Date.now());
-
           // @ts-ignore
           navigation.navigate(Globals.SCREENS.NewChatScreen, {
-            chatCredentials: chatCredentials,
+            chatCredentials,
+            chatData,
           });
         }}>
         <View

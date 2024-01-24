@@ -297,11 +297,9 @@ const Web3Helper = {
           .resolver(domain)
           .addr()
           .then(address => {
-            console.log(address);
             resolve(address);
           })
           .catch(err => {
-            console.log(err);
             reject(err);
           });
       });
@@ -312,11 +310,9 @@ const Web3Helper = {
       resolution
         .addr(domain, currency)
         .then(address => {
-          console.log(address);
           resolve(address);
         })
         .catch(err => {
-          console.log(err);
           reject(err);
         });
     });

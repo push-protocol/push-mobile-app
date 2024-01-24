@@ -1,7 +1,7 @@
 import {Ionicons} from '@expo/vector-icons';
 import {EvilIcons} from '@expo/vector-icons';
 import {PushApi} from '@kalashshah/react-native-sdk/src';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   Image,
   Platform,
@@ -23,7 +23,7 @@ import {
 import {DEFAULT_AVATAR} from 'src/navigation/screens/chats/constants';
 
 import SingleChatItem from './components/SingleChatItem';
-import {useChatLoader} from './helpers/useChatLoader';
+import {ChatData} from './helpers/useChatLoader';
 
 const NewChatScreen = ({route, navigation}: any) => {
   const [ethAddress, setEthAddress] = useState('');
@@ -34,11 +34,7 @@ const NewChatScreen = ({route, navigation}: any) => {
   const toastRef = useRef<any>();
 
   const chatCredentials: UserChatCredentials = route.params.chatCredentials;
-  if (!chatCredentials) {
-    throw new Error('Couldnot find the chat credential');
-  }
-
-  const [isLoading, chatData, refresh] = useChatLoader(chatCredentials);
+  const chatData: ChatData = route.params.chatData;
 
   const checkIfAddressPresetInFeed = (
     addrs: string,
@@ -47,7 +43,7 @@ const NewChatScreen = ({route, navigation}: any) => {
 
     if (feeds) {
       for (let i = 0; i < feeds.length; i++) {
-        if (feeds[i].wallets.indexOf(addrs) !== -1) {
+        if (feeds[i].wallets && feeds[i].wallets.indexOf(addrs) !== -1) {
           return [feeds[i], true];
         }
       }
@@ -55,27 +51,13 @@ const NewChatScreen = ({route, navigation}: any) => {
     return [null, false];
   };
 
-  useEffect(() => {
-    let lis: any;
-    (async () => {
-      try {
-        lis = navigation.addListener('focus', () => {
-          refresh();
-        });
-      } catch (error) {
-        console.log('error fetching the chats');
-      }
-    })();
-    return lis;
-  }, [navigation]);
-
   const checkIfAddressPresetInReq = (
     addrs: string,
   ): [PushApi.IFeeds | null, boolean] => {
     const feeds = chatData.requests;
     if (feeds) {
       for (let i = 0; i < feeds.length; i++) {
-        if (feeds[i].wallets.indexOf(addrs) !== -1) {
+        if (feeds[i].wallets && feeds[i].wallets.indexOf(addrs) !== -1) {
           return [feeds[i], true];
         }
       }
@@ -144,7 +126,7 @@ const NewChatScreen = ({route, navigation}: any) => {
     setEthAddress('');
   };
 
-  if (isLoading || !chatData.connectedUserData) {
+  if (!chatData.connectedUserData) {
     return (
       <View
         style={{
