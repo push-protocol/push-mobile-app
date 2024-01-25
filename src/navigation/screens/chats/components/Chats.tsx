@@ -1,5 +1,5 @@
 import {EvilIcons, Ionicons} from '@expo/vector-icons';
-import * as PushSdk from '@kalashshah/react-native-sdk/src';
+import {IFeeds} from '@pushprotocol/restapi';
 import {useNavigation} from '@react-navigation/native';
 import React, {useContext, useState} from 'react';
 import {
@@ -20,7 +20,7 @@ import {DEFAULT_AVATAR} from '../constants';
 import SingleChatItem from './SingleChatItem';
 
 type ChatsProps = {
-  feeds: PushSdk.PushApi.IFeeds[];
+  feeds: IFeeds[];
   isIntentReceivePage: boolean;
   toastRef: any;
 };
@@ -29,9 +29,7 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
   const [ethAddress, setEthAddress] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchEnabled, setIsSearchEnabled] = useState(false);
-  const [matchedItem, setMatchedItem] = useState<PushSdk.PushApi.IFeeds | null>(
-    null,
-  );
+  const [matchedItem, setMatchedItem] = useState<IFeeds | null>(null);
 
   const appContext = useContext(Context);
   const navigation = useNavigation();
@@ -48,7 +46,7 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
 
   const checkIfAddressPresetInFeed = (
     addrs: string,
-  ): [PushSdk.PushApi.IFeeds | null, boolean] => {
+  ): [IFeeds | null, boolean] => {
     for (let i = 0; i < feeds.length; i++) {
       if (feeds[i].wallets.indexOf(addrs) !== -1) {
         return [feeds[i], true];

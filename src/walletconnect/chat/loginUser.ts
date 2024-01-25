@@ -1,4 +1,3 @@
-import {decryptPGPKey} from '@kalashshah/react-native-sdk/src';
 import * as PushAPI from '@pushprotocol/restapi';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {IProvider} from '@walletconnect/modal-react-native';
@@ -31,7 +30,7 @@ export const handleWalletConnectChatLogin = async (wcProvider: IProvider) => {
   }
 
   try {
-    const pgpKey = await decryptPGPKey({
+    const pgpKey = await PushAPI.chat.decryptPGPKey({
       encryptedPGPPrivateKey: user.encryptedPrivateKey,
       account: caipAddrs,
       env: envConfig.ENV as ENV,

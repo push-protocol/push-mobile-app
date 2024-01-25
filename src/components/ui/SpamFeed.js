@@ -1,4 +1,3 @@
-import {PushApi} from '@kalashshah/react-native-sdk/src';
 import {Asset} from 'expo-asset';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -14,7 +13,7 @@ import {useSelector} from 'react-redux';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
-import ENV_CONFIG from 'src/env.config';
+import {usePushApi} from 'src/contexts/PushApiContext';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 import NotificationItem from './NotificationItem';
@@ -23,6 +22,7 @@ export default function SpamFeed(props) {
   const users = useSelector(selectUsers);
   const currentUser = useSelector(selectCurrentUser);
   const {wallet} = users[currentUser];
+  const {userPushSDKInstance} = usePushApi();
 
   const [initialized, setInitialized] = useState(false);
   const [feed, setFeed] = useState([]);
@@ -39,7 +39,9 @@ export default function SpamFeed(props) {
   const FlatListFeedsRef = useRef(null);
 
   useEffect(() => {
-    fetchInitializedFeeds();
+    if (userPushSDKInstance) {
+      fetchInitializedFeeds();
+    }
   }, []);
 
   // Refresh Feed
@@ -83,15 +85,12 @@ export default function SpamFeed(props) {
   };
 
   const fetchFeed = async rewrite => {
-    if (!endReached || rewrite === true) {
+    if ((!endReached || rewrite === true) && userPushSDKInstance) {
       if (!loading) {
         setloading(true);
-        const feeds = await PushApi.user.getFeeds({
-          user: wallet,
-          env: ENV_CONFIG.ENV,
+        const feeds = await userPushSDKInstance.notification.list('SPAM', {
           limit: 10,
           page: page,
-          spam: true,
         });
 
         if (feeds && feeds.length > 0) {

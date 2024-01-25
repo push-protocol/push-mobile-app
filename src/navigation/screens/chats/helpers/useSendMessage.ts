@@ -1,7 +1,7 @@
-import * as PushSdk from '@kalashshah/react-native-sdk/src';
+import {IMessageIPFS} from '@pushprotocol/restapi';
 import {useState} from 'react';
 import {ConnectedUser} from 'src/apis';
-import envConfig from 'src/env.config';
+import {usePushApi} from 'src/contexts/PushApiContext';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
 export interface MessageFormat {
@@ -13,20 +13,20 @@ type sendIntentFunc = (message: MessageFormat) => Promise<void>;
 type sendMessageFunc = ({
   message,
   messageType,
-}: MessageFormat) => Promise<[string, PushSdk.PushApi.IMessageIPFS]>;
+}: MessageFormat) => Promise<[string, IMessageIPFS]>;
 
 type useSendMessageReturnType = [
   boolean,
   sendMessageFunc | sendIntentFunc,
   boolean,
-  PushSdk.PushApi.IMessageIPFS,
+  IMessageIPFS,
 ];
 
-const generateNullRespose = (): [string, PushSdk.PushApi.IMessageIPFS] => {
+const generateNullRespose = (): [string, IMessageIPFS] => {
   return ['', generateNullChatMessage()];
 };
 
-const generateNullChatMessage = (): PushSdk.PushApi.IMessageIPFS => {
+const generateNullChatMessage = (): IMessageIPFS => {
   return {
     toDID: '',
     toCAIP10: '',
@@ -50,14 +50,20 @@ const useSendMessage = (
   showToast: any,
 ): useSendMessageReturnType => {
   const [isSending, setIsSending] = useState(false);
-  const [tempChatMessage, setTempChatMessage] =
-    useState<PushSdk.PushApi.IMessageIPFS>(generateNullChatMessage());
+  const [tempChatMessage, setTempChatMessage] = useState<IMessageIPFS>(
+    generateNullChatMessage(),
+  );
+
+  const {userPushSDKInstance} = usePushApi();
 
   const sendMessage = async ({
     message,
     messageType,
-  }: MessageFormat): Promise<[string, PushSdk.PushApi.IMessageIPFS]> => {
+  }: MessageFormat): Promise<[string, IMessageIPFS]> => {
     try {
+      if (!userPushSDKInstance) {
+        return generateNullRespose();
+      }
       setIsSending(true);
       setTempChatMessage({
         toDID: to,
@@ -74,18 +80,12 @@ const useSendMessage = (
         sigType: '',
       });
 
-      const res = await PushSdk.send({
-        account: connectedUser.wallets,
-        pgpPrivateKey: connectedUser.privateKey,
-        message: {
-          content: message,
-          type: messageType,
-        },
-        to,
-        env: envConfig.ENV as PushSdk.ENV,
+      const res = await userPushSDKInstance.chat.send(to, {
+        content: message,
+        type: messageType,
       });
 
-      const chatMessage: PushSdk.PushApi.IMessageIPFS = {
+      const chatMessage: IMessageIPFS = {
         toDID: caip10ToWallet(res.toCAIP10),
         toCAIP10: caip10ToWallet(res.toCAIP10),
         fromDID: caip10ToWallet(res.fromCAIP10),
@@ -98,6 +98,7 @@ const useSendMessage = (
         link: res.cid,
         signature: res.signature,
         sigType: res.sigType,
+        verificationProof: res.verificationProof,
       };
 
       return [res.cid, chatMessage];

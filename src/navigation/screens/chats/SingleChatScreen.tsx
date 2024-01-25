@@ -5,9 +5,7 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
 import {GiphyDialog, GiphyDialogEvent} from '@giphy/react-native-sdk';
-import {ENV, approve} from '@kalashshah/react-native-sdk/src';
-import * as PushSdk from '@kalashshah/react-native-sdk/src';
-import {VideoCallStatus} from '@pushprotocol/restapi';
+import {IFeeds, IMessageIPFS, VideoCallStatus} from '@pushprotocol/restapi';
 import {walletToPCAIP10} from '@pushprotocol/restapi/src/lib/helpers';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useNavigation} from '@react-navigation/native';
@@ -35,6 +33,7 @@ import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
+import {usePushApi} from 'src/contexts/PushApiContext';
 import {VideoCallContext} from 'src/contexts/VideoContext';
 import envConfig from 'src/env.config';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
@@ -57,7 +56,7 @@ interface ChatScreenParam {
   isIntentSendPage: boolean;
   isIntentReceivePage: boolean;
   chatId: string;
-  feed?: PushSdk.PushApi.IFeeds;
+  feed?: IFeeds;
   title?: string;
 }
 
@@ -121,6 +120,7 @@ const SingleChatScreen = ({route}: any) => {
   const senderAddressFormatted = senderAddress
     ? getFormattedAddress(senderAddress)
     : null;
+  const {userPushSDKInstance} = usePushApi();
 
   const handleSend = async () => {
     const _text = text;
@@ -153,15 +153,9 @@ const SingleChatScreen = ({route}: any) => {
   const onAccept = async () => {
     try {
       setIsAccepting(true);
-      const user = await MetaStorage.instance.getUserChatData();
-      const APPROVED_INTENT = 'Approved';
-      await approve({
-        account: connectedUser.wallets,
-        senderAddress: senderAddress ? walletToPCAIP10(senderAddress) : chatId,
-        pgpPrivateKey: user.pgpPrivateKey,
-        status: APPROVED_INTENT,
-        env: envConfig.ENV as ENV,
-      });
+      await userPushSDKInstance?.chat.accept(
+        senderAddress ? walletToPCAIP10(senderAddress) : chatId,
+      );
       setisIntentReceivePage(false);
     } catch (error) {
       console.log('error accepting req ', error);
@@ -291,13 +285,7 @@ const SingleChatScreen = ({route}: any) => {
     }
   };
 
-  const renderItem = ({
-    item,
-    index,
-  }: {
-    item: PushSdk.PushApi.IMessageIPFS;
-    index: number;
-  }) => {
+  const renderItem = ({item, index}: {item: IMessageIPFS; index: number}) => {
     const componentType = item.fromCAIP10.includes(
       caip10ToWallet(connectedUser.wallets),
     )

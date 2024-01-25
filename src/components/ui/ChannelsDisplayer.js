@@ -1,5 +1,4 @@
 import '@ethersproject/shims';
-import * as PushApi from '@pushprotocol/restapi';
 import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -14,6 +13,7 @@ import {useSelector} from 'react-redux';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ChannelItem from 'src/components/ui/ChannelItem';
+import {usePushApi} from 'src/contexts/PushApiContext';
 import ENV_CONFIG from 'src/env.config';
 import {selectUsers} from 'src/redux/authSlice';
 
@@ -39,6 +39,7 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
 
   const wc_connector = useWalletConnectModal();
   const users = useSelector(selectUsers);
+  const {userPushSDKInstance} = usePushApi();
 
   useEffect(() => {
     setRefreshing(true);
@@ -90,11 +91,9 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
     }
 
     setIsSearchEnded(false);
-    const channels = await PushApi.channels.search({
-      query: channelName,
+    const channels = await userPushSDKInstance.channel.search(channelName, {
       limit: 20,
       page: 1,
-      env: ENV_CONFIG.ENV,
     });
 
     setChannels(channels);

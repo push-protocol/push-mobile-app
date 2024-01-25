@@ -1,4 +1,4 @@
-import * as PushSdk from '@kalashshah/react-native-sdk/src';
+import {IMessageIPFS} from '@pushprotocol/restapi';
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {formatAMPM, formatDate} from 'src/helpers/DateTimeHelper';
@@ -9,7 +9,7 @@ import {ImageMessage} from './messageTypes/ImageMessage';
 export type MessageComponentType = 'SENDER' | 'RECEIVER';
 
 type MessageComponentProps = {
-  chatMessage: PushSdk.PushApi.IMessageIPFS;
+  chatMessage: IMessageIPFS;
   componentType: MessageComponentType;
   includeDate: boolean;
 };

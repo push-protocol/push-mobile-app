@@ -1,11 +1,14 @@
 import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {usePushApi} from 'src/contexts/PushApiContext';
 
 import {handleWalletConnectChatLogin} from '../chat/loginUser';
 
 const WallectConnectPage = ({initalizate}: any) => {
+  const {refreshUserPushSDKInstance} = usePushApi();
   const wc_connector = useWalletConnectModal();
+
   const handle = async () => {
     let chatInfoLoaded = false;
     try {
@@ -16,11 +19,13 @@ const WallectConnectPage = ({initalizate}: any) => {
       console.log(error);
     }
     if (chatInfoLoaded) {
+      await refreshUserPushSDKInstance();
       initalizate();
     } else {
       return;
     }
   };
+
   return (
     <View style={styles.container}>
       <Image source={require('assets/ui/pgp_dapp.png')} style={styles.image} />

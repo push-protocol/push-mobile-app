@@ -1,4 +1,4 @@
-import {createUser} from '@kalashshah/react-native-sdk/src';
+import * as PushApi from '@pushprotocol/restapi';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import {ethers} from 'ethers';
@@ -21,7 +21,7 @@ const useChat = () => {
     } else if (userPKey) {
       signer = new ethers.Wallet(userPKey);
     }
-    const createdUser = await createUser({
+    const createdUser = await PushApi.user.create({
       account: caip10,
       env: envConfig.ENV as ENV,
       signer,

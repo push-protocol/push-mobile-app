@@ -15,6 +15,7 @@ import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import NoticePrompt from 'src/components/modals/NoticePrompt';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
+import {usePushApi} from 'src/contexts/PushApiContext';
 import ENV_CONFIG from 'src/env.config';
 import MetaStorage from 'src/singletons/MetaStorage';
 import {handleChannelSub} from 'src/walletconnect';
@@ -31,157 +32,22 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
 
   const [processing, setProcessing] = useState(false);
 
-  const apiURL =
-    ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_SUBSCRIPTION;
-
-  const EPNS_DOMAIN = {
-    name: 'EPNS COMM V1',
-    chainId: ENV_CONFIG.CHAIN_ID,
-    verifyingContract: ENV_CONFIG.CONTRACTS.COMM_CONTRACT,
-  };
-
-  const subType = {
-    Subscribe: [
-      {name: 'channel', type: 'address'},
-      {name: 'subscriber', type: 'address'},
-      {name: 'action', type: 'string'},
-    ],
-  };
-  const unsubType = {
-    Unsubscribe: [
-      {name: 'channel', type: 'address'},
-      {name: 'unsubscriber', type: 'address'},
-      {name: 'action', type: 'string'},
-    ],
-  };
-
-  const subMessage = {
-    channel: channel,
-    subscriber: user,
-    action: 'Subscribe',
-  };
-
-  const unsubMessage = {
-    channel: channel,
-    unsubscriber: user,
-    action: 'Unsubscribe',
-  };
-
-  const handleSubscribe = async () => {
-    if (pKey !== '') {
-      const signer = new ethers.Wallet(pKey);
-      signer._signTypedData(EPNS_DOMAIN, subType, subMessage).then(res => {
-        offChainSubscribe(res);
-      });
-    } else {
-      showPopUp();
-    }
-  };
-
-  const handleUnsubscribe = async () => {
-    if (pKey !== '') {
-      const signer = new ethers.Wallet(pKey);
-      signer._signTypedData(EPNS_DOMAIN, unsubType, unsubMessage).then(res => {
-        offChainUnsubscribe(res);
-      });
-    } else {
-      showPopUp();
-    }
-  };
-
-  const offChainSubscribe = async signature => {
-    const apiUrl =
-      ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_SUBSCRIBE_OFFCHAIN;
-
-    const body = {
-      signature: signature,
-      message: subMessage,
-      contractAddress: ENV_CONFIG.CONTRACTS.COMM_CONTRACT,
-      chainId: ENV_CONFIG.CHAIN_ID,
-      op: 'write',
-    };
-
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    const subscribeResponse = await response.json();
-    console.log('subscribeResponse', subscribeResponse);
-
-    fetchSubscriptionStatus(user, channel);
-  };
-
-  const offChainUnsubscribe = async signature => {
-    const apiUrl =
-      ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_UNSUBSCRIBE_OFFCHAIN;
-
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        signature: signature,
-        message: unsubMessage,
-        contractAddress: ENV_CONFIG.CONTRACTS.COMM_CONTRACT,
-        chainId: ENV_CONFIG.CHAIN_ID,
-        op: 'write',
-      }),
-    });
-
-    const unsubscribeResponse = await response.json();
-    console.log('unsubscribeRespone', unsubscribeResponse);
-
-    fetchSubscriptionStatus(user, channel);
-  };
+  const {userPushSDKInstance} = usePushApi();
 
   // Setup Refs
   const OverlayBlurRef = useRef(null);
   const NoticePromptRef = useRef(null);
 
-  useEffect(() => {
-    let isMounted = true;
-    if (isMounted) fetchSubscriptionStatus(user, channel);
+  const subscribeToChannel = async () => {
+    if (userPushSDKInstance.readMode) await wc_connector.open();
+    // TODO: check if we need to put else condition here, same with unsubscribe
+    userPushSDKInstance.notification.subscribe(channel);
+  };
 
-    return () => {
-      isMounted = false;
-    };
-  });
-
-  const handleOpts = async action => {
-    // Check signin flow
-    setProcessing(true);
-    const isWalletConnect = wc_connector.isConnected;
-    const signedInType = await MetaStorage.instance.getSignedInType();
-    if (isWalletConnect) {
-      try {
-        const done = await handleChannelSub(
-          wc_connector.provider,
-          action,
-          channel,
-        );
-        if (done) {
-          setSubscribed(prev => !prev);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
-      if (action === 1) {
-        handleSubscribe();
-      } else if (action === 2) {
-        handleUnsubscribe();
-      }
-    } else {
-      console.log('Not connected, opening wallet connect modal');
-      wc_connector.open();
-    }
+  const unsubscribeFromChannel = async () => {
+    if (userPushSDKInstance.readMode) await wc_connector.open();
+    // TODO: check if we need to put else condition here, same with subscribe
+    userPushSDKInstance.notification.unsubscribe(channel);
   };
 
   const showPopUp = async action => {
