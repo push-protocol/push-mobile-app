@@ -1,37 +1,21 @@
 import * as PushSdk from '@kalashshah/react-native-sdk/src';
+import * as PushApi from '@pushprotocol/restapi';
 import {EVENTS, createSocketConnection} from '@pushprotocol/socket';
 import {useEffect, useRef, useState} from 'react';
+import {useSelector} from 'react-redux';
 import {Socket} from 'socket.io-client';
 import * as PushNodeClient from 'src/apis';
 import envConfig from 'src/env.config';
+import {selectUsers} from 'src/redux/authSlice';
 
 import {SocketConfig} from './socketHelper';
+import {storeConversationData} from './storage';
 
 type pushChatDataDirectFunc = (
   cid: string,
   msg: PushSdk.PushApi.IMessageIPFS,
 ) => void;
 type loadMoreDataFunc = () => Promise<void>;
-const socketResponseToInbox = (chat: any) => {
-  const inboxChat: PushNodeClient.InboxChat = {
-    name: '',
-    profilePicture: '',
-    encType: chat.encType,
-    encryptedSecret: chat.encryptedSecret,
-    fromCAIP10: chat.fromCAIP10,
-    fromDID: chat.fromDID,
-    toCAIP10: chat.toCAIP10,
-    toDID: chat.toDID,
-    timestamp: chat.timestamp,
-    lastMessage: chat.link,
-    messageType: chat.messageType,
-    messageContent: chat.messageContent,
-    signature: chat.signature,
-    signatureType: chat.sigType,
-  };
-
-  return inboxChat;
-};
 
 const useConversationLoader = (
   cid: string,
@@ -41,15 +25,16 @@ const useConversationLoader = (
   combinedDID: string,
 ): [
   boolean,
-  PushSdk.PushApi.IMessageIPFS[],
+  PushApi.IMessageIPFS[],
   pushChatDataDirectFunc,
   loadMoreDataFunc,
   boolean,
 ] => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [chatData, setChatData] = useState<PushSdk.PushApi.IMessageIPFS[]>([]);
+  const [chatData, setChatData] = useState<PushApi.IMessageIPFS[]>([]);
   const pageBatchSize = 10;
+  const [connectedUser] = useSelector(selectUsers);
 
   const currentHash = useRef(cid);
   const fetchedTill = useRef<string | null>('');
@@ -151,21 +136,29 @@ const useConversationLoader = (
           console.log('disconnected :(');
         });
 
-        // TODO:
-        // pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, chat => {
-        //   console.log('socket new message');
+        pushSDKSocket.on(
+          EVENTS.CHAT_RECEIVED_MESSAGE,
+          async (message: PushNodeClient.MessageIPFSWithCID) => {
+            if (message.cid && message.cid === currentHash.current) {
+              console.log('no new conversation');
+              return;
+            }
 
-        //   if (chat.cid && chat.cid === currentHash.current) {
-        //     console.log('no new conversation');
-        //     return;
-        //   }
-        //   const inboxChat = socketResponseToInbox(chat);
-        //   (async () => {
-        //     const newMsgs = await resolveSocketMsg(inboxChat, pgpPrivateKey);
-        //     // await storeConversationData(combinedDID, chat.cid, newMsgs);
-        //     setChatData(prev => [...newMsgs.reverse(), ...prev]);
-        //   })();
-        // });
+            const newMsgs = await PushApi.chat.decryptConversation({
+              messages: [message],
+              pgpHelper: PushSdk.PGPHelper,
+              env: envConfig.ENV as PushSdk.ENV,
+              pgpPrivateKey,
+              connectedUser: {
+                ...connectedUser,
+                wallets: connectedUser.wallet,
+              },
+            });
+
+            await storeConversationData(combinedDID, message.cid, newMsgs);
+            setChatData(prev => [...newMsgs.reverse(), ...prev]);
+          },
+        );
       } else {
         chatListener = fetchNewChatUsingTimer();
       }

@@ -1,5 +1,4 @@
 import * as PushSdk from '@kalashshah/react-native-sdk/src';
-import {ChatSendOptionsType} from '@pushprotocol/restapi';
 import {useEffect, useRef, useState} from 'react';
 import {ConnectedUser} from 'src/apis';
 import * as PushNodeClient from 'src/apis';
@@ -107,7 +106,7 @@ const useSendMessage = (
         sigType: '',
       });
 
-      const payload: ChatSendOptionsType = {
+      const res = await PushSdk.send({
         account: connectedUser.wallets,
         pgpPrivateKey: connectedUser.privateKey,
         message: {
@@ -116,8 +115,7 @@ const useSendMessage = (
         },
         to: receiverAddress,
         env: envConfig.ENV as PushSdk.ENV,
-      };
-      const res = await PushSdk.send(payload);
+      });
 
       const chatMessage: PushSdk.PushApi.IMessageIPFS = {
         toDID: caip10ToWallet(res.toCAIP10),
