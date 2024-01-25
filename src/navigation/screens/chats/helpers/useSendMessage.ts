@@ -1,9 +1,8 @@
 import * as PushSdk from '@kalashshah/react-native-sdk/src';
-import {useEffect, useRef, useState} from 'react';
+import {useState} from 'react';
 import {ConnectedUser} from 'src/apis';
-import * as PushNodeClient from 'src/apis';
 import envConfig from 'src/env.config';
-import {caip10ToWallet, getCAIPAddress} from 'src/helpers/CAIPHelper';
+import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
 export interface MessageFormat {
   message: string;
@@ -46,44 +45,13 @@ const generateNullChatMessage = (): PushSdk.PushApi.IMessageIPFS => {
 
 const useSendMessage = (
   connectedUser: ConnectedUser,
-  receiverAddress: string,
+  to: string,
   _isIntentSendPage: boolean,
   showToast: any,
 ): useSendMessageReturnType => {
   const [isSending, setIsSending] = useState(false);
-  const [isIntentSendPage, setIsIntentSendPage] = useState(_isIntentSendPage);
-  const [isSendingReady, setIsSendingReady] = useState(false);
   const [tempChatMessage, setTempChatMessage] =
     useState<PushSdk.PushApi.IMessageIPFS>(generateNullChatMessage());
-
-  const messageReceiver = useRef({
-    ethAddress: getCAIPAddress(receiverAddress),
-    pgpAddress: '',
-  });
-
-  useEffect(() => {
-    // getting receivers infos
-    (async () => {
-      const res = await PushNodeClient.getUser(
-        messageReceiver.current.ethAddress,
-      );
-
-      if (res && res !== null) {
-        // TODO: support pgpv2
-        let pubKey = res.publicKey;
-        try {
-          pubKey = JSON.parse(pubKey).key;
-        } catch {
-          console.log('pgpv1 receiver');
-        }
-        messageReceiver.current.pgpAddress = pubKey;
-        console.log('Receiver addrs found');
-      } else {
-        console.log('Receiver not found');
-      }
-      setIsSendingReady(true);
-    })();
-  }, []);
 
   const sendMessage = async ({
     message,
@@ -92,8 +60,8 @@ const useSendMessage = (
     try {
       setIsSending(true);
       setTempChatMessage({
-        toDID: caip10ToWallet(messageReceiver.current.ethAddress),
-        toCAIP10: caip10ToWallet(messageReceiver.current.ethAddress),
+        toDID: to,
+        toCAIP10: to,
         fromDID: caip10ToWallet(connectedUser.wallets),
         fromCAIP10: caip10ToWallet(connectedUser.wallets),
         messageType: messageType,
@@ -113,7 +81,7 @@ const useSendMessage = (
           content: message,
           type: messageType,
         },
-        to: receiverAddress,
+        to,
         env: envConfig.ENV as PushSdk.ENV,
       });
 
@@ -142,7 +110,7 @@ const useSendMessage = (
     return generateNullRespose();
   };
 
-  return [isSending, sendMessage, isSendingReady, tempChatMessage];
+  return [isSending, sendMessage, true, tempChatMessage];
 };
 
 export {useSendMessage};

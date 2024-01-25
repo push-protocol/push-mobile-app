@@ -39,6 +39,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow Push (EPNS) to access your photo library for selecting images</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow Push (EPNS) to access your camera. Push will use this to scan the QR Code of your wallet.</string>
 	<key>NSFaceIDUsageDescription</key>

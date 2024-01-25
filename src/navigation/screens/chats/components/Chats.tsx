@@ -1,9 +1,16 @@
-import {EvilIcons} from '@expo/vector-icons';
+import {EvilIcons, Ionicons} from '@expo/vector-icons';
 import * as PushSdk from '@kalashshah/react-native-sdk/src';
+import {useNavigation} from '@react-navigation/native';
 import React, {useContext, useState} from 'react';
-import {Dimensions, StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Globals from 'src/Globals';
-import * as PushNodeClient from 'src/apis';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {caip10ToWallet, getCombinedDID} from 'src/helpers/CAIPHelper';
 import Web3Helper from 'src/helpers/Web3Helper';
@@ -27,6 +34,7 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
   );
 
   const appContext = useContext(Context);
+  const navigation = useNavigation();
 
   const showError = (q: string) => {
     if (toastRef) {
@@ -89,6 +97,11 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
     setIsSearching(false);
     setMatchedItem(null);
     setEthAddress('');
+  };
+
+  const navigateToCreateGrp = () => {
+    // @ts-ignore
+    navigation.navigate(Globals.SCREENS.CREATE_GROUP);
   };
 
   return (
@@ -166,23 +179,50 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
 
       {!isSearchEnabled && (
         <View style={styles.content}>
+          <TouchableOpacity
+            style={styles.createGrpButton}
+            onPress={navigateToCreateGrp}>
+            <Ionicons
+              name="people-outline"
+              style={styles.createGrpButtonIcon}
+            />
+            <Text style={styles.createGrpButtonTxt}>Create Group</Text>
+            <View style={styles.newTag}>
+              <Text style={styles.newTagTxt}>New</Text>
+            </View>
+          </TouchableOpacity>
           {feeds.map((item, index) => {
-            // TODO: remove this check once we have support for group chat
-            if (item.groupInformation) return null;
-            return (
-              <SingleChatItem
-                key={item.chatId || index}
-                image={item.profilePicture}
-                wallet={caip10ToWallet(item.wallets)}
-                text={item.threadhash ? item.threadhash : ''}
-                combinedDID={item.combinedDID}
-                isIntentReceivePage={isIntentReceivePage}
-                isIntentSendPage={false}
-                clearSearch={handleClearSearch}
-                chatId={item.chatId}
-                feed={item}
-              />
-            );
+            if (item.groupInformation) {
+              return (
+                <SingleChatItem
+                  key={item.chatId || index}
+                  image={item.groupInformation.groupImage}
+                  title={item.groupInformation.groupName}
+                  clearSearch={handleClearSearch}
+                  chatId={item.groupInformation.chatId}
+                  isIntentReceivePage={isIntentReceivePage}
+                  isIntentSendPage={false}
+                  text={item.threadhash ? item.threadhash : ''}
+                  feed={item}
+                  combinedDID={item.combinedDID}
+                />
+              );
+            } else {
+              return (
+                <SingleChatItem
+                  key={item.chatId || index}
+                  image={item.profilePicture}
+                  wallet={caip10ToWallet(item.wallets)}
+                  text={item.threadhash ? item.threadhash : ''}
+                  combinedDID={item.combinedDID}
+                  isIntentReceivePage={isIntentReceivePage}
+                  isIntentSendPage={false}
+                  clearSearch={handleClearSearch}
+                  chatId={item.chatId}
+                  feed={item}
+                />
+              );
+            }
           })}
         </View>
       )}
@@ -222,13 +262,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: 50,
-    marginVertical: 12,
+    marginTop: 12,
     marginLeft: 5,
     backgroundColor: Globals.COLORS.LIGHT_BLUE,
     borderRadius: 20,
     padding: 4,
     color: Globals.COLORS.BLACK,
-    marginBottom: 10,
   },
 
   searchImage: {
@@ -276,5 +315,33 @@ const styles = StyleSheet.create({
   emptyFeedsText: {
     textAlign: 'center',
     fontSize: 16,
+  },
+  createGrpButton: {
+    height: 54,
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  createGrpButtonTxt: {
+    fontSize: 16,
+  },
+  createGrpButtonIcon: {
+    fontSize: 32,
+    marginRight: 8,
+    color: Globals.COLORS.PINK,
+    transform: [{scaleX: -1}],
+  },
+  newTag: {
+    backgroundColor: Globals.COLORS.CHAT_LIGHT_PINK,
+    borderRadius: 6,
+    marginLeft: 18,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  newTagTxt: {
+    color: Globals.COLORS.PINK,
+    fontSize: 10,
   },
 });

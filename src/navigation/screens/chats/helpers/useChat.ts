@@ -30,7 +30,16 @@ const useChat = () => {
     return createdUser;
   };
 
-  return {createNewPgpPair};
+  const createSigner = async () => {
+    if (wc_connector.isConnected && wc_connector.provider) {
+      const [sig, account] = await getSigner(wc_connector.provider);
+      return sig;
+    } else if (userPKey) {
+      return new ethers.Wallet(userPKey);
+    }
+  };
+
+  return {createNewPgpPair, createSigner};
 };
 
 export default useChat;
