@@ -1,16 +1,16 @@
-import * as PushSdk from '@kalashshah/react-native-sdk/src';
+import {IMessageIPFS} from '@pushprotocol/restapi';
+import * as PushApi from '@pushprotocol/restapi';
+import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {EVENTS, createSocketConnection} from '@pushprotocol/socket';
 import {useEffect, useRef, useState} from 'react';
 import {Socket} from 'socket.io-client';
 import * as PushNodeClient from 'src/apis';
+import {usePushApi} from 'src/contexts/PushApiContext';
 import envConfig from 'src/env.config';
 
 import {SocketConfig} from './socketHelper';
 
-type pushChatDataDirectFunc = (
-  cid: string,
-  msg: PushSdk.PushApi.IMessageIPFS,
-) => void;
+type pushChatDataDirectFunc = (cid: string, msg: IMessageIPFS) => void;
 type loadMoreDataFunc = () => Promise<void>;
 const socketResponseToInbox = (chat: any) => {
   const inboxChat: PushNodeClient.InboxChat = {
@@ -41,14 +41,14 @@ const useConversationLoader = (
   combinedDID: string,
 ): [
   boolean,
-  PushSdk.PushApi.IMessageIPFS[],
+  IMessageIPFS[],
   pushChatDataDirectFunc,
   loadMoreDataFunc,
   boolean,
 ] => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [chatData, setChatData] = useState<PushSdk.PushApi.IMessageIPFS[]>([]);
+  const [chatData, setChatData] = useState<IMessageIPFS[]>([]);
   const pageBatchSize = 10;
 
   const currentHash = useRef(cid);
@@ -56,6 +56,8 @@ const useConversationLoader = (
   const fetchedFrom = useRef<string | null>('');
 
   const isFetching = useRef(false);
+
+  const {userPushSDKInstance} = usePushApi();
 
   const loadMoreData = async () => {
     if (isLoadingMore) {
@@ -80,42 +82,37 @@ const useConversationLoader = (
   const fetchChats = async (_pgpPrivateKey: string, currentCid: string) => {
     isFetching.current = true;
     try {
-      const chats = await PushSdk.history({
-        account: userAddress,
-        threadhash: currentCid,
+      const chats = await userPushSDKInstance?.chat.history(senderAddress, {
         limit: pageBatchSize,
-        toDecrypt: true,
-        pgpPrivateKey: _pgpPrivateKey,
-        env: envConfig.ENV as PushSdk.ENV,
+        reference: currentCid,
       });
-
       isFetching.current = false;
-      return chats;
+      return chats || [];
     } catch (err) {
       isFetching.current = false;
       return [];
     }
   };
 
-  const pushChatDataDirect = (
-    _cid: string,
-    msg: PushSdk.PushApi.IMessageIPFS,
-  ) => {
+  const pushChatDataDirect = (_cid: string, msg: IMessageIPFS) => {
     setChatData(prev => [msg, ...prev]);
     currentHash.current = _cid;
   };
 
   useEffect(() => {
+    if (!userPushSDKInstance) {
+      return;
+    }
     let chatListener: NodeJS.Timer;
     let pushSDKSocket: Socket | null;
 
     (async () => {
       // fetch conversation datas
       try {
-        const {threadHash} = await PushSdk.conversationHash({
+        const {threadHash} = await PushApi.chat.conversationHash({
           account: userAddress,
           conversationId: senderAddress,
-          env: envConfig.ENV as PushSdk.ENV,
+          env: envConfig.ENV as ENV,
         });
 
         const msgs = await fetchChats(pgpPrivateKey, threadHash);
@@ -180,15 +177,15 @@ const useConversationLoader = (
         clearInterval(chatListener);
       }
     };
-  }, []);
+  }, [userPushSDKInstance]);
 
   const fetchNewChatUsingTimer = () => {
     let chatListener = setInterval(async () => {
       if (!isFetching.current) {
-        const {threadHash} = await PushSdk.conversationHash({
+        const {threadHash} = await PushApi.chat.conversationHash({
           account: userAddress,
           conversationId: senderAddress,
-          env: envConfig.ENV as PushSdk.ENV,
+          env: envConfig.ENV as ENV,
         });
 
         if (threadHash !== currentHash.current) {

@@ -1,9 +1,8 @@
 import {EvilIcons} from '@expo/vector-icons';
-import * as PushSdk from '@kalashshah/react-native-sdk/src';
+import {IFeeds} from '@pushprotocol/restapi';
 import React, {useContext, useState} from 'react';
 import {Dimensions, StyleSheet, Text, TextInput, View} from 'react-native';
 import Globals from 'src/Globals';
-import * as PushNodeClient from 'src/apis';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {caip10ToWallet, getCombinedDID} from 'src/helpers/CAIPHelper';
 import Web3Helper from 'src/helpers/Web3Helper';
@@ -13,7 +12,7 @@ import {DEFAULT_AVATAR} from '../constants';
 import SingleChatItem from './SingleChatItem';
 
 type ChatsProps = {
-  feeds: PushSdk.PushApi.IFeeds[];
+  feeds: IFeeds[];
   isIntentReceivePage: boolean;
   toastRef: any;
 };
@@ -22,9 +21,7 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
   const [ethAddress, setEthAddress] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchEnabled, setIsSearchEnabled] = useState(false);
-  const [matchedItem, setMatchedItem] = useState<PushSdk.PushApi.IFeeds | null>(
-    null,
-  );
+  const [matchedItem, setMatchedItem] = useState<IFeeds | null>(null);
 
   const appContext = useContext(Context);
 
@@ -40,7 +37,7 @@ const Chats = ({feeds, isIntentReceivePage, toastRef}: ChatsProps) => {
 
   const checkIfAddressPresetInFeed = (
     addrs: string,
-  ): [PushSdk.PushApi.IFeeds | null, boolean] => {
+  ): [IFeeds | null, boolean] => {
     for (let i = 0; i < feeds.length; i++) {
       if (feeds[i].wallets.indexOf(addrs) !== -1) {
         return [feeds[i], true];

@@ -1,21 +1,22 @@
-import * as PushSdk from '@kalashshah/react-native-sdk/src';
 import {EVENTS, createSocketConnection} from '@pushprotocol/socket';
+import {CONSTANTS, IFeeds } from '@pushprotocol/restapi';
 import {useEffect, useState} from 'react';
 import {useRef} from 'react';
 import {useSelector} from 'react-redux';
 import {Socket} from 'socket.io-client';
 import * as PushNodeClient from 'src/apis';
-import envConfig from 'src/env.config';
 import * as CaipHelper from 'src/helpers/CAIPHelper';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 import {UserChatCredentials} from '../ChatScreen';
 import {SocketConfig} from './socketHelper';
+import { usePushApi } from 'src/contexts/PushApiContext';
+import { PushStream } from '@pushprotocol/restapi/src/lib/pushstream/PushStream';
 
 export interface ChatData {
   connectedUserData: PushNodeClient.ConnectedUser | undefined;
-  feeds: PushSdk.PushApi.IFeeds[];
-  requests: PushSdk.PushApi.IFeeds[];
+  feeds: IFeeds[];
+  requests: IFeeds[];
 }
 
 export interface ChatFeedCache {
@@ -34,10 +35,11 @@ const useChatLoader = (
     feeds: [],
     requests: [],
   });
+  const { userPushSDKInstance } = usePushApi();
 
   const users = useSelector(selectUsers);
   const currentUser = useSelector(selectCurrentUser);
-  const pushSDKSocket = useRef<Socket | null>(null);
+  const pushSDKSocket = useRef<PushStream | null>(null);
 
   const setUpChatProfile = async (
     caipAddress: string,
@@ -60,25 +62,15 @@ const useChatLoader = (
   };
 
   const loadInbox = async (ethAddress: string) => {
-    
-
     const [feeds, requests]:[any, any] = await Promise.all([
-      PushSdk.chats({
-        account: ethAddress,
-        toDecrypt: true,
-        pgpPrivateKey: userChatCredentials?.pgpPrivateKey,
+      userPushSDKInstance?.chat.list('CHATS', {
         page: currentPage,
         limit: 15,
-        env: envConfig.ENV as PushSdk.ENV,
       }),
-      PushSdk.requests({
-        account:ethAddress,
-        toDecrypt: true,
-        pgpPrivateKey: userChatCredentials?.pgpPrivateKey,
+      userPushSDKInstance?.chat.list('REQUESTS', {
         page: 1,
         limit: 10,
-        env: envConfig.ENV as PushSdk.ENV,
-      })
+      }),
     ])
 
     if (!feeds) {
@@ -95,7 +87,7 @@ const useChatLoader = (
   };
 
   useEffect(() => {
-    if (!userChatCredentials) {
+    if (!userChatCredentials || !userPushSDKInstance) {
       return;
     }
 
@@ -113,34 +105,28 @@ const useChatLoader = (
       // qeury for new threads evey 3 second
       if (SocketConfig.useSocket) {
         if (!pushSDKSocket.current) {
-          console.log('new socket created');
-          pushSDKSocket.current = createSocketConnection({
-            user: derivedAddress,
-            env: SocketConfig.url as any,
-            apiKey: SocketConfig.key,
-            socketType: 'chat',
-            socketOptions: {autoConnect: true, reconnectionAttempts: 3},
-          });
+          pushSDKSocket.current = await userPushSDKInstance.initStream([
+            CONSTANTS.STREAM.CHAT, CONSTANTS.STREAM.CHAT_OPS, CONSTANTS.STREAM.CONNECT], 
+            { connection: { retries: 3} }
+          );
+          pushSDKSocket.current.connect();
 
           if (!pushSDKSocket.current) {
             console.log('got push sdk null');
             return;
           }
 
-          pushSDKSocket.current.on(EVENTS.CONNECT, () => {
+          pushSDKSocket.current.on(CONSTANTS.STREAM.CONNECT, () => {
             console.log('connection done');
           });
 
-          pushSDKSocket.current.on(EVENTS.DISCONNECT, () => {
+          pushSDKSocket.current.on(CONSTANTS.STREAM.DISCONNECT, () => {
             console.log('disconnected :(');
           });
-          pushSDKSocket.current.on(EVENTS.CHAT_RECEIVED_MESSAGE, _ => {
-            loadInbox(derivedAddress);
-          });
 
-          // pushSDKSocket.current.on(EVENTS.CHAT_UPDATE_INTENT, _ => {
-          //   loadInbox(derivedAddress);
-          // });
+          pushSDKSocket.current.on(CONSTANTS.STREAM.CHAT, (chat) => {
+            if(chat.origin === 'other') loadInbox(derivedAddress);
+          });
         }
       } else {
         fetchNewMessages = setInterval(async () => {
@@ -159,7 +145,7 @@ const useChatLoader = (
         clearInterval(fetchNewMessages);
       }
     };
-  }, [userChatCredentials]);
+  }, [userChatCredentials, userPushSDKInstance]);
 
   const refresh = async () => {
     await loadInbox(users[currentUser].wallet);
@@ -169,22 +155,14 @@ const useChatLoader = (
     console.log("loading inbox");
     
     const [feeds, requests]:[any, any] = await Promise.all([
-      PushSdk.chats({
-        account: ethAddress,
-        toDecrypt: true,
-        pgpPrivateKey: userChatCredentials?.pgpPrivateKey,
-        page: currentPage+1,
+      userPushSDKInstance?.chat.list('CHATS', {
+        page: currentPage + 1,
         limit: 10,
-        env: envConfig.ENV as PushSdk.ENV,
       }),
-      PushSdk.requests({
-        account:ethAddress,
-        toDecrypt: true,
-        pgpPrivateKey: userChatCredentials?.pgpPrivateKey,
+      userPushSDKInstance?.chat.list('REQUESTS', {
         page: 1,
         limit: 5,
-        env: envConfig.ENV as PushSdk.ENV,
-      })
+      }),
     ])
 
     console.log("got reqs",requests);

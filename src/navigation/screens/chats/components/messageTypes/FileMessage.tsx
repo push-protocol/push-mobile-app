@@ -1,5 +1,5 @@
 import {FontAwesome} from '@expo/vector-icons';
-import {PushApi} from '@kalashshah/react-native-sdk/src';
+import {IMessageIPFS} from '@pushprotocol/restapi';
 import React from 'react';
 import {Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {SvgUri} from 'react-native-svg';
@@ -25,7 +25,7 @@ const formatFileSize = (size: number): string => {
 export const FileMessageComponent = ({
   chatMessage,
 }: {
-  chatMessage: PushApi.IMessageIPFS;
+  chatMessage: IMessageIPFS;
 }) => {
   const fileContent: FileMessageContent = JSON.parse(
     chatMessage.messageContent,

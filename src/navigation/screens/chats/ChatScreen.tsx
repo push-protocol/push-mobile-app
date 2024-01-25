@@ -1,4 +1,4 @@
-import * as PushSdk from '@kalashshah/react-native-sdk/src';
+import {IFeeds} from '@pushprotocol/restapi';
 import {useNavigation} from '@react-navigation/native';
 import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import React, {useEffect, useRef, useState} from 'react';
@@ -26,8 +26,8 @@ import {useChatLoader} from './helpers/useChatLoader';
 
 export interface AppContext {
   connectedUser: PushNodeClient.ConnectedUser;
-  feeds: PushSdk.PushApi.IFeeds[];
-  requests: PushSdk.PushApi.IFeeds[];
+  feeds: IFeeds[];
+  requests: IFeeds[];
   chatCredentials: UserChatCredentials | undefined;
 }
 

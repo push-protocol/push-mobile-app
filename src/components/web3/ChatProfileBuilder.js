@@ -1,4 +1,4 @@
-import {decryptPGPKey} from '@kalashshah/react-native-sdk/src';
+import * as PushApi from '@pushprotocol/restapi';
 import {ethers} from 'ethers';
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
@@ -31,7 +31,7 @@ const ChatProfileBuilder = ({style, wallet, pkey, setProfileComplete}) => {
 
         const signer = new ethers.Wallet(pkey);
 
-        const decryptedPrivateKey = await decryptPGPKey({
+        const decryptedPrivateKey = await PushApi.chat.decryptPGPKey({
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
           account: signer.address,
           signer: signer,

@@ -1,6 +1,6 @@
 import {Ionicons} from '@expo/vector-icons';
 import {EvilIcons} from '@expo/vector-icons';
-import {PushApi} from '@kalashshah/react-native-sdk/src';
+import {IFeeds} from '@pushprotocol/restapi';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   Image,
@@ -30,7 +30,7 @@ const NewChatScreen = ({route, navigation}: any) => {
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchEnabled, setIsSearchEnabled] = useState(false);
   const [isIntentReceivePage, setIsIntentReceivePage] = useState(false);
-  const [matchedItem, setMatchedItem] = useState<PushApi.IFeeds | null>(null);
+  const [matchedItem, setMatchedItem] = useState<IFeeds | null>(null);
   const toastRef = useRef<any>();
 
   const chatCredentials: UserChatCredentials = route.params.chatCredentials;
@@ -42,7 +42,7 @@ const NewChatScreen = ({route, navigation}: any) => {
 
   const checkIfAddressPresetInFeed = (
     addrs: string,
-  ): [PushApi.IFeeds | null, boolean] => {
+  ): [IFeeds | null, boolean] => {
     const feeds = chatData.feeds;
 
     if (feeds) {
@@ -71,7 +71,7 @@ const NewChatScreen = ({route, navigation}: any) => {
 
   const checkIfAddressPresetInReq = (
     addrs: string,
-  ): [PushApi.IFeeds | null, boolean] => {
+  ): [IFeeds | null, boolean] => {
     const feeds = chatData.requests;
     if (feeds) {
       for (let i = 0; i < feeds.length; i++) {

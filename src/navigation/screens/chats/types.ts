@@ -1,10 +1,10 @@
-import * as PushSdk from '@kalashshah/react-native-sdk/src';
+import {IFeeds} from '@pushprotocol/restapi';
 
 export interface SingleChatItemProps {
   image: any;
   wallet: string;
   text: string | null;
-  feed?: PushSdk.PushApi.IFeeds;
+  feed?: IFeeds;
   count?: number;
   combinedDID: string;
   isIntentReceivePage: boolean;
