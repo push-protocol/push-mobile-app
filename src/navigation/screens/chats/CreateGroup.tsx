@@ -1,5 +1,4 @@
 import {Ionicons} from '@expo/vector-icons';
-import {ENV, createGroup} from '@kalashshah/react-native-sdk/src';
 import {IUser} from '@pushprotocol/restapi';
 import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
@@ -14,14 +13,10 @@ import {
   View,
 } from 'react-native';
 import {KeyboardAvoidingView} from 'react-native';
-import {useSelector} from 'react-redux';
 import Globals from 'src/Globals';
-import envConfig from 'src/env.config';
-import {caip10ToWallet, walletToCAIP10} from 'src/helpers/CAIPHelper';
-import {selectUsers} from 'src/redux/authSlice';
-import MetaStorage from 'src/singletons/MetaStorage';
+import {usePushApi} from 'src/contexts/PushApiContext';
+import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
-import {UserChatCredentials} from './ChatScreen';
 import CreateGroupDetails from './components/createGroup/CreateGroupDetails';
 import CreateGroupWallets from './components/createGroup/CreateGroupWallets';
 
@@ -51,7 +46,7 @@ const CreateGroup = () => {
   );
   const [members, setMembers] = useState<{user: IUser; isAdmin: boolean}[]>([]);
   const navigation = useNavigation();
-  const [connectedUser] = useSelector(selectUsers);
+  const {userPushSDKInstance} = usePushApi();
 
   const handleBack = () => {
     if (activeComponent === CREATE_GROUP_STEP_KEYS.INPUT_DETAILS) {
@@ -72,19 +67,12 @@ const CreateGroup = () => {
           .filter(member => member.isAdmin)
           .map(member => caip10ToWallet(member.user.wallets));
 
-        const {pgpPrivateKey}: UserChatCredentials =
-          await MetaStorage.instance.getUserChatData();
-
-        const grp = await createGroup({
-          groupName,
-          groupDescription,
+        const grp = await userPushSDKInstance?.chat.group.create(groupName, {
+          description: groupDescription,
           members: grpMembers,
-          groupImage: imageSource,
+          image: imageSource,
           admins,
-          isPublic,
-          pgpPrivateKey,
-          account: walletToCAIP10(connectedUser.wallet),
-          env: envConfig.ENV as ENV,
+          private: !isPublic,
         });
 
         console.log('Group created successfully', grp);

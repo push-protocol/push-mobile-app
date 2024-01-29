@@ -1,5 +1,4 @@
 import {Entypo, EvilIcons, Ionicons} from '@expo/vector-icons';
-import {PushApi} from '@kalashshah/react-native-sdk/src';
 import {IUser} from '@pushprotocol/restapi';
 import React from 'react';
 import {
@@ -14,7 +13,7 @@ import {
 import {useSelector} from 'react-redux';
 import Tooltip from 'rn-tooltip';
 import Globals from 'src/Globals';
-import envConfig from 'src/env.config';
+import {usePushApi} from 'src/contexts/PushApiContext';
 import {caip10ToWallet, walletToCAIP10} from 'src/helpers/CAIPHelper';
 import {UserHelper} from 'src/helpers/UserHelper';
 import Web3Helper from 'src/helpers/Web3Helper';
@@ -33,6 +32,7 @@ const CreateGroupWallets = ({members, setMembers}: CreateGroupWalletsProps) => {
   const [ethAddress, setEthAddress] = React.useState('');
   const [isSearching, setIsSearching] = React.useState(false);
   const [connectedUser] = useSelector(selectUsers);
+  const {userPushSDKInstance} = usePushApi();
 
   const MAX_MEMBERS = 5000;
 
@@ -55,9 +55,8 @@ const CreateGroupWallets = ({members, setMembers}: CreateGroupWalletsProps) => {
         address = await Web3Helper.resolveBlockchainDomain(query, 'ETH');
       }
 
-      const profile = await PushApi.user.get({
-        env: envConfig.ENV as PushApi.Env,
-        account: address,
+      const profile = await userPushSDKInstance?.info({
+        overrideAccount: address,
       });
 
       const caip10 = walletToCAIP10(address);

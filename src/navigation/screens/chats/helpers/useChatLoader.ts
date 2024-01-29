@@ -1,4 +1,3 @@
-import {EVENTS, createSocketConnection} from '@pushprotocol/socket';
 import {CONSTANTS, IFeeds } from '@pushprotocol/restapi';
 import {useEffect, useState} from 'react';
 import {useRef} from 'react';
@@ -104,17 +103,18 @@ const useChatLoader = (
       // qeury for new threads evey 3 second
       if (SocketConfig.useSocket) {
         if (!pushSDKSocket.current) {
-          pushSDKSocket.current = await userPushSDKInstance.initStream([
-            CONSTANTS.STREAM.CHAT, CONSTANTS.STREAM.CHAT_OPS, CONSTANTS.STREAM.CONNECT], 
+          pushSDKSocket.current = await userPushSDKInstance.initStream(
+            [CONSTANTS.STREAM.CHAT, CONSTANTS.STREAM.CHAT_OPS, CONSTANTS.STREAM.CONNECT], 
             { connection: { retries: 3} }
           );
-          pushSDKSocket.current.connect();
-
+          
           if (!pushSDKSocket.current) {
             console.log('got push sdk null');
             return;
           }
 
+          pushSDKSocket.current.connect();
+          
           pushSDKSocket.current.on(CONSTANTS.STREAM.CONNECT, () => {
             console.log('connection done');
           });
@@ -151,8 +151,6 @@ const useChatLoader = (
   };
 
   const fetchInboxPage = async(ethAddress: string)=>{
-    console.log("loading inbox");
-    
     const [feeds, requests]:[any, any] = await Promise.all([
       userPushSDKInstance?.chat.list('CHATS', {
         page: currentPage + 1,

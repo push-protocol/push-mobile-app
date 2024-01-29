@@ -1,15 +1,3 @@
-diff --git a/node_modules/@pushprotocol/restapi/src/lib/chat/conversationHash.js b/node_modules/@pushprotocol/restapi/src/lib/chat/conversationHash.js
-index c4b631e..5dc7189 100644
---- a/node_modules/@pushprotocol/restapi/src/lib/chat/conversationHash.js
-+++ b/node_modules/@pushprotocol/restapi/src/lib/chat/conversationHash.js
-@@ -10,6 +10,7 @@ const helpers_2 = require("./helpers");
-  * Whenever a new message is sent or received, this CID will change.
-  */
- const conversationHash = (options) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
-+    console.log("HERERERERER");
-     const { conversationId, account, env = constants_1.default.ENV.PROD } = options || {};
-     try {
-         if (!(0, helpers_1.isValidETHAddress)(account)) {
 diff --git a/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/pgp.js b/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/pgp.js
 index 161c76b..beca4e6 100644
 --- a/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/pgp.js
@@ -180,7 +168,7 @@ index eb24b92..d1abafd 100644
      private account;
      private decryptedPgpPvtKey?;
 diff --git a/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js b/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js
-index 22efafa..367b2c1 100644
+index 22efafa..1cc4c67 100644
 --- a/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js
 +++ b/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js
 @@ -78,7 +78,7 @@ class PushAPI {
@@ -213,3 +201,17 @@ index 22efafa..367b2c1 100644
                      if (user && user.encryptedPrivateKey) {
                          try {
                              decryptedPGPPrivateKey = yield PUSH_CHAT.decryptPGPKey({
+@@ -187,9 +188,10 @@ class PushAPI {
+     }
+     initStream(listen, options) {
+         return tslib_1.__awaiter(this, void 0, void 0, function* () {
+-            if (this.stream) {
+-                throw new Error('Stream is already initialized.');
+-            }
++            // if (this.stream) {
++                // console.warn('Stream is already initialized.');
++                // throw new Error('Stream is already initialized.');
++            // }
+             this.stream = yield PushStream_1.PushStream.initialize(this.account, listen, this.env, this.decryptedPgpPvtKey, this.progressHook, this.signer, options);
+             return this.stream;
+         });

@@ -1,14 +1,11 @@
 import {IMessageIPFS} from '@pushprotocol/restapi';
 import * as PushApi from '@pushprotocol/restapi';
+import {CONSTANTS} from '@pushprotocol/restapi';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
-import {EVENTS, createSocketConnection} from '@pushprotocol/socket';
+import {PushStream} from '@pushprotocol/restapi/src/lib/pushstream/PushStream';
 import {useEffect, useRef, useState} from 'react';
-import {useSelector} from 'react-redux';
-import {Socket} from 'socket.io-client';
-import * as PushNodeClient from 'src/apis';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import envConfig from 'src/env.config';
-import {selectUsers} from 'src/redux/authSlice';
 
 import {SocketConfig} from './socketHelper';
 import {storeConversationData} from './storage';
@@ -34,10 +31,9 @@ const useConversationLoader = (
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [chatData, setChatData] = useState<IMessageIPFS[]>([]);
   const pageBatchSize = 10;
-  const [connectedUser] = useSelector(selectUsers);
+  const pushSDKSocket = useRef<PushStream | null>(null);
 
   const currentHash = useRef(cid);
-  const fetchedTill = useRef<string | null>('');
   const fetchedFrom = useRef<string | null>('');
 
   const isFetching = useRef(false);
@@ -89,7 +85,6 @@ const useConversationLoader = (
       return;
     }
     let chatListener: NodeJS.Timer;
-    let pushSDKSocket: Socket | null;
 
     (async () => {
       // fetch conversation datas
@@ -110,48 +105,66 @@ const useConversationLoader = (
       setIsLoading(false);
 
       // listen to new chats
-      if (SocketConfig.useSocket) {
+      if (SocketConfig.useSocket && !pushSDKSocket.current) {
         // use socket connection
-        pushSDKSocket = createSocketConnection({
-          user: userAddress,
-          env: SocketConfig.url as any,
-          apiKey: SocketConfig.key,
-          socketType: 'chat',
-          socketOptions: {autoConnect: true, reconnectionAttempts: 3},
-        });
+        pushSDKSocket.current = await userPushSDKInstance.initStream(
+          [
+            CONSTANTS.STREAM.CHAT,
+            CONSTANTS.STREAM.CHAT_OPS,
+            CONSTANTS.STREAM.CONNECT,
+          ],
+          {connection: {retries: 5}},
+        );
 
-        if (!pushSDKSocket) {
+        if (!pushSDKSocket.current) {
           console.log('got push sdk null');
           return;
         }
 
-        pushSDKSocket.on(EVENTS.CONNECT, () => {
+        pushSDKSocket.current.connect();
+
+        pushSDKSocket.current.on(PushApi.CONSTANTS.STREAM.CONNECT, () => {
           console.log('***$$$****socket connection success');
         });
 
-        pushSDKSocket.on(EVENTS.DISCONNECT, () => {
+        pushSDKSocket.current.on(PushApi.CONSTANTS.STREAM.DISCONNECT, () => {
           console.log('disconnected :(');
         });
 
-        pushSDKSocket.on(
-          EVENTS.CHAT_RECEIVED_MESSAGE,
-          async (message: PushNodeClient.MessageIPFSWithCID) => {
-            if (message.cid && message.cid === currentHash.current) {
+        pushSDKSocket.current.on(
+          // EVENTS.CHAT_RECEIVED_MESSAGE,
+          PushApi.CONSTANTS.STREAM.CHAT,
+          async message => {
+            if (
+              (message.reference &&
+                message.reference === currentHash.current) ||
+              message.chatId !== chatId
+            ) {
               console.log('no new conversation');
               return;
             }
 
-            const newMsgs = await PushApi.chat.decryptConversation({
-              messages: [message],
-              env: envConfig.ENV as ENV,
-              pgpPrivateKey,
-              connectedUser: {
-                ...connectedUser,
-                wallets: connectedUser.wallet,
+            const newMsgs: IMessageIPFS[] = [
+              {
+                encryptedSecret: null,
+                fromCAIP10: message.from,
+                fromDID: message.from,
+                link: null,
+                messageType: message.message.type,
+                toCAIP10: message.to[0],
+                toDID: message.to[0],
+                messageContent: message.message.content,
+                timestamp: Number(message.timestamp),
+                encType: '',
+                signature: '',
+                sigType: '',
               },
-            });
-
-            await storeConversationData(combinedDID, message.cid, newMsgs);
+            ];
+            await storeConversationData(
+              combinedDID,
+              message.reference,
+              newMsgs,
+            );
             setChatData(prev => [...newMsgs.reverse(), ...prev]);
           },
         );
@@ -162,8 +175,8 @@ const useConversationLoader = (
 
     return () => {
       if (SocketConfig.useSocket) {
-        if (pushSDKSocket) {
-          pushSDKSocket.disconnect();
+        if (pushSDKSocket.current) {
+          pushSDKSocket.current.disconnect();
         }
       } else {
         clearInterval(chatListener);
