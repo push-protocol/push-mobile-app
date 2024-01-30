@@ -1,100 +1,25 @@
-import {FontAwesome5} from '@expo/vector-icons';
-import {useWalletConnectModal} from '@walletconnect/modal-react-native';
-import {ethers} from 'ethers';
-import React, {useEffect, useRef, useState} from 'react';
-import {
-  ActivityIndicator,
-  Linking,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  View,
-} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import NoticePrompt from 'src/components/modals/NoticePrompt';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
-import {usePushApi} from 'src/contexts/PushApiContext';
-import ENV_CONFIG from 'src/env.config';
-import MetaStorage from 'src/singletons/MetaStorage';
-import {handleChannelSub} from 'src/walletconnect';
-
-const CHANNEL_OPT_IN = 1;
-const CHANNEL_OPT_OUT = 2;
+import {useSubscriptions} from 'src/contexts/SubscriptionsContext';
 
 const SubscriptionStatus = ({channel, user, style, pKey}) => {
-  const [subscribed, setSubscribed] = useState(null);
-
-  const wc_connector = useWalletConnectModal();
-  const [modal, setModal] = useState(false);
-  const [action, setAction] = useState('');
-
   const [processing, setProcessing] = useState(false);
 
-  const {userPushSDKInstance} = usePushApi();
+  const {
+    subscriptions,
+    toggleSubscription,
+    isLoading: isLoadingSubscriptions,
+  } = useSubscriptions();
+
+  const subscribed = subscriptions?.[channel] !== undefined;
 
   // Setup Refs
   const OverlayBlurRef = useRef(null);
   const NoticePromptRef = useRef(null);
-
-  const subscribeToChannel = async () => {
-    if (userPushSDKInstance.readMode) await wc_connector.open();
-    // TODO: check if we need to put else condition here, same with unsubscribe
-    userPushSDKInstance.notification.subscribe(channel);
-  };
-
-  const unsubscribeFromChannel = async () => {
-    if (userPushSDKInstance.readMode) await wc_connector.open();
-    // TODO: check if we need to put else condition here, same with subscribe
-    userPushSDKInstance.notification.unsubscribe(channel);
-  };
-
-  const showPopUp = async action => {
-    // Check if Wallet Connect
-    setModal(true);
-
-    if (action === 1) {
-      setAction('Opt-In');
-    } else if (action === 2) {
-      setAction('Opt-Out');
-    }
-  };
-
-  const fetchSubscriptionStatus = async (user, channel) => {
-    const response = await fetch(apiURL, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        subscriber: user,
-        channel: channel,
-        op: 'read',
-      }),
-    });
-    const subscriptionStatus = await response.json();
-    setProcessing(false);
-    setSubscribed(subscriptionStatus);
-  };
-
-  const openURL = async url => {
-    // if (validURL(url) || 1) {
-    // console.log("OPENING URL ", url);
-    // Bypassing the check so that custom app domains can be opened
-    await Linking.openURL(url);
-    // Linking.canOpenURL(url).then((supported) => {
-    //   if (supported) {
-    //     Linking.openURL(url);
-    //   } else {
-    //     // showToast("Device Not Supported", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
-    //   }
-    // });
-    // } else {
-    // showToast("Link not valid", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
-    // }
-  };
 
   // Open Notice Prompt With Overlay Blur
   const toggleNoticePrompt = (
@@ -116,16 +41,22 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
     NoticePromptRef.current.changeRenderState(toggle, animate);
   };
 
+  const handleChangeSubStatus = async () => {
+    setProcessing(true);
+    await toggleSubscription(channel);
+    setProcessing(false);
+  };
+
   return (
     <View style={styles.container}>
-      {subscribed == null && (
+      {isLoadingSubscriptions && (
         <ActivityIndicator
           size={'small'}
           color={GLOBALS.COLORS.GRADIENT_PRIMARY}
         />
       )}
 
-      {subscribed != null && subscribed === true && (
+      {subscribed === true && (
         <PrimaryButton
           style={styles.controlPrimary}
           setButtonStyle={{borderRadius: 0, padding: 0}}
@@ -138,13 +69,11 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
           setHeight="100%"
           disabled={processing}
           loading={processing}
-          onPress={() => {
-            handleOpts(CHANNEL_OPT_OUT);
-          }}
+          onPress={handleChangeSubStatus}
         />
       )}
 
-      {subscribed !== null && subscribed === false && (
+      {subscribed === false && (
         <PrimaryButton
           style={styles.controlPrimary}
           setButtonStyle={{borderRadius: 0, padding: 0}}
@@ -161,9 +90,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
           setHeight="100%"
           disabled={processing}
           loading={processing}
-          onPress={() => {
-            handleOpts(CHANNEL_OPT_IN);
-          }}
+          onPress={handleChangeSubStatus}
         />
       )}
 
@@ -177,7 +104,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
         closeFunc={() => toggleNoticePrompt(false, true)}
       />
 
-      <Modal
+      {/* <Modal
         animationType="fade"
         transparent={true}
         visible={modal}
@@ -213,53 +140,6 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
                 <Text style={[styles.cancelText]}>Cancel</Text>
               </TouchableHighlight>
             </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modal}
-        onRequestClose={() => {
-          setModal(!modal);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>
-              {action} is currently posible with Metamask. You will be
-              redirected to the Metamask app where you can sign into our Dapp
-              and carry out {action}.
-            </Text>
-            <TouchableOpacity
-              style={styles.button1}
-              onPress={() => openURL(ENV_CONFIG.METAMASK_LINK)}
-            >
-              <Text style={styles.textStyle}>
-                Sign In with Metamask.{"  "}
-                <FontAwesome5 name="external-link-alt" size={20} />{" "}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.button1}
-              onPress={() => {
-                initiateWalletConnect();
-              }}
-            >
-              <Text style={styles.textStyle}>
-                Sign In with Wallet Connect.{"  "}
-                <FontAwesome5 name="external-link-alt" size={20} />{" "}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => setModal(!modal)}
-            >
-              <Text style={styles.textStyle}>Close.</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </Modal> */}

@@ -39,7 +39,7 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
 
   const wc_connector = useWalletConnectModal();
   const users = useSelector(selectUsers);
-  const {userPushSDKInstance} = usePushApi();
+  const {userPushSDKInstance, refreshUserPushSDKInstance} = usePushApi();
 
   useEffect(() => {
     setRefreshing(true);
@@ -72,12 +72,14 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
     ) {
       wc_connector.provider.disconnect();
       toastRef.current.showToast(
-        'Please use the same wallet\nyou used to sign in',
+        'Please use the same wallet\nthat you used to sign in',
         '',
         ToasterOptions.TYPE.GRADIENT_PRIMARY,
         '',
         ToasterOptions.DELAY.LONGER,
       );
+    } else {
+      refreshUserPushSDKInstance();
     }
   }, [wc_connector.isConnected]);
 

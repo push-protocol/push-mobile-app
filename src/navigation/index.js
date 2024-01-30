@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import IncomingCall from 'src/components/modals/IncomingCall';
 import PushApiContextProvider from 'src/contexts/PushApiContext';
+import SubscriptionsContextProvider from 'src/contexts/SubscriptionsContext';
 import CallkeepHelper from 'src/helpers/CallkeepHelper';
 import {selectAuthState, setLogout} from 'src/redux/authSlice';
 import {selectUsers} from 'src/redux/authSlice';
@@ -60,7 +61,9 @@ const Screens = ({callAccepted}) => {
               />
             )}
             <PushApiContextProvider>
-              <AuthenticatedNavigator />
+              <SubscriptionsContextProvider>
+                <AuthenticatedNavigator />
+              </SubscriptionsContextProvider>
             </PushApiContextProvider>
           </>
         )}
