@@ -103,6 +103,9 @@ export default function SpamFeed(props) {
           }
           setPage(prev => prev + 1);
           setEndReached(true);
+        } else if (feeds && feeds.length === 0) {
+          setFeed([]);
+          setEndReached(true);
         }
         setloading(false);
         setRefreshing(false);
