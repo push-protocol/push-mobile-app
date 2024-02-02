@@ -44,9 +44,11 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
     // TODO: Remove fake signer later
     let signer: any = 'FAKE SIGNER';
 
+    const isWalletConnect = isConnected && provider;
+
     if (connectedUser.userPKey) {
       signer = new ethers.Wallet(connectedUser.userPKey);
-    } else if (isConnected && provider) {
+    } else if (isWalletConnect) {
       // If the user has logged in via wallet connect
       const [sig, account] = await getSigner(provider);
       signer = sig;
@@ -89,13 +91,31 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
       };
     }
 
-    setFakeSigner(signer === 'FAKE SIGNER');
+    const isFakeSigner = signer === 'FAKE SIGNER';
+    setFakeSigner(isFakeSigner);
     const userInstance = await PushAPI.initialize(signer, {
       account: walletToCAIP10(connectedUser.wallet),
       env: envConfig.ENV as ENV,
       // @ts-ignore
       decryptedPGPPrivateKey: pgpPrivateKey,
     });
+
+    const decryptedPgpPvtKey = userInstance.decryptedPgpPvtKey;
+    const encryptionPublicKey = userInstance.pgpPublicKey;
+
+    if (
+      !isFakeSigner &&
+      isWalletConnect &&
+      decryptedPgpPvtKey &&
+      encryptionPublicKey &&
+      !pgpPrivateKey
+    ) {
+      // Connected to wallet connect for the first time
+      await MetaStorage.instance.setUserChatData({
+        pgpPrivateKey: decryptedPgpPvtKey,
+        encryptionPublicKey,
+      });
+    }
     setUserPushSDKInstance(userInstance);
   };
 

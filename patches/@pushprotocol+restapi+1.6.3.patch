@@ -155,10 +155,10 @@ index 161c76b..beca4e6 100644
  //# sourceMappingURL=pgp.js.map
 \ No newline at end of file
 diff --git a/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.d.ts b/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.d.ts
-index eb24b92..d1abafd 100644
+index eb24b92..dfb7563 100644
 --- a/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.d.ts
 +++ b/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.d.ts
-@@ -10,7 +10,7 @@ import { PushStreamInitializeProps, STREAM } from '../pushstream/pushStreamTypes
+@@ -10,11 +10,11 @@ import { PushStreamInitializeProps, STREAM } from '../pushstream/pushStreamTypes
  import { Video } from './video';
  export declare class PushAPI {
      private signer?;
@@ -166,7 +166,13 @@ index eb24b92..d1abafd 100644
 +    public readMode;
      private alpha;
      private account;
-     private decryptedPgpPvtKey?;
+-    private decryptedPgpPvtKey?;
+-    private pgpPublicKey?;
++    public decryptedPgpPvtKey?;
++    public pgpPublicKey?;
+     private env;
+     private progressHook?;
+     chat: Chat;
 diff --git a/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js b/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js
 index 22efafa..1cc4c67 100644
 --- a/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js
