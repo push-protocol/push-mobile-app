@@ -105,12 +105,11 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
 
     if (
       !isFakeSigner &&
-      isWalletConnect &&
       decryptedPgpPvtKey &&
       encryptionPublicKey &&
       !pgpPrivateKey
     ) {
-      // Connected to wallet connect for the first time
+      // Connected to wallet for the first time
       await MetaStorage.instance.setUserChatData({
         pgpPrivateKey: decryptedPgpPvtKey,
         encryptionPublicKey,
