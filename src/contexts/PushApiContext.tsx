@@ -119,7 +119,16 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
   };
 
   useEffect(() => {
-    refreshUserPushSDKInstance();
+    (async () => {
+      // Initialize the push SDK instance in read-only mode to avoid empty state
+      // when requesting for the user's signature
+      const userInstanceReadOnly = await PushAPI.initialize({
+        account: walletToCAIP10(connectedUser.wallet),
+        env: envConfig.ENV as ENV,
+      });
+      setUserPushSDKInstance(userInstanceReadOnly);
+      await refreshUserPushSDKInstance();
+    })();
   }, []);
 
   return (
