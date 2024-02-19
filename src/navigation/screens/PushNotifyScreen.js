@@ -1,4 +1,3 @@
-import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import {useFocusEffect} from '@react-navigation/native';
 import React, {Component} from 'react';
@@ -10,12 +9,14 @@ import {
   View,
 } from 'react-native';
 import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
+import {connect} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
 import NoticePrompt from 'src/components/modals/NoticePrompt';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
+import {withUseAuth} from 'src/hooks/auth/useAuth';
 import Notify from 'src/singletons/Notify';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
@@ -43,7 +44,7 @@ function GetScreenInsets() {
   }
 }
 
-export default class PushNotifyScreen extends Component {
+class PushNotifyScreen extends Component {
   // CONSTRUCTOR
   constructor(props) {
     super(props);
@@ -134,7 +135,7 @@ export default class PushNotifyScreen extends Component {
     Notify.instance.requestDeviceToken();
 
     // Goto Next Screen
-    this.props.navigation.navigate(GLOBALS.SCREENS.SETUPCOMPLETE);
+    this.props.login();
   };
 
   // RETURN
@@ -206,6 +207,12 @@ export default class PushNotifyScreen extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps, {})(withUseAuth(PushNotifyScreen));
 
 // Styling
 const styles = StyleSheet.create({
