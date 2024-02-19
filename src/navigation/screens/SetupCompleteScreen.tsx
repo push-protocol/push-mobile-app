@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useState} from 'react';
 import {ActivityIndicator, Image, StyleSheet, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
@@ -11,13 +11,16 @@ import {selectUserDomain} from 'src/redux/authSlice';
 import {getTrimmedAddress} from './chats/helpers/chatAddressFormatter';
 
 const SetupCompleteScreen = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const {userInfo, getReadWriteInstance} = usePushApi();
   const domain = useSelector(selectUserDomain);
   const navigation = useNavigation();
 
   const decryptPushProfile = async () => {
+    setLoading(true);
     await getReadWriteInstance();
     loadNextScreen();
+    setLoading(false);
   };
 
   const loadNextScreen = () => {
@@ -36,6 +39,7 @@ const SetupCompleteScreen = () => {
           fontColor: GLOBALS.COLORS.WHITE,
           onPress: decryptPushProfile,
           disabled: !userInfo,
+          loading: loading,
         },
         {
           title: 'Skip for now',

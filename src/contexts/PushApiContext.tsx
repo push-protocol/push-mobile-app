@@ -81,6 +81,7 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
     ModalComponent: AddressMismatchModal,
     showModal: showAddressMismatchModal,
     hideModal: hideAddressMismatchModal,
+    isModalOpen: isAddressMismatchModalOpen,
   } = useModalBlur();
 
   const getReadOnlyInstance = async (overrideAccount?: string) => {
@@ -214,11 +215,11 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
       address.toLowerCase() !== walletAddress.toLowerCase()
     ) {
       // If the user tries to unlock profile with different wallet
-      showAddressMismatchModal();
+      if (!isAddressMismatchModalOpen) showAddressMismatchModal();
     } else {
       refreshUserPushSDKInstance();
     }
-  }, [isConnected, users]);
+  }, [isConnected, address]);
 
   return (
     <PushApiContext.Provider
@@ -227,7 +228,6 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
         setUserPushSDKInstance,
         refreshUserPushSDKInstance,
         getReadWriteInstance,
-        // fakeSigner,
         userInfo,
         readOnlyMode,
         isLoading,
@@ -277,8 +277,8 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
                 dispatch(setInitialSignin(newUsers[0]));
                 dispatch(setAuthType(GLOBALS.AUTH_TYPE.WALLET_CONNECT));
                 dispatch(setIsGuest(undefined));
-                await login(newUsers);
                 hideAddressMismatchModal();
+                await login(newUsers);
                 await getReadWriteInstance(address);
               },
             },
