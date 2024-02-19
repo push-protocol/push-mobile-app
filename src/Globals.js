@@ -140,11 +140,17 @@ export default {
     CHAT_LIGHT_PINK: '#F3D7FA',
     CHAT_LIGHT_GRAY: '#BAC4D6',
     CHAT_BORDER_COLOR: '#A0A3B1',
+
+    // Status
+    STATUS_YELLOW: '#F2CB65',
+    STATUS_GREEN: '#5DD177',
+    STATUS_YELLOW_BG: '#FDF7EE',
   },
   SCREENS: {
     WELCOME: 'Welcome',
     SIGNIN: 'SignIn',
     SIGNINADVANCE: 'SignInAdvance',
+    SIGNINWALLET: 'SignInWallet',
     BIOMETRIC: 'Biometric',
     PUSHNOTIFY: 'PushNotify',
     SETUPCOMPLETE: 'SetupComplete',
@@ -155,13 +161,10 @@ export default {
     CHANNELS: 'Channels',
     SPAM: 'Spam',
     SAMPLEFEED: 'SampleFeed',
-    NEWWALLETSIGNIN: 'NewWalletSignIn',
     CHATS: 'Chats',
     SINGLE_CHAT: 'SingleChat',
     PGP_FROM_PK_SCREEN: 'PgpFromPkScreen',
     CHATPROFILESCREEN: 'ChatProfileScreen',
-    SIGNINFROMDAPP: 'SignInFromDapp',
-    SIGNINFROMDAPP_LOGIN: 'SIGNINFROMDAPP_LOGIN',
     LOG_IN_DAPP_INFO: 'LOG_IN_DAPP_INFO',
     QRScanScreen: 'QRScanScreen',
     QRScanScreenFromLogin: 'QRScanScreenFromLogin',
@@ -170,17 +173,17 @@ export default {
     CREATE_GROUP: 'CreateGroup',
     GROUP_INFO: 'GroupInfo',
   },
-  APP_AUTH_STATES: {
-    INITIALIZING: 1,
-    ONBOARDING: 2,
-    ONBOARDED: 3,
-    AUTHENTICATED: 4,
-  },
   AUTH_STATE: {
     INITIALIZING: 'INITIALIZING',
     ONBOARDING: 'ONBOARDING',
     ONBOARDED: 'ONBOARDED',
     AUTHENTICATED: 'AUTHENTICATED',
+  },
+  AUTH_TYPE: {
+    WALLET: 'AuthTypeWallet',
+    PRIVATE_KEY: 'AuthTypePrivateKey',
+    WALLET_CONNECT: 'AuthTypeWalletConnect',
+    NONE: 'AuthTypeNone',
   },
   CONTRACTS: {
     STAGING: {

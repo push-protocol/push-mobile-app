@@ -11,7 +11,7 @@ import Globals from 'src/Globals';
 
 interface LimitInputProps extends React.ComponentProps<typeof TextInput> {
   title: string;
-  limit: number;
+  limit?: number;
   optional?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
   value: string;
@@ -35,7 +35,7 @@ const LimitInput: React.FC<LimitInputProps> = ({
           <Text>{title}</Text>
           <Text style={styles.optionalTag}>{optional && 'optional'}</Text>
         </View>
-        <Text>{limit - value.length}</Text>
+        {limit && <Text>{limit - value.length}</Text>}
       </View>
       <TextInput
         style={[styles.input, isFocused && styles.isFocused, style]}
