@@ -15,7 +15,6 @@ import {
 import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
-import {DappScanPage} from 'src/components/ui/DappScanPage';
 import MetaStorage from 'src/singletons/MetaStorage';
 import {WallectConnectPage} from 'src/walletconnect/pages/WallectConnectPage';
 
@@ -112,10 +111,6 @@ const ChatScreen = (props: any) => {
 
   if (isWCUser) {
     return <WallectConnectPage initalizate={initalizate} />;
-  }
-
-  if (!isPrivateKeyUser && !isReady) {
-    return <DappScanPage />;
   }
 
   if (isLoading || !isReady) {

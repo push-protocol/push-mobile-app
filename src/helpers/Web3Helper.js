@@ -94,6 +94,7 @@ const Web3Helper = {
       const response = {
         success: false,
         info: e,
+        wallet: null,
       };
 
       return response;
@@ -126,6 +127,7 @@ const Web3Helper = {
       const response = {
         success: false,
         info: e,
+        ens: undefined,
       };
 
       return response;
@@ -316,6 +318,42 @@ const Web3Helper = {
           reject(err);
         });
     });
+  },
+
+  reverseResolveWalletBoth: async wallet => {
+    const [{ens}, [_, cns]] = await Promise.all([
+      Web3Helper.getENSReverseDomain(wallet),
+      Web3Helper.getUDRev(wallet),
+    ]);
+    return {ens, cns};
+  },
+
+  // Reverse Resolve Wallet to Domain
+  reverseResolveWallet: async wallet => {
+    const [udsuccess, domain] = await Web3Helper.getUDRev(wallet);
+    if (udsuccess) {
+      return domain;
+    } else {
+      const {ens, success} = await Web3Helper.getENSReverseDomain(wallet);
+      if (success) return ens;
+    }
+  },
+
+  // Resolve Wallet to Domain or Domain to Wallet
+  resolveBlockchainDomainAndWallet: async input => {
+    if (ethers.utils.isAddress(input)) {
+      const domain = await Web3Helper.reverseResolveWallet(input);
+      return {
+        wallet: ethers.utils.getAddress(input),
+        domain,
+      };
+    } else {
+      const resolution = await Web3Helper.resolveBlockchainDomain(input, 'ETH');
+      return {
+        wallet: ethers.utils.getAddress(resolution),
+        domain: input,
+      };
+    }
   },
 };
 

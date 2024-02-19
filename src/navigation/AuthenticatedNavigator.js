@@ -9,7 +9,6 @@ import QRScanScreen from 'src/navigation/screens/dapp/QRScanScreen';
 import ChatProfileScreen from './screens/ChatProfileScreen';
 import PgpFromPkScreen from './screens/PgpFromPkScreen';
 import SettingsScreen from './screens/SettingsScreen';
-import SignInFromDapp from './screens/SignInFromDapp';
 import {SingleChatScreen} from './screens/chats';
 import CreateGroup from './screens/chats/CreateGroup';
 import GroupInfo from './screens/chats/GroupInfo';
@@ -116,14 +115,6 @@ export default function AuthenticatedNavigator() {
       <Stack.Screen
         name={GLOBALS.SCREENS.QRScanScreenFromLogin}
         component={QRScanScreen}
-        options={{
-          headerShown: false,
-          headerTintColor: GLOBALS.COLORS.MID_GRAY,
-        }}
-      />
-      <Stack.Screen
-        name={GLOBALS.SCREENS.SIGNINFROMDAPP}
-        component={SignInFromDapp}
         options={{
           headerShown: false,
           headerTintColor: GLOBALS.COLORS.MID_GRAY,
