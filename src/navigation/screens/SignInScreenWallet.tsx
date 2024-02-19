@@ -14,6 +14,7 @@ import useNotice from 'src/hooks/ui/useNotice';
 import {setAuthType, setInitialSignin, setIsGuest} from 'src/redux/authSlice';
 
 const SignInScreenWallet = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [input, setInput] = useState('');
   const [error, setError] = useState({title: '', subtitle: ''});
 
@@ -39,6 +40,7 @@ const SignInScreenWallet = () => {
   };
 
   const handleSignin = async (code?: string) => {
+    setLoading(true);
     const address = code || input;
     try {
       const {wallet} = await Web3Helper.resolveBlockchainDomainAndWallet(
@@ -60,11 +62,14 @@ const SignInScreenWallet = () => {
       // @ts-ignore
       navigation.navigate(GLOBALS.SCREENS.BIOMETRIC);
     } catch (e) {
+      console.log('Errror', e);
       setError({
         title: 'Invalid Wallet Address or Domain',
         subtitle: 'Please enter a valid erc20 wallet address or web3 domain',
       });
       showErrorNotice();
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,8 +79,9 @@ const SignInScreenWallet = () => {
         title="Enter your wallet address to sign in."
         footerButtons={[
           {
+            loading: loading,
             title: 'Sign In',
-            onPress: handleSignin,
+            onPress: () => handleSignin(),
             bgColor: GLOBALS.COLORS.PINK,
             fontColor: GLOBALS.COLORS.WHITE,
           },
@@ -103,7 +109,9 @@ const SignInScreenWallet = () => {
             value={input}
             onChangeText={txt => setInput(txt)}
             title="Enter Wallet Address or Web3 Domain"
-            multiline={true}
+            textAlignVertical="center"
+            returnKeyType="done"
+            onSubmitEditing={() => handleSignin()}
           />
         </View>
       </OnboardingWrapper>

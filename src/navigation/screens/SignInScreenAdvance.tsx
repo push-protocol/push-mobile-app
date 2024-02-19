@@ -14,6 +14,7 @@ import useNotice from 'src/hooks/ui/useNotice';
 import {setAuthType, setInitialSignin, setIsGuest} from 'src/redux/authSlice';
 
 const SignInScreenAdvance = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [privateKey, setPrivateKey] = useState('');
   const [error, setError] = useState({title: '', subtitle: ''});
   const qrScannerRef = useRef<QRScanner>(null);
@@ -39,6 +40,7 @@ const SignInScreenAdvance = () => {
   };
 
   const handleLogin = async (key?: string) => {
+    setLoading(true);
     const pkey = key || privateKey;
     const provider = Web3Helper.getWeb3Provider();
     const {success, wallet} = await Web3Helper.getWalletAddress(pkey, provider);
@@ -69,6 +71,7 @@ const SignInScreenAdvance = () => {
         fromOnboarding: true,
       });
     }
+    setLoading(false);
   };
 
   return (
@@ -79,7 +82,8 @@ const SignInScreenAdvance = () => {
         footerLabel="Your private key can be used by malicious apps to compromise you. [Learn about risks](https://www.coinbase.com/learn/crypto-basics/what-is-a-private-key) and [Verify our repo](https://github.com/ethereum-push-notification-service/push-mobile-app)"
         footerButtons={[
           {
-            onPress: handleLogin,
+            loading: loading,
+            onPress: () => handleLogin(),
             title: 'Import',
             bgColor: GLOBALS.COLORS.PINK,
             fontColor: GLOBALS.COLORS.WHITE,
@@ -107,12 +111,11 @@ const SignInScreenAdvance = () => {
             limit={64}
             defaultValue={privateKey}
             value={privateKey}
-            onChangeText={async key => {
-              setPrivateKey(key);
-              await handleLogin(key);
-            }}
+            onChangeText={txt => setPrivateKey(txt)}
             title="Enter private key"
-            multiline={true}
+            textAlignVertical="center"
+            returnKeyType="done"
+            onSubmitEditing={() => handleLogin()}
           />
         </View>
       </OnboardingWrapper>
@@ -123,7 +126,10 @@ const SignInScreenAdvance = () => {
         errorMessage="Ensure that it is a valid Eth private key QR"
         title="Scan your Eth private key to link your device to the push app"
         qrType={QR_TYPES.ETH_PK_SCAN}
-        doneFunc={(code: string) => setPrivateKey(code)}
+        doneFunc={async (code: string) => {
+          setPrivateKey(code);
+          await handleLogin(code);
+        }}
         closeFunc={() => toggleQRScanner(false)}
       />
       <PermissionsNotice
