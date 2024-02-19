@@ -1,5 +1,4 @@
 import {NotificationSettings} from '@pushprotocol/restapi';
-import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import React, {createContext, useEffect, useState} from 'react';
 import envConfig from 'src/env.config';
 
@@ -43,8 +42,8 @@ const SubscriptionsContextProvider = ({
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [subscriptions, setSubscriptions] = useState<SubscriptionsMapping>({});
-  const {userPushSDKInstance, fakeSigner} = usePushApi();
-  const wc_connector = useWalletConnectModal();
+  const {userPushSDKInstance, readOnlyMode, showUnlockProfileModal} =
+    usePushApi();
 
   const refreshSubscriptions = async () => {
     try {
@@ -66,9 +65,8 @@ const SubscriptionsContextProvider = ({
   };
 
   const toggleSubscription = async (channel: string) => {
-    if (userPushSDKInstance?.readMode || fakeSigner) {
-      await wc_connector?.open();
-      return;
+    if (readOnlyMode) {
+      showUnlockProfileModal();
     }
     try {
       const subscription = subscriptions?.[channel];
