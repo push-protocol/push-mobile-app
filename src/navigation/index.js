@@ -6,6 +6,7 @@ import GLOBALS from 'src/Globals';
 import IncomingCall from 'src/components/modals/IncomingCall';
 import PushApiContextProvider from 'src/contexts/PushApiContext';
 import SubscriptionsContextProvider from 'src/contexts/SubscriptionsContext';
+import ToasterContextProvider from 'src/contexts/ToasterContext';
 import CallkeepHelper from 'src/helpers/CallkeepHelper';
 import {selectAuthState, setLogout} from 'src/redux/authSlice';
 import {selectUsers} from 'src/redux/authSlice';
@@ -36,39 +37,43 @@ const Screens = ({callAccepted}) => {
   }, []);
 
   return (
-    <>
-      <NavigationContainer>
-        {/* Show Modal on Android devices and iOS devices in China */}
-        {isReceivingCall &&
-          (Platform.OS === 'android' ||
-            (Platform.OS === 'ios' && CallkeepHelper.isChina())) && (
-            <IncomingCall />
-          )}
+    <ToasterContextProvider>
+      <PushApiContextProvider>
+        <SubscriptionsContextProvider>
+          <NavigationContainer>
+            {/* Show Modal on Android devices and iOS devices in China */}
+            {isReceivingCall &&
+              (Platform.OS === 'android' ||
+                (Platform.OS === 'ios' && CallkeepHelper.isChina())) && (
+                <IncomingCall />
+              )}
 
-        {authState === GLOBALS.AUTH_STATE.INITIALIZING && (
-          <InitializingNavigator />
-        )}
-        {authState === GLOBALS.AUTH_STATE.ONBOARDING && <OnboardingNavigator />}
-
-        {authState === GLOBALS.AUTH_STATE.ONBOARDED && <OnboardedNavigator />}
-
-        {authState === GLOBALS.AUTH_STATE.AUTHENTICATED && (
-          <>
-            {connectedUser && (
-              <NavGlobalSocket
-                callAccepted={callAccepted}
-                connectedUser={connectedUser}
-              />
+            {authState === GLOBALS.AUTH_STATE.INITIALIZING && (
+              <InitializingNavigator />
             )}
-            <PushApiContextProvider>
-              <SubscriptionsContextProvider>
+            {authState === GLOBALS.AUTH_STATE.ONBOARDING && (
+              <OnboardingNavigator />
+            )}
+
+            {authState === GLOBALS.AUTH_STATE.ONBOARDED && (
+              <OnboardedNavigator />
+            )}
+
+            {authState === GLOBALS.AUTH_STATE.AUTHENTICATED && (
+              <>
+                {connectedUser && (
+                  <NavGlobalSocket
+                    callAccepted={callAccepted}
+                    connectedUser={connectedUser}
+                  />
+                )}
                 <AuthenticatedNavigator />
-              </SubscriptionsContextProvider>
-            </PushApiContextProvider>
-          </>
-        )}
-      </NavigationContainer>
-    </>
+              </>
+            )}
+          </NavigationContainer>
+        </SubscriptionsContextProvider>
+      </PushApiContextProvider>
+    </ToasterContextProvider>
   );
 };
 

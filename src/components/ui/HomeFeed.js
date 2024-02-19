@@ -18,7 +18,7 @@ import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import NotificationItem from './NotificationItem';
 
 export default function InboxFeed(props) {
-  const {userPushSDKInstance} = usePushApi();
+  const {userPushSDKInstance, userInfo} = usePushApi();
 
   // SET STATES
   const [initialized, setInitialized] = useState(false);
@@ -41,6 +41,11 @@ export default function InboxFeed(props) {
       fetchInitializedFeeds();
     }
   }, [initialized, userPushSDKInstance]);
+
+  useEffect(() => {
+    // Wallet changed, different user
+    setInitialized(false);
+  }, [userInfo?.wallets]);
 
   useEffect(() => {
     if (props.refreshNotifFeeds) {
