@@ -1,6 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 import React, {useState} from 'react';
-import {ActivityIndicator, Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import OnboardingWrapper from 'src/components/misc/OnboardingWrapper';
@@ -12,9 +13,12 @@ import {getTrimmedAddress} from './chats/helpers/chatAddressFormatter';
 
 const SetupCompleteScreen = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const {userInfo, getReadWriteInstance} = usePushApi();
+  const {getReadWriteInstance} = usePushApi();
   const domain = useSelector(selectUserDomain);
   const navigation = useNavigation();
+  const route = useRoute();
+  // @ts-ignore
+  const {user} = route.params;
 
   const decryptPushProfile = async () => {
     setLoading(true);
@@ -30,7 +34,7 @@ const SetupCompleteScreen = () => {
 
   return (
     <OnboardingWrapper
-      title="Your Push profile has been successfully linked."
+      title="Your Push Profile has been successfully linked."
       footerTopLabel="Skipping will let you browse with limited features. You can unlock your profile for full features later."
       footerButtons={[
         {
@@ -38,7 +42,6 @@ const SetupCompleteScreen = () => {
           bgColor: GLOBALS.COLORS.PINK,
           fontColor: GLOBALS.COLORS.WHITE,
           onPress: decryptPushProfile,
-          disabled: !userInfo,
           loading: loading,
         },
         {
@@ -46,33 +49,22 @@ const SetupCompleteScreen = () => {
           bgColor: GLOBALS.COLORS.TRANSPARENT,
           fontColor: GLOBALS.COLORS.BLACK,
           onPress: loadNextScreen,
-          disabled: !userInfo,
         },
       ]}>
-      {userInfo ? (
-        <>
-          <Image
-            source={{
-              uri:
-                userInfo.profile.picture ||
-                GLOBALS.CONSTANTS.DEFAULT_PROFILE_PICTURE,
-            }}
-            style={styles.profilePic}
-          />
-          <View style={styles.addressContainer}>
-            <Text style={styles.address}>
-              {domain ||
-                getTrimmedAddress(caip10ToWallet(userInfo?.wallets || ''))}
-            </Text>
-          </View>
-        </>
-      ) : (
-        <ActivityIndicator
-          size={'large'}
-          color={GLOBALS.COLORS.BLACK}
-          style={styles.loader}
-        />
-      )}
+      <Image
+        source={{
+          uri:
+            user?.profile?.picture ||
+            user?.profilePicture ||
+            GLOBALS.CONSTANTS.DEFAULT_PROFILE_PICTURE,
+        }}
+        style={styles.profilePic}
+      />
+      <View style={styles.addressContainer}>
+        <Text style={styles.address}>
+          {domain || getTrimmedAddress(caip10ToWallet(user?.wallets || ''))}
+        </Text>
+      </View>
     </OnboardingWrapper>
   );
 };

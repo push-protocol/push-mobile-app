@@ -50,6 +50,61 @@ export type MessageReciver = {ethAddress: string; pgpAddress: string};
 
 const BASE_URL = envConfig.EPNS_SERVER;
 
+export const createUser = async ({
+  caip10,
+  did,
+  publicKey,
+  encryptedPrivateKey,
+  encryptionType,
+  signature,
+  sigType,
+}: {
+  caip10: string;
+  did: string;
+  publicKey: string;
+  encryptedPrivateKey: string;
+  encryptionType: string;
+  signature: string;
+  sigType: string;
+}): Promise<User> => {
+  const url = BASE_URL + '/v1/users';
+  const body = JSON.stringify({
+    caip10,
+    did,
+    publicKey,
+    encryptedPrivateKey,
+    encryptionType,
+    signature,
+    sigType,
+  });
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'content-Type': 'application/json',
+    },
+    body: body,
+  }).catch(e => {
+    console.log(e);
+    throw new Error(e);
+  });
+
+  const data: User = await response.json();
+  return data;
+};
+
+export const createEmptyUser = async (address: string) => {
+  return await createUser({
+    caip10: address,
+    did: address,
+    publicKey: '',
+    encryptedPrivateKey: '',
+    encryptionType: '',
+    signature: 'pgp',
+    sigType: 'pgp',
+  });
+};
+
 export const getUser = async (caip10: string): Promise<User | undefined> => {
   let retry = 0;
 

@@ -1,17 +1,30 @@
+import {user as pushUser} from '@pushprotocol/restapi';
+import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {useNavigation} from '@react-navigation/native';
 import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import React, {useEffect} from 'react';
-import {Image, StyleSheet, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import GLOBALS from 'src/Globals';
+import {createEmptyUser} from 'src/apis';
+import LoadingSpinner from 'src/components/loaders/LoadingSpinner';
 import OnboardingWrapper from 'src/components/misc/OnboardingWrapper';
+import envConfig from 'src/env.config';
+import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import Web3Helper from 'src/helpers/Web3Helper';
+import useModalBlur from 'src/hooks/ui/useModalBlur';
 import {setAuthType, setInitialSignin} from 'src/redux/authSlice';
 
 const SingInScreen = () => {
   const navigation = useNavigation();
   const {provider, isConnected, open, address} = useWalletConnectModal();
   const dispatch = useDispatch();
+
+  const {
+    ModalComponent: SigningInModal,
+    showModal: showSigningInModal,
+    hideModal: hideSigningInModal,
+  } = useModalBlur();
 
   const walletConnectHandler = async () => {
     if (isConnected) provider?.disconnect();
@@ -35,7 +48,16 @@ const SingInScreen = () => {
 
   useEffect(() => {
     (async () => {
-      if (isConnected) {
+      if (isConnected && address && provider) {
+        showSigningInModal();
+        let user;
+        user = await pushUser.get({
+          account: address,
+          env: envConfig.ENV as ENV,
+        });
+        if (user === null) {
+          user = await createEmptyUser(walletToCAIP10(address));
+        }
         const {cns, ens} = await Web3Helper.reverseResolveWalletBoth(address);
         dispatch(setAuthType(GLOBALS.AUTH_TYPE.WALLET_CONNECT));
         dispatch(
@@ -48,54 +70,68 @@ const SingInScreen = () => {
             index: 0,
           }),
         );
+        hideSigningInModal();
         // @ts-ignore
-        navigation.navigate(GLOBALS.SCREENS.SETUPCOMPLETE);
+        navigation.navigate(GLOBALS.SCREENS.SETUPCOMPLETE, {user});
       }
     })();
   }, [isConnected]);
 
   return (
-    <OnboardingWrapper
-      title="Connect your wallet to enable important features in Push."
-      footerLabel="By signing in, you agree to Push's [Terms & Conditions](https://push.org/tos/) and [Privacy Policy](https://push.org/privacy/)."
-      footerButtons={[
-        {
-          iconFactory: 'Image',
-          icon: require('assets/ui/walletConnect.png'),
-          iconSize: 24,
-          iconFirst: true,
-          title: 'Sign in with Wallet',
-          fontColor: GLOBALS.COLORS.WHITE,
-          bgColor: GLOBALS.COLORS.BLACK,
-          onPress: walletConnectHandler,
-        },
-        {
-          iconFactory: 'Image',
-          icon: require('assets/ui/pencil_logo.png'),
-          iconSize: 24,
-          iconFirst: true,
-          title: 'Enter wallet address',
-          fontColor: GLOBALS.COLORS.BLACK,
-          bgColor: GLOBALS.COLORS.WHITE,
-          borderColor: GLOBALS.COLORS.MID_GRAY,
-          onPress: loadWalletScreen,
-        },
-        {
-          iconFactory: 'Image',
-          icon: require('assets/ui/walletadv.png'),
-          iconSize: 24,
-          iconFirst: true,
-          title: 'Advanced',
-          fontColor: GLOBALS.COLORS.BLACK,
-          bgColor: GLOBALS.COLORS.WHITE,
-          borderColor: GLOBALS.COLORS.MID_GRAY,
-          onPress: loadAdvanceScreen,
-        },
-      ]}>
-      <View style={styles.container}>
-        <Image source={require('assets/ui/wallet.png')} style={styles.image} />
-      </View>
-    </OnboardingWrapper>
+    <>
+      <OnboardingWrapper
+        title="Connect your wallet to enable important features in Push."
+        footerLabel="By signing in, you agree to Push's [Terms & Conditions](https://push.org/tos/) and [Privacy Policy](https://push.org/privacy/)."
+        footerButtons={[
+          {
+            iconFactory: 'Image',
+            icon: require('assets/ui/walletConnect.png'),
+            iconSize: 24,
+            iconFirst: true,
+            title: 'Sign in with Wallet',
+            fontColor: GLOBALS.COLORS.WHITE,
+            bgColor: GLOBALS.COLORS.BLACK,
+            onPress: walletConnectHandler,
+          },
+          {
+            iconFactory: 'Image',
+            icon: require('assets/ui/pencil_logo.png'),
+            iconSize: 24,
+            iconFirst: true,
+            title: 'Enter wallet address',
+            fontColor: GLOBALS.COLORS.BLACK,
+            bgColor: GLOBALS.COLORS.WHITE,
+            borderColor: GLOBALS.COLORS.MID_GRAY,
+            onPress: loadWalletScreen,
+          },
+          {
+            iconFactory: 'Image',
+            icon: require('assets/ui/walletadv.png'),
+            iconSize: 24,
+            iconFirst: true,
+            title: 'Advanced',
+            fontColor: GLOBALS.COLORS.BLACK,
+            bgColor: GLOBALS.COLORS.WHITE,
+            borderColor: GLOBALS.COLORS.MID_GRAY,
+            onPress: loadAdvanceScreen,
+          },
+        ]}>
+        <View style={styles.container}>
+          <Image
+            source={require('assets/ui/wallet.png')}
+            style={styles.image}
+          />
+        </View>
+      </OnboardingWrapper>
+      <SigningInModal
+        InnerComponent={() => (
+          <View style={styles.signingInModalContainer}>
+            <Text style={styles.signingInModalText}>Signing you in...</Text>
+            <LoadingSpinner />
+          </View>
+        )}
+      />
+    </>
   );
 };
 
@@ -112,5 +148,19 @@ const styles = StyleSheet.create({
     height: 184,
     aspectRatio: 1,
     resizeMode: 'contain',
+  },
+  signingInModalContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
+  signingInModalText: {
+    color: GLOBALS.COLORS.BLACK,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '700',
+    lineHeight: 22,
+    letterSpacing: -0.43,
+    marginBottom: 16,
   },
 });

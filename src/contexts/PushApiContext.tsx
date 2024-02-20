@@ -30,7 +30,7 @@ type PushApiContextType = {
   userInfo: IUser | null;
   setUserPushSDKInstance: React.Dispatch<React.SetStateAction<PushAPI | null>>;
   refreshUserPushSDKInstance: () => Promise<void>;
-  getReadWriteInstance: () => Promise<void>;
+  getReadWriteInstance: (overrideAccount?: string) => Promise<void>;
   readOnlyMode: boolean;
   isLoading: boolean;
   showUnlockProfileModal: () => void;
