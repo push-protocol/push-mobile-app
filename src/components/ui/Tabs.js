@@ -3,6 +3,7 @@ import React from 'react';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {TabIcon} from 'src/components/custom/TabIcons';
+import {usePushApi} from 'src/contexts/PushApiContext';
 import ChannelsScreen from 'src/navigation/screens/ChannelsScreen';
 import HomeScreen from 'src/navigation/screens/HomeScreen';
 import SpamBoxScreen from 'src/navigation/screens/SpamBoxScreen';
@@ -12,6 +13,7 @@ import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 export default function Tabs() {
   const users = useSelector(selectUsers);
   const currentUser = useSelector(selectCurrentUser);
+  const {readOnlyMode, showUnlockProfileModal} = usePushApi();
 
   const Tab = createMaterialBottomTabNavigator();
   const wallet = users[currentUser].wallet;
@@ -70,6 +72,14 @@ export default function Tabs() {
       <Tab.Screen
         name={GLOBALS.SCREENS.CHATS}
         component={ChatScreen}
+        listeners={{
+          tabPress: e => {
+            if (readOnlyMode) {
+              e.preventDefault();
+              showUnlockProfileModal();
+            }
+          },
+        }}
         options={{
           tabBarIcon: ({focused}) => <TabIcon active={focused} icon={'CHAT'} />,
         }}

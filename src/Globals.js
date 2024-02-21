@@ -76,6 +76,8 @@ export default {
     FEED_ITEMS_TO_PULL: 20,
 
     STATUS_BAR_HEIGHT: 60,
+    DEFAULT_PROFILE_PICTURE:
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
   },
 
   ADJUSTMENTS: {
@@ -133,11 +135,22 @@ export default {
     LIGHT_BLUE: '#F4F5FA',
     CHAT_BLACK: '#1E1E1E',
     CHAT_LIGHT_DARK: '#657795',
+
+    // Group Chat
+    CHAT_LIGHT_PINK: '#F3D7FA',
+    CHAT_LIGHT_GRAY: '#BAC4D6',
+    CHAT_BORDER_COLOR: '#A0A3B1',
+
+    // Status
+    STATUS_YELLOW: '#F2CB65',
+    STATUS_GREEN: '#5DD177',
+    STATUS_YELLOW_BG: '#FDF7EE',
   },
   SCREENS: {
     WELCOME: 'Welcome',
     SIGNIN: 'SignIn',
     SIGNINADVANCE: 'SignInAdvance',
+    SIGNINWALLET: 'SignInWallet',
     BIOMETRIC: 'Biometric',
     PUSHNOTIFY: 'PushNotify',
     SETUPCOMPLETE: 'SetupComplete',
@@ -148,30 +161,29 @@ export default {
     CHANNELS: 'Channels',
     SPAM: 'Spam',
     SAMPLEFEED: 'SampleFeed',
-    NEWWALLETSIGNIN: 'NewWalletSignIn',
     CHATS: 'Chats',
     SINGLE_CHAT: 'SingleChat',
     PGP_FROM_PK_SCREEN: 'PgpFromPkScreen',
     CHATPROFILESCREEN: 'ChatProfileScreen',
-    SIGNINFROMDAPP: 'SignInFromDapp',
-    SIGNINFROMDAPP_LOGIN: 'SIGNINFROMDAPP_LOGIN',
     LOG_IN_DAPP_INFO: 'LOG_IN_DAPP_INFO',
     QRScanScreen: 'QRScanScreen',
     QRScanScreenFromLogin: 'QRScanScreenFromLogin',
     NewChatScreen: 'NewChatScreen',
     VIDEOCALL: 'VideoCall',
-  },
-  APP_AUTH_STATES: {
-    INITIALIZING: 1,
-    ONBOARDING: 2,
-    ONBOARDED: 3,
-    AUTHENTICATED: 4,
+    CREATE_GROUP: 'CreateGroup',
+    GROUP_INFO: 'GroupInfo',
   },
   AUTH_STATE: {
     INITIALIZING: 'INITIALIZING',
     ONBOARDING: 'ONBOARDING',
     ONBOARDED: 'ONBOARDED',
     AUTHENTICATED: 'AUTHENTICATED',
+  },
+  AUTH_TYPE: {
+    WALLET: 'AuthTypeWallet',
+    PRIVATE_KEY: 'AuthTypePrivateKey',
+    WALLET_CONNECT: 'AuthTypeWalletConnect',
+    NONE: 'AuthTypeNone',
   },
   CONTRACTS: {
     STAGING: {

@@ -4,10 +4,12 @@ import MetaStorage from 'src/singletons/MetaStorage';
 
 const initialState = {
   authState: GLOBALS.AUTH_STATE.INITIALIZING,
+  authType: GLOBALS.AUTH_TYPE.NONE,
   users: [],
   currentUser: null,
   isLoggedIn: false,
   newWallet: false,
+  isGuest: undefined,
 };
 
 const authSlice = createSlice({
@@ -18,6 +20,14 @@ const authSlice = createSlice({
       state.users = [action.payload];
       state.currentUser = action.payload.index;
       state.isLoggedIn = true;
+    },
+
+    setAuthType: (state, action) => {
+      state.authType = action.payload;
+    },
+
+    setIsGuest: (state, action) => {
+      state.isGuest = action.payload;
     },
 
     setAuthState: (state, action) => {
@@ -74,12 +84,20 @@ const authSlice = createSlice({
 });
 
 export const selectAuthState = state => state.auth.authState;
+export const selectAuthType = state => state.auth.authType;
 export const selectUsers = state => state.auth.users;
 export const selectCurrentUser = state => state.auth.currentUser;
+export const selectUserDomain = state => {
+  const user = state.auth.users[state.auth.currentUser];
+  return user.cns !== '' ? user.cns : user.ens !== '' ? user.ens : undefined;
+};
+export const selectIsGuest = state => state.auth.isGuest;
 
 export const {
   setInitialSignin,
   setAuthState,
+  setAuthType,
+  setIsGuest,
   setLogout,
   setUser,
   switchUser,

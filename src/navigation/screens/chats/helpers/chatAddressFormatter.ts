@@ -3,7 +3,7 @@ import Web3Helper from 'src/helpers/Web3Helper';
 
 const MAX_ADDRESS_LEN = 21;
 
-const getTrimmedAddress = (originalAddress: string) => {
+export const getTrimmedAddress = (originalAddress: string) => {
   const addrsLen = originalAddress.length;
   if (addrsLen >= MAX_ADDRESS_LEN) {
     return `${originalAddress?.substring(0, 8)}...${originalAddress?.substring(

@@ -1,4 +1,4 @@
-import * as PushSdk from '@kalashshah/react-native-sdk/src';
+import {IFeeds} from '@pushprotocol/restapi';
 import {useNavigation} from '@react-navigation/native';
 import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import React, {useEffect, useRef, useState} from 'react';
@@ -15,7 +15,6 @@ import {
 import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
-import {DappScanPage} from 'src/components/ui/DappScanPage';
 import MetaStorage from 'src/singletons/MetaStorage';
 import {WallectConnectPage} from 'src/walletconnect/pages/WallectConnectPage';
 
@@ -26,8 +25,8 @@ import {useChatLoader} from './helpers/useChatLoader';
 
 export interface AppContext {
   connectedUser: PushNodeClient.ConnectedUser;
-  feeds: PushSdk.PushApi.IFeeds[];
-  requests: PushSdk.PushApi.IFeeds[];
+  feeds: IFeeds[];
+  requests: IFeeds[];
   chatCredentials: UserChatCredentials | undefined;
 }
 
@@ -114,10 +113,6 @@ const ChatScreen = (props: any) => {
     return <WallectConnectPage initalizate={initalizate} />;
   }
 
-  if (!isPrivateKeyUser && !isReady) {
-    return <DappScanPage />;
-  }
-
   if (isLoading || !isReady) {
     return (
       <SafeAreaView style={styles.container}>
@@ -200,11 +195,10 @@ const ChatScreen = (props: any) => {
 
       <TouchableWithoutFeedback
         onPress={() => {
-          console.log('dadda', Date.now());
-
           // @ts-ignore
           navigation.navigate(Globals.SCREENS.NewChatScreen, {
-            chatCredentials: chatCredentials,
+            chatCredentials,
+            chatData,
           });
         }}>
         <View

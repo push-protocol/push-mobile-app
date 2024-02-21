@@ -1,234 +1,25 @@
-import {FontAwesome5} from '@expo/vector-icons';
-import {useWalletConnectModal} from '@walletconnect/modal-react-native';
-import {ethers} from 'ethers';
-import React, {useEffect, useRef, useState} from 'react';
-import {
-  ActivityIndicator,
-  Linking,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  View,
-} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import NoticePrompt from 'src/components/modals/NoticePrompt';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
-import ENV_CONFIG from 'src/env.config';
-import MetaStorage from 'src/singletons/MetaStorage';
-import {handleChannelSub} from 'src/walletconnect';
-
-const CHANNEL_OPT_IN = 1;
-const CHANNEL_OPT_OUT = 2;
+import {useSubscriptions} from 'src/contexts/SubscriptionsContext';
 
 const SubscriptionStatus = ({channel, user, style, pKey}) => {
-  const [subscribed, setSubscribed] = useState(null);
-
-  const wc_connector = useWalletConnectModal();
-  const [modal, setModal] = useState(false);
-  const [action, setAction] = useState('');
-
   const [processing, setProcessing] = useState(false);
 
-  const apiURL =
-    ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_SUBSCRIPTION;
+  const {
+    subscriptions,
+    toggleSubscription,
+    isLoading: isLoadingSubscriptions,
+  } = useSubscriptions();
 
-  const EPNS_DOMAIN = {
-    name: 'EPNS COMM V1',
-    chainId: ENV_CONFIG.CHAIN_ID,
-    verifyingContract: ENV_CONFIG.CONTRACTS.COMM_CONTRACT,
-  };
-
-  const subType = {
-    Subscribe: [
-      {name: 'channel', type: 'address'},
-      {name: 'subscriber', type: 'address'},
-      {name: 'action', type: 'string'},
-    ],
-  };
-  const unsubType = {
-    Unsubscribe: [
-      {name: 'channel', type: 'address'},
-      {name: 'unsubscriber', type: 'address'},
-      {name: 'action', type: 'string'},
-    ],
-  };
-
-  const subMessage = {
-    channel: channel,
-    subscriber: user,
-    action: 'Subscribe',
-  };
-
-  const unsubMessage = {
-    channel: channel,
-    unsubscriber: user,
-    action: 'Unsubscribe',
-  };
-
-  const handleSubscribe = async () => {
-    if (pKey !== '') {
-      const signer = new ethers.Wallet(pKey);
-      signer._signTypedData(EPNS_DOMAIN, subType, subMessage).then(res => {
-        offChainSubscribe(res);
-      });
-    } else {
-      showPopUp();
-    }
-  };
-
-  const handleUnsubscribe = async () => {
-    if (pKey !== '') {
-      const signer = new ethers.Wallet(pKey);
-      signer._signTypedData(EPNS_DOMAIN, unsubType, unsubMessage).then(res => {
-        offChainUnsubscribe(res);
-      });
-    } else {
-      showPopUp();
-    }
-  };
-
-  const offChainSubscribe = async signature => {
-    const apiUrl =
-      ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_SUBSCRIBE_OFFCHAIN;
-
-    const body = {
-      signature: signature,
-      message: subMessage,
-      contractAddress: ENV_CONFIG.CONTRACTS.COMM_CONTRACT,
-      chainId: ENV_CONFIG.CHAIN_ID,
-      op: 'write',
-    };
-
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    const subscribeResponse = await response.json();
-    console.log('subscribeResponse', subscribeResponse);
-
-    fetchSubscriptionStatus(user, channel);
-  };
-
-  const offChainUnsubscribe = async signature => {
-    const apiUrl =
-      ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_UNSUBSCRIBE_OFFCHAIN;
-
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        signature: signature,
-        message: unsubMessage,
-        contractAddress: ENV_CONFIG.CONTRACTS.COMM_CONTRACT,
-        chainId: ENV_CONFIG.CHAIN_ID,
-        op: 'write',
-      }),
-    });
-
-    const unsubscribeResponse = await response.json();
-    console.log('unsubscribeRespone', unsubscribeResponse);
-
-    fetchSubscriptionStatus(user, channel);
-  };
+  const subscribed = subscriptions?.[channel] !== undefined;
 
   // Setup Refs
   const OverlayBlurRef = useRef(null);
   const NoticePromptRef = useRef(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    if (isMounted) fetchSubscriptionStatus(user, channel);
-
-    return () => {
-      isMounted = false;
-    };
-  });
-
-  const handleOpts = async action => {
-    // Check signin flow
-    setProcessing(true);
-    const isWalletConnect = wc_connector.isConnected;
-    const signedInType = await MetaStorage.instance.getSignedInType();
-    if (isWalletConnect) {
-      try {
-        const done = await handleChannelSub(
-          wc_connector.provider,
-          action,
-          channel,
-        );
-        if (done) {
-          setSubscribed(prev => !prev);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    } else if (signedInType === GLOBALS.CONSTANTS.CRED_TYPE_PRIVATE_KEY) {
-      if (action === 1) {
-        handleSubscribe();
-      } else if (action === 2) {
-        handleUnsubscribe();
-      }
-    } else {
-      console.log('Not connected, opening wallet connect modal');
-      wc_connector.open();
-    }
-  };
-
-  const showPopUp = async action => {
-    // Check if Wallet Connect
-    setModal(true);
-
-    if (action === 1) {
-      setAction('Opt-In');
-    } else if (action === 2) {
-      setAction('Opt-Out');
-    }
-  };
-
-  const fetchSubscriptionStatus = async (user, channel) => {
-    const response = await fetch(apiURL, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        subscriber: user,
-        channel: channel,
-        op: 'read',
-      }),
-    });
-    const subscriptionStatus = await response.json();
-    setProcessing(false);
-    setSubscribed(subscriptionStatus);
-  };
-
-  const openURL = async url => {
-    // if (validURL(url) || 1) {
-    // console.log("OPENING URL ", url);
-    // Bypassing the check so that custom app domains can be opened
-    await Linking.openURL(url);
-    // Linking.canOpenURL(url).then((supported) => {
-    //   if (supported) {
-    //     Linking.openURL(url);
-    //   } else {
-    //     // showToast("Device Not Supported", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
-    //   }
-    // });
-    // } else {
-    // showToast("Link not valid", "ios-link", ToasterOptions.TYPE.GRADIENT_PRIMARY)
-    // }
-  };
 
   // Open Notice Prompt With Overlay Blur
   const toggleNoticePrompt = (
@@ -250,16 +41,22 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
     NoticePromptRef.current.changeRenderState(toggle, animate);
   };
 
+  const handleChangeSubStatus = async () => {
+    setProcessing(true);
+    await toggleSubscription(channel);
+    setProcessing(false);
+  };
+
   return (
     <View style={styles.container}>
-      {subscribed == null && (
+      {isLoadingSubscriptions && (
         <ActivityIndicator
           size={'small'}
           color={GLOBALS.COLORS.GRADIENT_PRIMARY}
         />
       )}
 
-      {subscribed != null && subscribed === true && (
+      {subscribed === true && (
         <PrimaryButton
           style={styles.controlPrimary}
           setButtonStyle={{borderRadius: 0, padding: 0}}
@@ -272,13 +69,11 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
           setHeight="100%"
           disabled={processing}
           loading={processing}
-          onPress={() => {
-            handleOpts(CHANNEL_OPT_OUT);
-          }}
+          onPress={handleChangeSubStatus}
         />
       )}
 
-      {subscribed !== null && subscribed === false && (
+      {subscribed === false && (
         <PrimaryButton
           style={styles.controlPrimary}
           setButtonStyle={{borderRadius: 0, padding: 0}}
@@ -295,9 +90,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
           setHeight="100%"
           disabled={processing}
           loading={processing}
-          onPress={() => {
-            handleOpts(CHANNEL_OPT_IN);
-          }}
+          onPress={handleChangeSubStatus}
         />
       )}
 
@@ -311,7 +104,7 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
         closeFunc={() => toggleNoticePrompt(false, true)}
       />
 
-      <Modal
+      {/* <Modal
         animationType="fade"
         transparent={true}
         visible={modal}
@@ -347,53 +140,6 @@ const SubscriptionStatus = ({channel, user, style, pKey}) => {
                 <Text style={[styles.cancelText]}>Cancel</Text>
               </TouchableHighlight>
             </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modal}
-        onRequestClose={() => {
-          setModal(!modal);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>
-              {action} is currently posible with Metamask. You will be
-              redirected to the Metamask app where you can sign into our Dapp
-              and carry out {action}.
-            </Text>
-            <TouchableOpacity
-              style={styles.button1}
-              onPress={() => openURL(ENV_CONFIG.METAMASK_LINK)}
-            >
-              <Text style={styles.textStyle}>
-                Sign In with Metamask.{"  "}
-                <FontAwesome5 name="external-link-alt" size={20} />{" "}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.button1}
-              onPress={() => {
-                initiateWalletConnect();
-              }}
-            >
-              <Text style={styles.textStyle}>
-                Sign In with Wallet Connect.{"  "}
-                <FontAwesome5 name="external-link-alt" size={20} />{" "}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => setModal(!modal)}
-            >
-              <Text style={styles.textStyle}>Close.</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </Modal> */}

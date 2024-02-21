@@ -72,16 +72,15 @@ export default class QRScanScreen extends Component {
   };
 
   loadLoginFromDapp = async (code, navigation) => {
-    const qrScreen =
-      this.props.route.params.authState === GLOBALS.AUTH_STATE.AUTHENTICATED
-        ? GLOBALS.SCREENS.SIGNINFROMDAPP
-        : GLOBALS.SCREENS.SIGNINFROMDAPP_LOGIN;
-
-    // Goto Next Screen
-    navigation.navigate(qrScreen, {
-      code: code,
-      navigation: navigation,
-    });
+    // const qrScreen =
+    //   this.props.route.params.authState === GLOBALS.AUTH_STATE.AUTHENTICATED
+    //     ? GLOBALS.SCREENS.SIGNINFROMDAPP
+    //     : GLOBALS.SCREENS.SIGNINFROMDAPP_LOGIN;
+    // // Goto Next Screen
+    // navigation.navigate(qrScreen, {
+    //   code: code,
+    //   navigation: navigation,
+    // });
   };
 
   // RENDER

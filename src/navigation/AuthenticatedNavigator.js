@@ -9,8 +9,9 @@ import QRScanScreen from 'src/navigation/screens/dapp/QRScanScreen';
 import ChatProfileScreen from './screens/ChatProfileScreen';
 import PgpFromPkScreen from './screens/PgpFromPkScreen';
 import SettingsScreen from './screens/SettingsScreen';
-import SignInFromDapp from './screens/SignInFromDapp';
 import {SingleChatScreen} from './screens/chats';
+import CreateGroup from './screens/chats/CreateGroup';
+import GroupInfo from './screens/chats/GroupInfo';
 import {NewChatScreen} from './screens/chats/NewChatScreen';
 import VideoScreen from './screens/video/VideoScreen';
 
@@ -119,14 +120,6 @@ export default function AuthenticatedNavigator() {
           headerTintColor: GLOBALS.COLORS.MID_GRAY,
         }}
       />
-      <Stack.Screen
-        name={GLOBALS.SCREENS.SIGNINFROMDAPP}
-        component={SignInFromDapp}
-        options={{
-          headerShown: false,
-          headerTintColor: GLOBALS.COLORS.MID_GRAY,
-        }}
-      />
 
       <Stack.Screen
         name={GLOBALS.SCREENS.NewChatScreen}
@@ -140,6 +133,24 @@ export default function AuthenticatedNavigator() {
       <Stack.Screen
         name={GLOBALS.SCREENS.VIDEOCALL}
         component={VideoScreen}
+        options={{
+          headerShown: false,
+          headerTintColor: GLOBALS.COLORS.MID_GRAY,
+        }}
+      />
+
+      <Stack.Screen
+        name={GLOBALS.SCREENS.GROUP_INFO}
+        component={GroupInfo}
+        options={{
+          headerShown: false,
+          headerTintColor: GLOBALS.COLORS.MID_GRAY,
+        }}
+      />
+
+      <Stack.Screen
+        name={GLOBALS.SCREENS.CREATE_GROUP}
+        component={CreateGroup}
         options={{
           headerShown: false,
           headerTintColor: GLOBALS.COLORS.MID_GRAY,

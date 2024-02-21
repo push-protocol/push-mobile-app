@@ -1,4 +1,4 @@
-import {createUser as createNewUser} from '@kalashshah/react-native-sdk/src';
+import * as PushApi from '@pushprotocol/restapi';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {IProvider} from '@walletconnect/modal-react-native';
 import envConfig from 'src/env.config';
@@ -12,7 +12,7 @@ export const createUser = async (
 
   const caip10: string = walletToPCAIP10(account);
 
-  const user = await createNewUser({
+  const user = await PushApi.user.create({
     account: caip10,
     env: envConfig.ENV as ENV,
     signer,

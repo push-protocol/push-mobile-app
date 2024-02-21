@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   Dimensions,
   Image,
@@ -8,40 +8,30 @@ import {
 } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import GLOBALS from 'src/Globals';
-import * as PushNodeClient from 'src/apis';
 import ENSButton from 'src/components/buttons/ENSButton';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 import Blockies from 'src/components/web3/Blockies';
-import {walletToCAIP10} from 'src/helpers/CAIPHelper';
+import {usePushApi} from 'src/contexts/PushApiContext';
 
 const MARGIN_RIGHT = 120;
 const ProfileDisplayer = props => {
-  const [profilePicture, setProfilePicture] = useState(null);
   const wallet = props.currentUser?.wallet?.toLowerCase() || null;
-
-  useEffect(() => {
-    if (!profilePicture && wallet) {
-      (async () => {
-        const user = await PushNodeClient.getUser(walletToCAIP10(wallet));
-        setProfilePicture(user.profilePicture);
-      })();
-    }
-  }, []);
+  const {readOnlyMode, isLoading, userInfo} = usePushApi();
 
   const {style} = props;
   return (
     <View style={[styles.container, style]} pointerEvents="box-none">
       <SafeAreaView style={[styles.container, styles.safeContainer]}>
-        <View style={[styles.innerContainer]}>
+        <View>
           <TouchableOpacity
             style={[styles.header]}
             onPress={() => {
               props.toggleShow();
             }}
             pointerEvents="auto">
-            {profilePicture ? (
+            {userInfo?.profile.picture ? (
               <Image
-                source={{uri: profilePicture}}
+                source={{uri: userInfo.profile.picture}}
                 style={styles.image}
                 resizeMode={'cover'}
               />
@@ -50,6 +40,18 @@ const ProfileDisplayer = props => {
                 style={styles.blockies}
                 seed={wallet} //string content to generate icon
                 dimension={40} // blocky icon size
+              />
+            )}
+            {!isLoading && (
+              <View
+                style={[
+                  styles.statusIcon,
+                  {
+                    backgroundColor: readOnlyMode
+                      ? GLOBALS.COLORS.STATUS_YELLOW
+                      : GLOBALS.COLORS.STATUS_GREEN,
+                  },
+                ]}
               />
             )}
             <ENSButton
@@ -105,6 +107,16 @@ const styles = StyleSheet.create({
     borderColor: GLOBALS.COLORS.LIGHT_GRAY,
     overflow: 'hidden',
     marginRight: 10,
+  },
+  statusIcon: {
+    position: 'absolute',
+    top: 28,
+    left: 38,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    borderWidth: 1.5,
+    borderColor: GLOBALS.COLORS.WHITE,
   },
   ens: {
     flex: 1,

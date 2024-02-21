@@ -157,7 +157,10 @@ export default class PrimaryButton extends Component {
       } else {
         return (
           <View style={[styles.iconContainer, iconStyle]}>
-            <Image style={[{width: size}, styles.iconImage]} source={icon} />
+            <Image
+              style={[{width: size, height: size}, styles.iconImage]}
+              source={icon}
+            />
           </View>
         );
       }
@@ -286,7 +289,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'stretch',
     alignSelf: 'stretch',
-    flexGrow: 1,
   },
   innerContainer: {
     flexDirection: 'row',

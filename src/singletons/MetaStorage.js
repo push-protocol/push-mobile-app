@@ -638,6 +638,16 @@ export default class MetaStorage {
     }
   };
 
+  removeUserChatData = async () => {
+    try {
+      await AsyncStorage.removeItem(GLOBALS.STORAGE.USER_CHAT_DATA);
+    } catch (error) {
+      // Error deleting data
+      console.warn(error);
+      return false;
+    }
+  };
+
   setUserLoginFromDapp = async () => {
     try {
       await AsyncStorage.setItem(GLOBALS.STORAGE.IS_FROM_DAPP, 'true');

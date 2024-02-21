@@ -1,7 +1,5 @@
 import '@ethersproject/shims';
-import * as PushApi from '@pushprotocol/restapi';
-import {useWalletConnectModal} from '@walletconnect/modal-react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -10,21 +8,19 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {useSelector} from 'react-redux';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ChannelItem from 'src/components/ui/ChannelItem';
+import {usePushApi} from 'src/contexts/PushApiContext';
 import ENV_CONFIG from 'src/env.config';
-import {selectUsers} from 'src/redux/authSlice';
 
 import Globals from '../../Globals';
-import {Toaster, ToasterOptions} from '../indicators/Toaster';
 
 const ChannelsDisplayer = ({style, wallet, pKey}) => {
   const [channels, setChannels] = useState([]);
   const [page, setPage] = useState(1);
 
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(true);
 
   const [contract] = useState(null);
   const [endReached] = useState(false);
@@ -34,16 +30,8 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
 
   const DEBOUNCE_TIMEOUT = 500; //time in millisecond which we want to wait for then to finish typing
   const [search, setSearch] = React.useState('');
-  const [walletAddress, setWalletAddress] = useState('');
-  const toastRef = useRef(null);
 
-  const wc_connector = useWalletConnectModal();
-  const users = useSelector(selectUsers);
-
-  useEffect(() => {
-    setRefreshing(true);
-    setWalletAddress(users[0].wallet);
-  }, []);
+  const {userPushSDKInstance} = usePushApi();
 
   const fetchChannels = async () => {
     const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_CHANNELS;
@@ -62,24 +50,6 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
     }
   }, [refreshing]);
 
-  useEffect(() => {
-    if (
-      wc_connector.isConnected &&
-      walletAddress !== '' &&
-      wc_connector.address !== undefined &&
-      wc_connector.address.toLowerCase() !== walletAddress.toLowerCase()
-    ) {
-      wc_connector.provider.disconnect();
-      toastRef.current.showToast(
-        'Please use the same wallet\nyou used to sign in',
-        '',
-        ToasterOptions.TYPE.GRADIENT_PRIMARY,
-        '',
-        ToasterOptions.DELAY.LONGER,
-      );
-    }
-  }, [wc_connector.isConnected]);
-
   const searchForChannel = async channelName => {
     setChannels([]);
 
@@ -90,11 +60,9 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
     }
 
     setIsSearchEnded(false);
-    const channels = await PushApi.channels.search({
-      query: channelName,
+    const channels = await userPushSDKInstance.channel.search(channelName, {
       limit: 20,
       page: 1,
-      env: ENV_CONFIG.ENV,
     });
 
     setChannels(channels);
@@ -181,7 +149,6 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
           }}
         />
       )}
-      <Toaster ref={toastRef} />
     </SafeAreaView>
   );
 };

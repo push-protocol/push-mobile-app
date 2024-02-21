@@ -1,15 +1,13 @@
 import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
 import GLOBALS from 'src/Globals';
-import {LoginWithDappScreen} from 'src/navigation/screens/dapp/LoginWithDapp';
 
 import BiometricScreen from './screens/BiometricScreen';
-import NewWalletSignInScreen from './screens/NewWalletSignInScreen';
 import PushNotifyScreen from './screens/PushNotifyScreen';
 import SetupCompleteScreen from './screens/SetupCompleteScreen';
-import SignInFromDapp from './screens/SignInFromDapp';
 import SignInScreen from './screens/SignInScreen';
 import SignInAdvanceScreen from './screens/SignInScreenAdvance';
+import SignInScreenWallet from './screens/SignInScreenWallet';
 import WelcomeScreen from './screens/WelcomeScreen';
 import QRScanScreen from './screens/dapp/QRScanScreen';
 
@@ -68,17 +66,8 @@ const OnboardingNavigator = () => {
       />
 
       <Stack.Screen
-        name={GLOBALS.SCREENS.SIGNINFROMDAPP_LOGIN}
-        component={SignInFromDapp}
-        options={{
-          headerShown: false,
-          headerTintColor: GLOBALS.COLORS.MID_GRAY,
-        }}
-      />
-
-      <Stack.Screen
-        name={GLOBALS.SCREENS.NEWWALLETSIGNIN}
-        component={NewWalletSignInScreen}
+        name={GLOBALS.SCREENS.SIGNINWALLET}
+        component={SignInScreenWallet}
         options={{
           headerShown: false,
           headerTintColor: GLOBALS.COLORS.MID_GRAY,
@@ -102,6 +91,7 @@ const OnboardingNavigator = () => {
           headerTintColor: GLOBALS.COLORS.MID_GRAY,
         }}
       />
+
       <Stack.Screen
         name={GLOBALS.SCREENS.SETUPCOMPLETE}
         component={SetupCompleteScreen}
@@ -110,14 +100,7 @@ const OnboardingNavigator = () => {
           headerTintColor: GLOBALS.COLORS.MID_GRAY,
         }}
       />
-      <Stack.Screen
-        name={GLOBALS.SCREENS.LOG_IN_DAPP_INFO}
-        component={LoginWithDappScreen}
-        options={{
-          headerShown: false,
-          headerTintColor: GLOBALS.COLORS.MID_GRAY,
-        }}
-      />
+
       <Stack.Screen
         name={GLOBALS.SCREENS.QRScanScreen}
         component={QRScanScreen}

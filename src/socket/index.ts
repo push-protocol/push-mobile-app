@@ -2,7 +2,7 @@ import {VideoCallStatus} from '@pushprotocol/restapi';
 import {ADDITIONAL_META_TYPE} from '@pushprotocol/restapi/src/lib/payloads';
 import {EVENTS, createSocketConnection} from '@pushprotocol/socket';
 import {useContext, useEffect, useRef} from 'react';
-import {AppState, Platform} from 'react-native';
+import {AppState} from 'react-native';
 import InCallManager from 'react-native-incall-manager';
 import {VideoCallContext} from 'src/contexts/VideoContext';
 import {SocketConfig} from 'src/navigation/screens/chats/helpers/socketHelper';

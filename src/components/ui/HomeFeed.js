@@ -1,4 +1,3 @@
-import {PushApi} from '@kalashshah/react-native-sdk/src';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
@@ -9,21 +8,17 @@ import {
   View,
 } from 'react-native';
 import ImageView from 'react-native-image-viewing';
-import {useSelector} from 'react-redux';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
-import envConfig from 'src/env.config';
+import {usePushApi} from 'src/contexts/PushApiContext';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
-import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 import NotificationItem from './NotificationItem';
 
 export default function InboxFeed(props) {
-  const users = useSelector(selectUsers);
-  const currentUser = useSelector(selectCurrentUser);
-  const {wallet} = users[currentUser];
+  const {userPushSDKInstance, userInfo} = usePushApi();
 
   // SET STATES
   const [initialized, setInitialized] = useState(false);
@@ -42,10 +37,15 @@ export default function InboxFeed(props) {
 
   // LOGIC
   useEffect(() => {
-    if (!initialized) {
+    if (!initialized && userPushSDKInstance) {
       fetchInitializedFeeds();
     }
-  }, [initialized]);
+  }, [initialized, userPushSDKInstance]);
+
+  useEffect(() => {
+    // Wallet changed, different user
+    setInitialized(false);
+  }, [userInfo?.wallets]);
 
   useEffect(() => {
     if (props.refreshNotifFeeds) {
@@ -73,14 +73,11 @@ export default function InboxFeed(props) {
   };
 
   const fetchFeed = async (rewrite, refresh = false) => {
-    if (!endReached || rewrite === true) {
+    if ((!endReached || rewrite === true) && userPushSDKInstance) {
       if (!loading) {
         setloading(true);
-        const feeds = await PushApi.user.getFeeds({
-          user: wallet,
-          env: envConfig.ENV,
+        const feeds = await userPushSDKInstance.notification.list('INBOX', {
           limit: 10,
-          spam: false,
           page: refresh ? 1 : page,
         });
 

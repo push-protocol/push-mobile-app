@@ -25,6 +25,7 @@ import NoticePrompt from 'src/components/modals/NoticePrompt';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 import BiometricHelper from 'src/helpers/BiometricHelper';
 import CryptoHelper from 'src/helpers/CryptoHelper';
+import {withUseAuth} from 'src/hooks/auth/useAuth';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 function ScreenFinishedTransition({setScreenTransitionAsDone}) {
@@ -352,7 +353,7 @@ class BiometricScreen extends Component {
     if (authorizationStatus === messaging.AuthorizationStatus.NOT_DETERMINED) {
       this.props.navigation.navigate(GLOBALS.SCREENS.PUSHNOTIFY);
     } else {
-      this.props.navigation.navigate(GLOBALS.SCREENS.SETUPCOMPLETE);
+      this.props.login();
     }
   };
 
@@ -733,4 +734,4 @@ const mapStateToProps = state => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, {})(BiometricScreen);
+export default connect(mapStateToProps, {})(withUseAuth(BiometricScreen));

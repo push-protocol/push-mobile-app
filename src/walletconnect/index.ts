@@ -4,7 +4,7 @@ const WalletConnectConfig = {
   sessionParams: {
     namespaces: {
       eip155: {
-        methods: ['personal_sign', 'eth_signTypedData'],
+        methods: ['personal_sign', 'eth_signTypedData', 'eth_signTypedData_v4'],
         chains: [`eip155:${envConfig.CHAIN_ID}`],
         events: ['chainChanged', 'accountsChanged'],
         rpcMap: {},
