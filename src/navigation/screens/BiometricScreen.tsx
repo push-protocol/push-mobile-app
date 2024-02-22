@@ -17,14 +17,13 @@ import {
 } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import GLOBALS from 'src/Globals';
+import PasscodeInput from 'src/components/input/PasscodeInput';
 import LoadingSpinner from 'src/components/loaders/LoadingSpinner';
 import OnboardingWrapper from 'src/components/misc/OnboardingWrapper';
 import BiometricHelper from 'src/helpers/BiometricHelper';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import useAuth from 'src/hooks/auth/useAuth';
 import MetaStorage from 'src/singletons/MetaStorage';
-
-const PASSCODE_LENGTH = 6;
 
 const STEPS = {
   ENTER_PASSCODE: 'ENTER_PASSCODE',
@@ -41,14 +40,6 @@ const BIOMETRIC_TYPES = {
   TOUCH_ID: 'Touch ID',
   FACE_ID: 'Face ID',
   NULL: 'NULL',
-};
-
-const PasscodeInputBox = ({char}: {char: string}) => {
-  return (
-    <View style={styles.passcodeInputBox}>
-      <Text style={styles.passcodeInputBoxDigit}>{char}</Text>
-    </View>
-  );
 };
 
 const BiometricScreen = () => {
@@ -80,7 +71,7 @@ const BiometricScreen = () => {
   };
 
   const validatePasscode = async (value: string) => {
-    if (value.length !== PASSCODE_LENGTH) return;
+    if (value.length !== GLOBALS.CONSTANTS.PASSCODE_LENGTH) return;
     if (step === STEPS.ENTER_PASSCODE) {
       setPasscodeMirror('');
       setStep(STEPS.VERIFY_PASSCODE);
@@ -110,14 +101,10 @@ const BiometricScreen = () => {
 
         // Check if biometric is available
         const supported = await BiometricHelper.getSupportedBiometric();
-        setPkeyEncrypted(true);
-        setEncryptedPKey(encryptedPkey);
-        setBiometricSupported(supported);
-        setStep(STEPS.PASSCODE_CONFIRMED);
 
         // If biometrics not supported, go to next screen
         if (supported === false) {
-          loadNextScreen();
+          await loadNextScreen();
         } else {
           let biometricType = BIOMETRIC_TYPES.NULL;
 
@@ -130,6 +117,11 @@ const BiometricScreen = () => {
           }
           setBiometricType(biometricType);
         }
+
+        setPkeyEncrypted(true);
+        setEncryptedPKey(encryptedPkey);
+        setBiometricSupported(supported);
+        setStep(STEPS.PASSCODE_CONFIRMED);
       }
     }
   };
@@ -260,28 +252,11 @@ const BiometricScreen = () => {
             <Text style={styles.textPrompt}>{textPrompt}</Text>
           </View>
           <View style={styles.passcodeWrapper}>
-            <View style={styles.passcodeContainer}>
-              {mappedPasscode.split('').map((char, index) => (
-                <PasscodeInputBox key={index} char={char} />
-              ))}
-              {Array.from({length: 6 - mappedPasscode.length}, (_, index) => (
-                <PasscodeInputBox key={index} char="" />
-              ))}
-            </View>
-            <View removeClippedSubviews={true}>
-              <TextInput
-                ref={inputRef}
-                style={styles.passcodeInput}
-                maxLength={6}
-                contextMenuHidden={true}
-                autoCorrect={false}
-                keyboardType="numeric"
-                onChangeText={text => handleEnteredPasscode(text)}
-                value={
-                  step === STEPS.ENTER_PASSCODE ? passcode : passcodeMirror
-                }
-              />
-            </View>
+            <PasscodeInput
+              ref={inputRef}
+              passcode={mappedPasscode}
+              onChangeText={text => handleEnteredPasscode(text)}
+            />
             {error && (
               <View style={styles.errorContainer}>
                 <Text style={styles.errorText}>{error}</Text>
@@ -297,43 +272,15 @@ const BiometricScreen = () => {
 export default BiometricScreen;
 
 const styles = StyleSheet.create({
-  passcodeInput: {
-    paddingHorizontal: 15,
-    paddingVertical: 25,
-    opacity: 0,
-  },
-  passcodeInputBox: {
-    width: 44,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#DEDFE1',
-    borderRadius: 8,
-    backgroundColor: GLOBALS.COLORS.WHITE,
-  },
-  passcodeInputBoxDigit: {
-    color: GLOBALS.COLORS.BLACK,
-    fontSize: 20,
-    fontWeight: '500',
-  },
   passcodeWrapper: {
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
   },
-  passcodeContainer: {
-    position: 'absolute',
-    alignSelf: 'center',
-    marginTop: 24,
-    flexDirection: 'row',
-    gap: 7,
-    justifyContent: 'center',
-    marginVertical: 24,
-  },
   textPromptContainer: {
     alignItems: 'center',
     marginTop: 84,
+    marginBottom: 24,
   },
   textPrompt: {
     color: '#3D3E45',

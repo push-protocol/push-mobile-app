@@ -92,6 +92,7 @@ export const selectUserDomain = state => {
   return user.cns !== '' ? user.cns : user.ens !== '' ? user.ens : undefined;
 };
 export const selectIsGuest = state => state.auth.isGuest;
+export const selectIsLoggedIn = state => state.auth.isLoggedIn;
 
 export const {
   setInitialSignin,
