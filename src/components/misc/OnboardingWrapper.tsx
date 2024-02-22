@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -40,6 +41,7 @@ const OnboardingWrapper = ({
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={[styles.container, {backgroundColor}]}>
+      <StatusBar backgroundColor={backgroundColor} barStyle="dark-content" />
       <ScrollView contentContainerStyle={styles.flexGrow}>
         <Text style={styles.title}>{title}</Text>
         {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
@@ -90,7 +92,7 @@ const styles = StyleSheet.create({
     paddingTop: 55,
   },
   subtitle: {
-    marginHorizontal: '12%',
+    marginHorizontal: '16%',
     marginTop: 16,
     fontSize: 13,
     fontWeight: '400',
