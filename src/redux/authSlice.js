@@ -91,6 +91,10 @@ export const selectUserDomain = state => {
   const user = state.auth.users[state.auth.currentUser];
   return user.cns !== '' ? user.cns : user.ens !== '' ? user.ens : undefined;
 };
+export const selectUserAddress = state => {
+  const user = state.auth.users[state.auth.currentUser];
+  return user.wallet;
+};
 export const selectIsGuest = state => state.auth.isGuest;
 export const selectIsLoggedIn = state => state.auth.isLoggedIn;
 

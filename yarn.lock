@@ -12172,6 +12172,11 @@ react-native-hash@^3.0.0:
   resolved "https://registry.yarnpkg.com/react-native-hash/-/react-native-hash-3.0.3.tgz#fd53642a11e01cc069f49575760d4ed9cf4abddd"
   integrity sha512-ACHe793sUabwPrKNurEBBRJyP/xp4Ff4OfuEceFbVR8ny/PIMZCjlVVMhc6xHO8n3KDMUK54shv57HvqwduanQ==
 
+react-native-hole-view@^3.0.0-alpha4:
+  version "3.0.0-alpha4"
+  resolved "https://registry.yarnpkg.com/react-native-hole-view/-/react-native-hole-view-3.0.0-alpha4.tgz#b5f54df380636c3b4dfacd5c297117f068fa4531"
+  integrity sha512-pAIQCA13Dn42xLFsVziFXHRtTgRJ13SBrb1vwFG7cIFslMjmBhPdFlUrqYcN+wMTt2+OnZhRxgM4Yaf4+gARDg==
+
 react-native-image-picker@^7.1.0:
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-7.1.0.tgz#1a41cc45ccdc177c2ebf7c7accee0ceadc36abd8"
