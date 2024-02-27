@@ -15,6 +15,7 @@ import GLOBALS from 'src/Globals';
 import ErrorModalWrapper from 'src/components/misc/ErrorModalWrapper';
 import {QRCodeVerification} from 'src/helpers/QRCodeValidator';
 
+import usePermissions from '../system/usePermissions';
 import useModalBlur from './useModalBlur';
 
 const {height, width} = Dimensions.get('window');
@@ -41,21 +42,36 @@ const useQrScanner = ({
   const qrBorderWidth = qrWindowWidth + 40;
   const qrBorderHeight = qrWindowHeight + 40;
 
+  const {getCameraPermissionAsync} = usePermissions();
+
   const {
     showModal: showErrorModal,
     hideModal: hideErrorModal,
     ModalComponent: QRErrorModal,
   } = useModalBlur();
 
+  const {
+    showModal: showPermissionsModal,
+    hideModal: hidePermissionsModal,
+    ModalComponent: PermissionsErrorModal,
+  } = useModalBlur();
+
   const handleOpen = async () => {
-    const permission = await Camera.requestCameraPermissionsAsync();
-    if (permission.granted) setOpen(true);
-    Animated.timing(fadeAnimation, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-    await playScanSound();
+    await getCameraPermissionAsync({
+      onPermissionGranted: () => {
+        setOpen(true);
+        Animated.timing(fadeAnimation, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }).start(async () => {
+          await playScanSound();
+        });
+      },
+      onPermissionDenied: () => {
+        showPermissionsModal();
+      },
+    });
   };
 
   const handleClose = () => {
@@ -109,6 +125,24 @@ const useQrScanner = ({
                 bgColor: GLOBALS.COLORS.BLACK,
                 fontColor: GLOBALS.COLORS.WHITE,
                 onPress: hideErrorModal,
+              },
+            ],
+          }}
+        />
+        <PermissionsErrorModal
+          InnerComponent={ErrorModalWrapper}
+          InnerComponentProps={{
+            title: 'Camera Permissions',
+            subtitle: 'Please enable camera permissions to scan QR codes',
+            footerButtons: [
+              {
+                title: 'Ok',
+                bgColor: GLOBALS.COLORS.BLACK,
+                fontColor: GLOBALS.COLORS.WHITE,
+                onPress: () => {
+                  hidePermissionsModal();
+                  handleClose();
+                },
               },
             ],
           }}

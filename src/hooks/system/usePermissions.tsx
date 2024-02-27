@@ -5,15 +5,15 @@ const usePermissions = () => {
     onPermissionGranted,
     onPermissionDenied,
   }: {
-    onPermissionGranted: () => void;
-    onPermissionDenied: () => void;
+    onPermissionGranted?: () => void;
+    onPermissionDenied?: () => void;
   }) => {
     const permission = await Camera.getCameraPermissionsAsync();
     if (permission.granted || (await Camera.requestCameraPermissionsAsync())) {
-      onPermissionGranted();
+      onPermissionGranted?.();
       return;
     }
-    onPermissionDenied();
+    onPermissionDenied?.();
   };
 
   return {getCameraPermissionAsync};

@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: Constants.statusBarHeight,
+    flexGrow: 1,
   },
   flexGrow: {
     flexGrow: 1,
