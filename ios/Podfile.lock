@@ -417,6 +417,8 @@ PODS:
     - React-Core
   - react-native-hash (3.0.3):
     - React
+  - react-native-hole-view (3.0.0-alpha4):
+    - React-Core
   - react-native-image-picker (7.1.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -631,6 +633,7 @@ DEPENDENCIES:
   - react-native-fast-openpgp (from `../node_modules/react-native-fast-openpgp`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-hash (from `../node_modules/react-native-hash`)
+  - react-native-hole-view (from `../node_modules/react-native-hole-view`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -786,6 +789,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-get-random-values"
   react-native-hash:
     :path: "../node_modules/react-native-hash"
+  react-native-hole-view:
+    :path: "../node_modules/react-native-hole-view"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-randombytes:
@@ -930,6 +935,7 @@ SPEC CHECKSUMS:
   react-native-fast-openpgp: 66d3a1cce74d205bcb7bad5ed6f63b91ce151ee7
   react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-hash: 4664516df1834e1293b30e711c63f61f7f801b6a
+  react-native-hole-view: 6935448993bac79f2b5a4ad7e9741094cf810679
   react-native-image-picker: 5e076db26cd81660cfb6db5bcf517cfa12054d45
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: 39c2d8be3328df5d437ac1700f4f3a4f75716acc

@@ -104,13 +104,12 @@ const BiometricScreen = () => {
           await loadNextScreen();
         } else {
           let biometricType = BIOMETRIC_TYPES.NULL;
-
-          if (biometricSupported === AuthenticationType.FINGERPRINT) {
+          if (supported === AuthenticationType.FINGERPRINT) {
             biometricType = BIOMETRIC_TYPES.TOUCH_ID;
-          } else if (
-            biometricSupported === AuthenticationType.FACIAL_RECOGNITION
-          ) {
+          } else if (supported === AuthenticationType.FACIAL_RECOGNITION) {
             biometricType = BIOMETRIC_TYPES.FACE_ID;
+          } else {
+            loadNextScreen();
           }
           setBiometricType(biometricType);
           setPkeyEncrypted(true);
