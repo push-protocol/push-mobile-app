@@ -1,5 +1,5 @@
 import messaging from '@react-native-firebase/messaging';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {CommonActions, useNavigation, useRoute} from '@react-navigation/native';
 import {
   AuthenticationType,
   LocalAuthenticationOptions,
@@ -22,7 +22,6 @@ import LoadingSpinner from 'src/components/loaders/LoadingSpinner';
 import OnboardingWrapper from 'src/components/misc/OnboardingWrapper';
 import BiometricHelper from 'src/helpers/BiometricHelper';
 import CryptoHelper from 'src/helpers/CryptoHelper';
-import useAuth from 'src/hooks/auth/useAuth';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 const STEPS = {
@@ -57,10 +56,9 @@ const BiometricScreen = () => {
   const inputRef = useRef<TextInput>(null);
   const navigation = useNavigation();
   const route = useRoute();
-  const {login} = useAuth();
 
   useEffect(() => {
-    inputRef.current?.focus();
+    setTimeout(() => inputRef.current?.focus(), 200);
   }, []);
 
   const resetPasscode = (error?: string) => {
@@ -77,7 +75,6 @@ const BiometricScreen = () => {
       setStep(STEPS.VERIFY_PASSCODE);
       inputRef.current?.focus();
     } else {
-      console.log('CHECKING', passcode, value, step);
       if (passcode !== value) {
         Vibration.vibrate();
         resetPasscode(ERRORS.PASSCODE_MISMATCH);
@@ -116,12 +113,11 @@ const BiometricScreen = () => {
             biometricType = BIOMETRIC_TYPES.FACE_ID;
           }
           setBiometricType(biometricType);
+          setPkeyEncrypted(true);
+          setEncryptedPKey(encryptedPkey);
+          setBiometricSupported(supported);
+          setStep(STEPS.PASSCODE_CONFIRMED);
         }
-
-        setPkeyEncrypted(true);
-        setEncryptedPKey(encryptedPkey);
-        setBiometricSupported(supported);
-        setStep(STEPS.PASSCODE_CONFIRMED);
       }
     }
   };
@@ -183,12 +179,20 @@ const BiometricScreen = () => {
     // If not, skip this step completely as user either gave permission or denied it
     const authorizationStatus = await messaging().hasPermission();
 
-    if (authorizationStatus === messaging.AuthorizationStatus.NOT_DETERMINED) {
-      // @ts-ignore
-      navigation.navigate(GLOBALS.SCREENS.PUSHNOTIFY);
-    } else {
-      await login();
-    }
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name:
+              authorizationStatus ===
+              messaging.AuthorizationStatus.NOT_DETERMINED
+                ? GLOBALS.SCREENS.PUSHNOTIFY
+                : GLOBALS.SCREENS.GETSTARTED,
+          },
+        ],
+      }),
+    );
   };
 
   const textPrompt = useMemo(() => {

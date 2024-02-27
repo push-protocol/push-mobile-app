@@ -11,15 +11,24 @@ import {QR_TYPES} from 'src/enums';
 import Web3Helper from 'src/helpers/Web3Helper';
 import usePermissions from 'src/hooks/system/usePermissions';
 import useNotice from 'src/hooks/ui/useNotice';
+import useQrScanner from 'src/hooks/ui/useQrScanner';
 import {setAuthType, setInitialSignin, setIsGuest} from 'src/redux/authSlice';
 
 const SignInScreenAdvance = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [privateKey, setPrivateKey] = useState('');
   const [error, setError] = useState({title: '', subtitle: ''});
-  const qrScannerRef = useRef<QRScanner>(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  const {hideScanner, showScanner, ScannerComponent} = useQrScanner({
+    title: 'Scan your private key to continue.',
+    doneFunc: async (code: string) => {
+      setPrivateKey(code);
+      await handleLogin(code);
+    },
+    qrType: QR_TYPES.ETH_PK_SCAN,
+  });
 
   const {getCameraPermissionAsync} = usePermissions();
 
@@ -36,7 +45,7 @@ const SignInScreenAdvance = () => {
   } = useNotice();
 
   const toggleQRScanner = (toggle: boolean) => {
-    qrScannerRef.current?.changeRenderState(toggle, navigation);
+    toggle ? showScanner() : hideScanner();
   };
 
   const handleLogin = async (key?: string) => {
@@ -119,19 +128,7 @@ const SignInScreenAdvance = () => {
           />
         </View>
       </OnboardingWrapper>
-      <QRScanner
-        ref={qrScannerRef}
-        navigation={navigation}
-        navHeader="Link Wallet Address"
-        errorMessage="Ensure that it is a valid Eth private key QR"
-        title="Scan your Eth private key to link your device to the push app"
-        qrType={QR_TYPES.ETH_PK_SCAN}
-        doneFunc={async (code: string) => {
-          setPrivateKey(code);
-          await handleLogin(code);
-        }}
-        closeFunc={() => toggleQRScanner(false)}
-      />
+      <ScannerComponent />
       <PermissionsNotice
         closeFunc={hidePermissionsNotice}
         closeTitle="OK"

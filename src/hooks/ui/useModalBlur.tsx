@@ -32,6 +32,7 @@ const useModalBlur = () => {
           animationOut="fadeOut"
           animationOutTiming={500}
           backdropOpacity={1}
+          statusBarTranslucent={true}
           customBackdrop={
             <BlurView intensity={70} tint="dark" style={styles.blurView} />
           }>

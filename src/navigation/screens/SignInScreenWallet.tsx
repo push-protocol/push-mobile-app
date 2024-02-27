@@ -1,16 +1,16 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import LimitInput from 'src/components/input/LimitInput';
 import OnboardingWrapper from 'src/components/misc/OnboardingWrapper';
-import QRScanner from 'src/components/modals/QRScanner';
 import {QR_TYPES} from 'src/enums';
 import Web3Helper from 'src/helpers/Web3Helper';
 import usePermissions from 'src/hooks/system/usePermissions';
 import useNotice from 'src/hooks/ui/useNotice';
+import useQrScanner from 'src/hooks/ui/useQrScanner';
 import {setAuthType, setInitialSignin, setIsGuest} from 'src/redux/authSlice';
 
 const SignInScreenWallet = () => {
@@ -18,7 +18,17 @@ const SignInScreenWallet = () => {
   const [input, setInput] = useState('');
   const [error, setError] = useState({title: '', subtitle: ''});
 
-  const qrScannerRef = useRef<QRScanner>(null);
+  const {ScannerComponent, hideScanner, isScannerOpen, showScanner} =
+    useQrScanner({
+      qrType: QR_TYPES.ETH_ADDRESS_SCAN,
+      doneFunc: async (code: string) => {
+        const addr = code.includes(':') ? code.split(':')[1] : code;
+        setInput(addr);
+        await handleSignin(addr);
+      },
+      title: 'Scan your wallet address to continue.',
+    });
+
   const navigation = useNavigation();
   const {getCameraPermissionAsync} = usePermissions();
   const dispatch = useDispatch();
@@ -36,7 +46,7 @@ const SignInScreenWallet = () => {
   } = useNotice();
 
   const toggleQRScanner = (toggle: boolean) => {
-    qrScannerRef.current?.changeRenderState(toggle, navigation);
+    toggle ? showScanner() : hideScanner();
   };
 
   const handleSignin = async (code?: string) => {
@@ -115,20 +125,7 @@ const SignInScreenWallet = () => {
           />
         </View>
       </OnboardingWrapper>
-      <QRScanner
-        ref={qrScannerRef}
-        navigation={navigation}
-        navHeader="Link Wallet Address"
-        errorMessage="Ensure that it is a valid Eth address QR"
-        title="Scan your Eth wallet address to link your device to the push app"
-        qrType={QR_TYPES.ETH_ADDRESS_SCAN}
-        doneFunc={async (code: string) => {
-          const addr = code.includes(':') ? code.split(':')[1] : code;
-          setInput(addr);
-          await handleSignin(addr);
-        }}
-        closeFunc={() => toggleQRScanner(false)}
-      />
+      <ScannerComponent />
       <PermissionsNotice
         closeFunc={hidePermissionsNotice}
         closeTitle="OK"

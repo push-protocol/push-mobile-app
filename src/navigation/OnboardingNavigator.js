@@ -3,6 +3,7 @@ import React from 'react';
 import GLOBALS from 'src/Globals';
 
 import BiometricScreen from './screens/BiometricScreen';
+import GetStartedScreen from './screens/GetStartedScreen';
 import PushNotifyScreen from './screens/PushNotifyScreen';
 import SetupCompleteScreen from './screens/SetupCompleteScreen';
 import SignInScreen from './screens/SignInScreen';
@@ -86,6 +87,15 @@ const OnboardingNavigator = () => {
       <Stack.Screen
         name={GLOBALS.SCREENS.PUSHNOTIFY}
         component={PushNotifyScreen}
+        options={{
+          headerShown: false,
+          headerTintColor: GLOBALS.COLORS.MID_GRAY,
+        }}
+      />
+
+      <Stack.Screen
+        name={GLOBALS.SCREENS.GETSTARTED}
+        component={GetStartedScreen}
         options={{
           headerShown: false,
           headerTintColor: GLOBALS.COLORS.MID_GRAY,

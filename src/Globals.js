@@ -155,6 +155,7 @@ export default {
     SIGNINWALLET: 'SignInWallet',
     BIOMETRIC: 'Biometric',
     PUSHNOTIFY: 'PushNotify',
+    GETSTARTED: 'GetStarted',
     SETUPCOMPLETE: 'SetupComplete',
     TABS: 'Tabs',
     SETTINGS: 'Settings',
