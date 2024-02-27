@@ -94,13 +94,13 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     marginHorizontal: '16%',
-    marginTop: 16,
+    marginVertical: 16,
     fontSize: 13,
     fontWeight: '400',
     textAlign: 'center',
   },
   footer: {
-    paddingBottom: '10%',
+    paddingVertical: '10%',
     paddingHorizontal: 20,
     width: '100%',
     alignItems: 'center',

@@ -132,8 +132,8 @@ const useQrScanner = ({
         <PermissionsErrorModal
           InnerComponent={ErrorModalWrapper}
           InnerComponentProps={{
-            title: 'Camera Permissions',
-            subtitle: 'Please enable camera permissions to scan QR codes',
+            title: 'Enable Camera Permission',
+            subtitle: 'Please enable camera permission to scan QR codes',
             footerButtons: [
               {
                 title: 'Ok',
