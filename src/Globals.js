@@ -147,6 +147,13 @@ export default {
     STATUS_YELLOW: '#F2CB65',
     STATUS_GREEN: '#5DD177',
     STATUS_YELLOW_BG: '#FDF7EE',
+
+    // Backgrounds
+    BG_WELCOME: '#F6EDFF',
+    BG_SIGNIN: '#EFF2FF',
+    BG_SETUPCOMPLETE: '#F1FDFF',
+    BG_BIOMETRIC: '#F9F9F9',
+    BG_PUSHNOTIFY: '#FDF7EE',
   },
   SCREENS: {
     WELCOME: 'Welcome',

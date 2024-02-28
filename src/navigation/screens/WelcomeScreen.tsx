@@ -14,13 +14,14 @@ const WelcomeScreen = () => {
 
   return (
     <OnboardingWrapper
+      backgroundColor={GLOBALS.COLORS.BG_WELCOME}
       title="Your communication app for web3 & blockchain"
       footerLabel="Visit [push.org](https://push.org) to learn more about it."
       footerButtons={[
         {
           title: 'Continue',
           fontColor: GLOBALS.COLORS.WHITE,
-          bgColor: GLOBALS.COLORS.GRADIENT_THIRD,
+          bgColor: GLOBALS.COLORS.BLACK,
           onPress: loadNextScreen,
         },
       ]}>

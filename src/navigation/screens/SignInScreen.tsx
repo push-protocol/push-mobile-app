@@ -80,6 +80,7 @@ const SingInScreen = () => {
   return (
     <>
       <OnboardingWrapper
+        backgroundColor={GLOBALS.COLORS.BG_SIGNIN}
         title="Connect your wallet to enable important features in Push."
         footerLabel="By signing in, you agree to Push's [Terms & Conditions](https://push.org/tos/) and [Privacy Policy](https://push.org/privacy/)."
         footerButtons={[
@@ -100,7 +101,7 @@ const SingInScreen = () => {
             iconFirst: true,
             title: 'Enter wallet address',
             fontColor: GLOBALS.COLORS.BLACK,
-            bgColor: GLOBALS.COLORS.WHITE,
+            bgColor: GLOBALS.COLORS.TRANSPARENT,
             borderColor: GLOBALS.COLORS.MID_GRAY,
             onPress: loadWalletScreen,
           },
@@ -111,7 +112,7 @@ const SingInScreen = () => {
             iconFirst: true,
             title: 'Advanced',
             fontColor: GLOBALS.COLORS.BLACK,
-            bgColor: GLOBALS.COLORS.WHITE,
+            bgColor: GLOBALS.COLORS.TRANSPARENT,
             borderColor: GLOBALS.COLORS.MID_GRAY,
             onPress: loadAdvanceScreen,
           },

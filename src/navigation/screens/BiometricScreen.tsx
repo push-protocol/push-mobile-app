@@ -211,7 +211,7 @@ const BiometricScreen = () => {
           {
             title: `Enable ${biometricType}`,
             disabled: !pkeyEncrypted,
-            bgColor: GLOBALS.COLORS.PINK,
+            bgColor: GLOBALS.COLORS.BLACK,
             fontColor: GLOBALS.COLORS.WHITE,
             loading: isSetupLoading,
             onPress: loadNextScreenAfterAdditionalSetup,
@@ -237,14 +237,20 @@ const BiometricScreen = () => {
 
   return (
     <OnboardingWrapper
-      backgroundColor="#F9F9F9"
+      backgroundColor={GLOBALS.COLORS.BG_BIOMETRIC}
       title={onboardingWrapperProps.title}
       subtitle={onboardingWrapperProps.subtitle}
       footerButtons={onboardingWrapperProps.footerButtons}>
       {step === STEPS.PASSCODE_CONFIRMED ? (
         <View style={styles.imageContainer}>
           {pkeyEncrypted ? (
-            <Image source={require('assets/ui/biometric.png')} />
+            <Image
+              source={
+                biometricType === BIOMETRIC_TYPES.FACE_ID
+                  ? require('assets/ui/ob-faceid.png')
+                  : require('assets/ui/biometric.png')
+              }
+            />
           ) : (
             <LoadingSpinner />
           )}

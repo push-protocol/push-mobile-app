@@ -73,13 +73,14 @@ const SignInScreenWallet = () => {
   return (
     <>
       <OnboardingWrapper
+        backgroundColor={GLOBALS.COLORS.BG_BIOMETRIC}
         title="Enter your wallet address to sign in."
         footerButtons={[
           {
             loading: loading,
             title: 'Sign In',
             onPress: () => handleSignin(),
-            bgColor: GLOBALS.COLORS.PINK,
+            bgColor: GLOBALS.COLORS.BLACK,
             fontColor: GLOBALS.COLORS.WHITE,
           },
         ]}>

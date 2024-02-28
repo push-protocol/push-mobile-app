@@ -29,7 +29,7 @@ const PushNotifyScreen = () => {
   return (
     <OnboardingWrapper
       title="Receive notifications for your preferred wallet activity."
-      backgroundColor="#FDF7EE"
+      backgroundColor={GLOBALS.COLORS.BG_PUSHNOTIFY}
       footerButtons={[
         {
           title: 'Enable Notifications',

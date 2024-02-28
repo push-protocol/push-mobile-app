@@ -73,6 +73,7 @@ const SignInScreenAdvance = () => {
   return (
     <>
       <OnboardingWrapper
+        backgroundColor={GLOBALS.COLORS.BG_BIOMETRIC}
         title="Import your existing account using private key."
         subtitle="Please proceed with importing your private key only if you are fully aware of the risks and are confident in this approach."
         footerLabel="Your private key can be used by malicious apps to compromise you. [Learn about risks](https://www.coinbase.com/learn/crypto-basics/what-is-a-private-key) and [Verify our repo](https://github.com/ethereum-push-notification-service/push-mobile-app)"
