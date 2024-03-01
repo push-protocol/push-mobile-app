@@ -15,7 +15,7 @@ const openURL = async url => {
   await Linking.openURL(url);
 };
 
-const ChannelItem = ({style, item, wallet, contract, pKey}) => {
+const ChannelItem = ({item}) => {
   return item.icon && item.name ? (
     <View style={styles.container}>
       <TouchableOpacity
@@ -44,11 +44,7 @@ const ChannelItem = ({style, item, wallet, contract, pKey}) => {
           </View>
 
           <View style={styles.controlsContainer}>
-            <SubscriptionStatus
-              channel={item.channel}
-              user={wallet}
-              pKey={pKey}
-            />
+            <SubscriptionStatus channel={item.channel} />
           </View>
         </View>
       </TouchableOpacity>

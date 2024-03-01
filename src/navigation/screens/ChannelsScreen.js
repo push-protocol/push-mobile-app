@@ -9,7 +9,7 @@ const ChannelsScreen = () => {
   const users = useSelector(selectUsers);
   const currentUser = useSelector(selectCurrentUser);
 
-  const {wallet, userPKey} = users[currentUser];
+  const {wallet} = users[currentUser];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -20,7 +20,7 @@ const ChannelsScreen = () => {
       />
 
       <View style={styles.content}>
-        <ChannelsDisplayer wallet={wallet} pKey={userPKey} />
+        <ChannelsDisplayer />
       </View>
     </SafeAreaView>
   );

@@ -1,5 +1,5 @@
 import '@ethersproject/shims';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -8,65 +8,68 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import {useSelector} from 'react-redux';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ChannelItem from 'src/components/ui/ChannelItem';
 import {usePushApi} from 'src/contexts/PushApiContext';
-import ENV_CONFIG from 'src/env.config';
+import useChannels from 'src/hooks/channel/useChannels';
+import useSubscriptions from 'src/hooks/channel/useSubscriptions';
+import {selectChannels, selectChannelsReachedEnd} from 'src/redux/channelSlice';
 
 import Globals from '../../Globals';
 
-const ChannelsDisplayer = ({style, wallet, pKey}) => {
-  const [channels, setChannels] = useState([]);
-  const [page, setPage] = useState(1);
-
-  const [refreshing, setRefreshing] = useState(true);
-
-  const [contract] = useState(null);
-  const [endReached] = useState(false);
-
+const ChannelsDisplayer = ({style}) => {
   const [searchTimer, setSearchTimer] = useState(null);
-  const [isSearchEnded, setIsSearchEnded] = useState(false);
 
   const DEBOUNCE_TIMEOUT = 500; //time in millisecond which we want to wait for then to finish typing
   const [search, setSearch] = React.useState('');
 
+  const [showSearchResults, setShowSearchResults] = useState(false);
+
+  const channelResults = useSelector(selectChannels);
+  const channelsReachedEnd = useSelector(selectChannelsReachedEnd);
+  const {
+    loadMoreChannels,
+    loadSearchResults,
+    isLoadingChannels,
+    isLoadingSearchResults,
+    searchResults,
+  } = useChannels();
+
+  const {refreshSubscriptions} = useSubscriptions();
   const {userPushSDKInstance} = usePushApi();
 
-  const fetchChannels = async () => {
-    const apiURL = ENV_CONFIG.EPNS_SERVER + ENV_CONFIG.ENDPOINT_FETCH_CHANNELS;
-    const requestURL = `${apiURL}?limit=10&page=${page}`;
-    const resJson = await fetch(requestURL).then(response => response.json());
-    if (resJson.count !== 0 && resJson.channels !== []) {
-      setChannels(prev => [...prev, ...resJson.channels]);
-      setPage(prev => prev + 1);
-    }
-    setRefreshing(false);
-  };
+  const channels = useMemo(() => {
+    return showSearchResults ? searchResults : channelResults;
+  }, [showSearchResults, searchResults, channelResults]);
+
+  const endReached = useMemo(() => {
+    return showSearchResults ? true : channelsReachedEnd;
+  }, [showSearchResults, true, channelsReachedEnd]);
+
+  const isLoading = useMemo(() => {
+    return showSearchResults ? isLoadingSearchResults : isLoadingChannels;
+  }, [showSearchResults, isLoadingSearchResults, isLoadingChannels]);
+
+  const loadMore = useMemo(() => {
+    return showSearchResults ? () => {} : loadMoreChannels;
+  }, [showSearchResults]);
 
   useEffect(() => {
-    if (refreshing) {
-      fetchChannels();
+    if (userPushSDKInstance) {
+      loadMore();
+      refreshSubscriptions();
     }
-  }, [refreshing]);
+  }, [userPushSDKInstance]);
 
   const searchForChannel = async channelName => {
-    setChannels([]);
-
-    // normal fetch for empty query
     if (channelName.trim() === '') {
-      await fetchChannels();
+      setShowSearchResults(false);
       return;
     }
-
-    setIsSearchEnded(false);
-    const channels = await userPushSDKInstance.channel.search(channelName, {
-      limit: 20,
-      page: 1,
-    });
-
-    setChannels(channels);
-    setIsSearchEnded(true);
+    setShowSearchResults(true);
+    await loadSearchResults(channelName);
   };
 
   const handleChannelSearch = async searchQuery => {
@@ -100,7 +103,7 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
 
       {channels.length === 0 && (
         <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-          {isSearchEnded ? (
+          {!isLoading ? (
             // Show channel not found label
             <StylishLabel
               style={styles.infoText}
@@ -129,19 +132,14 @@ const ChannelsDisplayer = ({style, wallet, pKey}) => {
           keyExtractor={item => item.channel.toString()}
           initialNumToRender={20}
           showsVerticalScrollIndicator={false}
-          onEndReached={async () =>
-            !endReached && search === '' ? setRefreshing(true) : null
-          }
-          renderItem={({item}) => (
-            <ChannelItem
-              item={item}
-              wallet={wallet}
-              contract={contract}
-              pKey={pKey}
-            />
-          )}
+          onEndReached={() => {
+            if (!endReached) {
+              loadMore(search);
+            }
+          }}
+          renderItem={({item}) => <ChannelItem item={item} />}
           ListFooterComponent={() => {
-            return endReached ? (
+            return isLoading ? (
               <View style={{paddingBottom: 20, marginTop: 20}}>
                 <EPNSActivity style={styles.activity} size="small" />
               </View>
