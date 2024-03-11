@@ -1,20 +1,39 @@
+import {Ionicons, MaterialIcons} from '@expo/vector-icons';
 import React, {useMemo, useState} from 'react';
-import {ActivityIndicator, StyleSheet, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import useSubscriptions from 'src/hooks/channel/useSubscriptions';
 import {
+  selectChannel,
   selectIsLoadingSubscriptions,
   selectSubscriptions,
 } from 'src/redux/channelSlice';
 
-const SubscriptionStatus = ({channel}: {channel: string}) => {
+const SubscriptionStatus = ({
+  channel,
+  index,
+  selectChannelForSettings,
+}: {
+  channel: string;
+  index: number;
+  selectChannelForSettings: (index: number) => void;
+}) => {
   const [processing, setProcessing] = useState(false);
   const subscriptions = useSelector(selectSubscriptions);
   const isLoadingSubscriptions = useSelector(selectIsLoadingSubscriptions);
+  const channelData = useSelector(selectChannel(index));
 
   const {subscribe, unsubscribe} = useSubscriptions();
+
+  const channelSettings = channelData.channel_settings;
 
   const subscribed = useMemo(() => {
     return subscriptions?.[channel] !== undefined;
@@ -25,52 +44,50 @@ const SubscriptionStatus = ({channel}: {channel: string}) => {
     if (subscribed === true) {
       await unsubscribe(channel);
     } else {
-      await subscribe(channel);
+      if (channelSettings) {
+        selectChannelForSettings(index);
+      } else {
+        await subscribe(channel);
+      }
     }
     setProcessing(false);
   };
 
   return (
     <View style={styles.container}>
-      {isLoadingSubscriptions && (
-        <ActivityIndicator
-          size={'small'}
-          color={GLOBALS.COLORS.GRADIENT_PRIMARY}
-        />
-      )}
-
-      {subscribed === true && (
-        <PrimaryButton
-          style={styles.controlPrimary}
-          setButtonStyle={{borderRadius: 0, padding: 0}}
-          iconFactory="MaterialCommunityIcons"
-          icon="checkbox-marked"
-          iconSize={24}
-          fontSize={10}
-          fontColor={GLOBALS.COLORS.WHITE}
-          bgColor={GLOBALS.COLORS.GRADIENT_PRIMARY}
-          setHeight="100%"
-          disabled={processing}
-          loading={processing}
+      {!isLoadingSubscriptions && subscribed === true && (
+        <Pressable
           onPress={handleChangeSubStatus}
-        />
+          style={styles.unsubButton}
+          disabled={processing}>
+          {processing ? (
+            <ActivityIndicator size="small" color={GLOBALS.COLORS.BLACK} />
+          ) : (
+            <>
+              <MaterialIcons
+                name="notifications-active"
+                size={16}
+                color={GLOBALS.COLORS.BLACK}
+              />
+              <Text>Subscribed</Text>
+              <Ionicons
+                name="chevron-down"
+                size={16}
+                color={GLOBALS.COLORS.BLACK}
+              />
+            </>
+          )}
+        </Pressable>
       )}
 
-      {subscribed === false && (
+      {!isLoadingSubscriptions && subscribed === false && (
         <PrimaryButton
-          style={styles.controlPrimary}
-          setButtonStyle={{borderRadius: 0, padding: 0}}
-          setButtonInnerStyle={{flexDirection: 'column-reverse'}}
-          title="Opt In"
-          iconFactory="MaterialCommunityIcons"
-          icon="checkbox-blank-outline"
-          iconSize={24}
-          iconColor={GLOBALS.COLORS.BLACK}
-          fontSize={10}
-          fontColor={GLOBALS.COLORS.MID_BLACK_TRANS}
-          bgColor={GLOBALS.COLORS.LIGHT_BLACK_TRANS}
-          color={GLOBALS.COLORS.GRADIENT_PRIMARY}
-          setHeight="100%"
+          style={styles.subButton}
+          setButtonStyle={styles.buttonStyle}
+          title="Subscribe"
+          fontSize={15}
+          fontColor={GLOBALS.COLORS.WHITE}
+          bgColor={GLOBALS.COLORS.BLACK}
           disabled={processing}
           loading={processing}
           onPress={handleChangeSubStatus}
@@ -81,16 +98,25 @@ const SubscriptionStatus = ({channel}: {channel: string}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    overflow: 'hidden',
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-    justifyContent: 'center',
+  container: {},
+  subButton: {
+    minWidth: 95,
   },
-  controlPrimary: {
-    flex: 1,
-    maxHeight: '100%',
+  buttonStyle: {
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+  },
+  unsubButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EFEFEF',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    gap: 6,
+    minWidth: 130,
   },
 });
 
