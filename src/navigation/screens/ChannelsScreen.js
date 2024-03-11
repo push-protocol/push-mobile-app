@@ -1,28 +1,22 @@
 import React from 'react';
 import {SafeAreaView, StatusBar, StyleSheet, View} from 'react-native';
-import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import ChannelsDisplayer from 'src/components/ui/ChannelsDisplayer';
-import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
+import ChannelsHeader from 'src/components/ui/ChannelsHeader';
 
 const ChannelsScreen = () => {
-  const users = useSelector(selectUsers);
-  const currentUser = useSelector(selectCurrentUser);
-
-  const {wallet} = users[currentUser];
-
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar
-        barStyle={'dark-content'}
-        translucent
-        backgroundColor="transparent"
-      />
-
-      <View style={styles.content}>
+    <>
+      <SafeAreaView style={styles.container}>
+        <StatusBar
+          barStyle={'dark-content'}
+          translucent
+          backgroundColor="transparent"
+        />
+        <ChannelsHeader />
         <ChannelsDisplayer />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </>
   );
 };
 
@@ -53,12 +47,6 @@ const styles = StyleSheet.create({
     width: 24,
     marginTop: 5,
     marginRight: 10,
-  },
-  content: {
-    flex: 1,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
 

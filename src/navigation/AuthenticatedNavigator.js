@@ -50,7 +50,7 @@ export default function AuthenticatedNavigator() {
             backgroundColor: 'white',
             style: 'dark',
           },
-          header: () => <Header />,
+          headerShown: false,
         }}
       />
 
