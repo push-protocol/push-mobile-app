@@ -1,11 +1,27 @@
-import {NotificationSettings} from '@pushprotocol/restapi';
 import {PayloadAction, createSlice} from '@reduxjs/toolkit';
+import {
+  ChannelSetting,
+  UserSetting,
+} from 'src/components/sheets/NFSettingSheet';
 
-type Channel = {};
+export type Channel = {
+  name: string;
+  icon: string;
+  subscriber_count: number;
+  channel: string;
+  itemcount: number;
+  processed: number;
+  timestamp: string;
+  url: string;
+  info: string;
+  verified_status: 0 | 1;
+  alias_blockchain_id: null | string;
+  channel_settings: null | string;
+};
 
 interface ISubscription {
   channel: string;
-  user_settings: NotificationSettings | null;
+  user_settings: UserSetting[] | null;
 }
 
 export type SubscriptionsMapping = {[key: string]: ISubscription | undefined};
@@ -75,6 +91,8 @@ export const {
 type ReturnTypeChannel = {channel: ChannelSliceData};
 export const selectChannels = (state: ReturnTypeChannel) =>
   state.channel.channels;
+export const selectChannel = (index: number) => (state: ReturnTypeChannel) =>
+  state.channel.channels[index];
 export const selectSubscriptions = (state: ReturnTypeChannel) =>
   state.channel.subscriptions;
 export const selectChannelsReachedEnd = (state: ReturnTypeChannel) =>
