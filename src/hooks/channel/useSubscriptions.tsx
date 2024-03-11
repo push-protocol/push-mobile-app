@@ -1,4 +1,5 @@
 import {UserSetting} from '@pushprotocol/restapi';
+import {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import envConfig from 'src/env.config';
@@ -13,6 +14,7 @@ import {
 } from 'src/redux/channelSlice';
 
 const useSubscriptions = () => {
+  const [loaded, setLoaded] = useState(false);
   const {userPushSDKInstance, showUnlockProfileModal, readOnlyMode} =
     usePushApi();
   const subscriptions = useSelector(selectSubscriptions);
@@ -56,8 +58,9 @@ const useSubscriptions = () => {
     } catch (e) {}
   };
 
-  const refreshSubscriptions = async () => {
+  const refreshSubscriptions = async (force = false) => {
     try {
+      if (loaded && !force) return;
       dispatch(setLoadingSubscriptions(true));
       const response = await userPushSDKInstance?.notification.subscriptions({
         account: caip10ToWallet(userPushSDKInstance?.account),
@@ -74,6 +77,7 @@ const useSubscriptions = () => {
         };
       });
       dispatch(setSubscriptions(subscriptionsMapping));
+      setLoaded(true);
     } catch (e) {
     } finally {
       dispatch(setLoadingSubscriptions(false));
