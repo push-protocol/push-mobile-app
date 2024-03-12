@@ -564,6 +564,10 @@ PODS:
     - React-Core
   - RNOS (1.2.6):
     - React
+  - RNReanimated (3.7.2):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
+    - ReactCommon/turbomodule/core
   - RNScreens (3.20.0):
     - React-Core
     - React-RCTImage
@@ -666,6 +670,7 @@ DEPENDENCIES:
   - RNLocalize (from `../node_modules/react-native-localize`)
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNOS (from `../node_modules/react-native-os`)
+  - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVoipPushNotification (from `../node_modules/react-native-voip-push-notification`)
@@ -856,6 +861,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@notifee/react-native"
   RNOS:
     :path: "../node_modules/react-native-os"
+  RNReanimated:
+    :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNSVG:
@@ -965,6 +972,7 @@ SPEC CHECKSUMS:
   RNLocalize: dbea38dcb344bf80ff18a1757b1becf11f70cae4
   RNNotifee: f3c01b391dd8e98e67f539f9a35a9cbcd3bae744
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
+  RNReanimated: 2dc3707222fa153658386f4c0d357e0853327c3d
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNSVG: 07dbd870b0dcdecc99b3a202fa37c8ca163caec2
   RNVoipPushNotification: 543e18f83089134a35e7f1d2eba4c8b1f7776b08
@@ -976,4 +984,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: eb792cc232500f7ddef117e6637abcb6fadff54c
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.15.2

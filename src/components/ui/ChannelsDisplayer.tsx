@@ -1,14 +1,7 @@
 import '@ethersproject/shims';
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {
-  FlatList,
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  TextInput,
-  View,
-} from 'react-native';
+import {FlatList, Image, StyleSheet, TextInput, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
@@ -112,7 +105,7 @@ const ChannelsDisplayer = () => {
 
   return (
     <>
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <View style={styles.searchView}>
           <Image
             source={require('assets/ui/search.png')}
@@ -178,7 +171,7 @@ const ChannelsDisplayer = () => {
             }}
           />
         )}
-      </SafeAreaView>
+      </View>
       <BottomSheet
         ref={bottomSheetRef}
         handleIndicatorStyle={styles.handleIndicator}
@@ -211,8 +204,8 @@ const ChannelsDisplayer = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
     paddingHorizontal: 16,
+    backgroundColor: Globals.COLORS.WHITE,
   },
   channels: {
     flex: 1,
@@ -239,6 +232,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: '#EFEFEF',
     marginBottom: 24,
+    height: 42,
   },
   searchBar: {
     fontSize: 14,

@@ -28,10 +28,12 @@ const useSubscriptions = () => {
     }
     const pushSettings: PushUserSetting[] | undefined = settings?.map(
       setting => {
-        return {
-          enabled: setting.type === 1 ? setting.user : setting.enabled,
-          value: setting.type === 1 ? undefined : setting.user,
-        };
+        if (setting.type === 1) return {enabled: setting.user};
+        else
+          return {
+            enabled: setting.enabled,
+            value: setting.user,
+          };
       },
     );
     try {
