@@ -27,7 +27,7 @@ const SubscriptionStatus = ({
   const [processing, setProcessing] = useState(false);
   const subscriptions = useSelector(selectSubscriptions);
   const isLoadingSubscriptions = useSelector(selectIsLoadingSubscriptions);
-  const {subscribe, unsubscribe} = useSubscriptions();
+  const {subscribe} = useSubscriptions();
 
   const channelSettings = channelData.channel_settings;
   const channel = channelData.channel;
@@ -39,7 +39,7 @@ const SubscriptionStatus = ({
   const handleChangeSubStatus = async () => {
     setProcessing(true);
     if (subscribed === true) {
-      await unsubscribe(channel);
+      selectChannelForSettings(channelData);
     } else {
       if (channelSettings) {
         selectChannelForSettings(channelData);

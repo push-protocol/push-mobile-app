@@ -75,9 +75,6 @@ const ChannelsDisplayer = () => {
     }
   }, [userPushSDKInstance]);
 
-  console.log('Channels', channels);
-  console.log('SearchResults', searchResults);
-
   const selectChannelForSettings = (channel: Channel) => {
     setNfSettingCurrentChannel(channel);
     bottomSheetRef.current?.expand();
@@ -104,6 +101,14 @@ const ChannelsDisplayer = () => {
       }, DEBOUNCE_TIMEOUT),
     );
   };
+
+  const snapPoints = useMemo(() => {
+    if (nfSettingCurrentChannel && nfSettingCurrentChannel.channel_settings) {
+      return ['85%'];
+    } else {
+      return [200];
+    }
+  }, [nfSettingCurrentChannel]);
 
   return (
     <>
@@ -187,7 +192,7 @@ const ChannelsDisplayer = () => {
             disappearsOnIndex={-1}
           />
         )}
-        snapPoints={['80%']}>
+        snapPoints={snapPoints}>
         {nfSettingCurrentChannel && (
           <NFSettingsSheet
             channel={nfSettingCurrentChannel}

@@ -1,9 +1,12 @@
 import {BottomSheetView} from '@gorhom/bottom-sheet';
+// @ts-ignore
+import _ from 'lodash';
 import React, {useEffect, useMemo, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
+import useSubscriptions from 'src/hooks/channel/useSubscriptions';
 import {Channel, selectSubscriptions} from 'src/redux/channelSlice';
 
 import PrimaryButton from '../buttons/PrimaryButton';
@@ -88,17 +91,25 @@ interface NFSettingsSheetProps {
 const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
   const subscriptions = useSelector(selectSubscriptions);
   const [currentSettings, setCurrentSettings] = useState<Array<UserSetting>>();
+  const {subscribe, unsubscribe} = useSubscriptions();
+  const [isLoadingSubscribe, setIsLoadingSubscribe] = useState(false);
+  const [isLoadingUnsubscribe, setIsLoadingUnsubscribe] = useState(false);
+
+  const isSubscribed = subscriptions[channel?.channel] !== undefined;
 
   const channelSettings: ChannelSetting[] = channel.channel_settings
     ? JSON.parse(channel.channel_settings)
     : [];
-  // const channelSettings: ChannelSetting[] = JSON.parse(
-  //   '[{"type": 3, "index": 1, "ticker": 0.1, "default": {"lower": 1.2, "upper": 1.6}, "enabled": true, "lowerLimit": 1, "upperLimit": 3, "description": "Choose Health Factor Range"}, {"type": 2, "index": 2, "ticker": 1, "default": 3, "enabled": true, "lowerLimit": 0, "upperLimit": 25, "description": "Choose Token Supply Rate (in percentage)"}, {"type": 2, "index": 3, "ticker": 1, "default": 3, "enabled": true, "lowerLimit": 0, "upperLimit": 25, "description": "Choose Token Borrow Rate (in percentage)"}]',
-  // );
+
   const userSettings = useMemo(() => {
-    console.log('re-render');
     return subscriptions?.[channel?.channel]?.user_settings;
   }, [subscriptions]);
+
+  // Check if the user has updated the settings
+  const isUpdated = useMemo(() => {
+    if (!currentSettings || !userSettings) return false;
+    return !_.isEqual(userSettings, currentSettings);
+  }, [currentSettings, userSettings]);
 
   const handleToggleSwitch = (index: number) => {
     if (!currentSettings) return;
@@ -132,9 +143,30 @@ const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
     setCurrentSettings(updatedSettings);
   };
 
+  const handleSubscribe = async () => {
+    setIsLoadingSubscribe(true);
+    await subscribe(channel.channel, currentSettings);
+    setIsLoadingSubscribe(false);
+    hideSheet();
+  };
+
+  const handleUnsubscribe = async () => {
+    if (isSubscribed) {
+      setIsLoadingUnsubscribe(true);
+      await unsubscribe(channel.channel);
+      setIsLoadingUnsubscribe(false);
+    }
+    hideSheet();
+  };
+
   useEffect(() => {
     if (userSettings) {
-      setCurrentSettings(userSettings);
+      /**
+       * This is a workaround to avoid mutating the state directly
+       * by creating a deep copy of the current settings object
+       * Since this is a simple object, we can use JSON.parse and JSON.stringify
+       */
+      setCurrentSettings(JSON.parse(JSON.stringify(userSettings)));
     } else {
       const settings: UserSetting[] = [];
       for (const setting of channelSettings) {
@@ -145,10 +177,7 @@ const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
     }
   }, [userSettings]);
 
-  const [test, setTest] = useState({
-    startVal: 0,
-    endVal: 100,
-  });
+  // console.log('currentSettings', currentSettings);
 
   return (
     <BottomSheetView style={styles.contentContainer}>
@@ -157,15 +186,19 @@ const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
         <ChannelTitleCard channel={channel} />
       </View>
       <BottomSheetView style={styles.innerContainer}>
-        <Text style={styles.sheetTitle}>
-          {userSettings
-            ? 'Manage Notification Settings'
-            : 'Subscribe to get Notified'}
-        </Text>
-        <Text style={styles.sheetDescription} numberOfLines={2}>
-          Select which setting list you would like to receive notifications
-          from.
-        </Text>
+        {currentSettings?.length !== 0 && (
+          <>
+            <Text style={styles.sheetTitle}>
+              {isSubscribed
+                ? 'Manage Notification Settings'
+                : 'Subscribe to get Notified'}
+            </Text>
+            <Text style={styles.sheetDescription} numberOfLines={2}>
+              Select which setting list you would like to receive notifications
+              from.
+            </Text>
+          </>
+        )}
         {currentSettings && (
           <View style={styles.scrollViewContainer}>
             <ScrollView>
@@ -247,19 +280,33 @@ const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
         )}
       </BottomSheetView>
       <BottomSheetView style={styles.buttonsContainer}>
-        <Text style={styles.note}>
-          You will receive all important updates from this channel.
-        </Text>
+        {currentSettings?.length !== 0 ? (
+          <>
+            <Text style={styles.note}>
+              You will receive all important updates from this channel.
+            </Text>
+            <PrimaryButton
+              loading={isLoadingSubscribe}
+              bgColor={
+                !isSubscribed || isUpdated ? GLOBALS.COLORS.BLACK : '#E0E3E7'
+              }
+              fontColor={
+                !isSubscribed || isUpdated ? GLOBALS.COLORS.WHITE : '#BAC4D6'
+              }
+              disabled={isSubscribed && !isUpdated}
+              title={isSubscribed ? 'Update Preferences' : 'Subscribe'}
+              onPress={handleSubscribe}
+            />
+          </>
+        ) : (
+          <View style={[styles.seperator, styles.seperatorMargin]} />
+        )}
         <PrimaryButton
-          bgColor={GLOBALS.COLORS.BLACK}
-          fontColor={GLOBALS.COLORS.WHITE}
-          title="Subscribe"
-        />
-        <PrimaryButton
+          loading={isLoadingUnsubscribe}
           bgColor={GLOBALS.COLORS.TRANSPARENT}
           fontColor={GLOBALS.COLORS.BLACK}
-          title="Cancel"
-          onPress={hideSheet}
+          title={isSubscribed ? 'Unsubscribe' : 'Cancel'}
+          onPress={handleUnsubscribe}
         />
       </BottomSheetView>
     </BottomSheetView>
@@ -286,6 +333,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     marginHorizontal: 16,
+    marginBottom: 12,
     flex: 1,
     justifyContent: 'flex-end',
   },
@@ -339,6 +387,9 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#E5E5E5',
     width: '100%',
+  },
+  seperatorMargin: {
+    marginBottom: 8,
   },
   scrollViewContainer: {
     maxHeight: '60%',

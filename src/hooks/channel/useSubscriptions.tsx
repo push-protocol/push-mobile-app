@@ -1,6 +1,7 @@
-import {UserSetting} from '@pushprotocol/restapi';
+import type {UserSetting as PushUserSetting} from '@pushprotocol/restapi';
 import {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
+import {UserSetting} from 'src/components/sheets/NFSettingSheet';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import envConfig from 'src/env.config';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
@@ -25,15 +26,23 @@ const useSubscriptions = () => {
       showUnlockProfileModal();
       return;
     }
+    const pushSettings: PushUserSetting[] | undefined = settings?.map(
+      setting => {
+        return {
+          enabled: setting.type === 1 ? setting.user : setting.enabled,
+          value: setting.type === 1 ? undefined : setting.user,
+        };
+      },
+    );
     try {
       const channelCaip = `eip155:${envConfig.CHAIN_ID}:${channel}`;
       await userPushSDKInstance?.notification.subscribe(channelCaip, {
-        settings,
+        settings: pushSettings,
         onSuccess: () => {
           dispatch(
             addChannelSubscription({
               channel,
-              user_settings: null, // TODO: ADD USER's SETTINGS
+              user_settings: settings ?? null,
             }),
           );
         },
