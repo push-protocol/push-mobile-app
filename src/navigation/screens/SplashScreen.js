@@ -23,6 +23,7 @@ import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
 import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
 import BiometricHelper from 'src/helpers/BiometricHelper';
+import {clearStorage} from 'src/navigation/screens/chats/helpers/storage';
 import {setAllUsers, setAuthState, switchUser} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
@@ -275,7 +276,7 @@ class SplashScreen extends Component {
       Vibration.vibrate();
 
       // decrement the remaining attempts
-      const remainingAttempts = GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS;
+      const remainingAttempts = this.state.remainingAttempts - 1;
 
       await MetaStorage.instance.setRemainingPasscodeAttempts(
         remainingAttempts,
@@ -408,13 +409,13 @@ class SplashScreen extends Component {
       Animated.parallel([
         Animated.timing(this.state.signedInFader, {
           toValue: 0,
-          easing: Easing.easeOut,
+          easing: Easing.ease,
           duration: 300,
           useNativeDriver: true,
         }),
         Animated.timing(this.state.userLockedFader, {
           toValue: 1,
-          easing: Easing.easeIn,
+          easing: Easing.ease,
           duration: 500,
           useNativeDriver: true,
         }),
@@ -427,17 +428,16 @@ class SplashScreen extends Component {
       });
     } else {
       Keyboard.dismiss();
-
       Animated.parallel([
         Animated.timing(this.state.passcodePromptFader, {
           toValue: 0,
-          easing: Easing.easeOut,
+          easing: Easing.ease,
           duration: 300,
           useNativeDriver: true,
         }),
         Animated.timing(this.state.userLockedFader, {
           toValue: 1,
-          easing: Easing.easeIn,
+          easing: Easing.ease,
           duration: 500,
           useNativeDriver: true,
         }),
@@ -454,6 +454,8 @@ class SplashScreen extends Component {
   // Reset Wallet
   resetWallet = async () => {
     await AuthenticationHelper.resetSignedInUser();
+    await MetaStorage.instance.clearStorage();
+    await clearStorage();
     this.props.dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING));
   };
 
