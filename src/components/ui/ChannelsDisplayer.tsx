@@ -1,12 +1,11 @@
 import '@ethersproject/shims';
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
   SafeAreaView,
   StyleSheet,
-  Text,
   TextInput,
   View,
 } from 'react-native';
@@ -18,6 +17,7 @@ import {usePushApi} from 'src/contexts/PushApiContext';
 import useChannels from 'src/hooks/channel/useChannels';
 import useSubscriptions from 'src/hooks/channel/useSubscriptions';
 import {
+  Channel,
   selectChannels,
   selectChannelsReachedEnd,
   selectIsLoadingSubscriptions,
@@ -28,8 +28,8 @@ import NFSettingsSheet from '../sheets/NFSettingSheet';
 
 const ChannelsDisplayer = () => {
   const [searchTimer, setSearchTimer] = useState<NodeJS.Timeout>();
-  const [nfSettingCurrentChannelIndex, setNfSettingCurrentChannelIndex] =
-    useState<number>();
+  const [nfSettingCurrentChannel, setNfSettingCurrentChannel] =
+    useState<Channel>();
 
   const DEBOUNCE_TIMEOUT = 500; //time in millisecond which we want to wait for then to finish typing
   const [search, setSearch] = React.useState('');
@@ -75,8 +75,11 @@ const ChannelsDisplayer = () => {
     }
   }, [userPushSDKInstance]);
 
-  const selectChannelForSettings = (index: number) => {
-    setNfSettingCurrentChannelIndex(index);
+  console.log('Channels', channels);
+  console.log('SearchResults', searchResults);
+
+  const selectChannelForSettings = (channel: Channel) => {
+    setNfSettingCurrentChannel(channel);
     bottomSheetRef.current?.expand();
   };
 
@@ -86,6 +89,7 @@ const ChannelsDisplayer = () => {
       return;
     }
     setShowSearchResults(true);
+    console.log('Searching for channel ' + channelName);
     await loadSearchResults(channelName);
   };
 
@@ -157,8 +161,8 @@ const ChannelsDisplayer = () => {
                 loadMore();
               }
             }}
-            renderItem={({index}) => (
-              <ChannelItem {...{index, selectChannelForSettings}} />
+            renderItem={({item: channel}) => (
+              <ChannelItem {...{channel, selectChannelForSettings}} />
             )}
             ListFooterComponent={() => {
               return isLoading ? (
@@ -174,7 +178,7 @@ const ChannelsDisplayer = () => {
         ref={bottomSheetRef}
         handleIndicatorStyle={styles.handleIndicator}
         enablePanDownToClose={true}
-        onClose={() => setNfSettingCurrentChannelIndex(undefined)}
+        onClose={() => setNfSettingCurrentChannel(undefined)}
         index={-1}
         backdropComponent={props => (
           <BottomSheetBackdrop
@@ -184,12 +188,12 @@ const ChannelsDisplayer = () => {
           />
         )}
         snapPoints={['80%']}>
-        {nfSettingCurrentChannelIndex && (
+        {nfSettingCurrentChannel && (
           <NFSettingsSheet
-            index={nfSettingCurrentChannelIndex}
+            channel={nfSettingCurrentChannel}
             hideSheet={() => {
               bottomSheetRef.current?.close();
-              setNfSettingCurrentChannelIndex(undefined);
+              setNfSettingCurrentChannel(undefined);
             }}
           />
         )}

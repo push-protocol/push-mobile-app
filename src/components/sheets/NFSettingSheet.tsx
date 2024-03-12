@@ -4,7 +4,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
-import {selectChannel, selectSubscriptions} from 'src/redux/channelSlice';
+import {Channel, selectSubscriptions} from 'src/redux/channelSlice';
 
 import PrimaryButton from '../buttons/PrimaryButton';
 import ToggleButton from '../buttons/ToggleButton';
@@ -81,12 +81,11 @@ export type UserSetting =
     };
 
 interface NFSettingsSheetProps {
-  index: number;
+  channel: Channel;
   hideSheet: () => void;
 }
 
-const NFSettingsSheet = ({hideSheet, index}: NFSettingsSheetProps) => {
-  const channel = useSelector(selectChannel(index));
+const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
   const subscriptions = useSelector(selectSubscriptions);
   const [currentSettings, setCurrentSettings] = useState<Array<UserSetting>>();
 

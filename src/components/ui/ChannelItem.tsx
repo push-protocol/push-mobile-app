@@ -1,25 +1,16 @@
 import React from 'react';
-import {Image} from 'react-native';
 import {StyleSheet, Text, View} from 'react-native';
-import {useSelector} from 'react-redux';
-import GLOBALS from 'src/Globals';
-import {ChainHelper} from 'src/helpers/ChainHelper';
-import {selectChannel} from 'src/redux/channelSlice';
+import {Channel} from 'src/redux/channelSlice';
 
 import SubscriptionStatus from '../buttons/SubscriptionStatus';
 import {ChannelLogo, ChannelTitleCard} from './ChannelComponents';
 
 type ChannelItemProps = {
-  index: number;
-  selectChannelForSettings: (index: number) => void;
+  channel: Channel;
+  selectChannelForSettings: (channel: Channel) => void;
 };
 
-const ChannelItem = ({index, selectChannelForSettings}: ChannelItemProps) => {
-  const channel = useSelector(selectChannel(index));
-  if (index === 1) {
-    console.log('Channel', channel);
-  }
-
+const ChannelItem = ({channel, selectChannelForSettings}: ChannelItemProps) => {
   if (channel.name === null) {
     return null;
   }
@@ -29,8 +20,7 @@ const ChannelItem = ({index, selectChannelForSettings}: ChannelItemProps) => {
       <View style={styles.topContainer}>
         <ChannelLogo icon={channel.icon} />
         <SubscriptionStatus
-          index={index}
-          channel={channel.channel}
+          channel={channel}
           selectChannelForSettings={selectChannelForSettings}
         />
       </View>

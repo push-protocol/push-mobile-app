@@ -12,28 +12,25 @@ import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import useSubscriptions from 'src/hooks/channel/useSubscriptions';
 import {
-  selectChannel,
+  Channel,
   selectIsLoadingSubscriptions,
   selectSubscriptions,
 } from 'src/redux/channelSlice';
 
 const SubscriptionStatus = ({
-  channel,
-  index,
   selectChannelForSettings,
+  channel: channelData,
 }: {
-  channel: string;
-  index: number;
-  selectChannelForSettings: (index: number) => void;
+  channel: Channel;
+  selectChannelForSettings: (channel: Channel) => void;
 }) => {
   const [processing, setProcessing] = useState(false);
   const subscriptions = useSelector(selectSubscriptions);
   const isLoadingSubscriptions = useSelector(selectIsLoadingSubscriptions);
-  const channelData = useSelector(selectChannel(index));
-
   const {subscribe, unsubscribe} = useSubscriptions();
 
   const channelSettings = channelData.channel_settings;
+  const channel = channelData.channel;
 
   const subscribed = useMemo(() => {
     return subscriptions?.[channel] !== undefined;
@@ -45,7 +42,7 @@ const SubscriptionStatus = ({
       await unsubscribe(channel);
     } else {
       if (channelSettings) {
-        selectChannelForSettings(index);
+        selectChannelForSettings(channelData);
       } else {
         await subscribe(channel);
       }
