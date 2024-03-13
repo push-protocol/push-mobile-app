@@ -56,12 +56,17 @@ const useChannels = () => {
 
   const loadSearchResults = async (query: string) => {
     setSearchResultsLoading(true);
-    const results = await userPushSDKInstance?.channel.search(query, {
-      page: 1,
-      limit: GLOBALS.CONSTANTS.FEED_ITEMS_TO_PULL,
-    });
-    setSearchResults(results);
-    setSearchResultsLoading(false);
+    try {
+      const results = await userPushSDKInstance?.channel.search(query, {
+        page: 1,
+        limit: GLOBALS.CONSTANTS.FEED_ITEMS_TO_PULL,
+      });
+      setSearchResults(results);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSearchResultsLoading(false);
+    }
   };
 
   return {

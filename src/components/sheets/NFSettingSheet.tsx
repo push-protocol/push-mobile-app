@@ -1,4 +1,4 @@
-import {BottomSheetView} from '@gorhom/bottom-sheet';
+import {BottomSheetScrollView, BottomSheetView} from '@gorhom/bottom-sheet';
 // @ts-ignore
 import _ from 'lodash';
 import React, {useEffect, useMemo, useState} from 'react';
@@ -107,7 +107,6 @@ const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
 
   // Check if the user has updated the settings
   const isUpdated = useMemo(() => {
-    if (!currentSettings || !userSettings) return false;
     return !_.isEqual(userSettings, currentSettings);
   }, [currentSettings, userSettings]);
 
@@ -178,7 +177,9 @@ const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
   }, [userSettings]);
 
   return (
-    <BottomSheetView style={styles.contentContainer}>
+    <BottomSheetScrollView
+      style={styles.contentContainer}
+      contentContainerStyle={styles.flexGrow}>
       <View style={styles.headerContainer}>
         <ChannelLogo icon={channel.icon} />
         <ChannelTitleCard channel={channel} />
@@ -199,81 +200,79 @@ const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
         )}
         {currentSettings && currentSettings.length > 0 && (
           <View style={styles.scrollViewContainer}>
-            <ScrollView>
-              {currentSettings.map((setting, index) => {
-                switch (setting.type) {
-                  case 1:
-                    return (
-                      <View style={styles.type1Container} key={index}>
+            {currentSettings.map((setting, index) => {
+              switch (setting.type) {
+                case 1:
+                  return (
+                    <View style={styles.type1Container} key={index}>
+                      <Text style={styles.description}>
+                        {setting.description}
+                      </Text>
+                      <ToggleButton
+                        isOn={setting.user}
+                        onToggle={() => handleToggleSwitch(index)}
+                      />
+                    </View>
+                  );
+                case 2:
+                  return (
+                    <View style={styles.type2Container} key={index}>
+                      <View style={styles.internalContainer}>
                         <Text style={styles.description}>
                           {setting.description}
                         </Text>
                         <ToggleButton
-                          isOn={setting.user}
+                          isOn={setting.enabled}
                           onToggle={() => handleToggleSwitch(index)}
                         />
                       </View>
-                    );
-                  case 2:
-                    return (
-                      <View style={styles.type2Container} key={index}>
-                        <View style={styles.internalContainer}>
-                          <Text style={styles.description}>
-                            {setting.description}
-                          </Text>
-                          <ToggleButton
-                            isOn={setting.enabled}
-                            onToggle={() => handleToggleSwitch(index)}
-                          />
-                        </View>
-                        {setting.enabled && (
-                          <InputSlider
-                            max={setting.upperLimit}
-                            min={setting.lowerLimit}
-                            defaultValue={setting.default}
-                            step={setting.ticker}
-                            val={setting.user}
-                            onChange={({x}) => handleSliderChange(index, x)}
-                          />
-                        )}
+                      {setting.enabled && (
+                        <InputSlider
+                          max={setting.upperLimit}
+                          min={setting.lowerLimit}
+                          defaultValue={setting.default}
+                          step={setting.ticker}
+                          val={setting.user}
+                          onChange={({x}) => handleSliderChange(index, x)}
+                        />
+                      )}
+                    </View>
+                  );
+                case 3:
+                  return (
+                    <View style={styles.type2Container} key={index}>
+                      <View style={styles.internalContainer}>
+                        <Text style={styles.description}>
+                          {setting.description}
+                        </Text>
+                        <ToggleButton
+                          isOn={setting.enabled}
+                          onToggle={() => handleToggleSwitch(index)}
+                        />
                       </View>
-                    );
-                  case 3:
-                    return (
-                      <View style={styles.type2Container} key={index}>
-                        <View style={styles.internalContainer}>
-                          <Text style={styles.description}>
-                            {setting.description}
-                          </Text>
-                          <ToggleButton
-                            isOn={setting.enabled}
-                            onToggle={() => handleToggleSwitch(index)}
-                          />
-                        </View>
-                        {setting.enabled && (
-                          <RangeInput
-                            max={setting.upperLimit}
-                            min={setting.lowerLimit}
-                            defaultStartValue={setting.default.lower}
-                            defaultEndValue={setting.default.upper}
-                            startValue={setting.user.lower}
-                            endValue={setting.user.upper}
-                            step={setting.ticker}
-                            onChange={({startVal, endVal}) =>
-                              handleSliderChange(index, {
-                                lower: startVal,
-                                upper: endVal,
-                              })
-                            }
-                          />
-                        )}
-                      </View>
-                    );
-                  default:
-                    return null;
-                }
-              })}
-            </ScrollView>
+                      {setting.enabled && (
+                        <RangeInput
+                          max={setting.upperLimit}
+                          min={setting.lowerLimit}
+                          defaultStartValue={setting.default.lower}
+                          defaultEndValue={setting.default.upper}
+                          startValue={setting.user.lower}
+                          endValue={setting.user.upper}
+                          step={setting.ticker}
+                          onChange={({startVal, endVal}) =>
+                            handleSliderChange(index, {
+                              lower: startVal,
+                              upper: endVal,
+                            })
+                          }
+                        />
+                      )}
+                    </View>
+                  );
+                default:
+                  return null;
+              }
+            })}
           </View>
         )}
       </BottomSheetView>
@@ -307,7 +306,7 @@ const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
           onPress={handleUnsubscribe}
         />
       </BottomSheetView>
-    </BottomSheetView>
+    </BottomSheetScrollView>
   );
 };
 
@@ -323,7 +322,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    paddingVertical: 20,
+    paddingVertical: 16,
   },
   innerContainer: {
     marginHorizontal: 24,
@@ -331,7 +330,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     marginHorizontal: 16,
-    marginBottom: 12,
+    marginBottom: 24,
     flex: 1,
     justifyContent: 'flex-end',
   },
@@ -390,8 +389,8 @@ const styles = StyleSheet.create({
   seperatorMargin: {
     marginBottom: 8,
   },
-  scrollViewContainer: {
-    maxHeight: '60%',
-    minHeight: '50%',
+  scrollViewContainer: {},
+  flexGrow: {
+    flexGrow: 1,
   },
 });

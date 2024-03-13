@@ -79,20 +79,21 @@ const ChannelsDisplayer = () => {
       return;
     }
     setShowSearchResults(true);
-    console.log('Searching for channel ' + channelName);
     await loadSearchResults(channelName);
   };
 
   const handleChannelSearch = async (searchQuery: string) => {
-    if (searchTimer) {
-      clearTimeout(searchTimer);
-    }
-    setSearch(searchQuery);
-    setSearchTimer(
-      setTimeout(() => {
-        searchForChannel(searchQuery);
-      }, DEBOUNCE_TIMEOUT),
-    );
+    try {
+      if (searchTimer) {
+        clearTimeout(searchTimer);
+      }
+      setSearch(searchQuery);
+      setSearchTimer(
+        setTimeout(() => {
+          searchForChannel(searchQuery);
+        }, DEBOUNCE_TIMEOUT),
+      );
+    } catch (e) {}
   };
 
   const snapPoints = useMemo(() => {
@@ -237,6 +238,7 @@ const styles = StyleSheet.create({
   searchBar: {
     fontSize: 14,
     color: Globals.COLORS.DARKER_GRAY,
+    flex: 1,
   },
   imageLogoStyle: {
     margin: 5,

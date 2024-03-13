@@ -85,9 +85,6 @@ const RangeInput = ({
         const upperBound =
           defaultEndValue + ((1.0 * (max - defaultEndValue)) / step) * step;
 
-        console.log('Lower Bound:', lowerBound);
-        console.log('Upper Bound:', upperBound);
-
         if (x <= 0) x = lowerBound;
         else if (x >= 1) x = upperBound;
         else {
