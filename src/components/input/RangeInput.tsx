@@ -46,11 +46,9 @@ const RangeInput = ({
         const {left, width} = coordinates;
         let x = (gestureState.moveX - left) / width;
         const lowerBound =
-          defaultStartValue -
-          Math.floor((defaultStartValue - min) / step) * step;
+          defaultStartValue - ((1.0 * (defaultStartValue - min)) / step) * step;
         const upperBound =
-          defaultStartValue +
-          Math.floor((max - defaultStartValue) / step) * step;
+          defaultStartValue + ((1.0 * (max - defaultStartValue)) / step) * step;
 
         if (x <= 0) x = lowerBound;
         else if (x >= 1) x = upperBound;
@@ -83,9 +81,12 @@ const RangeInput = ({
         const {left, width} = coordinates;
         let x = (gestureState.moveX - left) / width;
         const lowerBound =
-          defaultEndValue - Math.floor((defaultEndValue - min) / step) * step;
+          defaultEndValue - ((1.0 * (defaultEndValue - min)) / step) * step;
         const upperBound =
-          defaultEndValue + Math.floor((max - defaultEndValue) / step) * step;
+          defaultEndValue + ((1.0 * (max - defaultEndValue)) / step) * step;
+
+        console.log('Lower Bound:', lowerBound);
+        console.log('Upper Bound:', upperBound);
 
         if (x <= 0) x = lowerBound;
         else if (x >= 1) x = upperBound;

@@ -1,6 +1,12 @@
 import {BlurView} from 'expo-blur';
 import React from 'react';
-import {InteractionManager, Pressable, StyleSheet, View} from 'react-native';
+import {
+  InteractionManager,
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+} from 'react-native';
 import Modal from 'react-native-modal';
 
 interface ModalType {
@@ -14,9 +20,13 @@ const useModalBlur = () => {
 
   const handleOpen = async () => {
     // Fix for iOS modal not opening bug
-    await InteractionManager.runAfterInteractions(() => {
+    if (Platform.OS === 'ios') {
+      await InteractionManager.runAfterInteractions(() => {
+        setOpen(true);
+      });
+    } else {
       setOpen(true);
-    });
+    }
   };
 
   const handleClose = () => {

@@ -177,8 +177,6 @@ const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
     }
   }, [userSettings]);
 
-  // console.log('currentSettings', currentSettings);
-
   return (
     <BottomSheetView style={styles.contentContainer}>
       <View style={styles.headerContainer}>
@@ -199,7 +197,7 @@ const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
             </Text>
           </>
         )}
-        {currentSettings && (
+        {currentSettings && currentSettings.length > 0 && (
           <View style={styles.scrollViewContainer}>
             <ScrollView>
               {currentSettings.map((setting, index) => {
@@ -365,6 +363,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: 22.5,
     letterSpacing: -0.3,
+    flex: 1,
   },
   type1Container: {
     flexDirection: 'row',
@@ -393,5 +392,6 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     maxHeight: '60%',
+    minHeight: '50%',
   },
 });
