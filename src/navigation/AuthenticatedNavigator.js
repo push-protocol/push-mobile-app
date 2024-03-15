@@ -8,7 +8,6 @@ import QRScanScreen from 'src/navigation/screens/dapp/QRScanScreen';
 
 import ChatProfileScreen from './screens/ChatProfileScreen';
 import PgpFromPkScreen from './screens/PgpFromPkScreen';
-import SettingsScreen from './screens/SettingsScreen';
 import {SingleChatScreen} from './screens/chats';
 import CreateGroup from './screens/chats/CreateGroup';
 import GroupInfo from './screens/chats/GroupInfo';
@@ -51,20 +50,6 @@ export default function AuthenticatedNavigator() {
             style: 'dark',
           },
           header: () => <Header />,
-        }}
-      />
-
-      <Stack.Screen
-        name={GLOBALS.SCREENS.SETTINGS}
-        component={SettingsScreen}
-        options={{
-          title: 'Settings',
-          headerStyle: {
-            backgroundColor: GLOBALS.COLORS.WHITE,
-            height:
-              Constants.statusBarHeight + GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
-          },
-          headerTintColor: GLOBALS.COLORS.MID_GRAY,
         }}
       />
 

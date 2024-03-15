@@ -18,7 +18,7 @@ import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 import NotificationItem from './NotificationItem';
 
-export default function SpamFeed(props) {
+export default function SpamFeed() {
   const users = useSelector(selectUsers);
   const currentUser = useSelector(selectCurrentUser);
   const {wallet} = users[currentUser];

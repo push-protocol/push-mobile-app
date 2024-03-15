@@ -16,9 +16,11 @@ import {clearStorage} from 'src/navigation/screens/chats/helpers/storage';
 import {selectUsers, setLogout} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
-const SettingsScreen = ({}) => {
+const SettingsScreen = ({route}) => {
   const dispatch = useDispatch();
   const users = useSelector(selectUsers);
+
+  const tabBarHeight = route?.params?.tabBarHeight || 80;
 
   // Wallet Connect functionality
   const wc_connector = useWalletConnectModal();
@@ -210,7 +212,7 @@ const SettingsScreen = ({}) => {
             )}
           </View>
 
-          <View style={styles.appInfo}>
+          <View style={[styles.appInfo, {bottom: tabBarHeight}]}>
             <Text
               style={
                 styles.appText
@@ -258,7 +260,6 @@ const styles = StyleSheet.create({
     marginLeft: 80,
     position: 'absolute',
     right: 0,
-    bottom: 20,
   },
   appImage: {
     height: 40,

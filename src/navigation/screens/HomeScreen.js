@@ -56,15 +56,7 @@ class HomeScreen extends Component {
   componentWillUnmount() {}
 
   // COMPONENT DID UPDATE
-  componentDidUpdate(prevProps) {
-    if (
-      prevProps.route.params.refreshNotifFeed !==
-        this.props.route.params.refreshNotifFeed &&
-      this.props.route.params.refreshNotifFeed === true
-    ) {
-      this.refreshFeeds();
-    }
-  }
+  componentDidUpdate() {}
 
   // COMPONENT LOADED
   // Run as soon as loaded

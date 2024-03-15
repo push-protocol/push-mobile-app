@@ -4,16 +4,16 @@ import GLOBALS from 'src/Globals';
 import SpamFeed from 'src/components/ui/SpamFeed';
 import 'src/components/ui/SpamFeed';
 
-const SpamBoxScreen = ({style, route}) => {
+const SpamBoxScreen = () => {
   return (
-    <View style={[styles.container, style]}>
+    <View style={styles.container}>
       <StatusBar
         barStyle={'dark-content'}
         translucent
         backgroundColor="transparent"
       />
 
-      <SpamFeed wallet={route.params.wallet} />
+      <SpamFeed />
     </View>
   );
 };

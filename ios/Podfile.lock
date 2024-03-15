@@ -29,7 +29,7 @@ PODS:
     - ExpoModulesCore
   - Expo (48.0.21):
     - ExpoModulesCore
-  - ExpoBlur (12.2.2):
+  - ExpoBlur (12.9.2):
     - ExpoModulesCore
   - ExpoDevice (5.2.1):
     - ExpoModulesCore
@@ -887,7 +887,7 @@ SPEC CHECKSUMS:
   EXImageLoader: fd053169a8ee932dd83bf1fe5487a50c26d27c2b
   EXPermissions: ee60d7978aba135b8b391185b039d78f151c376a
   Expo: 0d9f112757acc6bf32103eabccf91267780bd580
-  ExpoBlur: fac3c6318fdf409dd5740afd3313b2bd52a35bac
+  ExpoBlur: e832d874bd94afc0645daddbd3162ec1ce172080
   ExpoDevice: e0bebf68f978b3d353377ce42e73c20c0a070215
   ExpoKeepAwake: 69f5f627670d62318410392d03e0b5db0f85759a
   ExpoLinearGradient: 8eaab76b7f55c612ed8348c8be8c2a18a9b4529f
@@ -982,4 +982,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: eb792cc232500f7ddef117e6637abcb6fadff54c
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.15.2

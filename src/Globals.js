@@ -165,6 +165,7 @@ export default {
     GETSTARTED: 'GetStarted',
     SETUPCOMPLETE: 'SetupComplete',
     TABS: 'Tabs',
+    NOTIF_TABS: 'NotificationTabs',
     SETTINGS: 'Settings',
     SPLASH: 'Splash',
     FEED: 'Feed',

@@ -1,37 +1,63 @@
-import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {BlurView} from 'expo-blur';
+import Constants from 'expo-constants';
 import React from 'react';
+import {StyleSheet} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {TabIcon} from 'src/components/custom/TabIcons';
 import {usePushApi} from 'src/contexts/PushApiContext';
+import NotifTabNavigator from 'src/navigation/NotifTabNavigator';
 import ChannelsScreen from 'src/navigation/screens/ChannelsScreen';
 import HomeScreen from 'src/navigation/screens/HomeScreen';
+import SettingsScreen from 'src/navigation/screens/SettingsScreen';
 import SpamBoxScreen from 'src/navigation/screens/SpamBoxScreen';
 import {ChatScreen} from 'src/navigation/screens/chats';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
+
+const Tab = createBottomTabNavigator();
 
 export default function Tabs() {
   const users = useSelector(selectUsers);
   const currentUser = useSelector(selectCurrentUser);
   const {readOnlyMode, showUnlockProfileModal} = usePushApi();
+  const {bottom} = useSafeAreaInsets();
 
-  const Tab = createMaterialBottomTabNavigator();
   const wallet = users[currentUser].wallet;
   const pkey = users[currentUser].userPKey;
 
   return (
     <Tab.Navigator
       initialRouteName={GLOBALS.SCREENS.FEED}
-      activeColor="#674c9f"
-      inactiveColor="#ccc"
-      barStyle={{backgroundColor: '#fefefe'}}
-      shifting={true}
-      labeled={false}>
+      screenOptions={{
+        tabBarStyle: {
+          position: 'absolute',
+          backgroundColor: 'transparent',
+          height: bottom + 60,
+          elevation: 0,
+        },
+        tabBarShowLabel: false,
+        headerShown: false,
+        lazy: true,
+        tabBarBackground: () => {
+          return (
+            <BlurView
+              tint="light"
+              experimentalBlurMethod="dimezisBlurView"
+              intensity={50}
+              style={{
+                ...StyleSheet.absoluteFillObject,
+                overflow: 'hidden',
+              }}
+            />
+          );
+        },
+      }}>
       <Tab.Screen
-        name={GLOBALS.SCREENS.FEED}
-        component={HomeScreen}
+        name={GLOBALS.SCREENS.NOTIF_TABS}
+        component={NotifTabNavigator}
         options={{
-          tabBarLabel: 'Inbox',
           tabBarIcon: ({focused}) => (
             <TabIcon active={focused} icon={'INBOX'} />
           ),
@@ -42,23 +68,9 @@ export default function Tabs() {
       />
 
       <Tab.Screen
-        name={GLOBALS.SCREENS.SPAM}
-        component={SpamBoxScreen}
-        options={{
-          tabBarLabel: 'Spam',
-          tabBarIcon: ({focused}) => <TabIcon active={focused} icon={'SPAM'} />,
-        }}
-        initialParams={{
-          wallet,
-          pkey,
-        }}
-      />
-
-      <Tab.Screen
         name={GLOBALS.SCREENS.CHANNELS}
         component={ChannelsScreen}
         options={{
-          tabBarLabel: 'Channels',
           tabBarIcon: ({focused}) => (
             <TabIcon active={focused} icon={'CHANNELS'} />
           ),
@@ -86,6 +98,17 @@ export default function Tabs() {
         initialParams={{
           wallet,
           pkey,
+        }}
+      />
+
+      <Tab.Screen
+        name={GLOBALS.SCREENS.SETTINGS}
+        component={SettingsScreen}
+        initialParams={{tabBarHeight: bottom + 60}}
+        options={{
+          tabBarIcon: ({focused}) => (
+            <TabIcon active={focused} icon={'SETTINGS'} />
+          ),
         }}
       />
     </Tab.Navigator>

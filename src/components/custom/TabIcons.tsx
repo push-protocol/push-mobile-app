@@ -3,12 +3,12 @@ import {Image} from 'react-native';
 
 const ICONS = {
   INBOX: 'INBOX',
-  SPAM: 'SPAM',
   CHANNELS: 'CHANNELS',
   CHAT: 'CHAT',
+  SETTINGS: 'SETTINGS',
 };
 
-type ICON_TYPE = 'INBOX' | 'SPAM' | 'CHANNELS' | 'CHAT';
+type ICON_TYPE = 'INBOX' | 'SETTINGS' | 'CHANNELS' | 'CHAT';
 
 interface TabIconProps {
   icon: ICON_TYPE;
@@ -31,20 +31,6 @@ const TabIcon = ({icon, active}: TabIconProps) => {
           />
         );
       }
-    case 'SPAM':
-      if (active) {
-        return (
-          <ImageComponent
-            src={require('assets/icons/nav_icon_filled/spam-icon.png')}
-          />
-        );
-      } else {
-        return (
-          <ImageComponent
-            src={require('assets/icons/nav_icons/spam-icon.png')}
-          />
-        );
-      }
 
     case 'CHANNELS':
       if (active) {
@@ -57,6 +43,21 @@ const TabIcon = ({icon, active}: TabIconProps) => {
         return (
           <ImageComponent
             src={require('assets/icons/nav_icons/channel-icon.png')}
+          />
+        );
+      }
+
+    case 'SETTINGS':
+      if (active) {
+        return (
+          <ImageComponent
+            src={require('assets/icons/nav_icons/settings-icon.png')}
+          />
+        );
+      } else {
+        return (
+          <ImageComponent
+            src={require('assets/icons/nav_icons/settings-icon.png')}
           />
         );
       }

@@ -116,33 +116,6 @@ const Header = ({switchUser, setParams, fetchFeedData, style}) => {
       <View>
         <View style={styles.header}>
           <UserProfile icon="copy" />
-
-          <View style={styles.headerRightContainer}>
-            <EPNSNotifierIcon
-              style={styles.notifier}
-              iconSize={32}
-              onPress={() => {
-                // Refresh the feeds
-                navigation.navigate(GLOBALS.SCREENS.FEED, {
-                  refreshNotifFeed: true,
-                });
-
-                navigation.setParams({refreshNotifFeed: true});
-              }}
-              onNewNotifications={() => {
-                // Do nothing for now, bell is ringing in the module anyway
-              }}
-            />
-
-            <ImageButton
-              style={styles.settings}
-              src={require('assets/ui/settings.png')}
-              iconSize={24}
-              onPress={() => {
-                navigation.navigate(GLOBALS.SCREENS.SETTINGS);
-              }}
-            />
-          </View>
         </View>
 
         {show && (
