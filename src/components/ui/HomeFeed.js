@@ -15,6 +15,7 @@ import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 
+import EmptyFeed from './EmptyFeed';
 import NotificationItem from './NotificationItem';
 
 export default function InboxFeed(props) {
@@ -133,6 +134,7 @@ export default function InboxFeed(props) {
             keyExtractor={item => item.sid.toString()}
             initialNumToRender={10}
             style={{flex: 1}}
+            contentContainerStyle={styles.contentContainerStyle}
             showsVerticalScrollIndicator={false}
             renderItem={({item}) => {
               return (
@@ -162,26 +164,11 @@ export default function InboxFeed(props) {
               />
             }
             ListEmptyComponent={
-              refreshing ? (
-                <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-                  <StylishLabel
-                    style={styles.infoText}
-                    fontSize={16}
-                    title="[dg:Please wait, Refreshing feed.!]"
-                  />
-                </View>
-              ) : (
-                <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-                  <Image
-                    style={styles.infoIcon}
-                    source={require('assets/ui/feed.png')}
-                  />
-                  <StylishLabel
-                    style={styles.infoText}
-                    fontSize={16}
-                    title="[dg:No Notifications!]"
-                  />
-                </View>
+              !refreshing && (
+                <EmptyFeed
+                  title="No notifications yet"
+                  subtitle="Notifications for channels you are subscribed to will show up here."
+                />
               )
             }
             ListFooterComponent={() => {
@@ -234,5 +221,8 @@ const styles = StyleSheet.create({
   },
   infoText: {
     marginVertical: 10,
+  },
+  contentContainerStyle: {
+    flexGrow: 1,
   },
 });

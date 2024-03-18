@@ -10,12 +10,12 @@ import {
 } from 'react-native';
 import ImageView from 'react-native-image-viewing';
 import {useSelector} from 'react-redux';
-import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
+import EmptyFeed from './EmptyFeed';
 import NotificationItem from './NotificationItem';
 
 export default function SpamFeed() {
@@ -122,6 +122,7 @@ export default function SpamFeed() {
           keyExtractor={item => item.sid.toString()}
           initialNumToRender={10}
           style={{flex: 1}}
+          contentContainerStyle={styles.contentContainerStyle}
           showsVerticalScrollIndicator={false}
           renderItem={({item}) => {
             return (
@@ -151,26 +152,11 @@ export default function SpamFeed() {
             />
           }
           ListEmptyComponent={
-            refreshing ? (
-              <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-                <StylishLabel
-                  style={styles.infoText}
-                  fontSize={16}
-                  title="[dg:Please wait, Refreshing feed.!]"
-                />
-              </View>
-            ) : (
-              <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-                <Image
-                  style={styles.infoIcon}
-                  source={require('assets/ui/feed.png')}
-                />
-                <StylishLabel
-                  style={styles.infoText}
-                  fontSize={16}
-                  title="[dg:No Spams!]"
-                />
-              </View>
+            !refreshing && (
+              <EmptyFeed
+                title="No spam notifications"
+                subtitle="Notifications for channels you have not subscribed to will show up here."
+              />
             )
           }
           ListFooterComponent={() => {
@@ -221,5 +207,8 @@ const styles = StyleSheet.create({
   },
   infoText: {
     marginVertical: 10,
+  },
+  contentContainerStyle: {
+    flexGrow: 1,
   },
 });
