@@ -212,9 +212,7 @@ const SettingsScreen = ({}) => {
 
           <View style={styles.appInfo}>
             <Text
-              style={
-                styles.appText
-              }>{`Ethereum Push Notification Service(Alpha) v${ENV_CONFIG.APP_VERSION}`}</Text>
+              style={styles.appText}>{`PUSH v${ENV_CONFIG.APP_VERSION}`}</Text>
             <Image
               style={styles.appImage}
               source={require('assets/ui/fulllogo.png')}
