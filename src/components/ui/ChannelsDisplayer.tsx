@@ -133,7 +133,7 @@ const ChannelsDisplayer = () => {
           </View>
         )}
 
-        {channels.length !== 0 && !isLoadingSubscriptions && !isLoading && (
+        {channels.length !== 0 && !isLoadingSubscriptions && (
           <FlatList
             data={channels}
             style={styles.channels}
