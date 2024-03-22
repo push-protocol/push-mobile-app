@@ -24,5 +24,4 @@ const WalletConnectConfig = {
 };
 
 export {WalletConnectConfig};
-export * from './channel/channelSub';
 export {handleWalletConnectChatLogin} from './chat/loginUser';
