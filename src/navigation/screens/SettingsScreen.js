@@ -97,9 +97,11 @@ const SettingsScreen = ({}) => {
       wc_connector.provider.disconnect();
     }
 
-    await AuthenticationHelper.resetSignedInUser();
-    await MetaStorage.instance.clearStorage();
-    await clearStorage();
+    await Promise.all([
+      AuthenticationHelper.resetSignedInUser(),
+      MetaStorage.instance.clearStorage(),
+      clearStorage(),
+    ]);
     dispatch(setLogout(null));
     setIsModalOpen(false);
   };
