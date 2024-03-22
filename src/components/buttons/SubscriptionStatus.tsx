@@ -66,7 +66,7 @@ const SubscriptionStatus = ({
                 size={16}
                 color={GLOBALS.COLORS.BLACK}
               />
-              <Text>Subscribed</Text>
+              <Text style={styles.text}>Subscribed</Text>
               <Ionicons
                 name="chevron-down"
                 size={16}
@@ -114,6 +114,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     gap: 6,
     minWidth: 130,
+  },
+  text: {
+    color: GLOBALS.COLORS.BLACK,
+    fontSize: 15,
   },
 });
 
