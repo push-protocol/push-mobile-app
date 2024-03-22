@@ -1,5 +1,4 @@
 import '@ethersproject/shims';
-import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {FlatList, Image, StyleSheet, TextInput, View} from 'react-native';
 import {useSelector} from 'react-redux';
@@ -7,6 +6,7 @@ import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ChannelItem from 'src/components/ui/ChannelItem';
 import {usePushApi} from 'src/contexts/PushApiContext';
+import {useSheets} from 'src/contexts/SheetContext';
 import useChannels from 'src/hooks/channel/useChannels';
 import useSubscriptions from 'src/hooks/channel/useSubscriptions';
 import {
@@ -16,13 +16,10 @@ import {
   selectIsLoadingSubscriptions,
 } from 'src/redux/channelSlice';
 
-import Globals from '../../Globals';
-import NFSettingsSheet from '../sheets/NFSettingSheet';
+import GLOBALS from '../../Globals';
 
 const ChannelsDisplayer = () => {
   const [searchTimer, setSearchTimer] = useState<NodeJS.Timeout>();
-  const [nfSettingCurrentChannel, setNfSettingCurrentChannel] =
-    useState<Channel>();
 
   const DEBOUNCE_TIMEOUT = 500; //time in millisecond which we want to wait for then to finish typing
   const [search, setSearch] = React.useState('');
@@ -42,8 +39,7 @@ const ChannelsDisplayer = () => {
   const isLoadingSubscriptions = useSelector(selectIsLoadingSubscriptions);
   const {refreshSubscriptions} = useSubscriptions();
   const {userPushSDKInstance} = usePushApi();
-
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const {openSheet} = useSheets();
 
   const channels = useMemo(() => {
     return showSearchResults ? searchResults : channelResults;
@@ -69,8 +65,7 @@ const ChannelsDisplayer = () => {
   }, [userPushSDKInstance]);
 
   const selectChannelForSettings = (channel: Channel) => {
-    setNfSettingCurrentChannel(channel);
-    bottomSheetRef.current?.expand();
+    openSheet({name: 'NFSettingsSheet', channel});
   };
 
   const searchForChannel = async (channelName: string) => {
@@ -95,14 +90,6 @@ const ChannelsDisplayer = () => {
       );
     } catch (e) {}
   };
-
-  const snapPoints = useMemo(() => {
-    if (nfSettingCurrentChannel && nfSettingCurrentChannel.channel_settings) {
-      return ['85%'];
-    } else {
-      return [200];
-    }
-  }, [nfSettingCurrentChannel]);
 
   return (
     <>
@@ -146,7 +133,7 @@ const ChannelsDisplayer = () => {
           </View>
         )}
 
-        {channels.length !== 0 && !isLoadingSubscriptions && (
+        {channels.length !== 0 && !isLoadingSubscriptions && !isLoading && (
           <FlatList
             data={channels}
             style={styles.channels}
@@ -173,30 +160,6 @@ const ChannelsDisplayer = () => {
           />
         )}
       </View>
-      <BottomSheet
-        ref={bottomSheetRef}
-        handleIndicatorStyle={styles.handleIndicator}
-        enablePanDownToClose={true}
-        onClose={() => setNfSettingCurrentChannel(undefined)}
-        index={-1}
-        backdropComponent={props => (
-          <BottomSheetBackdrop
-            {...props}
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-          />
-        )}
-        snapPoints={snapPoints}>
-        {nfSettingCurrentChannel && (
-          <NFSettingsSheet
-            channel={nfSettingCurrentChannel}
-            hideSheet={() => {
-              bottomSheetRef.current?.close();
-              setNfSettingCurrentChannel(undefined);
-            }}
-          />
-        )}
-      </BottomSheet>
     </>
   );
 };
@@ -206,7 +169,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    backgroundColor: Globals.COLORS.WHITE,
+    backgroundColor: GLOBALS.COLORS.WHITE,
   },
   channels: {
     flex: 1,
@@ -234,10 +197,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#EFEFEF',
     marginBottom: 24,
     height: 42,
+    paddingHorizontal: 8,
   },
   searchBar: {
     fontSize: 14,
-    color: Globals.COLORS.DARKER_GRAY,
+    color: GLOBALS.COLORS.DARKER_GRAY,
     flex: 1,
   },
   imageLogoStyle: {
@@ -251,11 +215,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#E5E5E5',
     marginVertical: 24,
-  },
-  handleIndicator: {
-    top: -24,
-    width: 50,
-    backgroundColor: 'white',
   },
 });
 

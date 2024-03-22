@@ -1,7 +1,7 @@
 import {WalletConnectModal} from '@walletconnect/modal-react-native';
 import '@walletconnect/react-native-compat';
 import React from 'react';
-import 'react-native-gesture-handler';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import WebviewCrypto from 'react-native-webview-crypto';
 import {Provider} from 'react-redux';
@@ -22,22 +22,24 @@ const App = ({isCallAccepted}) => {
 
   return (
     <SafeAreaProvider>
-      <WebviewCrypto />
-      <WalletConnectModal
-        projectId={WalletConnectConfig.projectId}
-        providerMetadata={WalletConnectConfig.providerMetadata(
-          `${appConfig.expo.scheme}://`,
-        )}
-        sessionParams={WalletConnectConfig.sessionParams}
-        relayUrl="wss://relay.walletconnect.com"
-      />
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <VideoCallContextProvider>
-            <AppScreens callAccepted={numBgCallAccepted || isCallAccepted} />
-          </VideoCallContextProvider>
-        </PersistGate>
-      </Provider>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <WebviewCrypto />
+        <WalletConnectModal
+          projectId={WalletConnectConfig.projectId}
+          providerMetadata={WalletConnectConfig.providerMetadata(
+            `${appConfig.expo.scheme}://`,
+          )}
+          sessionParams={WalletConnectConfig.sessionParams}
+          relayUrl="wss://relay.walletconnect.com"
+        />
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <VideoCallContextProvider>
+              <AppScreens callAccepted={numBgCallAccepted || isCallAccepted} />
+            </VideoCallContextProvider>
+          </PersistGate>
+        </Provider>
+      </GestureHandlerRootView>
     </SafeAreaProvider>
   );
 };

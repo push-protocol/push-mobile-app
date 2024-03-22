@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     letterSpacing: -0.43,
     lineHeight: 23.4,
+    fontWeight: '600',
   },
   verifiedIcon: {
     width: 16,
