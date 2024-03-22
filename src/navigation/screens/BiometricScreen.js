@@ -294,7 +294,7 @@ class BiometricScreen extends Component {
       }
 
       const options = {};
-      options.promptMessage = `Allow ${biometricType} to Authenticate you quickly and securely.`;
+      options.promptMessage = `Allow Push to authenticate you quickly and securely.`;
       options.cancelLabel = 'Skip for Now';
       options.fallbackLabel = '';
       options.disableDeviceFallback = true;
@@ -329,9 +329,9 @@ class BiometricScreen extends Component {
         this.toggleNoticePrompt(
           true,
           true,
-          `${biometricType} Skipped`,
-          `${biometricType} is recommended for added security and to quickly authenticate you`,
-          `If you wish to enable ${biometricType} in the future, you can do so from the [appsettings:App Settings]`,
+          `Biometrics skipped`,
+          `Biometrics are recommended for added security and to quickly authenticate you`,
+          `If you wish to enable Biometrics in the future, you can do so from the [appsettings:App Settings]`,
           false,
         );
       }
@@ -404,9 +404,9 @@ class BiometricScreen extends Component {
       }
 
       continueIcon = 'md-finger-print';
-      continuePrompt = `Enable ${biometricType} and Continue`;
+      continuePrompt = `Enable Biometrics and Continue`;
 
-      biometricPrompt = `Enabling [b:${biometricType} is optional] but further improves your security. It also gives you [d:fast and secure access].`;
+      biometricPrompt = `Enabling [b:Biometrics is optional] but further improves your security. It also gives you [d:fast and secure access].`;
     }
 
     return (

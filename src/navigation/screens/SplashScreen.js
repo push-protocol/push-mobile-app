@@ -170,7 +170,7 @@ class SplashScreen extends Component {
       }
 
       try {
-        const title = `Signing you with ${biometricType}`;
+        const title = `Signing you in with Biometrics`;
         const cancel = 'Use Passcode';
 
         const AUTH_OPTIONS = {
