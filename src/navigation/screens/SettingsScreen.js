@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import React, {useRef, useState} from 'react';
 import {FlatList, Image, StatusBar, StyleSheet, Text, View} from 'react-native';
@@ -10,6 +11,7 @@ import Dropdown from 'src/components/custom/Dropdown';
 import {Toaster} from 'src/components/indicators/Toaster';
 import ConfirmResetWallet from 'src/components/modals/ConfirmResetWallet';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
+import {usePushApi} from 'src/contexts/PushApiContext';
 import ENV_CONFIG from 'src/env.config';
 import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
 import {clearStorage} from 'src/navigation/screens/chats/helpers/storage';
@@ -19,6 +21,7 @@ import MetaStorage from 'src/singletons/MetaStorage';
 const SettingsScreen = ({}) => {
   const dispatch = useDispatch();
   const users = useSelector(selectUsers);
+  const [loadingIndex, setLoadingIndex] = useState(-1);
 
   // Wallet Connect functionality
   const wc_connector = useWalletConnectModal();
@@ -30,22 +33,15 @@ const SettingsScreen = ({}) => {
   // To Reset Wallet
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // FUNCTIONS
-  // // ADD HEADER COMPONENET
-  // const addHeaderComponent = (navigation) => {
-  //   navigation.setOptions({
-  //     headerLeft: () => {
-  //       return null
-  //     },
-  //   })
-  // }
+  const {getReadOnlyInstance} = usePushApi();
+  const navigation = useNavigation();
 
   // Render Items in Settings
-  const renderItem = ({item}) => {
+  const renderItem = ({item, index}) => {
     if (item.type === 'button') {
       return (
         <ImageTitleButton
+          loading={index === loadingIndex}
           title={item.title}
           img={item.img}
           onPress={item.func}
@@ -66,25 +62,6 @@ const SettingsScreen = ({}) => {
       return null;
     }
   };
-
-  // To Unarchive Message
-  // const unarchiveMessages = async () => {
-  //   const db = FeedDBHelper.getDB()
-  //   await FeedDBHelper.unhideAllFeedItems(db)
-
-  //   // Change the header back
-  //   addHeaderComponent(navigation)
-
-  //   showToast(
-  //     'Messages Unarchived! Restarting...',
-  //     '',
-  //     ToasterOptions.TYPE.GRADIENT_PRIMARY,
-  //   )
-
-  //   setTimeout(() => {
-  //     dispatch(setAuthState(GLOBALS.AUTH_STATES.ONBOARDING))
-  //   }, 1500)
-  // }
 
   // To Reset Wallet
   const resetWallet = async () => {
@@ -112,31 +89,6 @@ const SettingsScreen = ({}) => {
   // CONSTANTS
   let settingsOptions = [];
 
-  // Unarchive Messages
-  // settingsOptions.push({
-  //   title: 'Unarchive Messages',
-  //   img: require('assets/ui/unarchive.png'),
-  //   func: () => {
-  //     unarchiveMessages();
-  //   },
-  //   type: 'button',
-  // })
-
-  // Sign in with another wallet
-  // Disable multiple wallet singin
-  // settingsOptions.push({
-  //   title: 'Sign in with another wallet',
-  //   img: require('assets/ui/brokenkey.png'),
-  //   func: () => {
-  //     if (users.length < 5) {
-  //       dispatch(clearFeed(null));
-  //       dispatch(createNewWallet({wallet: '', userPKey: ''}));
-  //       dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING));
-  //     }
-  //   },
-  //   type: 'button',
-  // });
-
   // Swipe Reset
   users.length === 1 &&
     settingsOptions.push({
@@ -154,8 +106,12 @@ const SettingsScreen = ({}) => {
     settingsOptions.push({
       title: 'Disconnect WalletConnect',
       img: require('assets/ui/wcsettings.png'),
-      func: () => {
-        wc_connector.provider.disconnect();
+      func: async () => {
+        setLoadingIndex(settingsOptions.length - 1);
+        await wc_connector.provider.disconnect();
+        await getReadOnlyInstance();
+        navigation.navigate(GLOBALS.SCREENS.FEED);
+        setLoadingIndex(-1);
       },
       type: 'button',
     });
