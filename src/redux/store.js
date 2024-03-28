@@ -12,6 +12,7 @@ import {
 } from 'redux-persist';
 
 import authSlice from './authSlice';
+import channelSlice from './channelSlice';
 import feedSlice from './feedSlice';
 import videoSlice from './videoSlice';
 
@@ -20,7 +21,7 @@ const persistConfig = {
   version: 1,
   storage: AsyncStorage,
   whitelist: ['feed', 'auth'],
-  blacklist: ['video'],
+  blacklist: ['video', 'channel'],
   // blacklist: ['feed', 'auth'],
 };
 
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
   auth: authSlice,
   feed: feedSlice,
   video: videoSlice,
+  channel: channelSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

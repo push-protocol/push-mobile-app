@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 import React, {useRef, useState} from 'react';
 import {FlatList, Image, StatusBar, StyleSheet, Text, View} from 'react-native';
@@ -10,6 +11,7 @@ import Dropdown from 'src/components/custom/Dropdown';
 import {Toaster} from 'src/components/indicators/Toaster';
 import ConfirmResetWallet from 'src/components/modals/ConfirmResetWallet';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
+import {usePushApi} from 'src/contexts/PushApiContext';
 import ENV_CONFIG from 'src/env.config';
 import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
 import {clearStorage} from 'src/navigation/screens/chats/helpers/storage';
@@ -31,21 +33,12 @@ const SettingsScreen = ({}) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // FUNCTIONS
-  // // ADD HEADER COMPONENET
-  // const addHeaderComponent = (navigation) => {
-  //   navigation.setOptions({
-  //     headerLeft: () => {
-  //       return null
-  //     },
-  //   })
-  // }
-
   // Render Items in Settings
   const renderItem = ({item}) => {
     if (item.type === 'button') {
       return (
         <ImageTitleButton
+          loading={false}
           title={item.title}
           img={item.img}
           onPress={item.func}
@@ -67,25 +60,6 @@ const SettingsScreen = ({}) => {
     }
   };
 
-  // To Unarchive Message
-  // const unarchiveMessages = async () => {
-  //   const db = FeedDBHelper.getDB()
-  //   await FeedDBHelper.unhideAllFeedItems(db)
-
-  //   // Change the header back
-  //   addHeaderComponent(navigation)
-
-  //   showToast(
-  //     'Messages Unarchived! Restarting...',
-  //     '',
-  //     ToasterOptions.TYPE.GRADIENT_PRIMARY,
-  //   )
-
-  //   setTimeout(() => {
-  //     dispatch(setAuthState(GLOBALS.AUTH_STATES.ONBOARDING))
-  //   }, 1500)
-  // }
-
   // To Reset Wallet
   const resetWallet = async () => {
     setIsModalOpen(true);
@@ -97,9 +71,11 @@ const SettingsScreen = ({}) => {
       wc_connector.provider.disconnect();
     }
 
-    await AuthenticationHelper.resetSignedInUser();
-    await MetaStorage.instance.clearStorage();
-    await clearStorage();
+    await Promise.all([
+      AuthenticationHelper.resetSignedInUser(),
+      MetaStorage.instance.clearStorage(),
+      clearStorage(),
+    ]);
     dispatch(setLogout(null));
     setIsModalOpen(false);
   };
@@ -110,54 +86,16 @@ const SettingsScreen = ({}) => {
   // CONSTANTS
   let settingsOptions = [];
 
-  // Unarchive Messages
-  // settingsOptions.push({
-  //   title: 'Unarchive Messages',
-  //   img: require('assets/ui/unarchive.png'),
-  //   func: () => {
-  //     unarchiveMessages();
-  //   },
-  //   type: 'button',
-  // })
-
-  // Sign in with another wallet
-  // Disable multiple wallet singin
-  // settingsOptions.push({
-  //   title: 'Sign in with another wallet',
-  //   img: require('assets/ui/brokenkey.png'),
-  //   func: () => {
-  //     if (users.length < 5) {
-  //       dispatch(clearFeed(null));
-  //       dispatch(createNewWallet({wallet: '', userPKey: ''}));
-  //       dispatch(setAuthState(GLOBALS.AUTH_STATE.ONBOARDING));
-  //     }
-  //   },
-  //   type: 'button',
-  // });
-
   // Swipe Reset
   users.length === 1 &&
     settingsOptions.push({
-      title: 'Swipe / Reset Wallet',
+      title: 'Logout',
       img: require('assets/ui/unlink.png'),
       func: () => {
         resetWallet();
       },
       type: 'button',
     });
-
-  // Wallet Connect Disconnect
-  if (wc_connector.isConnected) {
-    // Add Wallet Connect Disconnect Link
-    settingsOptions.push({
-      title: 'Disconnect WalletConnect',
-      img: require('assets/ui/wcsettings.png'),
-      func: () => {
-        wc_connector.provider.disconnect();
-      },
-      type: 'button',
-    });
-  }
 
   if (isModalOpen) {
     return (
@@ -212,9 +150,7 @@ const SettingsScreen = ({}) => {
 
           <View style={styles.appInfo}>
             <Text
-              style={
-                styles.appText
-              }>{`Ethereum Push Notification Service(Alpha) v${ENV_CONFIG.APP_VERSION}`}</Text>
+              style={styles.appText}>{`PUSH v${ENV_CONFIG.APP_VERSION}`}</Text>
             <Image
               style={styles.appImage}
               source={require('assets/ui/fulllogo.png')}

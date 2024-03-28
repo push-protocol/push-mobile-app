@@ -31,6 +31,7 @@ type PushApiContextType = {
   setUserPushSDKInstance: React.Dispatch<React.SetStateAction<PushAPI | null>>;
   refreshUserPushSDKInstance: () => Promise<void>;
   getReadWriteInstance: (overrideAccount?: string) => Promise<void>;
+  getReadOnlyInstance: (overrideAccount?: string) => Promise<void>;
   readOnlyMode: boolean;
   isLoading: boolean;
   showUnlockProfileModal: () => void;
@@ -42,6 +43,7 @@ export const PushApiContext = createContext<PushApiContextType>({
   setUserPushSDKInstance: () => {},
   refreshUserPushSDKInstance: () => Promise.resolve(),
   getReadWriteInstance: () => Promise.resolve(),
+  getReadOnlyInstance: () => Promise.resolve(),
   readOnlyMode: true,
   isLoading: true,
   showUnlockProfileModal: () => {},
@@ -228,6 +230,7 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
         setUserPushSDKInstance,
         refreshUserPushSDKInstance,
         getReadWriteInstance,
+        getReadOnlyInstance,
         userInfo,
         readOnlyMode,
         isLoading,

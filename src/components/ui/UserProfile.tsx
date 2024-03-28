@@ -13,7 +13,7 @@ export const UserProfileIcon = () => {
   const {readOnlyMode, isLoading, userInfo} = usePushApi();
 
   return (
-    <>
+    <View>
       <Image
         source={{
           uri:
@@ -35,7 +35,7 @@ export const UserProfileIcon = () => {
           ]}
         />
       )}
-    </>
+    </View>
   );
 };
 

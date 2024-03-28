@@ -1,11 +1,18 @@
 import {BlurView} from 'expo-blur';
 import React from 'react';
-import {InteractionManager, StyleSheet, View} from 'react-native';
+import {
+  InteractionManager,
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+} from 'react-native';
 import Modal from 'react-native-modal';
 
 interface ModalType {
   InnerComponent?: (props: any) => JSX.Element;
   InnerComponentProps?: any;
+  onBackDropPress?: () => void;
 }
 
 const useModalBlur = () => {
@@ -13,16 +20,24 @@ const useModalBlur = () => {
 
   const handleOpen = async () => {
     // Fix for iOS modal not opening bug
-    await InteractionManager.runAfterInteractions(() => {
+    if (Platform.OS === 'ios') {
+      await InteractionManager.runAfterInteractions(() => {
+        setOpen(true);
+      });
+    } else {
       setOpen(true);
-    });
+    }
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const ModalComponent = ({InnerComponent, InnerComponentProps}: ModalType) => {
+  const ModalComponent = ({
+    InnerComponent,
+    InnerComponentProps,
+    onBackDropPress,
+  }: ModalType) => {
     return (
       <>
         <Modal
@@ -33,7 +48,9 @@ const useModalBlur = () => {
           animationOutTiming={500}
           backdropOpacity={1}
           customBackdrop={
-            <BlurView intensity={70} tint="dark" style={styles.blurView} />
+            <Pressable onPress={onBackDropPress} style={styles.blurView}>
+              <BlurView intensity={70} tint="dark" style={styles.blurView} />
+            </Pressable>
           }>
           <View style={styles.container}>
             {InnerComponent && <InnerComponent {...InnerComponentProps} />}

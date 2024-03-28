@@ -15,6 +15,7 @@ import {
 import Globals from 'src/Globals';
 import * as PushNodeClient from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
+import Header from 'src/components/ui/Header';
 import MetaStorage from 'src/singletons/MetaStorage';
 import {WallectConnectPage} from 'src/walletconnect/pages/WallectConnectPage';
 
@@ -133,6 +134,7 @@ const ChatScreen = (props: any) => {
         requests: chatData.requests,
         chatCredentials: chatCredentials,
       }}>
+      <Header />
       <SafeAreaView style={styles.container}>
         <View>
           <View style={styles.header}>

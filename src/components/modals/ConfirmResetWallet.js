@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   Animated,
   KeyboardAvoidingView,
   StyleSheet,
@@ -23,6 +24,7 @@ const ConfirmResetWallet = ({
     indicator: false,
     _isMounted: false,
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setState({
@@ -37,6 +39,12 @@ const ConfirmResetWallet = ({
       });
     };
   }, []);
+
+  const handleClose = async () => {
+    setLoading(true);
+    await closeFunc();
+    setLoading(false);
+  };
 
   return (
     //@ts-ignore
@@ -66,8 +74,12 @@ const ConfirmResetWallet = ({
             <TouchableHighlight
               style={[styles.cancel]}
               underlayColor={GLOBALS.COLORS.LIGHT_GRAY}
-              onPress={closeFunc}>
-              <Text style={[styles.cancelText]}>{closeTitle}</Text>
+              onPress={handleClose}>
+              {loading ? (
+                <ActivityIndicator size="small" color={GLOBALS.COLORS.LINKS} />
+              ) : (
+                <Text style={[styles.cancelText]}>{closeTitle}</Text>
+              )}
             </TouchableHighlight>
           </View>
         </View>

@@ -1,8 +1,15 @@
-import React, {Component} from 'react';
-import {Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
+import React from 'react';
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableHighlight,
+  View,
+} from 'react-native';
 import GLOBALS from 'src/Globals';
 
-export default ImageTitleButton = ({img, title, onPress}) => {
+export default ImageTitleButton = ({img, title, onPress, loading = false}) => {
   // Rendor
   return (
     <TouchableHighlight
@@ -10,7 +17,15 @@ export default ImageTitleButton = ({img, title, onPress}) => {
       onPress={onPress}
       underlayColor={GLOBALS.COLORS.SLIGHT_GRAY}>
       <View style={styles.childContainer}>
-        <Image style={styles.image} source={img} />
+        {loading ? (
+          <ActivityIndicator
+            size="small"
+            color={GLOBALS.COLORS.PINK}
+            style={styles.indicator}
+          />
+        ) : (
+          <Image style={styles.image} source={img} />
+        )}
         <Text style={styles.title}>{title}</Text>
       </View>
     </TouchableHighlight>
@@ -45,5 +60,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     fontWeight: '200',
+  },
+  indicator: {
+    marginRight: 9,
   },
 });

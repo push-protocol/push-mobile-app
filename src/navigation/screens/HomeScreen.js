@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {Toaster} from 'src/components/indicators/Toaster';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
+import Header from 'src/components/ui/Header';
 import HomeFeed from 'src/components/ui/HomeFeed';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import ServerHelper from 'src/helpers/ServerHelper';
@@ -166,45 +167,48 @@ class HomeScreen extends Component {
   // RENDER
   render() {
     return (
-      <View style={styles.container}>
-        <ScreenFinishedTransition
-          runAfterScreenTransition={() => {
-            this.setState({
-              transitionFinished: true,
-            });
-
-            this.afterTransitionMaintainer();
-          }}
-        />
-
+      <>
+        <Header />
         <View style={styles.container}>
-          <StatusBar
-            barStyle={'dark-content'}
-            translucent
-            backgroundColor="transparent"
+          <ScreenFinishedTransition
+            runAfterScreenTransition={() => {
+              this.setState({
+                transitionFinished: true,
+              });
+
+              this.afterTransitionMaintainer();
+            }}
           />
 
-          <View style={styles.content}>
-            <HomeFeed
-              refreshNotifFeeds={this.state.refresh}
-              ToasterFunc={(msg, icon, type, tapCB, screenTime) => {
-                this.showToast(msg, icon, type, tapCB, screenTime);
-              }}
+          <View style={styles.container}>
+            <StatusBar
+              barStyle={'dark-content'}
+              translucent
+              backgroundColor="transparent"
             />
+
+            <View style={styles.content}>
+              <HomeFeed
+                refreshNotifFeeds={this.state.refresh}
+                ToasterFunc={(msg, icon, type, tapCB, screenTime) => {
+                  this.showToast(msg, icon, type, tapCB, screenTime);
+                }}
+              />
+            </View>
           </View>
+
+          {/* Overlay Blur to show incase need to emphasize on something */}
+          <OverlayBlur
+            ref="OverlayBlur"
+            onPress={() => {
+              this.exitIntentOnOverleyBlur();
+            }}
+          />
+
+          {/* Toaster Always goes here in the end after safe area */}
+          <Toaster ref="Toaster" onToastTap />
         </View>
-
-        {/* Overlay Blur to show incase need to emphasize on something */}
-        <OverlayBlur
-          ref="OverlayBlur"
-          onPress={() => {
-            this.exitIntentOnOverleyBlur();
-          }}
-        />
-
-        {/* Toaster Always goes here in the end after safe area */}
-        <Toaster ref="Toaster" onToastTap />
-      </View>
+      </>
     );
   }
 }
