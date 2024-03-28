@@ -21,7 +21,6 @@ import MetaStorage from 'src/singletons/MetaStorage';
 const SettingsScreen = ({}) => {
   const dispatch = useDispatch();
   const users = useSelector(selectUsers);
-  const [loadingIndex, setLoadingIndex] = useState(-1);
 
   // Wallet Connect functionality
   const wc_connector = useWalletConnectModal();
@@ -33,15 +32,13 @@ const SettingsScreen = ({}) => {
   // To Reset Wallet
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const {getReadOnlyInstance} = usePushApi();
-  const navigation = useNavigation();
 
   // Render Items in Settings
-  const renderItem = ({item, index}) => {
+  const renderItem = ({item}) => {
     if (item.type === 'button') {
       return (
         <ImageTitleButton
-          loading={index === loadingIndex}
+          loading={false}
           title={item.title}
           img={item.img}
           onPress={item.func}
@@ -92,30 +89,13 @@ const SettingsScreen = ({}) => {
   // Swipe Reset
   users.length === 1 &&
     settingsOptions.push({
-      title: 'Swipe / Reset Wallet',
+      title: 'Logout',
       img: require('assets/ui/unlink.png'),
       func: () => {
         resetWallet();
       },
       type: 'button',
     });
-
-  // Wallet Connect Disconnect
-  if (wc_connector.isConnected) {
-    // Add Wallet Connect Disconnect Link
-    settingsOptions.push({
-      title: 'Disconnect WalletConnect',
-      img: require('assets/ui/wcsettings.png'),
-      func: async () => {
-        setLoadingIndex(settingsOptions.length - 1);
-        await wc_connector.provider.disconnect();
-        await getReadOnlyInstance();
-        navigation.navigate(GLOBALS.SCREENS.FEED);
-        setLoadingIndex(-1);
-      },
-      type: 'button',
-    });
-  }
 
   if (isModalOpen) {
     return (

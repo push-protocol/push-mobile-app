@@ -41,6 +41,7 @@ const useSubscriptions = () => {
           };
       },
     );
+    const isAlreadySubscribed = subscriptions?.[channel] !== undefined;
     const onSuccess = () => {
       dispatch(
         addChannelSubscription({
@@ -49,7 +50,9 @@ const useSubscriptions = () => {
         }),
       );
       toastRef.current?.showToast(
-        `Successfully subscribed to channel`,
+        isAlreadySubscribed
+          ? 'Successfully updated channel preferences'
+          : 'Successfully subscribed to channel',
         '',
         ToasterOptions.TYPE.GRADIENT_PRIMARY,
       );

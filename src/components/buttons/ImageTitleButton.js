@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import GLOBALS from 'src/Globals';
 
-export default ImageTitleButton = ({img, title, onPress, loading}) => {
+export default ImageTitleButton = ({img, title, onPress, loading = false}) => {
   // Rendor
   return (
     <TouchableHighlight
