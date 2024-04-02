@@ -14,6 +14,7 @@ import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import Web3Helper from 'src/helpers/Web3Helper';
 import useModalBlur from 'src/hooks/ui/useModalBlur';
 import {setAuthType, setInitialSignin} from 'src/redux/authSlice';
+import {openModal} from 'src/redux/modalSlice';
 
 const SingInScreen = () => {
   const navigation = useNavigation();
@@ -26,7 +27,12 @@ const SingInScreen = () => {
     hideModal: hideSigningInModal,
   } = useModalBlur();
 
-  const walletConnectHandler = async () => {
+  const walletConnectHandler = async (showError = false) => {
+    if (!provider && showError) {
+      dispatch(
+        openModal({modalKey: 'WALLET_CONNECT_ERROR', data: {isOpen: true}}),
+      );
+    }
     if (isConnected) provider?.disconnect();
     else await open();
   };
@@ -91,7 +97,7 @@ const SingInScreen = () => {
             title: 'Sign in with Wallet',
             fontColor: GLOBALS.COLORS.WHITE,
             bgColor: GLOBALS.COLORS.BLACK,
-            onPress: walletConnectHandler,
+            onPress: () => walletConnectHandler(true),
           },
           {
             iconFactory: 'Image',

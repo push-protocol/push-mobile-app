@@ -4,6 +4,7 @@ import {Platform} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import IncomingCall from 'src/components/modals/IncomingCall';
+import {ModalsWrapper} from 'src/components/modals/ModalsWrapper';
 import PushApiContextProvider from 'src/contexts/PushApiContext';
 import SheetContextProvider from 'src/contexts/SheetContext';
 import ToasterContextProvider from 'src/contexts/ToasterContext';
@@ -70,6 +71,7 @@ const Screens = ({callAccepted}) => {
             </>
           )}
         </NavigationContainer>
+        <ModalsWrapper />
       </PushApiContextProvider>
     </ToasterContextProvider>
   );
