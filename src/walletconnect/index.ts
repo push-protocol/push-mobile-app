@@ -11,7 +11,7 @@ const WalletConnectConfig = {
       },
     },
   },
-  providerMetadata: (scheme: String) => ({
+  providerMetadata: (scheme: string) => ({
     name: 'Push Mobile App',
     description: 'Push Mobile App',
     url: 'https://push.org/',
@@ -20,7 +20,7 @@ const WalletConnectConfig = {
       native: scheme,
     },
   }),
-  projectId: envConfig.WALLET_CONNECT_PROJECT_ID,
+  projectId: envConfig.WALLET_CONNECT_PROJECT_ID ?? '',
 };
 
 export {WalletConnectConfig};

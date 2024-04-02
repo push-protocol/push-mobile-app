@@ -14,6 +14,7 @@ import {
 import authSlice from './authSlice';
 import channelSlice from './channelSlice';
 import feedSlice from './feedSlice';
+import modalSlice from './modalSlice';
 import videoSlice from './videoSlice';
 
 const persistConfig = {
@@ -21,8 +22,7 @@ const persistConfig = {
   version: 1,
   storage: AsyncStorage,
   whitelist: ['feed', 'auth'],
-  blacklist: ['video', 'channel'],
-  // blacklist: ['feed', 'auth'],
+  blacklist: ['video', 'channel', 'modal'],
 };
 
 const rootReducer = combineReducers({
@@ -30,6 +30,7 @@ const rootReducer = combineReducers({
   feed: feedSlice,
   video: videoSlice,
   channel: channelSlice,
+  modal: modalSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
