@@ -1,5 +1,5 @@
 import {useNetInfo} from '@react-native-community/netinfo';
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import useModalBlur from 'src/hooks/ui/useModalBlur';
@@ -13,13 +13,22 @@ export const InternetConnectionModal = () => {
   const {isConnected} = useNetInfo();
   const dispatch = useDispatch();
 
+  const checkConnection = useCallback(
+    async (connected: boolean | null) => {
+      if (connected) {
+        if (isOpen) dispatch(closeModal({modalKey: 'INTERNET_ERROR'}));
+      } else {
+        if (!isOpen)
+          dispatch(
+            openModal({modalKey: 'INTERNET_ERROR', data: {isOpen: true}}),
+          );
+      }
+    },
+    [dispatch],
+  );
+
   useEffect(() => {
-    if (isConnected) {
-      if (isOpen) dispatch(closeModal({modalKey: 'INTERNET_ERROR'}));
-    } else {
-      if (!isOpen)
-        dispatch(openModal({modalKey: 'INTERNET_ERROR', data: {isOpen: true}}));
-    }
+    checkConnection(isConnected);
   }, [isConnected]);
 
   return (
@@ -34,7 +43,7 @@ export const InternetConnectionModal = () => {
             bgColor: GLOBALS.COLORS.BLACK,
             title: 'Retry',
             onPress: async () => {
-              await new Promise(resolve => setTimeout(resolve, 500));
+              await checkConnection(isConnected);
             },
           },
         ],

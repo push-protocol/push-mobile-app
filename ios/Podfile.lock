@@ -420,6 +420,8 @@ PODS:
   - react-native-image-picker (7.1.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
+  - react-native-netinfo (11.3.1):
+    - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
   - react-native-safe-area-context (4.5.0):
@@ -636,6 +638,7 @@ DEPENDENCIES:
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-hash (from `../node_modules/react-native-hash`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-simple-toast (from `../node_modules/react-native-simple-toast`)
@@ -793,6 +796,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-hash"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
   react-native-randombytes:
     :path: "../node_modules/react-native-randombytes"
   react-native-safe-area-context:
@@ -938,6 +943,7 @@ SPEC CHECKSUMS:
   react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-hash: 4664516df1834e1293b30e711c63f61f7f801b6a
   react-native-image-picker: 5e076db26cd81660cfb6db5bcf517cfa12054d45
+  react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: 39c2d8be3328df5d437ac1700f4f3a4f75716acc
   react-native-simple-toast: 8ee5d23f0b92b935ab7434cdb65159ce12dfb4b7
