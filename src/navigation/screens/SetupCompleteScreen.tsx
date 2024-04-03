@@ -4,9 +4,12 @@ import React, {useState} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
+import {ToasterOptions} from 'src/components/indicators/Toaster';
 import OnboardingWrapper from 'src/components/misc/OnboardingWrapper';
 import {usePushApi} from 'src/contexts/PushApiContext';
+import {useToaster} from 'src/contexts/ToasterContext';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
+import {TimeoutHelper} from 'src/helpers/TimeoutHelper';
 import {selectUserDomain} from 'src/redux/authSlice';
 
 import {getTrimmedAddress} from './chats/helpers/chatAddressFormatter';
@@ -17,12 +20,22 @@ const SetupCompleteScreen = () => {
   const domain = useSelector(selectUserDomain);
   const navigation = useNavigation();
   const route = useRoute();
+  const {toastRef} = useToaster();
   // @ts-ignore
   const {user} = route.params;
 
   const decryptPushProfile = async () => {
     setLoading(true);
-    await getReadWriteInstance();
+    await TimeoutHelper.timeoutAsync({
+      asyncFunction: getReadWriteInstance(),
+      onError: () => {
+        toastRef.current?.showToast(
+          'Request timed out.\nYou might have to restart the wallet and try again.',
+          '',
+          ToasterOptions.TYPE.ERROR,
+        );
+      },
+    })();
     loadNextScreen();
     setLoading(false);
   };

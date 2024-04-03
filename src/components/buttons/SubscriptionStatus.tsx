@@ -10,12 +10,16 @@ import {
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
+import {useToaster} from 'src/contexts/ToasterContext';
+import {TimeoutHelper} from 'src/helpers/TimeoutHelper';
 import useSubscriptions from 'src/hooks/channel/useSubscriptions';
 import {
   Channel,
   selectIsLoadingSubscriptions,
   selectSubscriptions,
 } from 'src/redux/channelSlice';
+
+import {ToasterOptions} from '../indicators/Toaster';
 
 const SubscriptionStatus = ({
   selectChannelForSettings,
@@ -28,6 +32,7 @@ const SubscriptionStatus = ({
   const subscriptions = useSelector(selectSubscriptions);
   const isLoadingSubscriptions = useSelector(selectIsLoadingSubscriptions);
   const {subscribe} = useSubscriptions();
+  const {toastRef} = useToaster();
 
   const channelSettings = channelData.channel_settings;
   const channel = channelData.channel;
@@ -44,7 +49,16 @@ const SubscriptionStatus = ({
       if (channelSettings) {
         selectChannelForSettings(channelData);
       } else {
-        await subscribe(channel);
+        await TimeoutHelper.timeoutAsync({
+          asyncFunction: subscribe(channel),
+          onError: () => {
+            toastRef.current?.showToast(
+              'Request timed out.\nYou might have to restart the wallet and try again.',
+              '',
+              ToasterOptions.TYPE.ERROR,
+            );
+          },
+        })();
       }
     }
     setProcessing(false);

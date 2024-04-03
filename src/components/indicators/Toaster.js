@@ -386,6 +386,7 @@ const styles = StyleSheet.create({
   message: {
     color: GLOBALS.COLORS.WHITE,
     fontSize: 14,
+    textAlign: 'center',
   },
   animatedIconsStyle: {
     paddingVertical: 2,
