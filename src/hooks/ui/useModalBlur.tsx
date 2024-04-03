@@ -1,6 +1,7 @@
 import {BlurView} from 'expo-blur';
 import React, {useEffect} from 'react';
 import {
+  Dimensions,
   InteractionManager,
   Platform,
   Pressable,
@@ -56,7 +57,9 @@ const useModalBlur = (isOpen?: boolean) => {
           animationOut="fadeOut"
           animationOutTiming={500}
           backdropOpacity={1}
-          statusBarTranslucent
+          coverScreen={false}
+          deviceWidth={Dimensions.get('window').width}
+          deviceHeight={Dimensions.get('window').height}
           customBackdrop={
             <Pressable onPress={onBackDropPress} style={styles.blurView}>
               <BlurView intensity={70} tint="dark" style={styles.blurView} />

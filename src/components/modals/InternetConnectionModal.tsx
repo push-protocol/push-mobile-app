@@ -16,8 +16,8 @@ export const InternetConnectionModal = () => {
   const checkConnection = useCallback(
     async (connected: boolean | null) => {
       if (connected) {
-        if (isOpen) dispatch(closeModal({modalKey: 'INTERNET_ERROR'}));
-      } else {
+        dispatch(closeModal({modalKey: 'INTERNET_ERROR'}));
+      } else if (connected === false) {
         if (!isOpen)
           dispatch(
             openModal({modalKey: 'INTERNET_ERROR', data: {isOpen: true}}),
@@ -28,7 +28,11 @@ export const InternetConnectionModal = () => {
   );
 
   useEffect(() => {
-    checkConnection(isConnected);
+    const timeoutId = setTimeout(() => checkConnection(isConnected), 1000);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [isConnected]);
 
   return (
