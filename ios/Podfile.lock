@@ -559,11 +559,12 @@ PODS:
     - React-Core
   - RNLocalize (3.0.2):
     - React-Core
-  - RNNotifee (7.8.0):
+  - RNNotifee (7.8.2):
     - React-Core
-    - RNNotifee/NotifeeCore (= 7.8.0)
-  - RNNotifee/NotifeeCore (7.8.0):
-    - React-Core
+    - RNNotifeeCore
+  - RNNotifeeCore (7.8.2):
+    - RNNotifeeCore/NotifeeCore (= 7.8.2)
+  - RNNotifeeCore/NotifeeCore (7.8.2)
   - RNOS (1.2.6):
     - React
   - RNReanimated (3.7.2):
@@ -672,6 +673,7 @@ DEPENDENCIES:
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNLocalize (from `../node_modules/react-native-localize`)
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
+  - "RNNotifeeCore (from `../node_modules/@notifee/react-native/RNNotifeeCore.podspec`)"
   - RNOS (from `../node_modules/react-native-os`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -864,6 +866,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-localize"
   RNNotifee:
     :path: "../node_modules/@notifee/react-native"
+  RNNotifeeCore:
+    :path: "../node_modules/@notifee/react-native/RNNotifeeCore.podspec"
   RNOS:
     :path: "../node_modules/react-native-os"
   RNReanimated:
@@ -976,7 +980,8 @@ SPEC CHECKSUMS:
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNLocalize: dbea38dcb344bf80ff18a1757b1becf11f70cae4
-  RNNotifee: f3c01b391dd8e98e67f539f9a35a9cbcd3bae744
+  RNNotifee: 91af2c3215d3921001b0a1f301cf46432048b9b7
+  RNNotifeeCore: 5c71d2e6eec6c38d58a94f6975a988dc18de0849
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: 2dc3707222fa153658386f4c0d357e0853327c3d
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
@@ -988,6 +993,6 @@ SPEC CHECKSUMS:
   YoutubePlayer-in-WKWebView: 4fca3b4f6f09940077bfbae7bddb771f2b43aacd
   ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5
 
-PODFILE CHECKSUM: eb792cc232500f7ddef117e6637abcb6fadff54c
+PODFILE CHECKSUM: 5f5e01aea2b22b7f6d04ff258a560dda86c0b261
 
 COCOAPODS: 1.15.2
