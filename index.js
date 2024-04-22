@@ -6,6 +6,7 @@ import RNCallKeep from 'react-native-callkeep';
 import 'react-native-crypto';
 import 'react-native-get-random-values';
 import CallKeepHelper from 'src/helpers/CallkeepHelper';
+import {NotificationHelper} from 'src/helpers/NotificationHelper';
 import {NotifeClearBadge} from 'src/notifee';
 import {getUUID} from 'src/push_video/payloads/helpers';
 import MetaStorage from 'src/singletons/MetaStorage';
@@ -59,8 +60,16 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
       'generic',
       true,
     );
+  } else {
+    NotificationHelper.resolveNotification(remoteMessage);
   }
 });
+
+messaging().onMessage(async remoteMessage => {
+  NotificationHelper.resolveNotification(remoteMessage);
+});
+
+NotificationHelper.handleChatNotification();
 
 if (isCallAccepted) {
   AppRegistry.registerComponent(appName, () => HeadlessCheck);

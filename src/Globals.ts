@@ -60,6 +60,8 @@ export default {
     USER_CHAT_DATA: 'UserChatData',
 
     IS_BACKGROUND_CALL_ACCEPTED: 'IsBackgroundCallAccepted',
+
+    NOTIFICATION_MESSAGES: 'NotificationMessages',
   },
 
   CONSTANTS: {
