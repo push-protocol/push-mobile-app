@@ -150,10 +150,12 @@ export default {
 
     // Backgrounds
     BG_WELCOME: '#F6EDFF',
-    BG_SIGNIN: '#EFF2FF',
-    BG_SETUPCOMPLETE: '#F1FDFF',
+    BG_SIGNIN: '#DBE1FF',
+    BG_SETUPCOMPLETE: '#DFF9FF',
     BG_BIOMETRIC: '#F9F9F9',
-    BG_PUSHNOTIFY: '#FDF7EE',
+    BG_PUSHNOTIFY: '#FCF2E3',
+    BG_ALLSET: '#F8ECFF',
+    BG_OBSLIDER: '#F8ECFF',
   },
   SCREENS: {
     WELCOME: 'Welcome',

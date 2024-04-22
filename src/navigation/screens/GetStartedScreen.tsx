@@ -54,6 +54,7 @@ const GetStartedScreen = () => {
   return (
     <OnboardingWrapper
       title="You're all set!"
+      backgroundColor={GLOBALS.COLORS.BG_ALLSET}
       footerButtons={[
         {
           title: 'Get Started',
@@ -63,6 +64,12 @@ const GetStartedScreen = () => {
           onPress: () => handleNextScreen(),
         },
       ]}>
+      <View style={styles.imageContainer}>
+        <Image
+          source={require('assets/ui/onboarding/ob-allset.png')}
+          style={styles.image}
+        />
+      </View>
       <View style={styles.sectionsWrapper}>
         {sections.map((section, index) => (
           <Section key={index} {...section} />
@@ -103,8 +110,19 @@ const styles = StyleSheet.create({
   },
   sectionsWrapper: {
     gap: 24,
-    flex: 1,
     justifyContent: 'flex-end',
-    marginBottom: 74,
+    marginVertical: '10%',
+  },
+  image: {
+    height: '100%',
+    width: '100%',
+    resizeMode: 'contain',
+    flex: 1,
+  },
+  imageContainer: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
