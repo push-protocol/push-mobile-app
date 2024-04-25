@@ -1,7 +1,10 @@
+import notifee from '@notifee/react-native';
+import messaging from '@react-native-firebase/messaging';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
+  Platform,
   RefreshControl,
   SafeAreaView,
   StyleSheet,
@@ -41,6 +44,22 @@ export default function InboxFeed(props) {
       fetchInitializedFeeds();
     }
   }, [initialized, userPushSDKInstance]);
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      messaging()
+        .hasPermission()
+        .then(val => {
+          if (val === 1) {
+            // User has enabled notifications
+            notifee.createChannel({
+              id: 'default',
+              name: 'Default Channel',
+            });
+          }
+        });
+    }
+  }, []);
 
   useEffect(() => {
     // Wallet changed, different user

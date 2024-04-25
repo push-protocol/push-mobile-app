@@ -6,7 +6,7 @@ import * as PushApi from '@pushprotocol/restapi';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
-import {Platform} from 'react-native';
+import {Linking} from 'react-native';
 import GLOBALS from 'src/Globals';
 import envConfig from 'src/env.config';
 import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
@@ -25,13 +25,18 @@ type SendNotifeeNotification = {
   newMessage: AndroidMessagingStyleMessage;
 };
 
+const NOTIFICATION_TYPES = {
+  CHANNEL: 'PUSH_NOTIFICATION_CHANNEL',
+  CHAT: 'PUSH_NOTIFICATION_CHAT',
+};
+
 export const NotificationHelper = {
   resolveNotification: async (
     notification: FirebaseMessagingTypes.RemoteMessage,
   ) => {
-    if (notification?.data?.type === 'CHAT') {
+    if (notification?.data?.type === NOTIFICATION_TYPES.CHAT) {
       NotificationHelper.handleChatNotification(notification);
-    } else if (notification?.data?.type === 'CHANNEL') {
+    } else if (notification?.data?.type === NOTIFICATION_TYPES.CHANNEL) {
       NotificationHelper.handleChannelNotification(notification);
     }
   },
@@ -70,68 +75,35 @@ export const NotificationHelper = {
   handleChannelNotification: async (
     message: FirebaseMessagingTypes.RemoteMessage,
   ) => {
-    // await NotificationHelper.sendNotification({});
+    await NotificationHelper.sendNotification({
+      conversationId: message.from ?? 'default',
+      from: {
+        avatar: message.data?.image.toString() ?? '',
+        id: message.from ?? 'default',
+        name: message.data?.title.toString() ?? '',
+      },
+      messageId: message.messageId ?? 'default',
+      body: message.data?.body.toString(),
+      title: message.data?.title.toString(),
+      newMessage: {
+        text: message.data?.body.toString() ?? '',
+        timestamp: Date.now(),
+      },
+    });
   },
 
   sendNotification: async (notification: SendNotifeeNotification) => {
     try {
-      // await notifee.displayNotification({
-      //   id: 'Communications',
-      //   title: 'Push protocol notif',
-      //   body: 'Hi there this is a test notification from push protocol',
-      //   ios: {
-      //     categoryId: 'Communications',
-      //     communicationInfo: {
-      //       conversationId: '123',
-      //       sender: {
-      //         id: 'abcde',
-      //         avatar: 'https://picsum.photos/200',
-      //         displayName: 'Aave Channel',
-      //       },
-      //     },
-      //   },
-      //   android: {
-      //     channelId: 'default',
-      //     largeIcon: 'https://picsum.photos/200',
-      //     smallIcon: 'ic_launcher',
-      //     color: '#9c27b0',
-      //     circularLargeIcon: true,
-      //     style: {
-      //       type: AndroidStyle.MESSAGING,
-      //       person: {
-      //         name: 'John Doe',
-      //         icon: 'https://picsum.photos/200',
-      //       },
-      //       messages: [
-      //         {
-      //           text: 'Hey, how are you?',
-      //           timestamp: Date.now() - 600000,
-      //         },
-      //       ],
-      //     },
-      //   },
-      // });
-      const messages =
-        (await NotificationHelper.getRecentMessageNotifications(
-          notification.from.id,
-        )) ?? [];
-      messages.push(notification.newMessage);
+      const messages = [notification.newMessage];
 
-      if (Platform.OS === 'android') {
-        await notifee.createChannel({
-          id: 'default',
-          name: 'Default Channel',
-        });
-      }
-
-      await notifee.displayNotification({
+      notifee.displayNotification({
         id: notification.messageId,
         title: notification?.title,
         body: notification?.body,
         ios: {
           categoryId: 'Communications',
           communicationInfo: {
-            conversationId: notification?.conversationId,
+            conversationId: notification.conversationId,
             sender: {
               id: notification.from.id,
               avatar: notification.from.avatar,
@@ -145,6 +117,9 @@ export const NotificationHelper = {
           smallIcon: '@drawable/ic_stat_name',
           color: '#e20880',
           circularLargeIcon: true,
+          pressAction: {
+            id: 'default',
+          },
           style: {
             type: AndroidStyle.MESSAGING,
             person: {
@@ -174,6 +149,14 @@ export const NotificationHelper = {
       return [];
     } catch (error) {
       return [];
+    }
+  },
+
+  openDeeplink: async (type: string) => {
+    const BASE_URL = 'app.push.org://';
+    if (type === NOTIFICATION_TYPES.CHANNEL) {
+      await Linking.openURL(`${BASE_URL}inbox`);
+    } else if (type === NOTIFICATION_TYPES.CHAT) {
     }
   },
 };

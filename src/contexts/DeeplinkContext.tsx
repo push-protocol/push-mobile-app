@@ -45,6 +45,15 @@ const DeeplinkContextProvider = ({children}: DeeplinkContextProviderProps) => {
     setParams(params);
   }, []);
 
+  const setupUrl = useCallback(
+    (url: string) => {
+      const data = DeeplinkHelper.parseUrl(url);
+      setPage(data.page);
+      setParams(data.params);
+    },
+    [setPage, setParams],
+  );
+
   useEffect(() => {
     if (authState === Globals.AUTH_STATE.AUTHENTICATED && page) {
       try {
@@ -59,17 +68,13 @@ const DeeplinkContextProvider = ({children}: DeeplinkContextProviderProps) => {
   }, [page, authState]);
 
   useEffect(() => {
-    Linking.getInitialURL().then(url => {
+    Linking.getInitialURL()?.then(url => {
       if (url) {
-        console.log('initial URL: ' + url);
+        setupUrl(url);
       }
     });
     Linking.addEventListener('url', ({url}) => {
-      console.log('url', url);
-      const data = DeeplinkHelper.parseUrl(url);
-      console.log('data: ' + JSON.stringify(data));
-      setPage(data.page);
-      setParams(data.params);
+      setupUrl(url);
     });
 
     return () => {
