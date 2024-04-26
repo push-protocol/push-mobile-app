@@ -205,7 +205,7 @@ const ChatScreen = (props: any) => {
         }}>
         <View
           style={{
-            bottom: 15,
+            bottom: 80,
             position: 'absolute',
             right: 15,
           }}>
@@ -242,6 +242,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     padding: 20,
+    paddingTop: 0,
   },
   activeTab: {
     width: '50%',

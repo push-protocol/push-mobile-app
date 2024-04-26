@@ -80,6 +80,8 @@ export default {
     STATUS_BAR_HEIGHT: 60,
     DEFAULT_PROFILE_PICTURE:
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+
+    PASSCODE_LENGTH: 6,
   },
 
   ADJUSTMENTS: {
@@ -147,6 +149,15 @@ export default {
     STATUS_YELLOW: '#F2CB65',
     STATUS_GREEN: '#5DD177',
     STATUS_YELLOW_BG: '#FDF7EE',
+
+    // Backgrounds
+    BG_WELCOME: '#F6EDFF',
+    BG_SIGNIN: '#DBE1FF',
+    BG_SETUPCOMPLETE: '#DFF9FF',
+    BG_BIOMETRIC: '#F9F9F9',
+    BG_PUSHNOTIFY: '#FCF2E3',
+    BG_ALLSET: '#F8ECFF',
+    BG_OBSLIDER: '#F8ECFF',
   },
   SCREENS: {
     WELCOME: 'Welcome',
@@ -155,8 +166,10 @@ export default {
     SIGNINWALLET: 'SignInWallet',
     BIOMETRIC: 'Biometric',
     PUSHNOTIFY: 'PushNotify',
+    GETSTARTED: 'GetStarted',
     SETUPCOMPLETE: 'SetupComplete',
     TABS: 'Tabs',
+    NOTIF_TABS: 'NotificationTabs',
     SETTINGS: 'Settings',
     SPLASH: 'Splash',
     FEED: 'Feed',

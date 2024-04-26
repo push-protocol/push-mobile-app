@@ -4,7 +4,10 @@ import * as LocalAuthentication from 'expo-local-authentication';
 const BiometricHelper = {
   // To Return Supported Biometric Type or False
   getSupportedBiometric: async function () {
-    let biometric = false;
+    let biometric:
+      | false
+      | LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
+      | LocalAuthentication.AuthenticationType.FINGERPRINT = false;
     const hasHardwareSupport =
       (await LocalAuthentication.hasHardwareAsync()) &&
       (await LocalAuthentication.isEnrolledAsync());

@@ -29,7 +29,7 @@ PODS:
     - ExpoModulesCore
   - Expo (48.0.21):
     - ExpoModulesCore
-  - ExpoBlur (12.2.2):
+  - ExpoBlur (12.9.2):
     - ExpoModulesCore
   - ExpoDevice (5.2.1):
     - ExpoModulesCore
@@ -417,6 +417,8 @@ PODS:
     - React-Core
   - react-native-hash (3.0.3):
     - React
+  - react-native-hole-view (3.0.0-alpha4):
+    - React-Core
   - react-native-image-picker (7.1.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -638,6 +640,7 @@ DEPENDENCIES:
   - react-native-fast-openpgp (from `../node_modules/react-native-fast-openpgp`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-hash (from `../node_modules/react-native-hash`)
+  - react-native-hole-view (from `../node_modules/react-native-hole-view`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
@@ -796,6 +799,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-get-random-values"
   react-native-hash:
     :path: "../node_modules/react-native-hash"
+  react-native-hole-view:
+    :path: "../node_modules/react-native-hole-view"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-netinfo:
@@ -898,7 +903,7 @@ SPEC CHECKSUMS:
   EXImageLoader: fd053169a8ee932dd83bf1fe5487a50c26d27c2b
   EXPermissions: ee60d7978aba135b8b391185b039d78f151c376a
   Expo: 0d9f112757acc6bf32103eabccf91267780bd580
-  ExpoBlur: fac3c6318fdf409dd5740afd3313b2bd52a35bac
+  ExpoBlur: e832d874bd94afc0645daddbd3162ec1ce172080
   ExpoDevice: e0bebf68f978b3d353377ce42e73c20c0a070215
   ExpoKeepAwake: 69f5f627670d62318410392d03e0b5db0f85759a
   ExpoLinearGradient: 8eaab76b7f55c612ed8348c8be8c2a18a9b4529f
@@ -946,6 +951,7 @@ SPEC CHECKSUMS:
   react-native-fast-openpgp: 66d3a1cce74d205bcb7bad5ed6f63b91ce151ee7
   react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-hash: 4664516df1834e1293b30e711c63f61f7f801b6a
+  react-native-hole-view: 6935448993bac79f2b5a4ad7e9741094cf810679
   react-native-image-picker: 5e076db26cd81660cfb6db5bcf517cfa12054d45
   react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846

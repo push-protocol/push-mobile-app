@@ -7,7 +7,7 @@ import GLOBALS from 'src/Globals';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import {getTrimmedAddress} from 'src/navigation/screens/chats/helpers/chatAddressFormatter';
-import {selectUserDomain} from 'src/redux/authSlice';
+import {selectUserAddress, selectUserDomain} from 'src/redux/authSlice';
 
 export const UserProfileIcon = () => {
   const {readOnlyMode, isLoading, userInfo} = usePushApi();
@@ -45,11 +45,11 @@ interface UserProfileAddressProps {
 
 export const UserProfileAddress = ({icon}: UserProfileAddressProps) => {
   const [copied, setCopied] = useState<boolean>(false);
-  const {userInfo} = usePushApi();
+  const userAddress = useSelector(selectUserAddress);
   const userDomain = useSelector(selectUserDomain);
 
   const copyToClipboard = () => {
-    Clipboard.setString(caip10ToWallet(userInfo?.wallets || ''));
+    Clipboard.setString(caip10ToWallet(userAddress || ''));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -62,8 +62,7 @@ export const UserProfileAddress = ({icon}: UserProfileAddressProps) => {
       ]}
       onPress={copyToClipboard}>
       <Text style={styles.address}>
-        {userDomain ||
-          getTrimmedAddress(caip10ToWallet(userInfo?.wallets || ''))}
+        {userDomain || getTrimmedAddress(caip10ToWallet(userAddress || ''))}
       </Text>
       <Ionicons
         name={copied ? 'checkmark' : icon}

@@ -1,22 +1,20 @@
 import React from 'react';
 import {StatusBar, StyleSheet, View} from 'react-native';
 import GLOBALS from 'src/Globals';
-import Header from 'src/components/ui/Header';
 import SpamFeed from 'src/components/ui/SpamFeed';
 import 'src/components/ui/SpamFeed';
 
-const SpamBoxScreen = ({style, route}) => {
+const SpamBoxScreen = () => {
   return (
     <>
-      <Header />
-      <View style={[styles.container, style]}>
+      <View style={styles.container}>
         <StatusBar
           barStyle={'dark-content'}
           translucent
           backgroundColor="transparent"
         />
 
-        <SpamFeed wallet={route.params.wallet} />
+        <SpamFeed />
       </View>
     </>
   );

@@ -11,6 +11,7 @@ import Dropdown from 'src/components/custom/Dropdown';
 import {Toaster} from 'src/components/indicators/Toaster';
 import ConfirmResetWallet from 'src/components/modals/ConfirmResetWallet';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
+import Header from 'src/components/ui/Header';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import ENV_CONFIG from 'src/env.config';
 import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
@@ -18,9 +19,11 @@ import {clearStorage} from 'src/navigation/screens/chats/helpers/storage';
 import {selectUsers, setLogout} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
-const SettingsScreen = ({}) => {
+const SettingsScreen = ({route}) => {
   const dispatch = useDispatch();
   const users = useSelector(selectUsers);
+
+  const tabBarHeight = route?.params?.tabBarHeight || 80;
 
   // Wallet Connect functionality
   const wc_connector = useWalletConnectModal();
@@ -130,6 +133,7 @@ const SettingsScreen = ({}) => {
           translucent
           backgroundColor="transparent"
         />
+        <Header />
 
         <View style={styles.settingsContainer}>
           <View style={{marginBottom: 20}}>
@@ -148,7 +152,7 @@ const SettingsScreen = ({}) => {
             )}
           </View>
 
-          <View style={styles.appInfo}>
+          <View style={[styles.appInfo, {bottom: tabBarHeight}]}>
             <Text
               style={styles.appText}>{`PUSH v${ENV_CONFIG.APP_VERSION}`}</Text>
             <Image
@@ -194,7 +198,6 @@ const styles = StyleSheet.create({
     marginLeft: 80,
     position: 'absolute',
     right: 0,
-    bottom: 20,
   },
   appImage: {
     height: 40,

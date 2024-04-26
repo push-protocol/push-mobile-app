@@ -3,7 +3,6 @@ import messaging from '@react-native-firebase/messaging';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
-  Image,
   Platform,
   RefreshControl,
   SafeAreaView,
@@ -12,12 +11,12 @@ import {
 } from 'react-native';
 import ImageView from 'react-native-image-viewing';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
-import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 
+import EmptyFeed from './EmptyFeed';
 import NotificationItem from './NotificationItem';
 
 export default function InboxFeed(props) {
@@ -152,6 +151,7 @@ export default function InboxFeed(props) {
             keyExtractor={item => item.sid.toString()}
             initialNumToRender={10}
             style={{flex: 1}}
+            contentContainerStyle={styles.contentContainerStyle}
             showsVerticalScrollIndicator={false}
             renderItem={({item}) => {
               return (
@@ -181,26 +181,11 @@ export default function InboxFeed(props) {
               />
             }
             ListEmptyComponent={
-              refreshing ? (
-                <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-                  <StylishLabel
-                    style={styles.infoText}
-                    fontSize={16}
-                    title="[dg:Please wait, Refreshing feed.!]"
-                  />
-                </View>
-              ) : (
-                <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-                  <Image
-                    style={styles.infoIcon}
-                    source={require('assets/ui/feed.png')}
-                  />
-                  <StylishLabel
-                    style={styles.infoText}
-                    fontSize={16}
-                    title="[dg:No Notifications!]"
-                  />
-                </View>
+              !refreshing && (
+                <EmptyFeed
+                  title="No notifications yet"
+                  subtitle="Notifications for channels you are subscribed to will show up here."
+                />
               )
             }
             ListFooterComponent={() => {
@@ -208,7 +193,9 @@ export default function InboxFeed(props) {
                 <View style={{paddingBottom: 30, marginTop: 20}}>
                   <EPNSActivity style={styles.activity} size="small" />
                 </View>
-              ) : null;
+              ) : (
+                <View style={styles.footer} />
+              );
             }}
           />
 
@@ -253,5 +240,11 @@ const styles = StyleSheet.create({
   },
   infoText: {
     marginVertical: 10,
+  },
+  contentContainerStyle: {
+    flexGrow: 1,
+  },
+  footer: {
+    paddingBottom: 100,
   },
 });

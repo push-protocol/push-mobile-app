@@ -60,6 +60,7 @@ const useModalBlur = (isOpen?: boolean) => {
           coverScreen={false}
           deviceWidth={Dimensions.get('window').width}
           deviceHeight={Dimensions.get('window').height}
+          statusBarTranslucent={true}
           customBackdrop={
             <Pressable onPress={onBackDropPress} style={styles.blurView}>
               <BlurView intensity={70} tint="dark" style={styles.blurView} />

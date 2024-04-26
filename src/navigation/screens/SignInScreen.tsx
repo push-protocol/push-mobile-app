@@ -86,45 +86,34 @@ const SingInScreen = () => {
   return (
     <>
       <OnboardingWrapper
+        backgroundColor={GLOBALS.COLORS.BG_SIGNIN}
         title="Connect your wallet to enable important features in Push."
         footerLabel="By signing in, you agree to Push's [Terms & Conditions](https://push.org/tos/) and [Privacy Policy](https://push.org/privacy/)."
         footerButtons={[
           {
-            iconFactory: 'Image',
-            icon: require('assets/ui/walletConnect.png'),
-            iconSize: 24,
-            iconFirst: true,
-            title: 'Sign in with Wallet',
+            title: 'Sign In with Wallet',
             fontColor: GLOBALS.COLORS.WHITE,
             bgColor: GLOBALS.COLORS.BLACK,
             onPress: () => walletConnectHandler(true),
           },
           {
-            iconFactory: 'Image',
-            icon: require('assets/ui/pencil_logo.png'),
-            iconSize: 24,
-            iconFirst: true,
-            title: 'Enter wallet address',
+            title: 'Enter Wallet Address',
             fontColor: GLOBALS.COLORS.BLACK,
-            bgColor: GLOBALS.COLORS.WHITE,
-            borderColor: GLOBALS.COLORS.MID_GRAY,
+            bgColor: GLOBALS.COLORS.TRANSPARENT,
+            borderColor: GLOBALS.COLORS.BLACK,
             onPress: loadWalletScreen,
           },
           {
-            iconFactory: 'Image',
-            icon: require('assets/ui/walletadv.png'),
-            iconSize: 24,
-            iconFirst: true,
             title: 'Advanced',
             fontColor: GLOBALS.COLORS.BLACK,
-            bgColor: GLOBALS.COLORS.WHITE,
-            borderColor: GLOBALS.COLORS.MID_GRAY,
+            bgColor: GLOBALS.COLORS.TRANSPARENT,
+            borderColor: GLOBALS.COLORS.BLACK,
             onPress: loadAdvanceScreen,
           },
         ]}>
         <View style={styles.container}>
           <Image
-            source={require('assets/ui/wallet.png')}
+            source={require('assets/ui/onboarding/ob-connect.png')}
             style={styles.image}
           />
         </View>

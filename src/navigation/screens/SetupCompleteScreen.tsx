@@ -47,12 +47,13 @@ const SetupCompleteScreen = () => {
 
   return (
     <OnboardingWrapper
+      backgroundColor={GLOBALS.COLORS.BG_SETUPCOMPLETE}
       title="Your Push Profile has been successfully linked."
       footerTopLabel="Skipping will let you browse with limited features. You can unlock your profile for full features later."
       footerButtons={[
         {
           title: 'Unlock Profile',
-          bgColor: GLOBALS.COLORS.PINK,
+          bgColor: GLOBALS.COLORS.BLACK,
           fontColor: GLOBALS.COLORS.WHITE,
           onPress: decryptPushProfile,
           loading: loading,
@@ -77,6 +78,7 @@ const SetupCompleteScreen = () => {
         <Text style={styles.address}>
           {domain || getTrimmedAddress(caip10ToWallet(user?.wallets || ''))}
         </Text>
+        <View style={styles.status} />
       </View>
     </OnboardingWrapper>
   );
@@ -89,8 +91,17 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: GLOBALS.COLORS.PINK,
+    backgroundColor: GLOBALS.COLORS.BLACK,
     borderRadius: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  status: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: GLOBALS.COLORS.STATUS_YELLOW,
   },
   address: {
     color: GLOBALS.COLORS.WHITE,
