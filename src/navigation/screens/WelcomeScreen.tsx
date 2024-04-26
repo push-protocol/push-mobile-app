@@ -16,15 +16,15 @@ const WelcomeScreen = () => {
       onDone={loadNextScreen}
       data={[
         {
-          title: 'Your communication app for web3 & blockchain.',
+          title: 'Your communication super app for web3 & blockchain.',
           image: require('assets/ui/onboarding/ob-main.png'),
         },
         {
-          title: 'Receive notifications from your favorite protocols.',
+          title: 'Subscribe to receive notifications from your favorite apps.',
           image: require('assets/ui/onboarding/ob-notif.png'),
         },
         {
-          title: 'Send and receive chats, Join vibrant communities.',
+          title: 'Chat with any wallet. Join vibrant communities.',
           image: require('assets/ui/onboarding/ob-chat.png'),
         },
       ]}
