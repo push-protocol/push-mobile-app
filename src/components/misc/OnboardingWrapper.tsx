@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '600',
     textAlign: 'center',
-    paddingTop: 55,
+    paddingTop: 45,
   },
   subtitle: {
     marginHorizontal: '16%',

@@ -36,18 +36,18 @@ const GetStartedScreen = () => {
     {
       title: 'Subscribe',
       description: 'Opt-in to your favorite web3 protocols.',
-      image: require('assets/ui/ob-subscribe.png'),
+      image: require('assets/ui/onboarding/ob-allset-sub.png'),
     },
     {
       title: 'Get Notified',
       description: 'Receive notifications from your favorite web3 services.',
-      image: require('assets/ui/ob-notification.png'),
+      image: require('assets/ui/onboarding/ob-allset-notif.png'),
     },
     {
       title: 'Chat, Engage, and Connect',
       description:
         'Send and receive messages, reactions, images, gifs, join web3 community groups and so much more...',
-      image: require('assets/ui/ob-chat.png'),
+      image: require('assets/ui/onboarding/ob-allset-chat.png'),
     },
   ];
 

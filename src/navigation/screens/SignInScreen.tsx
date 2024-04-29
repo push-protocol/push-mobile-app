@@ -139,9 +139,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: 184,
-    height: 184,
-    aspectRatio: 1,
+    width: '100%',
+    height: '90%',
     resizeMode: 'contain',
   },
   signingInModalContainer: {
