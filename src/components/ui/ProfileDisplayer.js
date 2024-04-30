@@ -12,11 +12,13 @@ import ENSButton from 'src/components/buttons/ENSButton';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
 import Blockies from 'src/components/web3/Blockies';
 import {usePushApi} from 'src/contexts/PushApiContext';
+import {usePushApiMode} from 'src/hooks/pushapi/usePushApiMode';
 
 const MARGIN_RIGHT = 120;
 const ProfileDisplayer = props => {
   const wallet = props.currentUser?.wallet?.toLowerCase() || null;
-  const {readOnlyMode, isLoading, userInfo} = usePushApi();
+  const {isLoading, userInfo} = usePushApi();
+  const {isGreenStatus} = usePushApiMode();
 
   const {style} = props;
   return (
@@ -47,7 +49,7 @@ const ProfileDisplayer = props => {
                 style={[
                   styles.statusIcon,
                   {
-                    backgroundColor: readOnlyMode
+                    backgroundColor: !isGreenStatus
                       ? GLOBALS.COLORS.STATUS_YELLOW
                       : GLOBALS.COLORS.STATUS_GREEN,
                   },

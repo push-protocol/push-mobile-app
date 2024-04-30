@@ -6,11 +6,13 @@ import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
+import {usePushApiMode} from 'src/hooks/pushapi/usePushApiMode';
 import {getTrimmedAddress} from 'src/navigation/screens/chats/helpers/chatAddressFormatter';
 import {selectUserAddress, selectUserDomain} from 'src/redux/authSlice';
 
 export const UserProfileIcon = () => {
-  const {readOnlyMode, isLoading, userInfo} = usePushApi();
+  const {isLoading, userInfo} = usePushApi();
+  const {isGreenStatus} = usePushApiMode();
 
   return (
     <View>
@@ -28,7 +30,7 @@ export const UserProfileIcon = () => {
           style={[
             styles.statusIcon,
             {
-              backgroundColor: readOnlyMode
+              backgroundColor: !isGreenStatus
                 ? GLOBALS.COLORS.STATUS_YELLOW
                 : GLOBALS.COLORS.STATUS_GREEN,
             },

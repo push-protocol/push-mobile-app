@@ -32,7 +32,6 @@ type PushApiContextType = {
   refreshUserPushSDKInstance: () => Promise<void>;
   getReadWriteInstance: (overrideAccount?: string) => Promise<void>;
   getReadOnlyInstance: (overrideAccount?: string) => Promise<void>;
-  readOnlyMode: boolean;
   isLoading: boolean;
   showUnlockProfileModal: () => void;
 };
@@ -44,7 +43,6 @@ export const PushApiContext = createContext<PushApiContextType>({
   refreshUserPushSDKInstance: () => Promise.resolve(),
   getReadWriteInstance: () => Promise.resolve(),
   getReadOnlyInstance: () => Promise.resolve(),
-  readOnlyMode: true,
   isLoading: true,
   showUnlockProfileModal: () => {},
 });
@@ -63,7 +61,6 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
   const [userInfo, setUserInfo] = useState<IUser | null>(null);
   const [connectedUser] = useSelector(selectUsers);
   const {isConnected, provider, address, open} = useWalletConnectModal();
-  const [readOnlyMode, setReadOnlyMode] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const authState = useSelector(selectAuthState);
   const authType = useSelector(selectAuthType);
@@ -94,13 +91,14 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
       env: envConfig.ENV as ENV,
     });
     setUserPushSDKInstance(userInstanceReadOnly);
-    setReadOnlyMode(true);
   };
 
   const getReadWriteInstance = async (overrideAccount?: string) => {
     let signer: any;
 
     const isWalletConnect = isConnected && provider;
+
+    const {pgpPrivateKey} = await MetaStorage.instance.getUserChatData();
 
     if (connectedUser.userPKey) {
       signer = new ethers.Wallet(connectedUser.userPKey);
@@ -152,6 +150,7 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
         overrideAccount ? overrideAccount : connectedUser.wallet,
       ),
       env: envConfig.ENV as ENV,
+      decryptedPGPPrivateKey: pgpPrivateKey ?? null,
     });
 
     setUserPushSDKInstance(userInstance);
@@ -160,13 +159,12 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
     const encryptionPublicKey = userInstance?.pgpPublicKey;
 
     if (decryptedPgpPvtKey && encryptionPublicKey) {
-      setReadOnlyMode(false);
       await MetaStorage.instance.setUserChatData({
         pgpPrivateKey: decryptedPgpPvtKey,
         encryptionPublicKey,
       });
     }
-    if (!userInstance.readMode && userInstance.errors.length === 0) {
+    if (!userInstance.readmode() && userInstance.errors.length === 0) {
       dispatch(setIsGuest(false));
     } else {
       dispatch(setIsGuest(true));
@@ -180,7 +178,7 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
       (authState !== GLOBALS.AUTH_STATE.ONBOARDING &&
         authType === GLOBALS.AUTH_TYPE.WALLET_CONNECT)
     ) {
-      if (!isGuest && userPushSDKInstance?.readMode)
+      if (!isGuest && userPushSDKInstance?.readmode())
         await getReadWriteInstance();
     }
   };
@@ -232,7 +230,6 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
         getReadWriteInstance,
         getReadOnlyInstance,
         userInfo,
-        readOnlyMode,
         isLoading,
         showUnlockProfileModal,
       }}>

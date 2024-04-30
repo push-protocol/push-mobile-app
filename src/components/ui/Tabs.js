@@ -1,6 +1,5 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {BlurView} from 'expo-blur';
-import Constants from 'expo-constants';
 import React from 'react';
 import {Platform, StyleSheet, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -8,11 +7,10 @@ import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {TabIcon} from 'src/components/custom/TabIcons';
 import {usePushApi} from 'src/contexts/PushApiContext';
+import {usePushApiMode} from 'src/hooks/pushapi/usePushApiMode';
 import NotifTabNavigator from 'src/navigation/NotifTabNavigator';
 import ChannelsScreen from 'src/navigation/screens/ChannelsScreen';
-import HomeScreen from 'src/navigation/screens/HomeScreen';
 import SettingsScreen from 'src/navigation/screens/SettingsScreen';
-import SpamBoxScreen from 'src/navigation/screens/SpamBoxScreen';
 import {ChatScreen} from 'src/navigation/screens/chats';
 import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
@@ -21,7 +19,8 @@ const Tab = createBottomTabNavigator();
 export default function Tabs() {
   const users = useSelector(selectUsers);
   const currentUser = useSelector(selectCurrentUser);
-  const {readOnlyMode, showUnlockProfileModal} = usePushApi();
+  const {showUnlockProfileModal} = usePushApi();
+  const {isChatEnabled} = usePushApiMode();
   const {bottom} = useSafeAreaInsets();
 
   const wallet = users[currentUser].wallet;
@@ -97,7 +96,7 @@ export default function Tabs() {
         component={ChatScreen}
         listeners={{
           tabPress: e => {
-            if (readOnlyMode) {
+            if (!isChatEnabled) {
               e.preventDefault();
               showUnlockProfileModal();
             }

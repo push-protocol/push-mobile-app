@@ -19,15 +19,19 @@ import {
   setLoadingSubscriptions,
   setSubscriptions,
 } from 'src/redux/channelSlice';
-import {getSigner} from 'src/walletconnect/chat/utils';
+
+import {usePushApiMode} from '../pushapi/usePushApiMode';
+import {useSigner} from '../pushapi/useSigner';
 
 const useSubscriptions = () => {
   const [loaded, setLoaded] = useState(false);
-  const {userPushSDKInstance, readOnlyMode} = usePushApi();
+  const {userPushSDKInstance} = usePushApi();
+  const {isSignerEnabled} = usePushApiMode();
   const subscriptions = useSelector(selectSubscriptions);
   const dispatch = useDispatch();
-  const {isConnected, provider, open} = useWalletConnectModal();
+  const {open} = useWalletConnectModal();
   const {toastRef} = useToaster();
+  const {getPushSigner} = useSigner();
 
   const subscribe = async (channel: string, settings?: UserSetting[]) => {
     const channelCaip = `eip155:${envConfig.CHAIN_ID}:${channel}`;
@@ -65,45 +69,32 @@ const useSubscriptions = () => {
       );
     };
 
-    if (readOnlyMode) {
+    const {account, signer} = await getPushSigner();
+    if (isSignerEnabled && signer && account) {
       try {
-        if (isConnected && provider) {
-          const [signer, account] = await getSigner(provider);
-          const baseClass = new PushNotificationBaseClass(
-            signer,
-            envConfig.ENV as ENV,
-            account,
-          );
-          const settings = pushSettings
-            ? // @ts-ignore
-              baseClass.getMinimalUserSetting(pushSettings)
-            : null;
-          await channels.subscribeV2({
-            channelAddress: channelCaip,
-            signer: signer,
-            userAddress: account,
-            env: envConfig.ENV as ENV,
-            settings: settings,
-            onSuccess: onSuccess,
-            onError: onError,
-          });
-        } else {
-          await open();
-        }
-      } catch (e) {
-        console.error(e);
-      }
-      return;
-    } else {
-      try {
-        await userPushSDKInstance?.notification.subscribe(channelCaip, {
-          settings: pushSettings,
+        const baseClass = new PushNotificationBaseClass(
+          signer,
+          envConfig.ENV as ENV,
+          account,
+        );
+        const settings = pushSettings
+          ? // @ts-ignore
+            baseClass.getMinimalUserSetting(pushSettings)
+          : null;
+        await channels.subscribeV2({
+          channelAddress: channelCaip,
+          signer: signer,
+          userAddress: account,
+          env: envConfig.ENV as ENV,
+          settings: settings,
           onSuccess: onSuccess,
           onError: onError,
         });
       } catch (e) {
         console.error(e);
       }
+    } else {
+      await open();
     }
   };
 
@@ -126,32 +117,23 @@ const useSubscriptions = () => {
       );
     };
 
-    if (readOnlyMode) {
+    const {account, signer} = await getPushSigner();
+    if (isSignerEnabled && signer && account) {
       try {
-        if (isConnected && provider) {
-          const [signer, account] = await getSigner(provider);
-          await channels.unsubscribeV2({
-            channelAddress: channelCaip,
-            signer,
-            userAddress: account,
-            env: envConfig.ENV as ENV,
-            onSuccess: onSuccess,
-            onError: onError,
-          });
-        } else {
-          await open();
-        }
+        await channels.unsubscribeV2({
+          channelAddress: channelCaip,
+          signer,
+          userAddress: account,
+          env: envConfig.ENV as ENV,
+          onSuccess: onSuccess,
+          onError: onError,
+        });
       } catch (e) {
         console.error(e);
       }
-      return;
+    } else {
+      await open();
     }
-    try {
-      await userPushSDKInstance?.notification.unsubscribe(channelCaip, {
-        onSuccess: onSuccess,
-        onError: onError,
-      });
-    } catch (e) {}
   };
 
   const refreshSubscriptions = async (force = false) => {
