@@ -154,61 +154,33 @@ index 161c76b..beca4e6 100644
 +exports.pgpDecrypt = PGPHelper.pgpDecrypt;
  //# sourceMappingURL=pgp.js.map
 \ No newline at end of file
-diff --git a/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.d.ts b/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.d.ts
-index eb24b92..120ab57 100644
---- a/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.d.ts
-+++ b/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.d.ts
-@@ -10,11 +10,11 @@ import { PushStreamInitializeProps, STREAM } from '../pushstream/pushStreamTypes
- import { Video } from './video';
- export declare class PushAPI {
-     private signer?;
--    private readMode;
-+    public readMode;
-     private alpha;
--    private account;
--    private decryptedPgpPvtKey?;
--    private pgpPublicKey?;
-+    public account;
-+    public decryptedPgpPvtKey?;
-+    public pgpPublicKey?;
-     private env;
-     private progressHook?;
-     chat: Chat;
+diff --git a/node_modules/@pushprotocol/restapi/src/lib/pushNotification/notification.js b/node_modules/@pushprotocol/restapi/src/lib/pushNotification/notification.js
+index a3019ad..c059f75 100644
+--- a/node_modules/@pushprotocol/restapi/src/lib/pushNotification/notification.js
++++ b/node_modules/@pushprotocol/restapi/src/lib/pushNotification/notification.js
+@@ -124,7 +124,7 @@ class Notification extends pushNotificationBase_1.PushNotificationBaseClass {
+                 return yield PUSH_CHANNEL.subscribeV2({
+                     signer: this.signer,
+                     channelAddress: channel,
+-                    userAddress: userAddressInCaip,
++                    userAddress: helpers_1.pCAIP10ToWallet(userAddressInCaip),
+                     env: this.env,
+                     settings: minimalSetting !== null && minimalSetting !== void 0 ? minimalSetting : '',
+                     onSuccess: onSuccess,
+@@ -163,7 +163,7 @@ class Notification extends pushNotificationBase_1.PushNotificationBaseClass {
+                 return yield PUSH_CHANNEL.unsubscribeV2({
+                     signer: this.signer,
+                     channelAddress: channel,
+-                    userAddress: userAddressInCaip,
++                    userAddress: helpers_1.pCAIP10ToWallet(userAddressInCaip),
+                     env: this.env,
+                     onSuccess: onSuccess,
+                     onError: onError,
 diff --git a/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js b/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js
-index 22efafa..607fb3b 100644
+index bc316bb..bfe331c 100644
 --- a/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js
 +++ b/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js
-@@ -78,7 +78,7 @@ class PushAPI {
-                         : defaultOptions.autoUpgrade, alpha: (options === null || options === void 0 ? void 0 : options.alpha) && options.alpha.feature
-                         ? options.alpha
-                         : config_1.ALPHA_FEATURE_CONFIG[constants_1.PACKAGE_BUILD] });
--                let readMode = !signer;
-+                let readMode = !signer && !options.decryptedPGPPrivateKey;
-                 const initializationErrors = [];
-                 // Get account
-                 // Derives account from signer if not provided
-@@ -95,8 +95,6 @@ class PushAPI {
-                 if (!derivedAccount) {
-                     throw new Error('Account could not be derived.');
-                 }
--                let decryptedPGPPrivateKey;
--                let pgpPublicKey;
-                 /**
-                  * Decrypt PGP private key
-                  * If user exists, decrypts the PGP private key
-@@ -106,7 +104,10 @@ class PushAPI {
-                     account: derivedAccount,
-                     env: settings.env,
-                 });
--                if (!readMode) {
-+                let pgpPublicKey = user ? user.pgpPublicKey : undefined;
-+                let decryptedPGPPrivateKey = options.decryptedPGPPrivateKey;
-+
-+                if (!readMode && !decryptedPGPPrivateKey) {
-                     if (user && user.encryptedPrivateKey) {
-                         try {
-                             decryptedPGPPrivateKey = yield PUSH_CHAT.decryptPGPKey({
-@@ -187,9 +188,10 @@ class PushAPI {
+@@ -206,9 +206,9 @@ class PushAPI {
      }
      initStream(listen, options) {
          return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -216,8 +188,7 @@ index 22efafa..607fb3b 100644
 -                throw new Error('Stream is already initialized.');
 -            }
 +            // if (this.stream) {
-+                // console.warn('Stream is already initialized.');
-+                // throw new Error('Stream is already initialized.');
++            //     throw new Error('Stream is already initialized.');
 +            // }
              this.stream = yield PushStream_1.PushStream.initialize(this.account, listen, this.env, this.decryptedPgpPvtKey, this.progressHook, this.signer, options);
              return this.stream;
