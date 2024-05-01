@@ -126,42 +126,35 @@ const SettingsScreen = ({route}) => {
 
   // RENDER
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.container}>
-        <StatusBar
-          barStyle={'dark-content'}
-          translucent
-          backgroundColor="transparent"
-        />
-        <Header />
+    <>
+      <Header />
 
-        <View style={styles.settingsContainer}>
-          <View style={{marginBottom: 20}}>
-            <FlatList
-              style={styles.settings}
-              bounces={true}
-              data={settingsOptions}
-              keyExtractor={item => item.title}
-              renderItem={renderItem}
-            />
+      <View style={styles.settingsContainer}>
+        <View style={{marginBottom: 20}}>
+          <FlatList
+            style={styles.settings}
+            bounces={true}
+            data={settingsOptions}
+            keyExtractor={item => item.title}
+            renderItem={renderItem}
+          />
 
-            {users.length > 1 && (
-              <View style={styles.dropdown}>
-                <Dropdown label="Logout" data={users} />
-              </View>
-            )}
-          </View>
-
-          <View style={[styles.appInfo, {bottom: tabBarHeight}]}>
-            <Text
-              style={styles.appText}>{`PUSH v${ENV_CONFIG.APP_VERSION}`}</Text>
-            <Image
-              style={styles.appImage}
-              source={require('assets/ui/fulllogo.png')}
-            />
-          </View>
+          {users.length > 1 && (
+            <View style={styles.dropdown}>
+              <Dropdown label="Logout" data={users} />
+            </View>
+          )}
         </View>
-      </SafeAreaView>
+
+        <View style={[styles.appInfo, {bottom: tabBarHeight}]}>
+          <Text
+            style={styles.appText}>{`PUSH v${ENV_CONFIG.APP_VERSION}`}</Text>
+          <Image
+            style={styles.appImage}
+            source={require('assets/ui/fulllogo.png')}
+          />
+        </View>
+      </View>
 
       {/* Overlay Blur to show incase need to emphasize on something */}
       <OverlayBlur
@@ -173,7 +166,7 @@ const SettingsScreen = ({route}) => {
 
       {/* Toaster Always goes here in the end after safe area */}
       <Toaster ref={ToasterRef} />
-    </View>
+    </>
   );
 };
 
@@ -187,6 +180,7 @@ const styles = StyleSheet.create({
   settingsContainer: {
     flex: 1,
     position: 'relative',
+    backgroundColor: GLOBALS.COLORS.WHITE,
   },
   settings: {},
   appInfo: {
