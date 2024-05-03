@@ -184,10 +184,9 @@ const BiometricScreen = () => {
         routes: [
           {
             name:
-              authorizationStatus ===
-              messaging.AuthorizationStatus.NOT_DETERMINED
-                ? GLOBALS.SCREENS.PUSHNOTIFY
-                : GLOBALS.SCREENS.GETSTARTED,
+              authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED
+                ? GLOBALS.SCREENS.GETSTARTED
+                : GLOBALS.SCREENS.PUSHNOTIFY,
           },
         ],
       }),

@@ -3,19 +3,25 @@ import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import GLOBALS from 'src/Globals';
+import {ToasterOptions} from 'src/components/indicators/Toaster';
 import OnboardingWrapper from 'src/components/misc/OnboardingWrapper';
+import {useToaster} from 'src/contexts/ToasterContext';
 import Notify from 'src/singletons/Notify';
 
 const PushNotifyScreen = () => {
   const navigation = useNavigation();
+  const {toastRef} = useToaster();
 
   const enableNotifications = async () => {
     const settings = await messaging().requestPermission();
-    if (settings == messaging.AuthorizationStatus.DENIED) {
-      console.log('User denied permission');
+    if (settings == messaging.AuthorizationStatus.AUTHORIZED) {
       loadNextScreen();
     } else {
-      loadNextScreen();
+      toastRef.current?.showToast(
+        'Notifications are disabled. \nYou can enable them in your device settings.',
+        '',
+        ToasterOptions.TYPE.GRADIENT_PRIMARY,
+      );
     }
   };
 
