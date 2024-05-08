@@ -70,15 +70,11 @@ Being an open communication middleware, Push is building a suite of products to 
 
 Push App offers you the chance to access web3 native instant messaging directly from your phone through Push Chat, and opt-in to notifications channels for your favourite apps to receive only the notifications you care about through Push Notifications.
 
-Our app is entirely free to access and free to use! Download today!
+Our app is entirely free to access and use, you can download it from the Google Play Store or the Apple App Store.
 
-### For Android Devices
-
-<a href="https://play.google.com/store/apps/details?id=io.epns.epns" title="Get it on Google play"><img src="https://www.freepnglogos.com/uploads/google-play-png-logo/get-it-on-google-play-google-play-badge-png-logos-23.png" width="200" height="100" style="object-fit: cover; margin-top: -15px; margin-bottom: -20px;" alt="Google play" /></a>
-
-### For iOS Devices
-
-<a href="https://apps.apple.com/app/ethereum-push-service-epns/id1528614910" title="Download on the App Store"><img src="https://www.freepnglogos.com/uploads/app-store-logo-png/download-on-the-app-store-logo-png-23.png" width="200" height="130" style="object-fit: cover; margin-top: -30px; margin-bottom: -20px;" alt="App Store" /></a>
+|                                                                                  Android                                                                                   |                                                                                       iOS                                                                                       |
+| :------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| [<img src="https://res.cloudinary.com/drlni3r6u/image/upload/v1715172038/google-play_o8hilb.png" height="50">](https://play.google.com/store/apps/details?id=io.epns.epns) | [<img src="https://res.cloudinary.com/drlni3r6u/image/upload/v1715172037/appstore_qoujfi.png" height="50">](https://apps.apple.com/app/ethereum-push-service-epns/id1528614910) |
 
 ## Development
 
@@ -87,10 +83,10 @@ Please refer to the [Push Mobile App Setup Guide](https://pushprotocol.notion.si
 ## Resources
 
 - **[Website](https://push.org)** To checkout our Product.
-- **[Docs](https://docs.push.org/developers/)** For comprehensive documentation.
+- **[Docs](https://push.org/docs)** For comprehensive documentation.
 - **[Blog](https://medium.com/push-protocol)** To learn more about our partners, new launches, etc.
 - **[Discord](https://discord.com/invite/pushprotocol)** for support and discussions with the community and the team.
-- **[GitHub](https://github.com/ethereum-push-notification-service)** for source code, project board, issues, and pull requests.
+- **[GitHub](https://github.com/push-protocol)** for source code, project board, issues, and pull requests.
 - **[Twitter](https://twitter.com/pushprotocol)** for the latest updates on the product and published blogs.
 
 ## Contributing
