@@ -17,15 +17,15 @@ const WelcomeScreen = () => {
       data={[
         {
           title: 'Your communication super app for web3 & blockchain.',
-          image: require('assets/ui/onboarding/ob-main.png'),
+          image: require('assets/ui/onboarding/ob-main.json'),
         },
         {
           title: 'Subscribe to receive notifications from your favorite apps.',
-          image: require('assets/ui/onboarding/ob-notif.png'),
+          image: require('assets/ui/onboarding/ob-notif.json'),
         },
         {
           title: 'Chat with any wallet. Join vibrant communities.',
-          image: require('assets/ui/onboarding/ob-chat.png'),
+          image: require('assets/ui/onboarding/ob-chat.json'),
         },
       ]}
       footerLabel="Visit [push.org](https://push.org) to learn more about it."

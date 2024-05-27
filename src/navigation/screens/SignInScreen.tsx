@@ -2,8 +2,9 @@ import {user as pushUser} from '@pushprotocol/restapi';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {useNavigation} from '@react-navigation/native';
 import {useWalletConnectModal} from '@walletconnect/modal-react-native';
+import LottieView from 'lottie-react-native';
 import React, {useEffect} from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {createEmptyUser} from 'src/apis';
@@ -112,9 +113,12 @@ const SingInScreen = () => {
           },
         ]}>
         <View style={styles.container}>
-          <Image
-            source={require('assets/ui/onboarding/ob-connect.png')}
+          <LottieView
+            source={require('assets/ui/onboarding/ob-connect.json')}
             style={styles.image}
+            autoPlay
+            loop
+            hardwareAccelerationAndroid
           />
         </View>
       </OnboardingWrapper>
@@ -141,7 +145,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '90%',
-    resizeMode: 'contain',
   },
   signingInModalContainer: {
     justifyContent: 'center',

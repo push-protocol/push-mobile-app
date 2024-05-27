@@ -1,10 +1,9 @@
 import Constants from 'expo-constants';
-import React, {useEffect} from 'react';
+import LottieView, {LottieViewProps} from 'lottie-react-native';
+import React from 'react';
 import {
   Dimensions,
   FlatList,
-  Image,
-  ImageSourcePropType,
   KeyboardAvoidingView,
   Platform,
   StatusBar,
@@ -21,7 +20,7 @@ type OnboardingSliderProps = {
   backgroundColor?: string;
   data: Array<{
     title: string;
-    image: ImageSourcePropType;
+    image: LottieViewProps['source'];
   }>;
   onDone: () => void;
   footerLabel?: string;
@@ -74,7 +73,13 @@ const OnboardingSlider = ({
               <View style={styles.item}>
                 <Text style={styles.title}>{item.title}</Text>
                 <View style={styles.imageContainer}>
-                  <Image source={item.image} style={styles.image} />
+                  <LottieView
+                    source={item.image}
+                    style={styles.image}
+                    autoPlay
+                    loop
+                    hardwareAccelerationAndroid
+                  />
                 </View>
               </View>
             );

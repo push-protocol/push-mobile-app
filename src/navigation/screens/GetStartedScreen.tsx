@@ -1,3 +1,4 @@
+import LottieView from 'lottie-react-native';
 import React, {useState} from 'react';
 import {Image, ImageSourcePropType, StyleSheet, Text, View} from 'react-native';
 import GLOBALS from 'src/Globals';
@@ -65,9 +66,12 @@ const GetStartedScreen = () => {
         },
       ]}>
       <View style={styles.imageContainer}>
-        <Image
-          source={require('assets/ui/onboarding/ob-allset.png')}
+        <LottieView
+          source={require('assets/ui/onboarding/ob-allset.json')}
           style={styles.image}
+          autoPlay
+          loop
+          hardwareAccelerationAndroid
         />
       </View>
       <View style={styles.sectionsWrapper}>
