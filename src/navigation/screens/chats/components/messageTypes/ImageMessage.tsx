@@ -20,9 +20,10 @@ export const ImageMessage = ({
 
   const [aspectRatio, setAspectRatio] = useState(1);
   const MAX_WIDTH = Platform.OS === 'android' ? 240 : 280;
+  const MIN_WIDTH = Platform.OS === 'android' ? 200 : 240;
 
   const getWidth = (_width: number) => {
-    return Math.min(_width, MAX_WIDTH);
+    return Math.max(Math.min(_width, MAX_WIDTH), MIN_WIDTH);
   };
 
   const handleImageLoad = ({
