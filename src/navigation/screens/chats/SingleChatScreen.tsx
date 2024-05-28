@@ -294,6 +294,7 @@ const SingleChatScreen = ({route}: any) => {
     return (
       <MessageComponent
         chatMessage={item}
+        isGroupMessage={!!feed?.groupInformation}
         componentType={componentType}
         includeDate={includeDate(index)}
       />

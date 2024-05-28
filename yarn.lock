@@ -4234,6 +4234,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-async-storage/async-storage@npm:^1.13.4":
+  version: 1.23.1
+  resolution: "@react-native-async-storage/async-storage@npm:1.23.1"
+  dependencies:
+    merge-options: ^3.0.4
+  peerDependencies:
+    react-native: ^0.0.0-0 || >=0.60 <1.0
+  checksum: 7096546ed4a5faf1f6e0425e2e15713575f1a7493a04524da386ff35c3844b57b8fd20544fad4157b4a61e048b10235f2f06124f262da5b327edc74fbc31e02b
+  languageName: node
+  linkType: hard
+
 "@react-native-clipboard/clipboard@npm:^1.11.1":
   version: 1.11.1
   resolution: "@react-native-clipboard/clipboard@npm:1.11.1"
@@ -16250,6 +16261,7 @@ __metadata:
     prettier: ^2.7.1
     react: 18.2.0
     react-native: 0.71.14
+    react-native-cache: ^2.0.3
     react-native-callkeep: 4.3.8
     react-native-config: ^1.5.0
     react-native-crypto: ^2.2.0
@@ -16523,6 +16535,15 @@ __metadata:
   dependencies:
     prop-types: ^15.7.2
   checksum: eb35821de36ae4eb00f97d99fc22ed79bd017248092ff1299f9d46a7ab946de16d2e6d6bfbf4cab5ef77d0d3bf47684aec761a7670ec7d36aae8d77ab8ddd171
+  languageName: node
+  linkType: hard
+
+"react-native-cache@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "react-native-cache@npm:2.0.3"
+  dependencies:
+    "@react-native-async-storage/async-storage": ^1.13.4
+  checksum: 51bb2c0480a46a80461b697a1ae6ed9b0ca484b7c55c2a2445d2c004ea523f2d4c6243af748f1162322f55d48d4ae61a7fb8fcf9d12048144d4f5629dcd72d69
   languageName: node
   linkType: hard
 
