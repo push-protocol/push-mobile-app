@@ -1,7 +1,14 @@
 import {Ionicons} from '@expo/vector-icons';
 import Clipboard from '@react-native-clipboard/clipboard';
 import React, {useState} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {usePushApi} from 'src/contexts/PushApiContext';
@@ -75,12 +82,16 @@ export const UserProfileAddress = ({icon}: UserProfileAddressProps) => {
   );
 };
 
-interface UserProfileProps extends UserProfileAddressProps {}
+interface UserProfileProps extends UserProfileAddressProps {
+  onPressIcon?: () => void;
+}
 
 const UserProfile = (props: UserProfileProps) => {
   return (
     <View style={styles.profileContainer}>
-      <UserProfileIcon />
+      <Pressable onPress={props?.onPressIcon}>
+        <UserProfileIcon />
+      </Pressable>
       <UserProfileAddress {...props} />
     </View>
   );

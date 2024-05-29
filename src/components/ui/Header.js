@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {connect} from 'react-redux';
@@ -9,11 +10,17 @@ import HeaderBanner from './HeaderBanner';
 import UserProfile from './UserProfile';
 
 const Header = () => {
+  const navigation = useNavigation();
+
+  const navigateToSettings = () => {
+    navigation.navigate(GLOBALS.SCREENS.SETTINGS);
+  };
+
   return (
     <>
       <HeaderBanner />
       <View style={styles.header}>
-        <UserProfile icon="copy" />
+        <UserProfile icon="copy" onPressIcon={navigateToSettings} />
       </View>
     </>
   );

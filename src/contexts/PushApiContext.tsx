@@ -178,8 +178,7 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
       (authState !== GLOBALS.AUTH_STATE.ONBOARDING &&
         authType === GLOBALS.AUTH_TYPE.WALLET_CONNECT)
     ) {
-      if (!isGuest && userPushSDKInstance?.readmode())
-        await getReadWriteInstance();
+      if (!isGuest) await getReadWriteInstance();
     }
   };
 
@@ -219,7 +218,7 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
     } else {
       refreshUserPushSDKInstance();
     }
-  }, [isConnected, address]);
+  }, [users, currentUser, isConnected, address]);
 
   return (
     <PushApiContext.Provider
