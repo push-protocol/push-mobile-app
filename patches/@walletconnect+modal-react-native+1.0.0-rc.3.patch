@@ -1,0 +1,78 @@
+diff --git a/node_modules/@walletconnect/modal-react-native/src/hooks/useConfigure.ts b/node_modules/@walletconnect/modal-react-native/src/hooks/useConfigure.ts
+index b53f670..54beef0 100644
+--- a/node_modules/@walletconnect/modal-react-native/src/hooks/useConfigure.ts
++++ b/node_modules/@walletconnect/modal-react-native/src/hooks/useConfigure.ts
+@@ -78,38 +78,43 @@ export function useConfigure(config: Props) {
+     fetchWallets();
+   }, []);
+ 
+-  /**
+-   * Initialize provider
+-   */
+-  useEffect(() => {
+-    async function initProvider() {
+-      try {
+-        const provider = await createUniversalProvider({
+-          projectId,
+-          relayUrl,
+-          metadata: providerMetadata,
+-        });
+-        if (provider) {
+-          ClientCtrl.setProvider(provider);
+-          provider.on('display_uri', onDisplayUri);
+-          provider.client.core.relayer.subscriber.on(
+-            SUBSCRIBER_EVENTS.deleted,
+-            onSessionDelete
+-          );
++  async function initProvider() {
++    try {
++      const provider = await createUniversalProvider({
++        projectId,
++        relayUrl,
++        metadata: providerMetadata,
++      });
++      if (provider) {
++        ClientCtrl.setProvider(provider);
++        provider.on('display_uri', onDisplayUri);
++        provider.client.core.relayer.subscriber.on(
++          SUBSCRIBER_EVENTS.deleted,
++          onSessionDelete
++        );
+ 
+-          // Check if there is an active session
+-          if (provider.session) {
+-            ClientCtrl.setSessionTopic(provider.session.topic);
+-            await AccountCtrl.getAccount();
+-          }
+-          ClientCtrl.setInitialized(true);
++        // Check if there is an active session
++        if (provider.session) {
++          ClientCtrl.setSessionTopic(provider.session.topic);
++          await AccountCtrl.getAccount();
+         }
+-      } catch (error) {
+-        Alert.alert('Error', 'Error initializing WalletConnect SDK');
++        ClientCtrl.setInitialized(true);
+       }
++    } catch (error) {
++      // Alert.alert('Error', 'Error initializing WalletConnect SDK');
++      throw new Error('Error initializing WalletConnect SDK');
+     }
+-    if (!ClientCtrl.provider() && projectId && providerMetadata) {
+-      initProvider();
+-    }
+-  }, [projectId, providerMetadata, relayUrl, onDisplayUri, onSessionDelete]);
++  }
++  // if (!ClientCtrl.provider() && projectId && providerMetadata) {
++  //   initProvider();
++  // }
++
++  /**
++   * Initialize provider
++   */
++  // useEffect(() => {
++    // initProvider();
++  // }, [projectId, providerMetadata, relayUrl, onDisplayUri, onSessionDelete]);
++
++  return {initProvider}
+ }

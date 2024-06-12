@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Animated,
   Easing,
+  Platform,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
@@ -361,7 +362,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     alignSelf: 'center',
-    bottom: 30,
+    bottom: Platform.OS === 'android' ? 80 : 100,
     zIndex: 9999,
   },
   content: {
@@ -386,6 +387,7 @@ const styles = StyleSheet.create({
   message: {
     color: GLOBALS.COLORS.WHITE,
     fontSize: 14,
+    textAlign: 'center',
   },
   animatedIconsStyle: {
     paddingVertical: 2,

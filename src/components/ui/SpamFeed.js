@@ -2,26 +2,20 @@ import {Asset} from 'expo-asset';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
-  Image,
   RefreshControl,
   SafeAreaView,
   StyleSheet,
   View,
 } from 'react-native';
 import ImageView from 'react-native-image-viewing';
-import {useSelector} from 'react-redux';
-import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
 import {usePushApi} from 'src/contexts/PushApiContext';
-import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
+import EmptyFeed from './EmptyFeed';
 import NotificationItem from './NotificationItem';
 
-export default function SpamFeed(props) {
-  const users = useSelector(selectUsers);
-  const currentUser = useSelector(selectCurrentUser);
-  const {wallet} = users[currentUser];
+export default function SpamFeed() {
   const {userPushSDKInstance} = usePushApi();
 
   const [initialized, setInitialized] = useState(false);
@@ -122,6 +116,7 @@ export default function SpamFeed(props) {
           keyExtractor={item => item.sid.toString()}
           initialNumToRender={10}
           style={{flex: 1}}
+          contentContainerStyle={styles.contentContainerStyle}
           showsVerticalScrollIndicator={false}
           renderItem={({item}) => {
             return (
@@ -151,26 +146,11 @@ export default function SpamFeed(props) {
             />
           }
           ListEmptyComponent={
-            refreshing ? (
-              <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-                <StylishLabel
-                  style={styles.infoText}
-                  fontSize={16}
-                  title="[dg:Please wait, Refreshing feed.!]"
-                />
-              </View>
-            ) : (
-              <View style={[styles.infodisplay, styles.noPendingFeeds]}>
-                <Image
-                  style={styles.infoIcon}
-                  source={require('assets/ui/feed.png')}
-                />
-                <StylishLabel
-                  style={styles.infoText}
-                  fontSize={16}
-                  title="[dg:No Spams!]"
-                />
-              </View>
+            !refreshing && (
+              <EmptyFeed
+                title="No spam notifications"
+                subtitle="Notifications for channels you have not subscribed to will show up here."
+              />
             )
           }
           ListFooterComponent={() => {
@@ -178,7 +158,9 @@ export default function SpamFeed(props) {
               <View style={{paddingBottom: 30, marginTop: 20}}>
                 <EPNSActivity style={styles.activity} size="small" />
               </View>
-            ) : null;
+            ) : (
+              <View style={styles.footer} />
+            );
           }}
         />
         <ImageView
@@ -221,5 +203,11 @@ const styles = StyleSheet.create({
   },
   infoText: {
     marginVertical: 10,
+  },
+  contentContainerStyle: {
+    flexGrow: 1,
+  },
+  footer: {
+    paddingBottom: 100,
   },
 });

@@ -3,14 +3,16 @@ import {BottomSheetScrollView, BottomSheetView} from '@gorhom/bottom-sheet';
 import _ from 'lodash';
 import React, {useEffect, useMemo, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
+import {useToaster} from 'src/contexts/ToasterContext';
+import {TimeoutHelper} from 'src/helpers/TimeoutHelper';
 import useSubscriptions from 'src/hooks/channel/useSubscriptions';
 import {Channel, selectSubscriptions} from 'src/redux/channelSlice';
 
 import PrimaryButton from '../buttons/PrimaryButton';
 import ToggleButton from '../buttons/ToggleButton';
+import {ToasterOptions} from '../indicators/Toaster';
 import RangeInput from '../input/RangeInput';
 import InputSlider from '../input/SliderInput';
 import {ChannelLogo, ChannelTitleCard} from '../ui/ChannelComponents';
@@ -94,6 +96,7 @@ const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
   const {subscribe, unsubscribe} = useSubscriptions();
   const [isLoadingSubscribe, setIsLoadingSubscribe] = useState(false);
   const [isLoadingUnsubscribe, setIsLoadingUnsubscribe] = useState(false);
+  const {toastRef} = useToaster();
 
   const isSubscribed = subscriptions[channel?.channel] !== undefined;
 
@@ -144,7 +147,16 @@ const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
 
   const handleSubscribe = async () => {
     setIsLoadingSubscribe(true);
-    await subscribe(channel.channel, currentSettings);
+    await TimeoutHelper.timeoutAsync({
+      asyncFunction: subscribe(channel.channel, currentSettings),
+      onError: () => {
+        toastRef.current?.showToast(
+          'Request timed out.\nYou might have to restart the wallet and try again.',
+          '',
+          ToasterOptions.TYPE.ERROR,
+        );
+      },
+    })();
     setIsLoadingSubscribe(false);
     hideSheet();
   };
@@ -152,7 +164,17 @@ const NFSettingsSheet = ({hideSheet, channel}: NFSettingsSheetProps) => {
   const handleUnsubscribe = async () => {
     if (isSubscribed) {
       setIsLoadingUnsubscribe(true);
-      await unsubscribe(channel.channel);
+      await TimeoutHelper.timeoutAsync({
+        asyncFunction: unsubscribe(channel.channel),
+        onError: () => {
+          toastRef.current?.showToast(
+            'Request timed out.\nYou might have to restart the wallet and try again.',
+            '',
+            ToasterOptions.TYPE.ERROR,
+          );
+        },
+      })();
+      console.log('Unsubscribed');
       setIsLoadingUnsubscribe(false);
     }
     hideSheet();

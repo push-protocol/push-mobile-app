@@ -19,6 +19,7 @@ import {connect} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import AnimatedEPNSIcon from 'src/components/custom/AnimatedEPNSIcon';
+import PasscodeInput from 'src/components/input/PasscodeInput';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
 import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
@@ -328,7 +329,7 @@ class SplashScreen extends Component {
         },
         () => {
           if (this.PasscodeInput) {
-            this.PasscodeInput.current.focus();
+            this.PasscodeInput.current?.focus();
           }
         },
       );
@@ -539,110 +540,18 @@ class SplashScreen extends Component {
                           <TouchableWithoutFeedback
                             style={styles.inputWrapper}
                             onPress={() => {
-                              this.PasscodeInput.current.blur();
+                              this.PasscodeInput.current?.blur();
                               setTimeout(
-                                () => this.PasscodeInput.current.focus(),
+                                () => this.PasscodeInput.current?.focus(),
                                 100,
                               );
                             }}>
-                            <View pointerEvents="none">
-                              <TextInput
-                                ref={this.PasscodeInput}
-                                style={styles.input}
-                                maxLength={6}
-                                contextMenuHidden={true}
-                                keyboardType={'numeric'}
-                                autoCorrect={false}
-                                onChangeText={value =>
-                                  this.changePassCode(value)
-                                }
-                                value={this.state.passcode}
-                              />
-                            </View>
+                            <PasscodeInput
+                              passcode={this.state.passcode}
+                              ref={this.PasscodeInput}
+                              onChangeText={text => this.changePassCode(text)}
+                            />
                           </TouchableWithoutFeedback>
-
-                          <View
-                            style={styles.fancyTextContainer}
-                            pointerEvents="none">
-                            <View
-                              style={[
-                                styles.fancyTextView,
-                                styles.fancyTextViewPrimary,
-                              ]}>
-                              <Text
-                                style={[
-                                  styles.fancyText,
-                                  styles.fancyTextPrimary,
-                                ]}>
-                                {passcodeSegment[0]}
-                              </Text>
-                            </View>
-                            <View
-                              style={[
-                                styles.fancyTextView,
-                                styles.fancyTextViewPrimary,
-                              ]}>
-                              <Text
-                                style={[
-                                  styles.fancyText,
-                                  styles.fancyTextPrimary,
-                                ]}>
-                                {passcodeSegment[1]}
-                              </Text>
-                            </View>
-                            <View
-                              style={[
-                                styles.fancyTextView,
-                                styles.fancyTextViewThird,
-                              ]}>
-                              <Text
-                                style={[
-                                  styles.fancyText,
-                                  styles.fancyTextThird,
-                                ]}>
-                                {passcodeSegment[2]}
-                              </Text>
-                            </View>
-                            <View
-                              style={[
-                                styles.fancyTextView,
-                                styles.fancyTextViewThird,
-                              ]}>
-                              <Text
-                                style={[
-                                  styles.fancyText,
-                                  styles.fancyTextThird,
-                                ]}>
-                                {passcodeSegment[3]}
-                              </Text>
-                            </View>
-                            <View
-                              style={[
-                                styles.fancyTextView,
-                                styles.fancyTextViewSecondary,
-                              ]}>
-                              <Text
-                                style={[
-                                  styles.fancyText,
-                                  styles.fancyTextSecondary,
-                                ]}>
-                                {passcodeSegment[4]}
-                              </Text>
-                            </View>
-                            <View
-                              style={[
-                                styles.fancyTextView,
-                                styles.fancyTextViewSecondary,
-                              ]}>
-                              <Text
-                                style={[
-                                  styles.fancyText,
-                                  styles.fancyTextSecondary,
-                                ]}>
-                                {passcodeSegment[5]}
-                              </Text>
-                            </View>
-                          </View>
                         </View>
                       </KeyboardAvoidingView>
                     </Animated.View>
@@ -818,11 +727,10 @@ const styles = StyleSheet.create({
     opacity: 0,
   },
   inputWrapper: {
-    paddingVertical: 60,
     width: WIDTH - 60,
     paddingHorizontal: 15,
     height: 50,
-    marginTop: -20,
+    marginTop: 20,
   },
   fancyTextContainer: {
     ...StyleSheet.absoluteFill,

@@ -241,7 +241,11 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 16,
   },
-  content: {padding: 10, width: '100%'},
+  content: {
+    padding: 10,
+    width: '100%',
+    paddingBottom: 100,
+  },
   input: {
     borderRadius: 20,
     color: Globals.COLORS.BLACK,

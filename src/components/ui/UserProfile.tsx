@@ -1,16 +1,25 @@
 import {Ionicons} from '@expo/vector-icons';
 import Clipboard from '@react-native-clipboard/clipboard';
 import React, {useState} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
+import {usePushApiMode} from 'src/hooks/pushapi/usePushApiMode';
 import {getTrimmedAddress} from 'src/navigation/screens/chats/helpers/chatAddressFormatter';
-import {selectUserDomain} from 'src/redux/authSlice';
+import {selectUserAddress, selectUserDomain} from 'src/redux/authSlice';
 
 export const UserProfileIcon = () => {
-  const {readOnlyMode, isLoading, userInfo} = usePushApi();
+  const {isLoading, userInfo} = usePushApi();
+  const {isGreenStatus} = usePushApiMode();
 
   return (
     <View>
@@ -28,7 +37,7 @@ export const UserProfileIcon = () => {
           style={[
             styles.statusIcon,
             {
-              backgroundColor: readOnlyMode
+              backgroundColor: !isGreenStatus
                 ? GLOBALS.COLORS.STATUS_YELLOW
                 : GLOBALS.COLORS.STATUS_GREEN,
             },
@@ -45,11 +54,11 @@ interface UserProfileAddressProps {
 
 export const UserProfileAddress = ({icon}: UserProfileAddressProps) => {
   const [copied, setCopied] = useState<boolean>(false);
-  const {userInfo} = usePushApi();
+  const userAddress = useSelector(selectUserAddress);
   const userDomain = useSelector(selectUserDomain);
 
   const copyToClipboard = () => {
-    Clipboard.setString(caip10ToWallet(userInfo?.wallets || ''));
+    Clipboard.setString(caip10ToWallet(userAddress || ''));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -62,8 +71,7 @@ export const UserProfileAddress = ({icon}: UserProfileAddressProps) => {
       ]}
       onPress={copyToClipboard}>
       <Text style={styles.address}>
-        {userDomain ||
-          getTrimmedAddress(caip10ToWallet(userInfo?.wallets || ''))}
+        {userDomain || getTrimmedAddress(caip10ToWallet(userAddress || ''))}
       </Text>
       <Ionicons
         name={copied ? 'checkmark' : icon}
@@ -74,12 +82,16 @@ export const UserProfileAddress = ({icon}: UserProfileAddressProps) => {
   );
 };
 
-interface UserProfileProps extends UserProfileAddressProps {}
+interface UserProfileProps extends UserProfileAddressProps {
+  onPressIcon?: () => void;
+}
 
 const UserProfile = (props: UserProfileProps) => {
   return (
     <View style={styles.profileContainer}>
-      <UserProfileIcon />
+      <Pressable onPress={props?.onPressIcon}>
+        <UserProfileIcon />
+      </Pressable>
       <UserProfileAddress {...props} />
     </View>
   );

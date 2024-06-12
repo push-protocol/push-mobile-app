@@ -1,43 +1,39 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import PrimaryButton from 'src/components/buttons/PrimaryButton';
 import LimitInput from 'src/components/input/LimitInput';
+import ErrorModalWrapper from 'src/components/misc/ErrorModalWrapper';
 import OnboardingWrapper from 'src/components/misc/OnboardingWrapper';
-import QRScanner from 'src/components/modals/QRScanner';
 import {QR_TYPES} from 'src/enums';
 import Web3Helper from 'src/helpers/Web3Helper';
-import usePermissions from 'src/hooks/system/usePermissions';
-import useNotice from 'src/hooks/ui/useNotice';
+import useModalBlur from 'src/hooks/ui/useModalBlur';
+import useQrScanner from 'src/hooks/ui/useQrScanner';
 import {setAuthType, setInitialSignin, setIsGuest} from 'src/redux/authSlice';
 
 const SignInScreenAdvance = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [privateKey, setPrivateKey] = useState('');
   const [error, setError] = useState({title: '', subtitle: ''});
-  const qrScannerRef = useRef<QRScanner>(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const {getCameraPermissionAsync} = usePermissions();
+  const {showScanner, ScannerComponent} = useQrScanner({
+    title: 'Scan your private key to continue.',
+    doneFunc: async (code: string) => {
+      setPrivateKey(code);
+      await handleLogin(code);
+    },
+    qrType: QR_TYPES.ETH_PK_SCAN,
+  });
 
   const {
-    NoticeComponent: PermissionsNotice,
-    hideNotice: hidePermissionsNotice,
-    showNotice: showPermissionsNotice,
-  } = useNotice();
-
-  const {
-    NoticeComponent: ErrorNotice,
-    hideNotice: hideErrorNotice,
-    showNotice: showErrorNotice,
-  } = useNotice();
-
-  const toggleQRScanner = (toggle: boolean) => {
-    qrScannerRef.current?.changeRenderState(toggle, navigation);
-  };
+    ModalComponent: ErrorModal,
+    hideModal: hideErrorModal,
+    showModal: showErrorModal,
+  } = useModalBlur();
 
   const handleLogin = async (key?: string) => {
     setLoading(true);
@@ -49,7 +45,7 @@ const SignInScreenAdvance = () => {
         title: 'Invalid Private Key',
         subtitle: 'Please enter a valid private key',
       });
-      showErrorNotice();
+      showErrorModal();
     } else {
       const {cns, ens} = await Web3Helper.reverseResolveWalletBoth(wallet);
       dispatch(setAuthType(GLOBALS.AUTH_TYPE.PRIVATE_KEY));
@@ -77,6 +73,7 @@ const SignInScreenAdvance = () => {
   return (
     <>
       <OnboardingWrapper
+        backgroundColor={GLOBALS.COLORS.BG_BIOMETRIC}
         title="Import your existing account using private key."
         subtitle="Please proceed with importing your private key only if you are fully aware of the risks and are confident in this approach."
         footerLabel="Your private key can be used by malicious apps to compromise you. [Learn about risks](https://www.coinbase.com/learn/crypto-basics/what-is-a-private-key) and [Verify our repo](https://github.com/push-protocol/push-mobile-app)"
@@ -99,12 +96,7 @@ const SignInScreenAdvance = () => {
             fontColor={GLOBALS.COLORS.BLACK}
             bgColor={GLOBALS.COLORS.TRANSPARENT}
             borderColor={GLOBALS.COLORS.BLACK}
-            onPress={() =>
-              getCameraPermissionAsync({
-                onPermissionDenied: showPermissionsNotice,
-                onPermissionGranted: () => toggleQRScanner(true),
-              })
-            }
+            onPress={() => showScanner()}
           />
           <Text style={styles.divider}>or</Text>
           <LimitInput
@@ -119,31 +111,21 @@ const SignInScreenAdvance = () => {
           />
         </View>
       </OnboardingWrapper>
-      <QRScanner
-        ref={qrScannerRef}
-        navigation={navigation}
-        navHeader="Link Wallet Address"
-        errorMessage="Ensure that it is a valid Eth private key QR"
-        title="Scan your Eth private key to link your device to the push app"
-        qrType={QR_TYPES.ETH_PK_SCAN}
-        doneFunc={async (code: string) => {
-          setPrivateKey(code);
-          await handleLogin(code);
+      <ScannerComponent />
+      <ErrorModal
+        InnerComponent={ErrorModalWrapper}
+        InnerComponentProps={{
+          title: error.title,
+          subtitle: error.subtitle,
+          footerButtons: [
+            {
+              title: 'Ok',
+              bgColor: GLOBALS.COLORS.BLACK,
+              fontColor: GLOBALS.COLORS.WHITE,
+              onPress: () => hideErrorModal(),
+            },
+          ],
         }}
-        closeFunc={() => toggleQRScanner(false)}
-      />
-      <PermissionsNotice
-        closeFunc={hidePermissionsNotice}
-        closeTitle="OK"
-        title="Camera Access"
-        subtitle="Need Camera Permissions for scanning QR Code"
-        notice="Please enable Camera Permissions from [appsettings:App Settings] to continue"
-      />
-      <ErrorNotice
-        closeFunc={hideErrorNotice}
-        closeTitle="OK"
-        title={error.title}
-        subtitle={error.subtitle}
       />
     </>
   );

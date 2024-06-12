@@ -11,6 +11,7 @@ import Dropdown from 'src/components/custom/Dropdown';
 import {Toaster} from 'src/components/indicators/Toaster';
 import ConfirmResetWallet from 'src/components/modals/ConfirmResetWallet';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
+import Header from 'src/components/ui/Header';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import ENV_CONFIG from 'src/env.config';
 import AuthenticationHelper from 'src/helpers/AuthenticationHelper';
@@ -18,9 +19,11 @@ import {clearStorage} from 'src/navigation/screens/chats/helpers/storage';
 import {selectUsers, setLogout} from 'src/redux/authSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
-const SettingsScreen = ({}) => {
+const SettingsScreen = ({route}) => {
   const dispatch = useDispatch();
   const users = useSelector(selectUsers);
+
+  const tabBarHeight = route?.params?.tabBarHeight || 80;
 
   // Wallet Connect functionality
   const wc_connector = useWalletConnectModal();
@@ -123,41 +126,35 @@ const SettingsScreen = ({}) => {
 
   // RENDER
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.container}>
-        <StatusBar
-          barStyle={'dark-content'}
-          translucent
-          backgroundColor="transparent"
-        />
+    <>
+      <Header />
 
-        <View style={styles.settingsContainer}>
-          <View style={{marginBottom: 20}}>
-            <FlatList
-              style={styles.settings}
-              bounces={true}
-              data={settingsOptions}
-              keyExtractor={item => item.title}
-              renderItem={renderItem}
-            />
+      <View style={styles.settingsContainer}>
+        <View style={{marginBottom: 20}}>
+          <FlatList
+            style={styles.settings}
+            bounces={true}
+            data={settingsOptions}
+            keyExtractor={item => item.title}
+            renderItem={renderItem}
+          />
 
-            {users.length > 1 && (
-              <View style={styles.dropdown}>
-                <Dropdown label="Logout" data={users} />
-              </View>
-            )}
-          </View>
-
-          <View style={styles.appInfo}>
-            <Text
-              style={styles.appText}>{`PUSH v${ENV_CONFIG.APP_VERSION}`}</Text>
-            <Image
-              style={styles.appImage}
-              source={require('assets/ui/fulllogo.png')}
-            />
-          </View>
+          {users.length > 1 && (
+            <View style={styles.dropdown}>
+              <Dropdown label="Logout" data={users} />
+            </View>
+          )}
         </View>
-      </SafeAreaView>
+
+        <View style={[styles.appInfo, {bottom: tabBarHeight}]}>
+          <Text
+            style={styles.appText}>{`PUSH v${ENV_CONFIG.APP_VERSION}`}</Text>
+          <Image
+            style={styles.appImage}
+            source={require('assets/ui/fulllogo.png')}
+          />
+        </View>
+      </View>
 
       {/* Overlay Blur to show incase need to emphasize on something */}
       <OverlayBlur
@@ -169,7 +166,7 @@ const SettingsScreen = ({}) => {
 
       {/* Toaster Always goes here in the end after safe area */}
       <Toaster ref={ToasterRef} />
-    </View>
+    </>
   );
 };
 
@@ -183,6 +180,7 @@ const styles = StyleSheet.create({
   settingsContainer: {
     flex: 1,
     position: 'relative',
+    backgroundColor: GLOBALS.COLORS.WHITE,
   },
   settings: {},
   appInfo: {
@@ -194,7 +192,6 @@ const styles = StyleSheet.create({
     marginLeft: 80,
     position: 'absolute',
     right: 0,
-    bottom: 20,
   },
   appImage: {
     height: 40,

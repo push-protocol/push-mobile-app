@@ -2,8 +2,9 @@ import {user as pushUser} from '@pushprotocol/restapi';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import {useNavigation} from '@react-navigation/native';
 import {useWalletConnectModal} from '@walletconnect/modal-react-native';
+import LottieView from 'lottie-react-native';
 import React, {useEffect} from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {createEmptyUser} from 'src/apis';
@@ -14,6 +15,7 @@ import {walletToCAIP10} from 'src/helpers/CAIPHelper';
 import Web3Helper from 'src/helpers/Web3Helper';
 import useModalBlur from 'src/hooks/ui/useModalBlur';
 import {setAuthType, setInitialSignin} from 'src/redux/authSlice';
+import {openModal} from 'src/redux/modalSlice';
 
 const SingInScreen = () => {
   const navigation = useNavigation();
@@ -26,7 +28,12 @@ const SingInScreen = () => {
     hideModal: hideSigningInModal,
   } = useModalBlur();
 
-  const walletConnectHandler = async () => {
+  const walletConnectHandler = async (showError = false) => {
+    if (!provider && showError) {
+      dispatch(
+        openModal({modalKey: 'WALLET_CONNECT_ERROR', data: {isOpen: true}}),
+      );
+    }
     if (isConnected) provider?.disconnect();
     else await open();
   };
@@ -80,46 +87,38 @@ const SingInScreen = () => {
   return (
     <>
       <OnboardingWrapper
+        backgroundColor={GLOBALS.COLORS.BG_SIGNIN}
         title="Connect your wallet to enable important features in Push."
         footerLabel="By signing in, you agree to Push's [Terms & Conditions](https://push.org/tos/) and [Privacy Policy](https://push.org/privacy/)."
         footerButtons={[
           {
-            iconFactory: 'Image',
-            icon: require('assets/ui/walletConnect.png'),
-            iconSize: 24,
-            iconFirst: true,
-            title: 'Sign in with Wallet',
+            title: 'Sign In with Wallet',
             fontColor: GLOBALS.COLORS.WHITE,
             bgColor: GLOBALS.COLORS.BLACK,
-            onPress: walletConnectHandler,
+            onPress: () => walletConnectHandler(true),
           },
           {
-            iconFactory: 'Image',
-            icon: require('assets/ui/pencil_logo.png'),
-            iconSize: 24,
-            iconFirst: true,
-            title: 'Enter wallet address',
+            title: 'Enter Wallet Address',
             fontColor: GLOBALS.COLORS.BLACK,
-            bgColor: GLOBALS.COLORS.WHITE,
-            borderColor: GLOBALS.COLORS.MID_GRAY,
+            bgColor: GLOBALS.COLORS.TRANSPARENT,
+            borderColor: GLOBALS.COLORS.BLACK,
             onPress: loadWalletScreen,
           },
           {
-            iconFactory: 'Image',
-            icon: require('assets/ui/walletadv.png'),
-            iconSize: 24,
-            iconFirst: true,
             title: 'Advanced',
             fontColor: GLOBALS.COLORS.BLACK,
-            bgColor: GLOBALS.COLORS.WHITE,
-            borderColor: GLOBALS.COLORS.MID_GRAY,
+            bgColor: GLOBALS.COLORS.TRANSPARENT,
+            borderColor: GLOBALS.COLORS.BLACK,
             onPress: loadAdvanceScreen,
           },
         ]}>
         <View style={styles.container}>
-          <Image
-            source={require('assets/ui/wallet.png')}
+          <LottieView
+            source={require('assets/ui/onboarding/ob-connect.json')}
             style={styles.image}
+            autoPlay
+            loop
+            hardwareAccelerationAndroid
           />
         </View>
       </OnboardingWrapper>
@@ -144,10 +143,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: 184,
-    height: 184,
-    aspectRatio: 1,
-    resizeMode: 'contain',
+    width: '100%',
+    height: '90%',
   },
   signingInModalContainer: {
     justifyContent: 'center',

@@ -195,7 +195,7 @@ export default class PrimaryButton extends Component {
 
     let fontStyle = {
       color: this.state.fontColor,
-      fontSize: fontSize,
+      fontSize: fontSize || 16,
       fontWeight: '500',
     };
 

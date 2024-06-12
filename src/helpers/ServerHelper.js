@@ -150,7 +150,7 @@ const ServerHelper = {
     const response = await messaging().deleteToken();
 
     // because of Firebase-react-native issue, call permissions again and again
-    await messaging().requestPermission();
+    // await messaging().requestPermission();
 
     // Checking
     // messaging()
