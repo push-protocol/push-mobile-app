@@ -1,5 +1,4 @@
 import {Env, user} from '@pushprotocol/restapi';
-import Globals from 'src/Globals';
 import envConfig from 'src/env.config';
 
 import {CacheHelper} from './CacheHelper';
@@ -13,11 +12,11 @@ export const ProfilePicHelper = {
         account: address,
         env: envConfig.ENV as Env,
       });
-      const pfp =
-        response?.profile?.picture || Globals.CONSTANTS.DEFAULT_PROFILE_PICTURE;
-      CacheHelper.setItem(address, pfp);
+      const pfp = response?.profile?.picture;
+      if (pfp) CacheHelper.setItem(address, pfp);
+      return pfp;
     } catch {
-      return Globals.CONSTANTS.DEFAULT_PROFILE_PICTURE;
+      return null;
     }
   },
 };
