@@ -91,6 +91,23 @@
 		1E90BBE828BD672C007E6105 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = epns/AppDelegate.h; sourceTree = "<group>"; };
 		294DC712B52960D1DF260F3B /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-PushCommonPods-push.prod/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		3E26DD02CFE7843ED02D45C2 /* Pods-PushCommonPods-push.staging.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-push.staging.debug.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-push.staging/Pods-PushCommonPods-push.staging.debug.xcconfig"; sourceTree = "<group>"; };
+		55ED27842BC4230E004B5E17 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		55ED27862BC4230E004B5E17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		55ED27932BC4242F004B5E17 /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
+		55ED27942BC4242F004B5E17 /* NotificationService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationService.m; sourceTree = "<group>"; };
+		55ED27962BC4242F004B5E17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		55ED27A32BC424AC004B5E17 /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
+		55ED27A42BC424AC004B5E17 /* NotificationService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationService.m; sourceTree = "<group>"; };
+		55ED27A62BC424AC004B5E17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		55ED27B32BC424CC004B5E17 /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
+		55ED27B42BC424CC004B5E17 /* NotificationService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationService.m; sourceTree = "<group>"; };
+		55ED27B62BC424CC004B5E17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		55ED27C32BC42557004B5E17 /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
+		55ED27C42BC42557004B5E17 /* NotificationService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationService.m; sourceTree = "<group>"; };
+		55ED27C62BC42557004B5E17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		55ED27D32BC42609004B5E17 /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
+		55ED27D42BC42609004B5E17 /* NotificationService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationService.m; sourceTree = "<group>"; };
+		55ED27D62BC42609004B5E17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		61482DF654A827E369D38D2C /* Pods-PushCommonPods-push.prod.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-push.prod.release.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-push.prod/Pods-PushCommonPods-push.prod.release.xcconfig"; sourceTree = "<group>"; };
 		80D15B5C905639E1954DF442 /* Pods-PushCommonPods-push.prod.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-push.prod.debug.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-push.prod/Pods-PushCommonPods-push.prod.debug.xcconfig"; sourceTree = "<group>"; };
 		8ACFD0E74AD416ABB6006158 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-PushCommonPods-push.staging/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
@@ -203,6 +220,65 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		55ED27832BC4230E004B5E17 /* NotifeeNotificationService */ = {
+			isa = PBXGroup;
+			children = (
+				55ED27842BC4230E004B5E17 /* NotificationService.swift */,
+				55ED27862BC4230E004B5E17 /* Info.plist */,
+			);
+			path = NotifeeNotificationService;
+			sourceTree = "<group>";
+		};
+		55ED27922BC4242F004B5E17 /* NotifeeNotificationService */ = {
+			isa = PBXGroup;
+			children = (
+				55ED27932BC4242F004B5E17 /* NotificationService.h */,
+				55ED27942BC4242F004B5E17 /* NotificationService.m */,
+				55ED27962BC4242F004B5E17 /* Info.plist */,
+			);
+			path = NotifeeNotificationService;
+			sourceTree = "<group>";
+		};
+		55ED27A22BC424AC004B5E17 /* NotifeeNotificationService */ = {
+			isa = PBXGroup;
+			children = (
+				55ED27A32BC424AC004B5E17 /* NotificationService.h */,
+				55ED27A42BC424AC004B5E17 /* NotificationService.m */,
+				55ED27A62BC424AC004B5E17 /* Info.plist */,
+			);
+			path = NotifeeNotificationService;
+			sourceTree = "<group>";
+		};
+		55ED27B22BC424CC004B5E17 /* NotifeeNotificationService */ = {
+			isa = PBXGroup;
+			children = (
+				55ED27B32BC424CC004B5E17 /* NotificationService.h */,
+				55ED27B42BC424CC004B5E17 /* NotificationService.m */,
+				55ED27B62BC424CC004B5E17 /* Info.plist */,
+			);
+			path = NotifeeNotificationService;
+			sourceTree = "<group>";
+		};
+		55ED27C22BC42557004B5E17 /* NotifeeNotificationService */ = {
+			isa = PBXGroup;
+			children = (
+				55ED27C32BC42557004B5E17 /* NotificationService.h */,
+				55ED27C42BC42557004B5E17 /* NotificationService.m */,
+				55ED27C62BC42557004B5E17 /* Info.plist */,
+			);
+			path = NotifeeNotificationService;
+			sourceTree = "<group>";
+		};
+		55ED27D22BC42609004B5E17 /* NotifeeNotificationService */ = {
+			isa = PBXGroup;
+			children = (
+				55ED27D32BC42609004B5E17 /* NotificationService.h */,
+				55ED27D42BC42609004B5E17 /* NotificationService.m */,
+				55ED27D62BC42609004B5E17 /* Info.plist */,
+			);
+			path = NotifeeNotificationService;
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -217,6 +293,12 @@
 				1E4AA6C228BD64F300E27A82 /* epns */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* epnsTests */,
+				55ED27832BC4230E004B5E17 /* NotifeeNotificationService */,
+				55ED27922BC4242F004B5E17 /* NotifeeNotificationService */,
+				55ED27A22BC424AC004B5E17 /* NotifeeNotificationService */,
+				55ED27B22BC424CC004B5E17 /* NotifeeNotificationService */,
+				55ED27C22BC42557004B5E17 /* NotifeeNotificationService */,
+				55ED27D22BC42609004B5E17 /* NotifeeNotificationService */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
@@ -390,6 +472,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1210;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
@@ -843,6 +926,7 @@
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = epns/epns.entitlements;
@@ -878,6 +962,7 @@
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = epns/epns.entitlements;
@@ -960,7 +1045,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -1035,7 +1120,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -1072,7 +1157,7 @@
 				CODE_SIGN_ENTITLEMENTS = epns/epns.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 116;
+				CURRENT_PROJECT_VERSION = 118;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "push.staging-Info.plist";
@@ -1108,7 +1193,7 @@
 				CODE_SIGN_ENTITLEMENTS = epns/epns.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 116;
+				CURRENT_PROJECT_VERSION = 118;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "push.staging-Info.plist";
@@ -1143,7 +1228,7 @@
 				CODE_SIGN_ENTITLEMENTS = epns/epns.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 108;
+				CURRENT_PROJECT_VERSION = 109;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "push.prod-Info.plist";
@@ -1152,7 +1237,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.9.1;
+				MARKETING_VERSION = 0.9.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1179,7 +1264,7 @@
 				CODE_SIGN_ENTITLEMENTS = epns/epns.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 108;
+				CURRENT_PROJECT_VERSION = 109;
 				DEVELOPMENT_TEAM = 62B7287GF5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "push.prod-Info.plist";
@@ -1188,7 +1273,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.9.1;
+				MARKETING_VERSION = 0.9.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

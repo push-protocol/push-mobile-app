@@ -1,8 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {Animated, Image, StyleSheet} from 'react-native';
 import GLOBALS from 'src/Globals';
-import OnboardingWrapper from 'src/components/misc/OnboardingWrapper';
+import OnboardingSlider from 'src/components/misc/OnboardingSlider';
 
 const WelcomeScreen = () => {
   const navigation = useNavigation();
@@ -13,30 +12,25 @@ const WelcomeScreen = () => {
   };
 
   return (
-    <OnboardingWrapper
-      title="Your communication app for web3 & blockchain"
-      footerLabel="Visit [push.org](https://push.org) to learn more about it."
-      footerButtons={[
+    <OnboardingSlider
+      onDone={loadNextScreen}
+      data={[
         {
-          title: 'Continue',
-          fontColor: GLOBALS.COLORS.WHITE,
-          bgColor: GLOBALS.COLORS.GRADIENT_THIRD,
-          onPress: loadNextScreen,
+          title: 'Your communication super app for web3 & blockchain.',
+          image: require('assets/ui/onboarding/ob-main.json'),
         },
-      ]}>
-      <Animated.View style={styles.logo}>
-        <Image source={require('assets/ui/fulllogo.png')} />
-      </Animated.View>
-    </OnboardingWrapper>
+        {
+          title: 'Subscribe to receive notifications from your favorite apps.',
+          image: require('assets/ui/onboarding/ob-notif.json'),
+        },
+        {
+          title: 'Chat with any wallet. Join vibrant communities.',
+          image: require('assets/ui/onboarding/ob-chat.json'),
+        },
+      ]}
+      footerLabel="Visit [push.org](https://push.org) to learn more about it."
+    />
   );
 };
 
 export default WelcomeScreen;
-
-const styles = StyleSheet.create({
-  logo: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-});

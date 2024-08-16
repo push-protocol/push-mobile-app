@@ -5,6 +5,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   Image,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -205,7 +206,7 @@ const ChatScreen = (props: any) => {
         }}>
         <View
           style={{
-            bottom: 15,
+            bottom: Platform.OS === 'android' ? 80 : 100,
             position: 'absolute',
             right: 15,
           }}>
@@ -242,6 +243,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     padding: 20,
+    paddingTop: 0,
   },
   activeTab: {
     width: '50%',

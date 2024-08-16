@@ -1,6 +1,7 @@
 import {BlurView} from 'expo-blur';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
+  Dimensions,
   InteractionManager,
   Platform,
   Pressable,
@@ -15,8 +16,17 @@ interface ModalType {
   onBackDropPress?: () => void;
 }
 
-const useModalBlur = () => {
+const useModalBlur = (isOpen?: boolean) => {
   const [open, setOpen] = React.useState(false);
+
+  useEffect(() => {
+    if (isOpen === undefined) return;
+    if (isOpen) {
+      handleOpen();
+    } else {
+      handleClose();
+    }
+  }, [isOpen]);
 
   const handleOpen = async () => {
     // Fix for iOS modal not opening bug
@@ -47,6 +57,10 @@ const useModalBlur = () => {
           animationOut="fadeOut"
           animationOutTiming={500}
           backdropOpacity={1}
+          coverScreen={false}
+          deviceWidth={Dimensions.get('window').width}
+          deviceHeight={Dimensions.get('window').height}
+          statusBarTranslucent={true}
           customBackdrop={
             <Pressable onPress={onBackDropPress} style={styles.blurView}>
               <BlurView intensity={70} tint="dark" style={styles.blurView} />

@@ -152,7 +152,7 @@ const ChannelsDisplayer = () => {
             )}
             ListFooterComponent={() => {
               return isLoading ? (
-                <View style={{paddingBottom: 20, marginTop: 20}}>
+                <View style={{paddingBottom: 80, marginTop: 20}}>
                   <EPNSActivity style={{}} size="small" />
                 </View>
               ) : null;

@@ -4,9 +4,12 @@ import React, {useState} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
+import {ToasterOptions} from 'src/components/indicators/Toaster';
 import OnboardingWrapper from 'src/components/misc/OnboardingWrapper';
 import {usePushApi} from 'src/contexts/PushApiContext';
+import {useToaster} from 'src/contexts/ToasterContext';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
+import {TimeoutHelper} from 'src/helpers/TimeoutHelper';
 import {selectUserDomain} from 'src/redux/authSlice';
 
 import {getTrimmedAddress} from './chats/helpers/chatAddressFormatter';
@@ -17,12 +20,22 @@ const SetupCompleteScreen = () => {
   const domain = useSelector(selectUserDomain);
   const navigation = useNavigation();
   const route = useRoute();
+  const {toastRef} = useToaster();
   // @ts-ignore
   const {user} = route.params;
 
   const decryptPushProfile = async () => {
     setLoading(true);
-    await getReadWriteInstance();
+    await TimeoutHelper.timeoutAsync({
+      asyncFunction: getReadWriteInstance(),
+      onError: () => {
+        toastRef.current?.showToast(
+          'Request timed out.\nYou might have to restart the wallet and try again.',
+          '',
+          ToasterOptions.TYPE.ERROR,
+        );
+      },
+    })();
     loadNextScreen();
     setLoading(false);
   };
@@ -34,12 +47,13 @@ const SetupCompleteScreen = () => {
 
   return (
     <OnboardingWrapper
+      backgroundColor={GLOBALS.COLORS.BG_SETUPCOMPLETE}
       title="Your Push Profile has been successfully linked."
       footerTopLabel="Skipping will let you browse with limited features. You can unlock your profile for full features later."
       footerButtons={[
         {
           title: 'Unlock Profile',
-          bgColor: GLOBALS.COLORS.PINK,
+          bgColor: GLOBALS.COLORS.BLACK,
           fontColor: GLOBALS.COLORS.WHITE,
           onPress: decryptPushProfile,
           loading: loading,
@@ -64,6 +78,7 @@ const SetupCompleteScreen = () => {
         <Text style={styles.address}>
           {domain || getTrimmedAddress(caip10ToWallet(user?.wallets || ''))}
         </Text>
+        <View style={styles.status} />
       </View>
     </OnboardingWrapper>
   );
@@ -76,8 +91,17 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: GLOBALS.COLORS.PINK,
+    backgroundColor: GLOBALS.COLORS.BLACK,
     borderRadius: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  status: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: GLOBALS.COLORS.STATUS_YELLOW,
   },
   address: {
     color: GLOBALS.COLORS.WHITE,

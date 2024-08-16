@@ -1,17 +1,27 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import GLOBALS from 'src/Globals';
 
 import HeaderBanner from './HeaderBanner';
 import {UserProfileIcon} from './UserProfile';
 
 const ChannelsHeader = () => {
+  const navigation = useNavigation();
+
+  const navigateToSettings = () => {
+    // @ts-ignore
+    navigation.navigate(GLOBALS.SCREENS.SETTINGS);
+  };
+
   return (
     <>
       <HeaderBanner />
       <View style={styles.container}>
         <Text style={styles.title}>Explore Channels</Text>
-        <UserProfileIcon />
+        <Pressable onPress={navigateToSettings}>
+          <UserProfileIcon />
+        </Pressable>
       </View>
     </>
   );

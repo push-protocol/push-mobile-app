@@ -294,6 +294,7 @@ const SingleChatScreen = ({route}: any) => {
     return (
       <MessageComponent
         chatMessage={item}
+        isGroupMessage={!!feed?.groupInformation}
         componentType={componentType}
         includeDate={includeDate(index)}
       />
@@ -337,7 +338,7 @@ const SingleChatScreen = ({route}: any) => {
 
         {feed && !feed.groupInformation ? (
           <>
-            {!(isIntentSendPage || isIntentReceivePage) && (
+            {/* {!(isIntentSendPage || isIntentReceivePage) && (
               <TouchableOpacity
                 onPress={startVideoCall}
                 style={styles.rightAligned}>
@@ -347,7 +348,7 @@ const SingleChatScreen = ({route}: any) => {
                   color={Globals.COLORS.PINK}
                 />
               </TouchableOpacity>
-            )}
+            )} */}
           </>
         ) : (
           <TouchableOpacity

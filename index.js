@@ -1,3 +1,4 @@
+import notifee, {EventType} from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import React, {useEffect} from 'react';
 import {AppRegistry, Platform} from 'react-native';
@@ -6,6 +7,7 @@ import RNCallKeep from 'react-native-callkeep';
 import 'react-native-crypto';
 import 'react-native-get-random-values';
 import CallKeepHelper from 'src/helpers/CallkeepHelper';
+import {NotificationHelper} from 'src/helpers/NotificationHelper';
 import {NotifeClearBadge} from 'src/notifee';
 import {getUUID} from 'src/push_video/payloads/helpers';
 import MetaStorage from 'src/singletons/MetaStorage';
@@ -47,7 +49,9 @@ if (Platform.OS === 'android') {
   CallKeepHelper.setupCallKeep();
   RNCallKeep.setAvailable(true);
 }
+
 messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('Message handled in the background!', remoteMessage);
   if (Platform.OS === 'android' && CallKeepHelper.isVideoCall(remoteMessage)) {
     const caller = CallKeepHelper.getCaller(remoteMessage);
     const addressTrimmed = CallKeepHelper.formatEthAddress(caller);
@@ -59,8 +63,29 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
       'generic',
       true,
     );
+  } else {
+    await NotificationHelper.resolveNotification(remoteMessage);
   }
 });
+
+messaging().onMessage(async remoteMessage => {
+  console.log('Message handled in the foreground!', remoteMessage);
+  await NotificationHelper.resolveNotification(remoteMessage);
+});
+
+notifee.onForegroundEvent(async ({type, detail}) => {
+  if (type === EventType.PRESS) {
+    await NotificationHelper.openDeeplink(detail.notification?.data?.type);
+  }
+});
+
+notifee.onBackgroundEvent(async ({type, detail}) => {
+  if (type === EventType.PRESS) {
+    await NotificationHelper.openDeeplink(detail.notification?.data?.type);
+  }
+});
+
+NotificationHelper.handleChatNotification();
 
 if (isCallAccepted) {
   AppRegistry.registerComponent(appName, () => HeadlessCheck);

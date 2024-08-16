@@ -5,7 +5,6 @@ import {connect} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {Toaster} from 'src/components/indicators/Toaster';
 import OverlayBlur from 'src/components/modals/OverlayBlur';
-import Header from 'src/components/ui/Header';
 import HomeFeed from 'src/components/ui/HomeFeed';
 import CryptoHelper from 'src/helpers/CryptoHelper';
 import ServerHelper from 'src/helpers/ServerHelper';
@@ -57,15 +56,7 @@ class HomeScreen extends Component {
   componentWillUnmount() {}
 
   // COMPONENT DID UPDATE
-  componentDidUpdate(prevProps) {
-    if (
-      prevProps.route.params.refreshNotifFeed !==
-        this.props.route.params.refreshNotifFeed &&
-      this.props.route.params.refreshNotifFeed === true
-    ) {
-      this.refreshFeeds();
-    }
-  }
+  componentDidUpdate() {}
 
   // COMPONENT LOADED
   // Run as soon as loaded
@@ -168,7 +159,6 @@ class HomeScreen extends Component {
   render() {
     return (
       <>
-        <Header />
         <View style={styles.container}>
           <ScreenFinishedTransition
             runAfterScreenTransition={() => {

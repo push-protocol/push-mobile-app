@@ -4,15 +4,17 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import GLOBALS from 'src/Globals';
 import {usePushApi} from 'src/contexts/PushApiContext';
+import {usePushApiMode} from 'src/hooks/pushapi/usePushApiMode';
 
 import PrimaryButton from '../buttons/PrimaryButton';
 
 const HeaderBanner = () => {
-  let {readOnlyMode, isLoading, getReadWriteInstance} = usePushApi();
-  const {open, isConnected} = useWalletConnectModal();
+  let {isLoading, getReadWriteInstance} = usePushApi();
+  const {open} = useWalletConnectModal();
+  const {isGreenStatus, isSignerEnabled} = usePushApiMode();
 
   const unlockProfile = async () => {
-    if (isConnected) {
+    if (isSignerEnabled) {
       await getReadWriteInstance();
     } else {
       await open();
@@ -24,10 +26,9 @@ const HeaderBanner = () => {
     <View
       style={[
         styles.container,
-        (isLoading || !readOnlyMode) && styles.noBanner,
+        (isLoading || isGreenStatus) && styles.noBanner,
       ]}>
-      {/* Header Comes Here */}
-      {!isLoading && readOnlyMode && (
+      {!isLoading && !isGreenStatus && (
         <View style={styles.bannerContainer}>
           <View style={styles.bannerLeftContainer}>
             <View style={styles.bannerStatusIcon} />
