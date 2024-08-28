@@ -205,5 +205,6 @@
     "net": "react-native-tcp",
     "os": "react-native-os",
     "stream": "stream-browserify"
-  }
+  },
+  "packageManager": "yarn@4.2.2"
 }
