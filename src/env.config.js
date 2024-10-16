@@ -43,7 +43,9 @@ const {STAGING: STAGING_CONTRACTS, PROD: PROD_CONTRACTS} = GLOBALS.CONTRACTS;
 export default {
   PROD_ENV: IS_PROD_ENV,
   SHOW_CONSOLE: SHOW_CONSOLE,
-  INFURA_API: `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID}`,
+  INFURA_API: IS_PROD_ENV
+    ? `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID}`
+    : `https://sepolia.infura.io/v3/${INFURA_PROJECT_ID}`,
 
   // All Server related endpoints
   EPNS_SERVER: IS_PROD_ENV ? PROD_EPNS_SERVER : DEV_EPNS_SERVER,
