@@ -13,8 +13,6 @@
 		1E90BBEA28BD672C007E6105 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E90BBE328BD672C007E6105 /* main.m */; };
 		1E90BBEC28BD672C007E6105 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE628BD672C007E6105 /* LaunchScreen.storyboard */; };
 		1E90BBED28BD672C007E6105 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE728BD672C007E6105 /* Images.xcassets */; };
-		437777D62CAC283100D68488 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 437777D52CAC283100D68488 /* GoogleService-Info.plist */; };
-		437777D82CAC284400D68488 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 437777D72CAC284400D68488 /* GoogleService-Info.plist */; };
 		7AFE86A24D9309551A6A1F50 /* Pods_PushCommonPods_push_staging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E73BB1D215C2E282DE121AF8 /* Pods_PushCommonPods_push_staging.framework */; };
 		9C0E5039ACCA8C6BD31E0A88 /* Pods_PushCommonPods_epnsTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1913101118E6F82F12B42CF /* Pods_PushCommonPods_epnsTests.framework */; };
 		AF1DF276A9B508570EE898AD /* Pods_PushCommonPods_push_prod.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA620DFE9E1EB4637021D24 /* Pods_PushCommonPods_push_prod.framework */; };
@@ -23,10 +21,12 @@
 		E74C05AF29C06A1400C20AC1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E90BBE328BD672C007E6105 /* main.m */; };
 		E74C05B429C06A1400C20AC1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE628BD672C007E6105 /* LaunchScreen.storyboard */; };
 		E74C05B529C06A1400C20AC1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE728BD672C007E6105 /* Images.xcassets */; };
+		E74C05B629C06A1400C20AC1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1E4AA6AD28BD4E4000E27A82 /* GoogleService-Info.plist */; };
 		E74C05C529C06A2800C20AC1 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1E90BBE228BD672C007E6105 /* AppDelegate.mm */; };
 		E74C05C629C06A2800C20AC1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E90BBE328BD672C007E6105 /* main.m */; };
 		E74C05CB29C06A2800C20AC1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE628BD672C007E6105 /* LaunchScreen.storyboard */; };
 		E74C05CC29C06A2800C20AC1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E90BBE728BD672C007E6105 /* Images.xcassets */; };
+		E7A4DAEC29C17BF300B09BEE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E7A4DAEB29C17BF300B09BEE /* GoogleService-Info.plist */; };
 		E8351FBD0375EAE7B50C572B /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D567BAEB1DF112E72F4E912 /* ExpoModulesProvider.swift */; };
 /* End PBXBuildFile section */
 
@@ -80,6 +80,7 @@
 		13B07F961A680F5B00A75B9A /* Push (EPNS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Push (EPNS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B9620AE046F4542DE792141 /* Pods-PushCommonPods-epnsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-epnsTests.debug.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-epnsTests/Pods-PushCommonPods-epnsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1D567BAEB1DF112E72F4E912 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-PushCommonPods-epnsTests/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		1E4AA6AD28BD4E4000E27A82 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1E90BBE128BD672B007E6105 /* epns-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "epns-Bridging-Header.h"; sourceTree = "<group>"; };
 		1E90BBE228BD672C007E6105 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = epns/AppDelegate.mm; sourceTree = "<group>"; };
 		1E90BBE328BD672C007E6105 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = epns/main.m; sourceTree = "<group>"; };
@@ -90,8 +91,6 @@
 		1E90BBE828BD672C007E6105 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = epns/AppDelegate.h; sourceTree = "<group>"; };
 		294DC712B52960D1DF260F3B /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-PushCommonPods-push.prod/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		3E26DD02CFE7843ED02D45C2 /* Pods-PushCommonPods-push.staging.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-push.staging.debug.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-push.staging/Pods-PushCommonPods-push.staging.debug.xcconfig"; sourceTree = "<group>"; };
-		437777D52CAC283100D68488 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		437777D72CAC284400D68488 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		55ED27842BC4230E004B5E17 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		55ED27862BC4230E004B5E17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		55ED27932BC4242F004B5E17 /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
@@ -120,6 +119,7 @@
 		E74C05C029C06A1500C20AC1 /* push.staging-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "push.staging-Info.plist"; path = "/Users/mdteach/Desktop/CDX/staging_mobile/ios/push.staging-Info.plist"; sourceTree = "<absolute>"; };
 		E74C05D629C06A2800C20AC1 /* push.prod.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = push.prod.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E74C05D729C06A2900C20AC1 /* push.prod-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "push.prod-Info.plist"; path = "/Users/mdteach/Desktop/CDX/staging_mobile/ios/push.prod-Info.plist"; sourceTree = "<absolute>"; };
+		E7A4DAEB29C17BF300B09BEE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E947697C83E13254FF4AE713 /* Pods-PushCommonPods-push.staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PushCommonPods-push.staging.release.xcconfig"; path = "Target Support Files/Pods-PushCommonPods-push.staging/Pods-PushCommonPods-push.staging.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -355,7 +355,7 @@
 		E7A4DAE129C1796B00B09BEE /* Prod */ = {
 			isa = PBXGroup;
 			children = (
-				437777D52CAC283100D68488 /* GoogleService-Info.plist */,
+				E7A4DAEB29C17BF300B09BEE /* GoogleService-Info.plist */,
 			);
 			path = Prod;
 			sourceTree = "<group>";
@@ -363,7 +363,7 @@
 		E7A4DAE729C17B0000B09BEE /* Staging */ = {
 			isa = PBXGroup;
 			children = (
-				437777D72CAC284400D68488 /* GoogleService-Info.plist */,
+				1E4AA6AD28BD4E4000E27A82 /* GoogleService-Info.plist */,
 			);
 			path = Staging;
 			sourceTree = "<group>";
@@ -528,7 +528,7 @@
 			files = (
 				E74C05B429C06A1400C20AC1 /* LaunchScreen.storyboard in Resources */,
 				E74C05B529C06A1400C20AC1 /* Images.xcassets in Resources */,
-				437777D82CAC284400D68488 /* GoogleService-Info.plist in Resources */,
+				E74C05B629C06A1400C20AC1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -538,7 +538,7 @@
 			files = (
 				E74C05CB29C06A2800C20AC1 /* LaunchScreen.storyboard in Resources */,
 				E74C05CC29C06A2800C20AC1 /* Images.xcassets in Resources */,
-				437777D62CAC283100D68488 /* GoogleService-Info.plist in Resources */,
+				E7A4DAEC29C17BF300B09BEE /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
