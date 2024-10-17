@@ -116,7 +116,7 @@ android {
             applicationId "io.epns.epns"
             targetSdkVersion rootProject.ext.targetSdkVersion
             resValue "string", "build_config_package", "io.epns.epns"
-            versionCode 69
+            versionCode 70
             versionName "0.9.2"
         }
         staging {
