@@ -2,6 +2,7 @@ import messaging from '@react-native-firebase/messaging';
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
+import {PermissionsAndroid, Platform} from 'react-native';
 import GLOBALS from 'src/Globals';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import OnboardingWrapper from 'src/components/misc/OnboardingWrapper';
@@ -13,15 +14,22 @@ const PushNotifyScreen = () => {
   const {toastRef} = useToaster();
 
   const enableNotifications = async () => {
-    const settings = await messaging().requestPermission();
-    if (settings == messaging.AuthorizationStatus.AUTHORIZED) {
-      loadNextScreen();
-    } else {
-      toastRef.current?.showToast(
-        'Notifications are disabled. \nYou can enable them in your device settings.',
-        '',
-        ToasterOptions.TYPE.GRADIENT_PRIMARY,
+    if (Platform.OS === 'android') {
+      const res = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
       );
+      if (res == PermissionsAndroid.RESULTS.GRANTED) {
+        loadNextScreen();
+      } else {
+        showToast();
+      }
+    } else {
+      const settings = await messaging().requestPermission();
+      if (settings == messaging.AuthorizationStatus.AUTHORIZED) {
+        loadNextScreen();
+      } else {
+        showToast();
+      }
     }
   };
 
@@ -30,6 +38,14 @@ const PushNotifyScreen = () => {
     Notify.instance.requestDeviceToken();
     // @ts-ignore
     navigation.navigate(GLOBALS.SCREENS.GETSTARTED);
+  };
+
+  const showToast = () => {
+    toastRef.current?.showToast(
+      'Notifications are disabled. \nYou can enable them in your device settings.',
+      '',
+      ToasterOptions.TYPE.GRADIENT_PRIMARY,
+    );
   };
 
   return (

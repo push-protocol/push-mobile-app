@@ -107,6 +107,16 @@ export default class CalendarEvents extends Component {
           color = colorName;
       }
       let textContent = match[2];
+      if (textContent.startsWith('**')) {
+        textContent = textContent.replace(/^\*\*|\*\*$/g, '');
+        return <Text style={[{color: color}, styles.bold]}>{textContent}</Text>;
+      }
+      if (textContent.startsWith('*')) {
+        textContent = textContent.replace(/^\*|\*$/g, '');
+        return (
+          <Text style={[{color: color}, styles.italics]}>{textContent}</Text>
+        );
+      }
       return <Text style={{color: color}}>{textContent}</Text>;
     }
 
