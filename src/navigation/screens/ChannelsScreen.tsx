@@ -1,11 +1,11 @@
 import React from 'react';
 import ChannelsDisplayer from 'src/components/ui/ChannelsDisplayer';
-import ChannelsHeader from 'src/components/ui/ChannelsHeader';
+import Header from 'src/components/ui/Header';
 
 const ChannelsScreen = () => {
   return (
     <>
-      <ChannelsHeader />
+      <Header title="Channels" />
       <ChannelsDisplayer />
     </>
   );

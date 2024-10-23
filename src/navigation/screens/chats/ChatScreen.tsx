@@ -135,7 +135,7 @@ const ChatScreen = (props: any) => {
         requests: chatData.requests,
         chatCredentials: chatCredentials,
       }}>
-      <Header />
+      <Header title="Chat" />
       <SafeAreaView style={styles.container}>
         <View>
           <View style={styles.header}>

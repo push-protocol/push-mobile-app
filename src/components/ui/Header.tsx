@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {FC} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 import {connect} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {switchUser} from 'src/redux/authSlice';
@@ -9,7 +9,11 @@ import {clearFeed, fetchFeedData} from 'src/redux/feedSlice';
 import HeaderBanner from './HeaderBanner';
 import UserProfile from './UserProfile';
 
-const Header = () => {
+type HeaderProps = {
+  title: string;
+};
+
+const Header: FC<HeaderProps> = ({title}) => {
   const navigation = useNavigation();
 
   const navigateToSettings = () => {
@@ -19,7 +23,8 @@ const Header = () => {
   return (
     <>
       <HeaderBanner />
-      <View style={styles.header}>
+      <View style={styles.container}>
+        <Text style={styles.title}>{title}</Text>
         <UserProfile icon="copy" onPressIcon={navigateToSettings} />
       </View>
     </>
@@ -38,17 +43,18 @@ const styles = StyleSheet.create({
     height: GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
     backgroundColor: GLOBALS.COLORS.WHITE,
   },
-  headerRightContainer: {
+  container: {
+    padding: 16,
+    backgroundColor: GLOBALS.COLORS.WHITE,
+    display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  notifier: {
-    height: GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
-  },
-  settings: {
-    marginLeft: 10,
-    width: 24,
-    height: GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
+  title: {
+    fontSize: 24,
+    fontWeight: '600',
+    lineHeight: 29,
   },
 });
 
