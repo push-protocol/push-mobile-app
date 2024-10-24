@@ -24,8 +24,10 @@ const formatFileSize = (size: number): string => {
 
 export const FileMessageComponent = ({
   chatMessage,
+  messageType,
 }: {
   chatMessage: IMessageIPFS;
+  messageType?: 'reply';
 }) => {
   const fileContent: FileMessageContent = JSON.parse(
     chatMessage.messageContent,
@@ -41,26 +43,39 @@ export const FileMessageComponent = ({
   const size = fileContent.size;
 
   return (
-    <View style={styles.container}>
-      <View style={{width: 32}}>
+    <View
+      style={
+        messageType === 'reply' ? styles.replyContainer : styles.container
+      }>
+      <View style={{width: messageType === 'reply' ? 25 : 32}}>
         <SvgUri
           uri={FILE_ICON(name.split('.').slice(-1)[0])}
           width="100%"
-          height="40"
+          height={messageType === 'reply' ? '30' : '40'}
         />
       </View>
-      <Text style={styles.text}>{modifiedName}</Text>
-      <Text style={styles.text}>{formatFileSize(size)}</Text>
-      <TouchableOpacity
-        onPress={() =>
-          Linking.openURL(content).catch(e => {
-            console.log('err', e);
-          })
-        }>
-        <FontAwesome name="download" size={24} color="gray" />
-      </TouchableOpacity>
+      <View style={styles.middleView}>
+        <Text numberOfLines={1} style={styles.text}>
+          {modifiedName}
+        </Text>
+        <Text style={[styles.text, styles.textAlignment]}>
+          {formatFileSize(size)}
+        </Text>
+      </View>
+      {!messageType && (
+        <TouchableOpacity
+          onPress={() =>
+            Linking.openURL(content).catch(e => {
+              console.log('err', e);
+            })
+          }>
+          <FontAwesome name="download" size={24} color="gray" />
+        </TouchableOpacity>
+      )}
 
-      <Text style={styles.time}>{formatAMPM(chatMessage.timestamp!)}</Text>
+      {!messageType && (
+        <Text style={styles.time}>{formatAMPM(chatMessage.timestamp!)}</Text>
+      )}
     </View>
   );
 };
@@ -71,15 +86,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     backgroundColor: '#343536',
-    minWidth: '75%',
-    maxWidth: '75%',
+    width: '75%',
     height: 90,
     borderRadius: 8,
-    padding: 15,
+    paddingHorizontal: 15,
+  },
+  replyContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    backgroundColor: '#343536',
+    maxWidth: '60%',
+    height: 60,
+    borderRadius: 8,
+    paddingHorizontal: 15,
+  },
+  middleView: {
+    paddingHorizontal: 8,
   },
   text: {
     color: 'white',
     fontWeight: '700',
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  textAlignment: {
+    textAlign: 'center',
   },
   time: {
     fontSize: 13,

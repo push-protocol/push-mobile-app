@@ -12,15 +12,19 @@ import {
 export const ImageMessage = ({
   imageSource,
   time,
+  messageType,
 }: {
   imageSource: string;
   time: string;
+  messageType?: 'reply';
 }) => {
   const [width, setWidth] = useState(1);
 
   const [aspectRatio, setAspectRatio] = useState(1);
-  const MAX_WIDTH = Platform.OS === 'android' ? 240 : 280;
-  const MIN_WIDTH = Platform.OS === 'android' ? 200 : 240;
+  const MAX_WIDTH =
+    messageType === 'reply' ? 100 : Platform.OS === 'android' ? 240 : 280;
+  const MIN_WIDTH =
+    messageType === 'reply' ? 60 : Platform.OS === 'android' ? 200 : 240;
 
   const getWidth = (_width: number) => {
     return Math.max(Math.min(_width, MAX_WIDTH), MIN_WIDTH);
@@ -43,7 +47,7 @@ export const ImageMessage = ({
         style={[styles.image, {width: getWidth(width), aspectRatio}]}
         resizeMode="contain"
       />
-      <Text style={styles.time}>{time}</Text>
+      {!messageType && <Text style={styles.time}>{time}</Text>}
     </View>
   );
 };
