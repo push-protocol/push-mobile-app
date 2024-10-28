@@ -23,7 +23,7 @@ const NotifTabNavigator = () => {
 
   return (
     <>
-      <Header />
+      <Header title="Notifications" />
       <TabView
         navigationState={{index, routes}}
         renderScene={renderScene}
