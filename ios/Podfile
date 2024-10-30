@@ -95,6 +95,9 @@ abstract_target 'PushCommonPods' do
     )
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
 
+    # TEMPORARY FIX: This code is a workaround and will be removed in the future 
+    # once we upgrade to the latest version of React Native. Please do not rely on 
+    # this for long-term solutions.
     bitcode_strip_path = `xcrun --find bitcode_strip`.chop!
     def strip_bitcode_from_framework(bitcode_strip_path, framework_relative_path)
       framework_path = File.join(Dir.pwd, framework_relative_path)
@@ -114,6 +117,7 @@ abstract_target 'PushCommonPods' do
     framework_paths.each do |framework_relative_path|
       strip_bitcode_from_framework(bitcode_strip_path, framework_relative_path)
     end
+    # TEMPORARY FIX: Ends here
   end
 
   
