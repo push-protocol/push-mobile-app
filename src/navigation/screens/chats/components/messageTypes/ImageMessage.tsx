@@ -15,7 +15,7 @@ export const ImageMessage = ({
   messageType,
 }: {
   imageSource: string;
-  time: string;
+  time?: string;
   messageType?: 'reply';
 }) => {
   const [width, setWidth] = useState(1);

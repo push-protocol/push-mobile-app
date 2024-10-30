@@ -69,6 +69,7 @@ const SectionHeight =
 const SingleChatScreen = ({route}: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const toastRef = useRef<any>();
+  const textInputRef = useRef<TextInput>(null);
   const {
     cid,
     senderAddress,
@@ -110,7 +111,7 @@ const SingleChatScreen = ({route}: any) => {
     combinedDID,
     chatId,
   );
-  // console.log('Chat messages list', JSON.stringify(chatMessages));
+  // console.log('chatList', JSON.stringify(chatMessages));
   const [isSending, sendMessage, isSendReady, tempChatMessage] = useSendMessage(
     connectedUser,
     senderAddress || chatId,
@@ -137,8 +138,12 @@ const SingleChatScreen = ({route}: any) => {
     const res = await sendMessage({
       messageType: 'Text',
       message: _text,
+      replyRef: replyPayload?.cid || undefined,
     });
-
+    if (replyPayload) {
+      setReplyPayload(null);
+      setReplyPadding(0);
+    }
     if (!res) {
       return;
     }
@@ -209,19 +214,28 @@ const SingleChatScreen = ({route}: any) => {
         if (gifUrl.trim() === '') {
           return;
         }
-
+        console.log({replyPayload});
         GiphyDialog.hide();
+
         const res = sendMessage({
           messageType: 'GIF',
           message: gifUrl,
-        }).then(_res => {
-          if (_res) {
-            const [_cid, msg] = _res;
-            if (_cid && msg) {
-              pushChatDataDirect(_cid, msg);
+          replyRef: replyPayload?.cid || undefined,
+        })
+          .then(_res => {
+            if (_res) {
+              const [_cid, msg] = _res;
+              if (_cid && msg) {
+                pushChatDataDirect(_cid, msg);
+              }
             }
-          }
-        });
+          })
+          .finally(() => {
+            if (replyPayload) {
+              setReplyPayload(null);
+              setReplyPadding(0);
+            }
+          });
         if (!res) {
           return;
         }
@@ -230,7 +244,7 @@ const SingleChatScreen = ({route}: any) => {
     return () => {
       listener.remove();
     };
-  }, []);
+  }, [replyPayload]);
 
   // scroll bar indicator
   useEffect(() => {
@@ -300,7 +314,16 @@ const SingleChatScreen = ({route}: any) => {
         isGroupMessage={!!feed?.groupInformation}
         componentType={componentType}
         includeDate={includeDate(index)}
-        setReplyPayload={payload => setReplyPayload(payload)}
+        setReplyPayload={payload => {
+          // @ts-ignore
+          scrollViewRef.current.scrollToIndex({
+            index: 0,
+            animated: true,
+          });
+          textInputRef.current?.focus();
+          setReplyPayload(payload);
+        }}
+        chatId={chatId}
       />
     );
   };
@@ -569,6 +592,7 @@ const SingleChatScreen = ({route}: any) => {
                   </View>
 
                   <TextInput
+                    ref={textInputRef}
                     style={[
                       styles.input,
                       {

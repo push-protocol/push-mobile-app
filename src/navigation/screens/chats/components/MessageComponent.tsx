@@ -1,13 +1,15 @@
 import {IMessageIPFS} from '@pushprotocol/restapi';
-import React, {useRef} from 'react';
+import React, {useMemo, useRef} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import Globals from 'src/Globals';
 import ProfilePicture from 'src/components/custom/ProfilePicture';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import {formatAMPM, formatDate} from 'src/helpers/DateTimeHelper';
 
 import {getTrimmedAddress} from '../helpers/chatAddressFormatter';
+import ReplyMessageBubble from './ReplyMessageBubble';
 import SwipeLeftView from './SwipeLeftView';
 import {FileMessageComponent, TextMessage} from './messageTypes';
 import {ImageMessage} from './messageTypes/ImageMessage';
@@ -20,6 +22,7 @@ type MessageComponentProps = {
   includeDate: boolean;
   isGroupMessage?: boolean;
   setReplyPayload?: (payload: IMessageIPFS) => void;
+  chatId?: string;
 };
 
 const MessageComponent = ({
@@ -28,12 +31,24 @@ const MessageComponent = ({
   includeDate,
   isGroupMessage = false,
   setReplyPayload,
+  chatId,
 }: MessageComponentProps) => {
   const time = formatAMPM(chatMessage.timestamp || 0);
   const date = formatDate(chatMessage.timestamp || 0);
 
   const styles = componentType === 'SENDER' ? senderStyle : recipientStyle;
-  const {messageContent, messageType, fromDID} = chatMessage;
+  const {fromDID} = chatMessage;
+
+  const messageContent =
+    chatMessage?.messageType === 'Reply'
+      ? chatMessage?.messageObj?.content?.messageObj?.content
+      : chatMessage?.messageContent;
+
+  const messageType =
+    chatMessage?.messageType === 'Reply'
+      ? chatMessage?.messageObj?.content?.messageType
+      : chatMessage?.messageType;
+
   const swipeRef = useRef<Swipeable>(null);
 
   const handleOnSwipe = (direction: string) => {
@@ -52,17 +67,28 @@ const MessageComponent = ({
           </View>
         )}
         <Swipeable
+          containerStyle={styles.bubbleAlignment}
           ref={swipeRef}
           friction={1}
           overshootFriction={8}
           renderLeftActions={() => <SwipeLeftView />}
           onSwipeableWillOpen={handleOnSwipe}>
           <View style={styles.container}>
+            {chatMessage?.messageType === 'Reply' && (
+              <ReplyMessageBubble
+                componentType="replied"
+                reference={chatMessage?.messageObj?.reference}
+                chatId={chatId}
+                messengerType={componentType}
+              />
+            )}
+
             {isGroupMessage && componentType === 'RECEIVER' && (
               <ProfilePicture address={caip10ToWallet(fromDID)} />
             )}
 
-            <View style={styles.textContainer}>
+            {/* Render the main message content */}
+            <View>
               {isGroupMessage && componentType === 'RECEIVER' && (
                 <Text style={messageStyle.groupAddress}>
                   {getTrimmedAddress(caip10ToWallet(fromDID))}
@@ -117,19 +143,31 @@ const messageStyle = StyleSheet.create({
 const recipientStyle = StyleSheet.create({
   container: {
     marginBottom: 17,
-    flexDirection: 'row',
-    display: 'flex',
+    backgroundColor: 'white',
+    minWidth: '35%',
+    maxWidth: '75%',
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 15,
+    borderBottomRightRadius: 15,
+    borderBottomLeftRadius: 20,
   },
-  textContainer: {
-    alignSelf: 'flex-start',
+  bubbleAlignment: {
+    alignItems: 'flex-start',
   },
 });
 
 const senderStyle = StyleSheet.create({
   container: {
     marginBottom: 17,
+    backgroundColor: Globals.COLORS.PINK,
+    minWidth: '35%',
+    maxWidth: '75%',
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 15,
+    borderBottomLeftRadius: 20,
   },
-  textContainer: {
-    alignSelf: 'flex-end',
+  bubbleAlignment: {
+    alignItems: 'flex-end',
   },
 });

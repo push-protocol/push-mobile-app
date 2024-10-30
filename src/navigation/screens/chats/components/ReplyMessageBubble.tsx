@@ -1,6 +1,6 @@
 import {FontAwesome} from '@expo/vector-icons';
 import {IMessageIPFS} from '@pushprotocol/restapi';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   LayoutChangeEvent,
   Pressable,
@@ -9,20 +9,24 @@ import {
   View,
 } from 'react-native';
 import Globals from 'src/Globals';
+import {usePushApi} from 'src/contexts/PushApiContext';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
-import {formatAMPM} from 'src/helpers/DateTimeHelper';
 
 import {getTrimmedAddress} from '../helpers/chatAddressFormatter';
-import {FileMessageComponent, TextMessage} from './messageTypes';
+import {FileMessageComponent} from './messageTypes';
 import {ImageMessage} from './messageTypes/ImageMessage';
 
 export type ReplyMessageBubbleType = 'replying' | 'replied';
+export type MessengerType = 'SENDER' | 'RECEIVER';
 
 type ReplyMessageBubbleProps = {
-  chatMessage: IMessageIPFS;
+  chatMessage?: IMessageIPFS;
   componentType: ReplyMessageBubbleType;
   onCancelReply?: () => void;
   onLayoutChange?: (nativeEvent: LayoutChangeEvent) => void;
+  reference?: string;
+  chatId?: string;
+  messengerType?: MessengerType;
 };
 
 const ReplyMessageBubble = ({
@@ -30,22 +34,106 @@ const ReplyMessageBubble = ({
   componentType,
   onCancelReply,
   onLayoutChange,
+  reference,
+  chatId,
+  messengerType,
 }: ReplyMessageBubbleProps) => {
-  const time = formatAMPM(chatMessage.timestamp || 0);
-  const {messageContent, messageType, fromDID} = chatMessage;
-  const styles = ReplyMessageBubbleStyles(componentType);
+  const {userPushSDKInstance} = usePushApi();
+  // set and get reply payload
+  const [replyPayloadManager, setReplyPayloadManager] = useState<{
+    payload: IMessageIPFS | null;
+    loaded: boolean;
+    err: string | null;
+  }>({payload: null, loaded: false, err: null});
+
+  // resolve reply payload
+  useEffect(() => {
+    if (!replyPayloadManager.loaded && !replyPayloadManager?.payload) {
+      if (componentType === 'replied') {
+        resolveReplyPayload();
+      } else {
+        const newChatMessage = JSON.parse(JSON.stringify(chatMessage));
+        if (newChatMessage?.messageType === 'Reply') {
+          newChatMessage.messageType =
+            newChatMessage?.messageObj?.content?.messageType;
+          newChatMessage.messageContent =
+            newChatMessage?.messageObj?.content?.messageObj?.content;
+        }
+        setReplyPayloadManager({
+          ...replyPayloadManager,
+          payload: newChatMessage ?? null,
+          loaded: true,
+        });
+      }
+    }
+  }, [
+    replyPayloadManager,
+    reference,
+    userPushSDKInstance?.chat,
+    chatId,
+    chatMessage,
+  ]);
+
+  const resolveReplyPayload = async () => {
+    if (reference && chatId) {
+      try {
+        const payloads = await userPushSDKInstance?.chat.history(chatId, {
+          reference: reference,
+          limit: 1,
+        });
+        const payload = payloads ? payloads[0] : null;
+        // check if payload is reply
+        // if so, change the message type to content one
+        if (payload?.messageType === 'Reply') {
+          payload.messageType = payload?.messageObj?.content?.messageType;
+          payload.messageContent =
+            payload?.messageObj?.content?.messageObj?.content;
+        }
+
+        // finally set the reply
+        setReplyPayloadManager({
+          ...replyPayloadManager,
+          payload: payload,
+          loaded: true,
+        });
+      } catch (err) {
+        console.log('ERROR', {err});
+        setReplyPayloadManager({
+          ...replyPayloadManager,
+          payload: null,
+          loaded: true,
+          err: 'Unable to load Preview',
+        });
+      }
+    } else {
+      console.log('Else');
+      setReplyPayloadManager({
+        ...replyPayloadManager,
+        payload: null,
+        loaded: true,
+        err: 'Reply reference not found',
+      });
+    }
+  };
+
+  const {payload} = replyPayloadManager;
+  const styles = ReplyMessageBubbleStyles(componentType, messengerType);
 
   return (
     <View style={styles.container} onLayout={event => onLayoutChange?.(event)}>
       {/* Render replying to and cancel reply button view */}
       {componentType === 'replying' && (
         <View style={styles.topViewWrapper}>
-          <Text style={styles.replyingToText}>
-            Replying to{' '}
-            <Text style={styles.replyingToBoldText}>
-              {getTrimmedAddress(caip10ToWallet(fromDID))}
+          {payload?.fromDID ? (
+            <Text style={styles.replyingToText}>
+              Replying to{' '}
+              <Text style={styles.replyingToBoldText}>
+                {getTrimmedAddress(caip10ToWallet(payload?.fromDID))}
+              </Text>
             </Text>
-          </Text>
+          ) : (
+            <View />
+          )}
 
           <Pressable
             style={styles.crossButton}
@@ -59,41 +147,50 @@ const ReplyMessageBubble = ({
           </Pressable>
         </View>
       )}
-
       {/* Render Reply bubble with content*/}
       <View style={styles.outerContentContainer}>
-        <View style={styles.innerContentContainer}>
-          {componentType === 'replied' && (
-            <Text style={styles.groupAddress}>
-              {getTrimmedAddress(caip10ToWallet(fromDID))}
-            </Text>
-          )}
-          {messageType === 'GIF' && (
-            <ImageMessage
-              imageSource={messageContent}
-              time={time}
-              messageType="reply"
-            />
-          )}
-          {messageType === 'Image' && (
-            <ImageMessage
-              imageSource={JSON.parse(messageContent).content}
-              time={time}
-              messageType="reply"
-            />
-          )}
-          {messageType === 'Text' && (
-            <Text numberOfLines={3} style={styles.text}>
-              {messageContent}
-            </Text>
-          )}
-          {messageType === 'File' && (
-            <FileMessageComponent
-              chatMessage={chatMessage}
-              messageType="reply"
-            />
-          )}
-        </View>
+        {/* Render Loading View */}
+        {!replyPayloadManager.loaded && (
+          <View style={styles.innerContentContainer}>
+            <Text style={styles.text}>Loading Preview...</Text>
+          </View>
+        )}
+        {/* Render Error View */}
+        {replyPayloadManager.loaded && replyPayloadManager.err && (
+          <View style={styles.innerContentContainer}>
+            <Text style={styles.text}>{replyPayloadManager.err}</Text>
+          </View>
+        )}
+        {/* Render Reply Message View */}
+        {replyPayloadManager.loaded && replyPayloadManager.payload && (
+          <View style={styles.innerContentContainer}>
+            {componentType === 'replied' && payload?.fromDID && (
+              <Text style={styles.groupAddress}>
+                {getTrimmedAddress(caip10ToWallet(payload?.fromDID))}
+              </Text>
+            )}
+            {payload?.messageType === 'GIF' && (
+              <ImageMessage
+                imageSource={payload?.messageContent}
+                messageType="reply"
+              />
+            )}
+            {payload?.messageType === 'Image' && (
+              <ImageMessage
+                imageSource={JSON.parse(payload?.messageContent).content}
+                messageType="reply"
+              />
+            )}
+            {payload?.messageType === 'Text' && (
+              <Text numberOfLines={3} style={styles.text}>
+                {payload?.messageContent}
+              </Text>
+            )}
+            {payload?.messageType === 'File' && (
+              <FileMessageComponent chatMessage={payload} messageType="reply" />
+            )}
+          </View>
+        )}
       </View>
     </View>
   );
@@ -101,11 +198,13 @@ const ReplyMessageBubble = ({
 
 export default ReplyMessageBubble;
 
-const ReplyMessageBubbleStyles = (componentType: ReplyMessageBubbleType) =>
+const ReplyMessageBubbleStyles = (
+  componentType: ReplyMessageBubbleType,
+  messengerType?: MessengerType,
+) =>
   StyleSheet.create({
     container: {
       marginVertical: 5,
-      display: 'flex',
       width: '100%',
       paddingHorizontal: 8,
     },
@@ -143,19 +242,29 @@ const ReplyMessageBubbleStyles = (componentType: ReplyMessageBubbleType) =>
     outerContentContainer: {
       width: '100%',
       borderRadius: 15,
-      backgroundColor: Globals.COLORS.DARKER_GRAY,
+      backgroundColor:
+        componentType === 'replying' || messengerType === 'RECEIVER'
+          ? Globals.COLORS.DARKER_GRAY
+          : Globals.COLORS.REPLY_LIGHT_PINK,
       marginTop: 4,
+      paddingLeft: 5,
     },
     innerContentContainer: {
-      width: '98.5%',
+      width: '100%',
       borderRadius: 15,
-      backgroundColor: Globals.COLORS.LIGHT_GRAY,
+      backgroundColor:
+        componentType === 'replying' || messengerType === 'RECEIVER'
+          ? Globals.COLORS.LIGHT_GRAY
+          : Globals.COLORS.REPLY_DARK_PINK,
       alignSelf: 'flex-end',
       paddingVertical: 10,
       paddingHorizontal: 15,
     },
     groupAddress: {
-      color: '#657795',
+      color:
+        componentType === 'replying' || messengerType === 'RECEIVER'
+          ? Globals.COLORS.CHAT_LIGHT_DARK
+          : Globals.COLORS.WHITE,
       fontSize: 12,
       marginBottom: 6,
       fontWeight: '400',
@@ -165,6 +274,9 @@ const ReplyMessageBubbleStyles = (componentType: ReplyMessageBubbleType) =>
       fontWeight: '400',
       lineHeight: 20,
       textAlign: 'left',
-      color: componentType === 'replying' ? 'black' : 'white',
+      color:
+        componentType === 'replying' || messengerType === 'RECEIVER'
+          ? Globals.COLORS.BLACK
+          : Globals.COLORS.WHITE,
     },
   });

@@ -143,9 +143,16 @@ const useConversationLoader = (
               console.log('no new conversation');
               return;
             }
-
+            let messageObj: any = {
+              content: message.message.content,
+            };
+            if (message.message.type === 'Reply') {
+              messageObj.reference = message.message?.reference;
+            }
             const newMsgs: IMessageIPFS[] = [
               {
+                // @ts-ignore
+                cid: message.reference,
                 encryptedSecret: null,
                 fromCAIP10: message.from,
                 fromDID: message.from,
@@ -158,6 +165,7 @@ const useConversationLoader = (
                 encType: '',
                 signature: '',
                 sigType: '',
+                messageObj,
               },
             ];
             await storeConversationData(
