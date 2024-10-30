@@ -107,7 +107,7 @@ const ChatItem = (props: SingleChatItemProps) => {
             </Text>
             <Text style={props.count ? styles.activeText : styles.text}>
               {messageType === 'Text' && formatTextData(lastMessage)}
-              {messageType === 'GIF' && 'GIF'}
+              {(messageType === 'GIF' || messageType === 'MediaEmbed') && 'GIF'}
               {messageType === 'File' && 'FILE'}
               {messageType === 'Image' && 'Image'}
             </Text>

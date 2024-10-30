@@ -27,6 +27,7 @@ type ReplyMessageBubbleProps = {
   reference?: string;
   chatId?: string;
   messengerType?: MessengerType;
+  disableCancel?: boolean;
 };
 
 const ReplyMessageBubble = ({
@@ -37,6 +38,7 @@ const ReplyMessageBubble = ({
   reference,
   chatId,
   messengerType,
+  disableCancel,
 }: ReplyMessageBubbleProps) => {
   const {userPushSDKInstance} = usePushApi();
   // set and get reply payload
@@ -136,6 +138,7 @@ const ReplyMessageBubble = ({
           )}
 
           <Pressable
+            disabled={disableCancel}
             style={styles.crossButton}
             hitSlop={styles.crossHitSlop}
             onPress={onCancelReply}>
@@ -169,7 +172,8 @@ const ReplyMessageBubble = ({
                 {getTrimmedAddress(caip10ToWallet(payload?.fromDID))}
               </Text>
             )}
-            {payload?.messageType === 'GIF' && (
+            {(payload?.messageType === 'GIF' ||
+              payload?.messageType === 'MediaEmbed') && (
               <ImageMessage
                 imageSource={payload?.messageContent}
                 messageType="reply"

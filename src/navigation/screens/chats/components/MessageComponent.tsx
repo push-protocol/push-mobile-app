@@ -94,7 +94,7 @@ const MessageComponent = ({
                   {getTrimmedAddress(caip10ToWallet(fromDID))}
                 </Text>
               )}
-              {messageType === 'GIF' && (
+              {(messageType === 'GIF' || messageType === 'MediaEmbed') && (
                 <ImageMessage imageSource={messageContent} time={time} />
               )}
               {messageType === 'Image' && (

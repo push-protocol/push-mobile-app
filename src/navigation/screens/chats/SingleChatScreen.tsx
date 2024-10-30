@@ -218,7 +218,7 @@ const SingleChatScreen = ({route}: any) => {
         GiphyDialog.hide();
 
         const res = sendMessage({
-          messageType: 'GIF',
+          messageType: 'MediaEmbed',
           message: gifUrl,
           replyRef: replyPayload?.cid || undefined,
         })
@@ -558,7 +558,7 @@ const SingleChatScreen = ({route}: any) => {
 
               <View style={styles.keyboard}>
                 {/* Render reply message bubble */}
-                {replyPayload && (
+                {replyPayload && !isSending && (
                   <ReplyMessageBubble
                     chatMessage={replyPayload}
                     componentType="replying"

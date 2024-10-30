@@ -6,7 +6,7 @@ import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
 export interface MessageFormat {
   message: string;
-  messageType: 'GIF' | 'Text';
+  messageType: 'GIF' | 'Text' | 'MediaEmbed';
   replyRef?: string;
 }
 
@@ -109,7 +109,7 @@ const useSendMessage = (
       //   sigType: '',
       //   messageObj,
       // });
-
+      console.log({messagePayload});
       const res = await userPushSDKInstance.chat.send(to, messagePayload);
       const chatMessage: IMessageIPFS = {
         // @ts-ignore
