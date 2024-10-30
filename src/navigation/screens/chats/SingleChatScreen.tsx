@@ -43,6 +43,7 @@ import MetaStorage from 'src/singletons/MetaStorage';
 
 import {AcceptIntent, MessageComponent} from './components';
 import {CustomScroll} from './components/CustomScroll';
+import ReplyMessageBubble from './components/ReplyMessageBubble';
 import './giphy/giphy.setup';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
@@ -68,6 +69,7 @@ const SectionHeight =
 const SingleChatScreen = ({route}: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const toastRef = useRef<any>();
+  const textInputRef = useRef<TextInput>(null);
   const {
     cid,
     senderAddress,
@@ -86,11 +88,13 @@ const SingleChatScreen = ({route}: any) => {
   const navigation = useNavigation();
   const [text, setText] = React.useState('');
   const [textInputHeight, setTextInputHeight] = useState(10);
+  const [replyPadding, setReplyPadding] = useState(0);
   const [isAccepting, setIsAccepting] = useState(false);
   const [showScrollDown, setShowScrollDown] = useState(false);
   const [listHeight, setListHeight] = useState(0);
   const [indicatorPos] = useState(() => new Animated.Value(0));
   const [indicatorSize, setIndicatorSize] = useState(0);
+  const [replyPayload, setReplyPayload] = useState<IMessageIPFS | null>(null);
   const SCORLL_OFF_SET = 250;
 
   const [
@@ -107,7 +111,7 @@ const SingleChatScreen = ({route}: any) => {
     combinedDID,
     chatId,
   );
-
+  // console.log('chatList', JSON.stringify(chatMessages));
   const [isSending, sendMessage, isSendReady, tempChatMessage] = useSendMessage(
     connectedUser,
     senderAddress || chatId,
@@ -134,8 +138,12 @@ const SingleChatScreen = ({route}: any) => {
     const res = await sendMessage({
       messageType: 'Text',
       message: _text,
+      replyRef: replyPayload?.cid || undefined,
     });
-
+    if (replyPayload) {
+      setReplyPayload(null);
+      setReplyPadding(0);
+    }
     if (!res) {
       return;
     }
@@ -206,19 +214,28 @@ const SingleChatScreen = ({route}: any) => {
         if (gifUrl.trim() === '') {
           return;
         }
-
+        console.log({replyPayload});
         GiphyDialog.hide();
+
         const res = sendMessage({
-          messageType: 'GIF',
+          messageType: 'MediaEmbed',
           message: gifUrl,
-        }).then(_res => {
-          if (_res) {
-            const [_cid, msg] = _res;
-            if (_cid && msg) {
-              pushChatDataDirect(_cid, msg);
+          replyRef: replyPayload?.cid || undefined,
+        })
+          .then(_res => {
+            if (_res) {
+              const [_cid, msg] = _res;
+              if (_cid && msg) {
+                pushChatDataDirect(_cid, msg);
+              }
             }
-          }
-        });
+          })
+          .finally(() => {
+            if (replyPayload) {
+              setReplyPayload(null);
+              setReplyPadding(0);
+            }
+          });
         if (!res) {
           return;
         }
@@ -227,7 +244,7 @@ const SingleChatScreen = ({route}: any) => {
     return () => {
       listener.remove();
     };
-  }, []);
+  }, [replyPayload]);
 
   // scroll bar indicator
   useEffect(() => {
@@ -297,6 +314,16 @@ const SingleChatScreen = ({route}: any) => {
         isGroupMessage={!!feed?.groupInformation}
         componentType={componentType}
         includeDate={includeDate(index)}
+        setReplyPayload={payload => {
+          // @ts-ignore
+          scrollViewRef.current.scrollToIndex({
+            index: 0,
+            animated: true,
+          });
+          textInputRef.current?.focus();
+          setReplyPayload(payload);
+        }}
+        chatId={chatId}
       />
     );
   };
@@ -394,6 +421,9 @@ const SingleChatScreen = ({route}: any) => {
                 <FlashList
                   // @ts-ignore
                   ref={scrollViewRef}
+                  contentContainerStyle={{
+                    paddingTop: replyPadding,
+                  }}
                   data={chatMessages}
                   renderItem={({item, index}) => renderItem({item, index})}
                   keyExtractor={(msg, index) =>
@@ -525,7 +555,26 @@ const SingleChatScreen = ({route}: any) => {
                   />
                 </TouchableOpacity>
               )}
+
               <View style={styles.keyboard}>
+                {/* Render reply message bubble */}
+                {replyPayload && !isSending && (
+                  <ReplyMessageBubble
+                    chatMessage={replyPayload}
+                    componentType="replying"
+                    onCancelReply={() => {
+                      setReplyPayload(null);
+                      setReplyPadding(0);
+                    }}
+                    onLayoutChange={({nativeEvent}) =>
+                      setReplyPadding(
+                        nativeEvent?.layout?.height
+                          ? nativeEvent?.layout?.height + 20
+                          : 0,
+                      )
+                    }
+                  />
+                )}
                 <View style={styles.textInputContainer}>
                   {/* Open gif */}
                   <View style={styles.smileyIcon}>
@@ -543,6 +592,7 @@ const SingleChatScreen = ({route}: any) => {
                   </View>
 
                   <TextInput
+                    ref={textInputRef}
                     style={[
                       styles.input,
                       {
@@ -671,11 +721,12 @@ const styles = StyleSheet.create({
     backgroundColor: Globals.COLORS.WHITE,
     borderRadius: 16,
     width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    // flexDirection: 'row',
+    // justifyContent: 'space-evenly',
     paddingVertical: Platform.OS === 'ios' ? 8 : 4,
     alignItems: 'center',
     alignSelf: 'center',
+    overflow: 'hidden',
   },
   input: {
     // marginVertical: Platform.OS === 'android' ? 6 : 16,
