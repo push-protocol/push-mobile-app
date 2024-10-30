@@ -579,7 +579,8 @@ PODS:
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - ReactCommon/turbomodule/core
-  - RNScreens (3.20.0):
+  - RNScreens (3.34.0):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-RCTImage
   - RNSVG (13.4.0):
@@ -960,7 +961,7 @@ SPEC CHECKSUMS:
   React-logger: 655ff5db8bd922acfbe76a4983ffab048916343e
   react-native-config: 5330c8258265c1e5fdb8c009d2cabd6badd96727
   react-native-encrypted-storage: db300a3f2f0aba1e818417c1c0a6be549038deb7
-  react-native-fast-openpgp: 66d3a1cce74d205bcb7bad5ed6f63b91ce151ee7
+  react-native-fast-openpgp: f4158eb50244457e12f9d2aec06bf7cfcba314ef
   react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-hash: 4664516df1834e1293b30e711c63f61f7f801b6a
   react-native-hole-view: 6935448993bac79f2b5a4ad7e9741094cf810679
@@ -1002,7 +1003,7 @@ SPEC CHECKSUMS:
   RNNotifee: 8e2d3df3f0e9ce8f5d1fe4c967431138190b6175
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: 2dc3707222fa153658386f4c0d357e0853327c3d
-  RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
+  RNScreens: 80369e822c4f123c3f076c9ea4141991c17770f9
   RNSVG: 07dbd870b0dcdecc99b3a202fa37c8ca163caec2
   RNVoipPushNotification: 543e18f83089134a35e7f1d2eba4c8b1f7776b08
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
@@ -1011,6 +1012,6 @@ SPEC CHECKSUMS:
   YoutubePlayer-in-WKWebView: 4fca3b4f6f09940077bfbae7bddb771f2b43aacd
   ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5
 
-PODFILE CHECKSUM: a49113093312d009c64844dbf4562ff7276ebb79
+PODFILE CHECKSUM: 55ca1f3224f042c4cc5631ddd32bca9ecf1880a9
 
 COCOAPODS: 1.15.2
