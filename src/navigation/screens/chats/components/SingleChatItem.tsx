@@ -110,6 +110,7 @@ const ChatItem = (props: SingleChatItemProps) => {
               {(messageType === 'GIF' || messageType === 'MediaEmbed') && 'GIF'}
               {messageType === 'File' && 'FILE'}
               {messageType === 'Image' && 'Image'}
+              {messageType === 'Reaction' && lastMessage}
             </Text>
           </View>
           <View>

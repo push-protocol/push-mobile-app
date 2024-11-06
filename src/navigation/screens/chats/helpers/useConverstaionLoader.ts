@@ -12,6 +12,7 @@ import {storeConversationData} from './storage';
 
 type pushChatDataDirectFunc = (cid: string, msg: IMessageIPFS) => void;
 type loadMoreDataFunc = () => Promise<void>;
+type ReactionIMessage = {[key: string]: IMessageIPFS[]};
 
 const useConversationLoader = (
   cid: string,
@@ -26,12 +27,14 @@ const useConversationLoader = (
   pushChatDataDirectFunc,
   loadMoreDataFunc,
   boolean,
+  ReactionIMessage,
 ] => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [chatData, setChatData] = useState<IMessageIPFS[]>([]);
   const pageBatchSize = 10;
   const pushSDKSocket = useRef<PushStream | null>(null);
+  const [reactions, setReactions] = useState<ReactionIMessage>({});
 
   const currentHash = useRef(cid);
   const fetchedFrom = useRef<string | null>('');
@@ -143,10 +146,14 @@ const useConversationLoader = (
               console.log('no new conversation');
               return;
             }
+
             let messageObj: any = {
               content: message.message.content,
             };
-            if (message.message.type === 'Reply') {
+            if (
+              message.message.type === 'Reply' ||
+              message.message.type === 'Reaction'
+            ) {
               messageObj.reference = message.message?.reference;
             }
             const newMsgs: IMessageIPFS[] = [
@@ -212,6 +219,55 @@ const useConversationLoader = (
     return chatListener;
   };
 
-  return [isLoading, chatData, pushChatDataDirect, loadMoreData, isLoadingMore];
+  useEffect(() => {
+    if (chatData?.length > 0) {
+      filterChatMessages(chatData);
+    }
+  }, [chatData?.length]);
+
+  const filterChatMessages = (messageList: Array<IMessageIPFS>) => {
+    // remove reactions into reactions
+    const reactionMessages = processChatReactions(messageList);
+    if (reactionMessages) {
+      // deep copy to update
+      setReactions(JSON.parse(JSON.stringify(reactionMessages)));
+    }
+  };
+
+  const processChatReactions = (messageList: Array<IMessageIPFS>) => {
+    const reactionMessages = reactions;
+
+    for (const message of messageList) {
+      if (message.messageType === 'Reaction') {
+        const reaction = message as IMessageIPFS;
+
+        // TODO: This should be present as an interface in the restapi package
+        const reference = (reaction as any).messageObj?.reference ?? '';
+
+        if (!reactionMessages[reference]) {
+          reactionMessages[reference] = [];
+        }
+        // Check if the reaction with the same CID already exists in the reactions array for this reference
+        const exists = reactionMessages[reference].some(
+          r => r.cid === reaction.cid,
+        );
+        if (!exists) {
+          // If not, add the reaction to the array
+          reactionMessages[reference].push(reaction);
+        }
+      }
+    }
+
+    return reactionMessages;
+  };
+
+  return [
+    isLoading,
+    chatData,
+    pushChatDataDirect,
+    loadMoreData,
+    isLoadingMore,
+    reactions,
+  ];
 };
 export {useConversationLoader};

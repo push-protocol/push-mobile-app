@@ -1,11 +1,18 @@
 import React, {FC} from 'react';
-import {Image, Pressable, StyleSheet} from 'react-native';
+import {Image, Pressable, StyleSheet, ViewStyle} from 'react-native';
 
-export type ReplyIconProps = {disabled?: boolean};
+export type ReplyIconProps = {
+  disabled?: boolean;
+  buttonStyle?: ViewStyle;
+  onPress?: () => void;
+};
 
-const ReplyIcon: FC<ReplyIconProps> = ({disabled}) => {
+const ReplyIcon: FC<ReplyIconProps> = ({disabled, buttonStyle, onPress}) => {
   return (
-    <Pressable disabled={disabled} style={styles.button}>
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      style={[styles.button, buttonStyle]}>
       <Image
         style={styles.icon}
         source={require('../../../../../assets/chat/icReply.png')}
