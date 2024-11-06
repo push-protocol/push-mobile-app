@@ -1,8 +1,8 @@
 diff --git a/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/pgp.js b/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/pgp.js
-index 161c76b..beca4e6 100644
+index 609b616..beca4e6 100644
 --- a/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/pgp.js
 +++ b/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/pgp.js
-@@ -2,135 +2,45 @@
+@@ -2,137 +2,45 @@
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.pgpDecrypt = exports.verifySignature = exports.sign = exports.pgpEncrypt = exports.generateKeyPair = exports.PGPHelper = void 0;
  const tslib_1 = require("tslib");
@@ -68,6 +68,8 @@ index 161c76b..beca4e6 100644
 -            });
 -            const publicKey = yield openpgp.readKey({ armoredKey: publicKeyArmored });
 -            const verificationResult = yield openpgp.verify({
+-                // setting date to 1 day in the future to avoid issues with clock skew
+-                date: new Date(Date.now() + 1000 * 60 * 60 * 24),
 -                message,
 -                signature,
 -                verificationKeys: publicKey
@@ -155,10 +157,10 @@ index 161c76b..beca4e6 100644
  //# sourceMappingURL=pgp.js.map
 \ No newline at end of file
 diff --git a/node_modules/@pushprotocol/restapi/src/lib/pushNotification/notification.js b/node_modules/@pushprotocol/restapi/src/lib/pushNotification/notification.js
-index a3019ad..c059f75 100644
+index c06af82..135f944 100644
 --- a/node_modules/@pushprotocol/restapi/src/lib/pushNotification/notification.js
 +++ b/node_modules/@pushprotocol/restapi/src/lib/pushNotification/notification.js
-@@ -124,7 +124,7 @@ class Notification extends pushNotificationBase_1.PushNotificationBaseClass {
+@@ -142,7 +142,7 @@ class Notification extends pushNotificationBase_1.PushNotificationBaseClass {
                  return yield PUSH_CHANNEL.subscribeV2({
                      signer: this.signer,
                      channelAddress: channel,
@@ -167,7 +169,7 @@ index a3019ad..c059f75 100644
                      env: this.env,
                      settings: minimalSetting !== null && minimalSetting !== void 0 ? minimalSetting : '',
                      onSuccess: onSuccess,
-@@ -163,7 +163,7 @@ class Notification extends pushNotificationBase_1.PushNotificationBaseClass {
+@@ -185,7 +185,7 @@ class Notification extends pushNotificationBase_1.PushNotificationBaseClass {
                  return yield PUSH_CHANNEL.unsubscribeV2({
                      signer: this.signer,
                      channelAddress: channel,
@@ -177,7 +179,7 @@ index a3019ad..c059f75 100644
                      onSuccess: onSuccess,
                      onError: onError,
 diff --git a/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js b/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js
-index bc316bb..bfe331c 100644
+index 08e7d08..9f7ebf8 100644
 --- a/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js
 +++ b/node_modules/@pushprotocol/restapi/src/lib/pushapi/PushAPI.js
 @@ -206,9 +206,9 @@ class PushAPI {

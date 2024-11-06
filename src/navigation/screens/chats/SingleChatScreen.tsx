@@ -9,12 +9,12 @@ import {IFeeds, IMessageIPFS, VideoCallStatus} from '@pushprotocol/restapi';
 import {walletToPCAIP10} from '@pushprotocol/restapi/src/lib/helpers';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useNavigation} from '@react-navigation/native';
-import {FlashList} from '@shopify/flash-list';
 import {produce} from 'immer';
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
   Animated,
   Dimensions,
+  FlatList,
   Image,
   Keyboard,
   KeyboardAvoidingView,
@@ -41,7 +41,7 @@ import {EncryptionInfo} from 'src/navigation/screens/chats/components/Encryption
 import {setOtherUserProfilePicture} from 'src/redux/videoSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
-import {AcceptIntent, MessageComponent} from './components';
+import {AcceptIntent, MessageComponent, ReplyMessageBubble} from './components';
 import {CustomScroll} from './components/CustomScroll';
 import './giphy/giphy.setup';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
@@ -68,6 +68,7 @@ const SectionHeight =
 const SingleChatScreen = ({route}: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const toastRef = useRef<any>();
+  const textInputRef = useRef<TextInput>(null);
   const {
     cid,
     senderAddress,
@@ -86,11 +87,13 @@ const SingleChatScreen = ({route}: any) => {
   const navigation = useNavigation();
   const [text, setText] = React.useState('');
   const [textInputHeight, setTextInputHeight] = useState(10);
+  const [replyPadding, setReplyPadding] = useState(0);
   const [isAccepting, setIsAccepting] = useState(false);
   const [showScrollDown, setShowScrollDown] = useState(false);
   const [listHeight, setListHeight] = useState(0);
   const [indicatorPos] = useState(() => new Animated.Value(0));
   const [indicatorSize, setIndicatorSize] = useState(0);
+  const [replyPayload, setReplyPayload] = useState<IMessageIPFS | null>(null);
   const SCORLL_OFF_SET = 250;
 
   const [
@@ -134,8 +137,12 @@ const SingleChatScreen = ({route}: any) => {
     const res = await sendMessage({
       messageType: 'Text',
       message: _text,
+      replyRef: replyPayload?.cid || undefined,
     });
-
+    if (replyPayload) {
+      setReplyPayload(null);
+      setReplyPadding(0);
+    }
     if (!res) {
       return;
     }
@@ -206,19 +213,27 @@ const SingleChatScreen = ({route}: any) => {
         if (gifUrl.trim() === '') {
           return;
         }
-
         GiphyDialog.hide();
+
         const res = sendMessage({
-          messageType: 'GIF',
+          messageType: 'MediaEmbed',
           message: gifUrl,
-        }).then(_res => {
-          if (_res) {
-            const [_cid, msg] = _res;
-            if (_cid && msg) {
-              pushChatDataDirect(_cid, msg);
+          replyRef: replyPayload?.cid || undefined,
+        })
+          .then(_res => {
+            if (_res) {
+              const [_cid, msg] = _res;
+              if (_cid && msg) {
+                pushChatDataDirect(_cid, msg);
+              }
             }
-          }
-        });
+          })
+          .finally(() => {
+            if (replyPayload) {
+              setReplyPayload(null);
+              setReplyPadding(0);
+            }
+          });
         if (!res) {
           return;
         }
@@ -227,7 +242,7 @@ const SingleChatScreen = ({route}: any) => {
     return () => {
       listener.remove();
     };
-  }, []);
+  }, [replyPayload]);
 
   // scroll bar indicator
   useEffect(() => {
@@ -297,6 +312,16 @@ const SingleChatScreen = ({route}: any) => {
         isGroupMessage={!!feed?.groupInformation}
         componentType={componentType}
         includeDate={includeDate(index)}
+        setReplyPayload={payload => {
+          // @ts-ignore
+          scrollViewRef.current.scrollToIndex({
+            index: 0,
+            animated: true,
+          });
+          textInputRef.current?.focus();
+          setReplyPayload(payload);
+        }}
+        chatId={chatId}
       />
     );
   };
@@ -306,6 +331,16 @@ const SingleChatScreen = ({route}: any) => {
     navigation.navigate(Globals.SCREENS.GROUP_INFO, {
       groupInformation: feed?.groupInformation!,
     });
+  };
+
+  const handleOnScroll = event => {
+    const y = event.nativeEvent.contentOffset.y;
+    if (y > SCORLL_OFF_SET) {
+      setShowScrollDown(true);
+    } else {
+      setShowScrollDown(false);
+    }
+    indicatorPos.setValue(y);
   };
 
   return (
@@ -391,41 +426,31 @@ const SingleChatScreen = ({route}: any) => {
                 },
               ]}>
               {chatMessages.length > 0 ? (
-                <FlashList
+                <FlatList
                   // @ts-ignore
                   ref={scrollViewRef}
+                  contentContainerStyle={{
+                    paddingTop: replyPadding,
+                  }}
                   data={chatMessages}
                   renderItem={({item, index}) => renderItem({item, index})}
-                  keyExtractor={(msg, index) =>
-                    msg.timestamp!.toString() + index
-                  }
+                  keyExtractor={(msg: any) => `chat-message-${msg.cid}`}
                   showsHorizontalScrollIndicator={false}
                   showsVerticalScrollIndicator={false}
                   overScrollMode={'never'}
-                  onScroll={event => {
-                    const y = event.nativeEvent.contentOffset.y;
-                    if (y > SCORLL_OFF_SET) {
-                      setShowScrollDown(true);
-                    } else {
-                      setShowScrollDown(false);
-                    }
-                    // setIndicatorPos(y);
-                    indicatorPos.setValue(y);
-                  }}
+                  onScroll={handleOnScroll}
                   onScrollToIndexFailed={() => {
                     console.log('err scorlling ');
                   }}
                   onEndReachedThreshold={0.6}
                   onEndReached={async () => {
-                    // console.log('loading more data');
                     if (!isLoadingMore) {
                       await loadMoreData();
                     }
-                    // }
                   }}
                   inverted={true}
                   extraData={chatMessages}
-                  estimatedItemSize={15}
+                  estimatedItemSize={100000}
                   onContentSizeChange={(_, h) => {
                     setListHeight(h);
                   }}
@@ -525,7 +550,26 @@ const SingleChatScreen = ({route}: any) => {
                   />
                 </TouchableOpacity>
               )}
+
               <View style={styles.keyboard}>
+                {/* Render reply message bubble */}
+                {replyPayload && !isSending && (
+                  <ReplyMessageBubble
+                    chatMessage={replyPayload}
+                    componentType="replying"
+                    onCancelReply={() => {
+                      setReplyPayload(null);
+                      setReplyPadding(0);
+                    }}
+                    onLayoutChange={({nativeEvent}) =>
+                      setReplyPadding(
+                        nativeEvent?.layout?.height
+                          ? nativeEvent?.layout?.height + 20
+                          : 0,
+                      )
+                    }
+                  />
+                )}
                 <View style={styles.textInputContainer}>
                   {/* Open gif */}
                   <View style={styles.smileyIcon}>
@@ -543,6 +587,7 @@ const SingleChatScreen = ({route}: any) => {
                   </View>
 
                   <TextInput
+                    ref={textInputRef}
                     style={[
                       styles.input,
                       {
@@ -671,14 +716,12 @@ const styles = StyleSheet.create({
     backgroundColor: Globals.COLORS.WHITE,
     borderRadius: 16,
     width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
     paddingVertical: Platform.OS === 'ios' ? 8 : 4,
     alignItems: 'center',
     alignSelf: 'center',
+    overflow: 'hidden',
   },
   input: {
-    // marginVertical: Platform.OS === 'android' ? 6 : 16,
     paddingLeft: 12,
     marginRight: 0,
     color: Globals.COLORS.BLACK,

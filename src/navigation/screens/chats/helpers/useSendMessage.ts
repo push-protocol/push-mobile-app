@@ -6,13 +6,15 @@ import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 
 export interface MessageFormat {
   message: string;
-  messageType: 'GIF' | 'Text';
+  messageType: 'GIF' | 'Text' | 'MediaEmbed';
+  replyRef?: string;
 }
 
 type sendIntentFunc = (message: MessageFormat) => Promise<void>;
 type sendMessageFunc = ({
   message,
   messageType,
+  replyRef,
 }: MessageFormat) => Promise<[string, IMessageIPFS]>;
 
 type useSendMessageReturnType = [
@@ -59,33 +61,43 @@ const useSendMessage = (
   const sendMessage = async ({
     message,
     messageType,
+    replyRef,
   }: MessageFormat): Promise<[string, IMessageIPFS]> => {
     try {
       if (!userPushSDKInstance) {
         return generateNullRespose();
       }
       setIsSending(true);
-      setTempChatMessage({
-        toDID: to,
-        toCAIP10: to,
-        fromDID: caip10ToWallet(connectedUser.wallets),
-        fromCAIP10: caip10ToWallet(connectedUser.wallets),
-        messageType: messageType,
-        messageContent: message,
-        timestamp: Date.now(),
-        encryptedSecret: '',
-        encType: '',
-        link: '',
-        signature: '',
-        sigType: '',
-      });
 
-      const res = await userPushSDKInstance.chat.send(to, {
-        content: message,
+      const messagePayload: any = {
         type: messageType,
-      });
+        content: message,
+      };
 
+      const messageObj: any = {
+        content: message,
+      };
+
+      if (replyRef !== undefined) {
+        messagePayload.type = 'Reply';
+        messagePayload.content = {
+          type: messageType,
+          content: message,
+        };
+        messagePayload.reference = replyRef;
+        messageObj.content = {
+          messageType,
+          messageObj: {
+            content: message,
+          },
+        };
+        messageObj.reference = replyRef;
+      }
+
+      const res = await userPushSDKInstance.chat.send(to, messagePayload);
       const chatMessage: IMessageIPFS = {
+        // @ts-ignore
+        cid: res.cid,
         toDID: caip10ToWallet(res.toCAIP10),
         toCAIP10: caip10ToWallet(res.toCAIP10),
         fromDID: caip10ToWallet(res.fromCAIP10),
@@ -99,11 +111,12 @@ const useSendMessage = (
         signature: res.signature,
         sigType: res.sigType,
         verificationProof: res.verificationProof,
+        messageObj,
       };
 
       return [res.cid, chatMessage];
     } catch (e) {
-      showToast('error', 'Message was not sent');
+      showToast('Message was not sent', 'bug-outline');
     } finally {
       setIsSending(false);
     }

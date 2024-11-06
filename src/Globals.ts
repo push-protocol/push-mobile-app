@@ -139,6 +139,8 @@ export default {
     LIGHT_BLUE: '#F4F5FA',
     CHAT_BLACK: '#1E1E1E',
     CHAT_LIGHT_DARK: '#657795',
+    REPLY_LIGHT_PINK: '#facfe8',
+    REPLY_DARK_PINK: '#e164ad',
 
     // Group Chat
     CHAT_LIGHT_PINK: '#F3D7FA',
