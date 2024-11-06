@@ -9,12 +9,12 @@ import {IFeeds, IMessageIPFS, VideoCallStatus} from '@pushprotocol/restapi';
 import {walletToPCAIP10} from '@pushprotocol/restapi/src/lib/helpers';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useNavigation} from '@react-navigation/native';
-import {FlashList} from '@shopify/flash-list';
 import {produce} from 'immer';
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
   Animated,
   Dimensions,
+  FlatList,
   Image,
   Keyboard,
   KeyboardAvoidingView,
@@ -41,9 +41,8 @@ import {EncryptionInfo} from 'src/navigation/screens/chats/components/Encryption
 import {setOtherUserProfilePicture} from 'src/redux/videoSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
-import {AcceptIntent, MessageComponent} from './components';
+import {AcceptIntent, MessageComponent, ReplyMessageBubble} from './components';
 import {CustomScroll} from './components/CustomScroll';
-import ReplyMessageBubble from './components/ReplyMessageBubble';
 import './giphy/giphy.setup';
 import {getFormattedAddress} from './helpers/chatAddressFormatter';
 import {useConversationLoader} from './helpers/useConverstaionLoader';
@@ -111,7 +110,7 @@ const SingleChatScreen = ({route}: any) => {
     combinedDID,
     chatId,
   );
-  // console.log('chatList', JSON.stringify(chatMessages));
+
   const [isSending, sendMessage, isSendReady, tempChatMessage] = useSendMessage(
     connectedUser,
     senderAddress || chatId,
@@ -214,7 +213,6 @@ const SingleChatScreen = ({route}: any) => {
         if (gifUrl.trim() === '') {
           return;
         }
-        console.log({replyPayload});
         GiphyDialog.hide();
 
         const res = sendMessage({
@@ -335,6 +333,16 @@ const SingleChatScreen = ({route}: any) => {
     });
   };
 
+  const handleOnScroll = event => {
+    const y = event.nativeEvent.contentOffset.y;
+    if (y > SCORLL_OFF_SET) {
+      setShowScrollDown(true);
+    } else {
+      setShowScrollDown(false);
+    }
+    indicatorPos.setValue(y);
+  };
+
   return (
     <LinearGradient colors={['#EEF5FF', '#ECE9FA']} style={styles.container}>
       <View style={styles.header}>
@@ -418,7 +426,7 @@ const SingleChatScreen = ({route}: any) => {
                 },
               ]}>
               {chatMessages.length > 0 ? (
-                <FlashList
+                <FlatList
                   // @ts-ignore
                   ref={scrollViewRef}
                   contentContainerStyle={{
@@ -426,36 +434,23 @@ const SingleChatScreen = ({route}: any) => {
                   }}
                   data={chatMessages}
                   renderItem={({item, index}) => renderItem({item, index})}
-                  keyExtractor={(msg, index) =>
-                    msg.timestamp!.toString() + index
-                  }
+                  keyExtractor={(msg: any) => `chat-message-${msg.cid}`}
                   showsHorizontalScrollIndicator={false}
                   showsVerticalScrollIndicator={false}
                   overScrollMode={'never'}
-                  onScroll={event => {
-                    const y = event.nativeEvent.contentOffset.y;
-                    if (y > SCORLL_OFF_SET) {
-                      setShowScrollDown(true);
-                    } else {
-                      setShowScrollDown(false);
-                    }
-                    // setIndicatorPos(y);
-                    indicatorPos.setValue(y);
-                  }}
+                  onScroll={handleOnScroll}
                   onScrollToIndexFailed={() => {
                     console.log('err scorlling ');
                   }}
                   onEndReachedThreshold={0.6}
                   onEndReached={async () => {
-                    // console.log('loading more data');
                     if (!isLoadingMore) {
                       await loadMoreData();
                     }
-                    // }
                   }}
                   inverted={true}
                   extraData={chatMessages}
-                  estimatedItemSize={15}
+                  estimatedItemSize={100000}
                   onContentSizeChange={(_, h) => {
                     setListHeight(h);
                   }}
@@ -721,15 +716,12 @@ const styles = StyleSheet.create({
     backgroundColor: Globals.COLORS.WHITE,
     borderRadius: 16,
     width: '100%',
-    // flexDirection: 'row',
-    // justifyContent: 'space-evenly',
     paddingVertical: Platform.OS === 'ios' ? 8 : 4,
     alignItems: 'center',
     alignSelf: 'center',
     overflow: 'hidden',
   },
   input: {
-    // marginVertical: Platform.OS === 'android' ? 6 : 16,
     paddingLeft: 12,
     marginRight: 0,
     color: Globals.COLORS.BLACK,

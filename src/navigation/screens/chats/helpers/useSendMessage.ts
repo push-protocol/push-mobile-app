@@ -94,22 +94,6 @@ const useSendMessage = (
         messageObj.reference = replyRef;
       }
 
-      // setTempChatMessage({
-      //   toDID: to,
-      //   toCAIP10: to,
-      //   fromDID: caip10ToWallet(connectedUser.wallets),
-      //   fromCAIP10: caip10ToWallet(connectedUser.wallets),
-      //   messageType: messageType,
-      //   messageContent: message,
-      //   timestamp: Date.now(),
-      //   encryptedSecret: '',
-      //   encType: '',
-      //   link: '',
-      //   signature: '',
-      //   sigType: '',
-      //   messageObj,
-      // });
-      console.log({messagePayload});
       const res = await userPushSDKInstance.chat.send(to, messagePayload);
       const chatMessage: IMessageIPFS = {
         // @ts-ignore

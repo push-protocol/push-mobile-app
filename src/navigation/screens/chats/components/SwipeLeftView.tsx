@@ -3,19 +3,17 @@ import React, {FC} from 'react';
 import {StyleSheet, View} from 'react-native';
 import Globals from 'src/Globals';
 
+import {ReplyIcon} from './ReplyIcon';
+
 const SwipeLeftView: FC = () => {
   return (
     <View style={styles.container}>
-      <FontAwesome
-        name="reply"
-        size={18}
-        color={Globals.COLORS.CHAT_LIGHT_DARK}
-      />
+      <ReplyIcon disabled />
     </View>
   );
 };
 
-export default SwipeLeftView;
+export {SwipeLeftView};
 
 const styles = StyleSheet.create({
   container: {
