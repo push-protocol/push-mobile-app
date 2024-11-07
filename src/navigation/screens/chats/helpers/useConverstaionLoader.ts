@@ -147,40 +147,42 @@ const useConversationLoader = (
               return;
             }
 
-            let messageObj: any = {
-              content: message.message.content,
-            };
-            if (
-              message.message.type === 'Reply' ||
-              message.message.type === 'Reaction'
-            ) {
-              messageObj.reference = message.message?.reference;
+            if (message?.event === 'chat.message') {
+              let messageObj: any = {
+                content: message.message.content,
+              };
+              if (
+                message.message.type === 'Reply' ||
+                message.message.type === 'Reaction'
+              ) {
+                messageObj.reference = message.message?.reference;
+              }
+              const newMsgs: IMessageIPFS[] = [
+                {
+                  // @ts-ignore
+                  cid: message.reference,
+                  encryptedSecret: null,
+                  fromCAIP10: message.from,
+                  fromDID: message.from,
+                  link: null,
+                  messageType: message.message.type,
+                  toCAIP10: message.to[0],
+                  toDID: message.to[0],
+                  messageContent: message.message.content,
+                  timestamp: Number(message.timestamp),
+                  encType: '',
+                  signature: '',
+                  sigType: '',
+                  messageObj,
+                },
+              ];
+              await storeConversationData(
+                combinedDID,
+                message.reference,
+                newMsgs,
+              );
+              setChatData(prev => [...newMsgs.reverse(), ...prev]);
             }
-            const newMsgs: IMessageIPFS[] = [
-              {
-                // @ts-ignore
-                cid: message.reference,
-                encryptedSecret: null,
-                fromCAIP10: message.from,
-                fromDID: message.from,
-                link: null,
-                messageType: message.message.type,
-                toCAIP10: message.to[0],
-                toDID: message.to[0],
-                messageContent: message.message.content,
-                timestamp: Number(message.timestamp),
-                encType: '',
-                signature: '',
-                sigType: '',
-                messageObj,
-              },
-            ];
-            await storeConversationData(
-              combinedDID,
-              message.reference,
-              newMsgs,
-            );
-            setChatData(prev => [...newMsgs.reverse(), ...prev]);
           },
         );
       } else {
