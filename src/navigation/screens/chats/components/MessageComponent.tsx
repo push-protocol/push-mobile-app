@@ -19,6 +19,12 @@ import {ImageMessage} from './messageTypes/ImageMessage';
 
 export type MessageComponentType = 'SENDER' | 'RECEIVER';
 
+export type ReactionPayloadType = {
+  messageType: string;
+  message: string | undefined;
+  reactionRef: string | undefined;
+};
+
 type MessageComponentProps = {
   chatMessage: IMessageIPFS;
   componentType: MessageComponentType;
@@ -29,8 +35,8 @@ type MessageComponentProps = {
   handleMessageLongPress?: (message: IMessageIPFS) => void;
   reactionPickerId?: any;
   handleTapOutside?: () => void;
-  sendReaction?: (reactionPayload: any) => void;
-  chatReactions?: any;
+  sendReaction?: (reactionPayload: ReactionPayloadType) => void;
+  chatReactions?: IMessageIPFS[];
 };
 
 const MessageComponent = React.memo(

@@ -1,3 +1,4 @@
+import {IMessageIPFS} from '@pushprotocol/restapi';
 import React, {FC} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import Globals from 'src/Globals';
@@ -9,29 +10,33 @@ type IReactions = {
 };
 
 export type ReactionsProps = {
-  chatReactions: any;
+  chatReactions: IMessageIPFS[];
   componentType: MessageComponentType;
 };
 
 const Reactions: FC<ReactionsProps> = ({chatReactions, componentType}) => {
   // transform to IReactions
-  const uniqueReactions = chatReactions.reduce((acc: any, reaction: any) => {
-    const contentKey = (reaction as any).messageObj?.content || '';
-    if (!acc[contentKey]) {
-      acc[contentKey] = [];
-    }
+  const uniqueReactions = chatReactions.reduce(
+    (acc: IReactions, reaction: IMessageIPFS) => {
+      console.log('check', JSON.stringify({acc, reaction, chatReactions}));
+      const contentKey = (reaction as any).messageObj?.content || '';
+      if (!acc[contentKey]) {
+        acc[contentKey] = [];
+      }
 
-    // eliminate duplicate
-    if (!acc[contentKey].includes((reaction as any).fromCAIP10)) {
-      acc[contentKey].push((reaction as any).fromCAIP10);
-    }
+      // eliminate duplicate
+      if (!acc[contentKey].includes((reaction as any).fromCAIP10)) {
+        acc[contentKey].push((reaction as any).fromCAIP10);
+      }
 
-    return acc;
-  }, {} as IReactions);
+      return acc;
+    },
+    {} as IReactions,
+  );
 
   // generate a unique key for the reactions
   const reactionsKey = chatReactions
-    .map((reaction: any) => reaction.reference)
+    .map((reaction: IMessageIPFS) => reaction.reference)
     .join('-');
 
   return (
@@ -49,21 +54,24 @@ const Reactions: FC<ReactionsProps> = ({chatReactions, componentType}) => {
             {' '}
             {String(
               Object.values(uniqueReactions).reduce(
-                (total: any, reactions: any) => total + reactions.length,
+                (total: number, reactions: string[]) =>
+                  total + reactions.length,
                 0,
               ),
             )}
           </Text>
         </View>
       ) : (
-        Object.entries(uniqueReactions).map(([content, reactions]: any[]) => (
-          <View
-            key={`reactions-${content}-${reactionsKey}`}
-            style={styles.reactionView}>
-            <Text style={styles.emojiText}>{`${content} `}</Text>
-            <Text style={styles.countText}>{reactions?.length}</Text>
-          </View>
-        ))
+        Object.entries(uniqueReactions).map(
+          ([content, reactions]: [string, string[]]) => (
+            <View
+              key={`reactions-${content}-${reactionsKey}`}
+              style={styles.reactionView}>
+              <Text style={styles.emojiText}>{`${content} `}</Text>
+              <Text style={styles.countText}>{reactions?.length}</Text>
+            </View>
+          ),
+        )
       )}
     </View>
   );

@@ -357,7 +357,7 @@ const SingleChatScreen = ({route}: any) => {
         reactionPickerId={activeReactionMessageId}
         handleTapOutside={() => handleTapOutside()}
         sendReaction={handleSendReaction}
-        chatReactions={reactionMessages?.[(item as any).cid] || []}
+        chatReactions={reactionMessages?.[(item as IMessageIPFS)?.cid] || []}
       />
     );
   };

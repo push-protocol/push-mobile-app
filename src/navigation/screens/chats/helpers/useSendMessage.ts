@@ -80,12 +80,12 @@ const useSendMessage = (
         content: message,
       };
 
-      if (reactionRef !== undefined) {
+      if (reactionRef) {
         messagePayload.reference = reactionRef;
         messageObj.reference = reactionRef;
       }
 
-      if (replyRef !== undefined) {
+      if (replyRef) {
         messagePayload.type = 'Reply';
         messagePayload.content = {
           type: messageType,
