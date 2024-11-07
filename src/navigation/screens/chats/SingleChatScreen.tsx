@@ -344,7 +344,7 @@ const SingleChatScreen = ({route}: any) => {
     )
       ? 'SENDER'
       : 'RECEIVER';
-    if (item?.messageType === 'Reaction') return null;
+    if (item?.messageType === 'Reaction' || !item?.messageType) return null;
     return (
       <MessageComponent
         chatMessage={item}
