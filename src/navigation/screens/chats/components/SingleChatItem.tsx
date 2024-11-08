@@ -76,9 +76,17 @@ const ChatItem = (props: SingleChatItemProps) => {
         return;
       }
 
-      setLastMessage(feed.msg.messageContent);
+      setLastMessage(
+        feed.msg.messageType === 'Reply'
+          ? feed.msg.messageObj?.content?.messageObj?.content
+          : feed.msg.messageContent,
+      );
       setTimeStamp(formatAMPM(feed.msg.timestamp || 0));
-      setMessageType(feed.msg.messageType);
+      setMessageType(
+        feed.msg.messageType === 'Reply'
+          ? feed.msg.messageObj?.content?.messageType
+          : feed.msg.messageType,
+      );
       setLoading(false);
     })();
   });
@@ -99,9 +107,10 @@ const ChatItem = (props: SingleChatItemProps) => {
             </Text>
             <Text style={props.count ? styles.activeText : styles.text}>
               {messageType === 'Text' && formatTextData(lastMessage)}
-              {messageType === 'GIF' && 'GIF'}
+              {(messageType === 'GIF' || messageType === 'MediaEmbed') && 'GIF'}
               {messageType === 'File' && 'FILE'}
               {messageType === 'Image' && 'Image'}
+              {messageType === 'Reaction' && lastMessage}
             </Text>
           </View>
           <View>

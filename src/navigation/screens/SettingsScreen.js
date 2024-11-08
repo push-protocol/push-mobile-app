@@ -127,7 +127,7 @@ const SettingsScreen = ({route}) => {
   // RENDER
   return (
     <>
-      <Header />
+      <Header title="Settings" />
 
       <View style={styles.settingsContainer}>
         <View style={{marginBottom: 20}}>

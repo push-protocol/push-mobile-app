@@ -71,7 +71,7 @@ export const UserProfileAddress = ({icon}: UserProfileAddressProps) => {
       ]}
       onPress={copyToClipboard}>
       <Text style={styles.address}>
-        {userDomain || getTrimmedAddress(caip10ToWallet(userAddress || ''))}
+        {userDomain || getTrimmedAddress(caip10ToWallet(userAddress || ''), 4)}
       </Text>
       <Ionicons
         name={copied ? 'checkmark' : icon}
@@ -89,10 +89,10 @@ interface UserProfileProps extends UserProfileAddressProps {
 const UserProfile = (props: UserProfileProps) => {
   return (
     <View style={styles.profileContainer}>
+      <UserProfileAddress {...props} />
       <Pressable onPress={props?.onPressIcon}>
         <UserProfileIcon />
       </Pressable>
-      <UserProfileAddress {...props} />
     </View>
   );
 };
