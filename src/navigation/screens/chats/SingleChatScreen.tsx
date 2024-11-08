@@ -434,21 +434,12 @@ const SingleChatScreen = ({route}: any) => {
         behavior="position"
         keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 60}
         enabled={true}
-        style={{
-          width: '100%',
-          height: SectionHeight,
-          position: 'relative',
-        }}>
-        <TouchableWithoutFeedback
-          onPress={() => handleTapOutside()}
-          onLongPress={() => null}>
-          <View
-            style={{
-              height: windowHeight,
-              width: '100%',
-              alignItems: 'center',
-              position: 'relative',
-            }}>
+        style={styles.keyboardAvoidingViewStyles}>
+        <View style={styles.chatListAndInputContainer}>
+          <TouchableWithoutFeedback
+            style={styles.touchableWithoutFeedbackStyle}
+            onPress={() => handleTapOutside()}
+            onLongPress={() => null}>
             {isLoading ? (
               <View style={{height: SectionHeight}}>
                 <Image
@@ -568,116 +559,114 @@ const SingleChatScreen = ({route}: any) => {
                 />
               </View>
             )}
+          </TouchableWithoutFeedback>
+          {/* Donot show keyboard at intent page */}
+          {!isLoading && !isIntentReceivePage && (
+            <View style={styles.keyboardAvoid}>
+              {/* scroll */}
+              {showScrollDown && (
+                <TouchableOpacity
+                  onPress={() => {
+                    setShowScrollDown(false);
+                    // @ts-ignore
+                    scrollViewRef.current.scrollToIndex({
+                      index: 0,
+                      animated: true,
+                    });
+                  }}>
+                  <View
+                    style={{
+                      position: 'absolute',
+                      width: 30,
+                      height: 30,
+                      bottom: 80,
+                      borderRadius: 20,
+                      right: 0,
+                      backgroundColor: '#00000033',
+                      zIndex: 200,
+                    }}
+                  />
+                </TouchableOpacity>
+              )}
 
-            {/* Donot show keyboard at intent page */}
-            {!isLoading && !isIntentReceivePage && (
-              <View style={styles.keyboardAvoid}>
-                {/* scroll */}
-                {showScrollDown && (
-                  <TouchableOpacity
-                    onPress={() => {
-                      setShowScrollDown(false);
-                      // @ts-ignore
-                      scrollViewRef.current.scrollToIndex({
-                        index: 0,
-                        animated: true,
-                      });
-                    }}>
-                    <View
-                      style={{
-                        position: 'absolute',
-                        width: 30,
-                        height: 30,
-                        bottom: 80,
-                        borderRadius: 20,
-                        right: 0,
-                        backgroundColor: '#00000033',
-                        zIndex: 200,
-                      }}
-                    />
-                  </TouchableOpacity>
+              <View style={styles.keyboard}>
+                {/* Render reply message bubble */}
+                {replyPayload && !isSending && (
+                  <ReplyMessageBubble
+                    chatMessage={replyPayload}
+                    componentType="replying"
+                    onCancelReply={() => {
+                      setReplyPayload(null);
+                      setReplyPadding(0);
+                    }}
+                    onLayoutChange={({nativeEvent}) =>
+                      setReplyPadding(
+                        nativeEvent?.layout?.height
+                          ? nativeEvent?.layout?.height + 20
+                          : 0,
+                      )
+                    }
+                  />
                 )}
+                <View style={styles.textInputContainer}>
+                  {/* Open gif */}
+                  <View style={styles.smileyIcon}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        GiphyDialog.show();
+                      }}>
+                      <MaterialCommunityIcons
+                        name="sticker-emoji"
+                        size={28}
+                        color="#898686"
+                      />
+                    </TouchableOpacity>
+                  </View>
 
-                <View style={styles.keyboard}>
-                  {/* Render reply message bubble */}
-                  {replyPayload && !isSending && (
-                    <ReplyMessageBubble
-                      chatMessage={replyPayload}
-                      componentType="replying"
-                      onCancelReply={() => {
-                        setReplyPayload(null);
-                        setReplyPadding(0);
-                      }}
-                      onLayoutChange={({nativeEvent}) =>
-                        setReplyPadding(
-                          nativeEvent?.layout?.height
-                            ? nativeEvent?.layout?.height + 20
-                            : 0,
-                        )
-                      }
-                    />
-                  )}
-                  <View style={styles.textInputContainer}>
-                    {/* Open gif */}
-                    <View style={styles.smileyIcon}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          GiphyDialog.show();
-                        }}>
-                        <MaterialCommunityIcons
-                          name="sticker-emoji"
-                          size={28}
-                          color="#898686"
+                  <TextInput
+                    ref={textInputRef}
+                    style={[
+                      styles.input,
+                      {
+                        height: Math.min(Math.max(5, textInputHeight), 100),
+                        minHeight: 40,
+                      },
+                    ]}
+                    onChangeText={setText}
+                    value={text}
+                    placeholder="Type your message here..."
+                    placeholderTextColor="#d2d1d1"
+                    multiline={true}
+                    onContentSizeChange={event => {
+                      setTextInputHeight(
+                        Math.max(event.nativeEvent.contentSize.height, 10),
+                      );
+                    }}
+                  />
+
+                  <View style={styles.textButtonContainer}>
+                    <View style={styles.sendIcon}>
+                      {isSending || !isSendReady ? (
+                        <FontAwesome
+                          name="spinner"
+                          size={24}
+                          color={Globals.COLORS.MID_GRAY}
                         />
-                        {/* <FontAwesome5 name="smile" size={20} color="black" /> */}
-                      </TouchableOpacity>
-                    </View>
-
-                    <TextInput
-                      ref={textInputRef}
-                      style={[
-                        styles.input,
-                        {
-                          height: Math.min(Math.max(5, textInputHeight), 100),
-                          minHeight: 40,
-                        },
-                      ]}
-                      onChangeText={setText}
-                      value={text}
-                      placeholder="Type your message here..."
-                      placeholderTextColor="#d2d1d1"
-                      multiline={true}
-                      onContentSizeChange={event => {
-                        setTextInputHeight(
-                          Math.max(event.nativeEvent.contentSize.height, 10),
-                        );
-                      }}
-                    />
-
-                    <View style={styles.textButtonContainer}>
-                      <View style={styles.sendIcon}>
-                        {isSending || !isSendReady ? (
-                          <FontAwesome
-                            name="spinner"
-                            size={24}
-                            color={Globals.COLORS.MID_GRAY}
-                          />
-                        ) : (
-                          <FontAwesome
-                            name="send"
-                            size={24}
-                            color={Globals.COLORS.PINK}
-                            onPress={handleSend}
-                          />
-                        )}
-                      </View>
+                      ) : (
+                        <FontAwesome
+                          name="send"
+                          size={24}
+                          color={Globals.COLORS.PINK}
+                          onPress={handleSend}
+                        />
+                      )}
                     </View>
                   </View>
                 </View>
               </View>
-            )}
-          </View>
-        </TouchableWithoutFeedback>
+            </View>
+          )}
+        </View>
       </KeyboardAvoidingView>
 
       <Toaster ref={toastRef} />
@@ -698,6 +687,20 @@ const getSectionStyles = (listHeight: number) =>
   }).section;
 
 const styles = StyleSheet.create({
+  keyboardAvoidingViewStyles: {
+    width: '100%',
+    height: SectionHeight,
+    position: 'relative',
+  },
+  chatListAndInputContainer: {
+    height: windowHeight,
+    width: '100%',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  touchableWithoutFeedbackStyle: {
+    position: 'relative',
+  },
   keyboardAvoid: {
     width: '100%',
     justifyContent: 'center',
