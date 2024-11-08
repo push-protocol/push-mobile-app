@@ -8,6 +8,7 @@ export interface MessageFormat {
   message: string;
   messageType: 'GIF' | 'Text' | 'MediaEmbed';
   replyRef?: string;
+  reactionRef?: string;
 }
 
 type sendIntentFunc = (message: MessageFormat) => Promise<void>;
@@ -62,6 +63,7 @@ const useSendMessage = (
     message,
     messageType,
     replyRef,
+    reactionRef,
   }: MessageFormat): Promise<[string, IMessageIPFS]> => {
     try {
       if (!userPushSDKInstance) {
@@ -78,7 +80,12 @@ const useSendMessage = (
         content: message,
       };
 
-      if (replyRef !== undefined) {
+      if (reactionRef) {
+        messagePayload.reference = reactionRef;
+        messageObj.reference = reactionRef;
+      }
+
+      if (replyRef) {
         messagePayload.type = 'Reply';
         messagePayload.content = {
           type: messageType,

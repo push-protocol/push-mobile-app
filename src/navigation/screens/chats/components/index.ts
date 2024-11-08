@@ -1,6 +1,8 @@
 import AcceptIntent from './AcceptIntent';
 import Chat from './Chats';
 import {MessageComponent} from './MessageComponent';
+import {ReactionPicker} from './ReactionPicker';
+import {Reactions} from './Reactions';
 import {ReplyIcon} from './ReplyIcon';
 import {ReplyMessageBubble} from './ReplyMessageBubble';
 import Requests from './Requests';
@@ -16,4 +18,6 @@ export {
   ReplyMessageBubble,
   SwipeLeftView,
   ReplyIcon,
+  ReactionPicker,
+  Reactions,
 };

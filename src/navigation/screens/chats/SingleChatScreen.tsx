@@ -27,6 +27,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch} from 'react-redux';
 import Globals from 'src/Globals';
@@ -94,6 +95,7 @@ const SingleChatScreen = ({route}: any) => {
   const [indicatorPos] = useState(() => new Animated.Value(0));
   const [indicatorSize, setIndicatorSize] = useState(0);
   const [replyPayload, setReplyPayload] = useState<IMessageIPFS | null>(null);
+  const [activeReactionMessageId, setActiveReactionMessageId] = useState(null);
   const SCORLL_OFF_SET = 250;
 
   const [
@@ -102,6 +104,7 @@ const SingleChatScreen = ({route}: any) => {
     pushChatDataDirect,
     loadMoreData,
     isLoadingMore,
+    reactionMessages,
   ] = useConversationLoader(
     cid,
     connectedUser.privateKey,
@@ -300,28 +303,61 @@ const SingleChatScreen = ({route}: any) => {
     }
   };
 
+  const handleSetReplyPayload = (payload: IMessageIPFS) => {
+    // @ts-ignore
+    scrollViewRef.current.scrollToIndex({
+      index: 0,
+      animated: true,
+    });
+    textInputRef.current?.focus();
+    setReplyPayload(payload);
+  };
+
+  const handleMessageLongPress = (messageId: any) => {
+    setActiveReactionMessageId(prev => (prev === messageId ? null : messageId));
+  };
+
+  const handleTapOutside = () => {
+    setActiveReactionMessageId(null);
+  };
+
+  const handleSendReaction = async (payload: any) => {
+    setActiveReactionMessageId(null);
+    const res = await sendMessage(payload);
+    if (!res) {
+      return;
+    }
+
+    const [_cid, msg] = res;
+    if (_cid && msg) {
+      console.log('_after sending got', _cid);
+      // No need to push intent to chat, will receive from socket
+      if (!isIntentSendPage) {
+        pushChatDataDirect(_cid, msg);
+      }
+    }
+  };
+
   const renderItem = ({item, index}: {item: IMessageIPFS; index: number}) => {
     const componentType = item.fromCAIP10.includes(
       caip10ToWallet(connectedUser.wallets),
     )
       ? 'SENDER'
       : 'RECEIVER';
+    if (item?.messageType === 'Reaction' || !item?.messageType) return null;
     return (
       <MessageComponent
         chatMessage={item}
         isGroupMessage={!!feed?.groupInformation}
         componentType={componentType}
         includeDate={includeDate(index)}
-        setReplyPayload={payload => {
-          // @ts-ignore
-          scrollViewRef.current.scrollToIndex({
-            index: 0,
-            animated: true,
-          });
-          textInputRef.current?.focus();
-          setReplyPayload(payload);
-        }}
+        setReplyPayload={handleSetReplyPayload}
         chatId={chatId}
+        handleMessageLongPress={message => handleMessageLongPress(message?.cid)}
+        reactionPickerId={activeReactionMessageId}
+        handleTapOutside={() => handleTapOutside()}
+        sendReaction={handleSendReaction}
+        chatReactions={reactionMessages?.[(item as IMessageIPFS)?.cid] || []}
       />
     );
   };
@@ -398,130 +434,132 @@ const SingleChatScreen = ({route}: any) => {
         behavior="position"
         keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 60}
         enabled={true}
-        style={{
-          width: '100%',
-          height: SectionHeight,
-          position: 'relative',
-        }}>
-        <View
-          style={{
-            height: windowHeight,
-            width: '100%',
-            alignItems: 'center',
-            position: 'relative',
-          }}>
-          {isLoading ? (
-            <View style={{height: SectionHeight}}>
-              <Image
-                style={{marginTop: 50, width: 50, height: 50}}
-                source={require('assets/chat/loading.gif')}
-              />
-            </View>
-          ) : (
-            <View
-              style={[
-                getSectionStyles(listHeight),
-                keyboardStatus && {
-                  height: Math.min(listHeight + keyboardHeight, SectionHeight),
-                },
-              ]}>
-              {chatMessages.length > 0 ? (
-                <FlatList
-                  // @ts-ignore
-                  ref={scrollViewRef}
-                  contentContainerStyle={{
-                    paddingTop: replyPadding,
-                  }}
-                  data={chatMessages}
-                  renderItem={({item, index}) => renderItem({item, index})}
-                  keyExtractor={(msg: any) => `chat-message-${msg.cid}`}
-                  showsHorizontalScrollIndicator={false}
-                  showsVerticalScrollIndicator={false}
-                  overScrollMode={'never'}
-                  onScroll={handleOnScroll}
-                  onScrollToIndexFailed={() => {
-                    console.log('err scorlling ');
-                  }}
-                  onEndReachedThreshold={0.6}
-                  onEndReached={async () => {
-                    if (!isLoadingMore) {
-                      await loadMoreData();
-                    }
-                  }}
-                  inverted={true}
-                  extraData={chatMessages}
-                  estimatedItemSize={100000}
-                  onContentSizeChange={(_, h) => {
-                    setListHeight(h);
-                  }}
-                  ListHeaderComponent={
-                    <>
-                      {isIntentReceivePage ? (
-                        <AcceptIntent
-                          onAccept={onAccept}
-                          onDecline={onDecline}
-                          isAccepting={isAccepting}
-                        />
-                      ) : isSending ? (
-                        <MessageComponent
-                          chatMessage={tempChatMessage}
-                          componentType="SENDER"
-                          includeDate={false}
-                        />
-                      ) : null}
-                    </>
-                  }
-                  ListFooterComponent={
-                    <View>
-                      <EncryptionInfo
-                        addrs={connectedUser.wallets}
-                        senderAddrs={senderAddress}
-                      />
-                      {isLoadingMore && (
-                        <View
-                          style={{
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}>
-                          <Image
-                            style={{marginBottom: 22, width: 40, height: 40}}
-                            source={require('assets/chat/loading.gif')}
-                          />
-                        </View>
-                      )}
-                    </View>
-                  }
+        style={styles.keyboardAvoidingViewStyles}>
+        <View style={styles.chatListAndInputContainer}>
+          <TouchableWithoutFeedback
+            style={styles.touchableWithoutFeedbackStyle}
+            onPress={() => handleTapOutside()}
+            onLongPress={() => null}>
+            {isLoading ? (
+              <View style={{height: SectionHeight}}>
+                <Image
+                  style={{marginTop: 50, width: 50, height: 50}}
+                  source={require('assets/chat/loading.gif')}
                 />
-              ) : (
-                <View style={{marginTop: 10}}>
-                  {keyboardStatus && <View style={{height: keyboardHeight}} />}
-                  <EncryptionInfo
-                    addrs={connectedUser.wallets}
-                    senderAddrs={senderAddress}
+              </View>
+            ) : (
+              <View
+                style={[
+                  getSectionStyles(listHeight),
+                  keyboardStatus && {
+                    height: Math.min(
+                      listHeight + keyboardHeight,
+                      SectionHeight,
+                    ),
+                  },
+                ]}>
+                {chatMessages.length > 0 ? (
+                  <FlatList
+                    // @ts-ignore
+                    ref={scrollViewRef}
+                    contentContainerStyle={[
+                      styles.contentContainerStyle,
+                      {paddingTop: replyPadding},
+                    ]}
+                    data={chatMessages}
+                    renderItem={({item, index}) => renderItem({item, index})}
+                    keyExtractor={(msg: any) => `chat-message-${msg.cid}`}
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
+                    overScrollMode={'never'}
+                    onScroll={handleOnScroll}
+                    onScrollToIndexFailed={() => {
+                      console.log('err scorlling ');
+                    }}
+                    onEndReachedThreshold={0.6}
+                    onEndReached={async () => {
+                      if (!isLoadingMore) {
+                        await loadMoreData();
+                      }
+                    }}
+                    inverted={true}
+                    extraData={[
+                      chatMessages,
+                      activeReactionMessageId,
+                      reactionMessages,
+                    ]}
+                    estimatedItemSize={100000}
+                    onContentSizeChange={(_, h) => {
+                      setListHeight(h);
+                    }}
+                    ListHeaderComponent={
+                      <>
+                        {isIntentReceivePage ? (
+                          <AcceptIntent
+                            onAccept={onAccept}
+                            onDecline={onDecline}
+                            isAccepting={isAccepting}
+                          />
+                        ) : null}
+                      </>
+                    }
+                    ListFooterComponent={
+                      <View>
+                        <EncryptionInfo
+                          addrs={connectedUser.wallets}
+                          senderAddrs={senderAddress}
+                        />
+                        {isLoadingMore && (
+                          <View
+                            style={{
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}>
+                            <Image
+                              style={{
+                                marginBottom: 22,
+                                width: 40,
+                                height: 40,
+                              }}
+                              source={require('assets/chat/loading.gif')}
+                            />
+                          </View>
+                        )}
+                      </View>
+                    }
                   />
-                  <Text
-                    style={{
-                      marginTop: 20,
-                      paddingHorizontal: 40,
-                      lineHeight: 22,
-                      color: '#657795',
-                      textAlign: 'center',
-                    }}>
-                    This is your first conversation with recipient. Start the
-                    conversation by sending a message.
-                  </Text>
-                </View>
-              )}
+                ) : (
+                  <View style={{marginTop: 10}}>
+                    {keyboardStatus && (
+                      <View style={{height: keyboardHeight}} />
+                    )}
+                    <EncryptionInfo
+                      addrs={connectedUser.wallets}
+                      senderAddrs={senderAddress}
+                    />
+                    <Text
+                      style={{
+                        marginTop: 20,
+                        paddingHorizontal: 40,
+                        lineHeight: 22,
+                        color: '#657795',
+                        textAlign: 'center',
+                      }}>
+                      This is your first conversation with recipient. Start the
+                      conversation by sending a message.
+                    </Text>
+                  </View>
+                )}
 
-              <CustomScroll
-                sectionHeight={SectionHeight}
-                indicatorPos={indicatorPos}
-                indicatorSize={indicatorSize}
-                listHeight={listHeight}
-              />
-            </View>
-          )}
-
+                <CustomScroll
+                  sectionHeight={SectionHeight}
+                  indicatorPos={indicatorPos}
+                  indicatorSize={indicatorSize}
+                  listHeight={listHeight}
+                />
+              </View>
+            )}
+          </TouchableWithoutFeedback>
           {/* Donot show keyboard at intent page */}
           {!isLoading && !isIntentReceivePage && (
             <View style={styles.keyboardAvoid}>
@@ -582,7 +620,6 @@ const SingleChatScreen = ({route}: any) => {
                         size={28}
                         color="#898686"
                       />
-                      {/* <FontAwesome5 name="smile" size={20} color="black" /> */}
                     </TouchableOpacity>
                   </View>
 
@@ -650,6 +687,20 @@ const getSectionStyles = (listHeight: number) =>
   }).section;
 
 const styles = StyleSheet.create({
+  keyboardAvoidingViewStyles: {
+    width: '100%',
+    height: SectionHeight,
+    position: 'relative',
+  },
+  chatListAndInputContainer: {
+    height: windowHeight,
+    width: '100%',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  touchableWithoutFeedbackStyle: {
+    position: 'relative',
+  },
   keyboardAvoid: {
     width: '100%',
     justifyContent: 'center',
@@ -707,7 +758,9 @@ const styles = StyleSheet.create({
     color: Globals.COLORS.BLACK,
     fontWeight: '500',
   },
-
+  contentContainerStyle: {
+    zIndex: 2,
+  },
   moreIcon: {
     marginTop: -3,
   },
