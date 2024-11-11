@@ -119,7 +119,9 @@ const MessageComponent = React.memo(
             ref={swipeRef}
             friction={1}
             overshootFriction={8}
-            renderLeftActions={() => <SwipeLeftView />}
+            renderLeftActions={() => (
+              <SwipeLeftView style={messageStyle.swipeLeftContainer} />
+            )}
             onSwipeableWillOpen={handleOnSwipe}>
             {/* Render Reactions */}
             {chatReactions && !!chatReactions.length && (
@@ -132,9 +134,6 @@ const MessageComponent = React.memo(
               style={[
                 messageStyle.mainOuterContainer,
                 styles.normalOuterContainerView,
-                showMoreOptions
-                  ? styles.mainOuterContainerAlignment
-                  : undefined,
               ]}>
               {/* Render ReplyIcon without overlap */}
               {showMoreOptions && (
@@ -234,6 +233,9 @@ const messageStyle = StyleSheet.create({
     paddingBottom: 25,
   },
   extraMargin: {marginTop: 55},
+  swipeLeftContainer: {
+    paddingBottom: 25,
+  },
 });
 
 const recipientStyle = StyleSheet.create({
@@ -250,13 +252,10 @@ const recipientStyle = StyleSheet.create({
   bubbleAlignment: {
     alignItems: 'flex-start',
   },
-  mainOuterContainerAlignment: {
-    paddingRight: 40,
-  },
   normalOuterContainerView: {
     alignSelf: 'flex-start',
   },
-  replyPressableButtonAlignmentStyles: {right: 0},
+  replyPressableButtonAlignmentStyles: {right: -40},
 });
 
 const senderStyle = StyleSheet.create({
@@ -279,5 +278,5 @@ const senderStyle = StyleSheet.create({
   normalOuterContainerView: {
     alignSelf: 'flex-end',
   },
-  replyPressableButtonAlignmentStyles: {left: 0},
+  replyPressableButtonAlignmentStyles: {left: -40},
 });

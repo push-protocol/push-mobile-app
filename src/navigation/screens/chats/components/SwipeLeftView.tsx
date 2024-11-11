@@ -1,13 +1,15 @@
-import {FontAwesome} from '@expo/vector-icons';
 import React, {FC} from 'react';
-import {StyleSheet, View} from 'react-native';
-import Globals from 'src/Globals';
+import {StyleSheet, View, ViewStyle} from 'react-native';
 
 import {ReplyIcon} from './ReplyIcon';
 
-const SwipeLeftView: FC = () => {
+export type SwipeLeftViewProps = {
+  style?: ViewStyle;
+};
+
+const SwipeLeftView: FC<SwipeLeftViewProps> = ({style}) => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <ReplyIcon disabled />
     </View>
   );
