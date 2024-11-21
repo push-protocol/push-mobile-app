@@ -45,10 +45,13 @@ function HeadlessCheck({isHeadless}) {
   return <App isCallAccepted={isCallAccepted} />;
 }
 
-if (Platform.OS === 'android') {
-  CallKeepHelper.setupCallKeep();
-  RNCallKeep.setAvailable(true);
-}
+// --------------------------------------
+// Uncomment the code below if the video call feature is enabled.
+// --------------------------------------
+// if (Platform.OS === 'android') {
+// CallKeepHelper.setupCallKeep();
+// RNCallKeep.setAvailable(true);
+// }
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('Message handled in the background!', remoteMessage);
