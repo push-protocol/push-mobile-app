@@ -54,6 +54,7 @@ export default function InboxFeed(props) {
             notifee.createChannel({
               id: 'default',
               name: 'Default Channel',
+              sound: 'default',
             });
           }
         });

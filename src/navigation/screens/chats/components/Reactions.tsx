@@ -18,7 +18,6 @@ const Reactions: FC<ReactionsProps> = ({chatReactions, componentType}) => {
   // transform to IReactions
   const uniqueReactions = chatReactions.reduce(
     (acc: IReactions, reaction: IMessageIPFS) => {
-      console.log('check', JSON.stringify({acc, reaction, chatReactions}));
       const contentKey = (reaction as any).messageObj?.content || '';
       if (!acc[contentKey]) {
         acc[contentKey] = [];

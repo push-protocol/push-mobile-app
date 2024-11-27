@@ -9,6 +9,7 @@ import {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
 import {Linking} from 'react-native';
 import GLOBALS from 'src/Globals';
 import envConfig from 'src/env.config';
+import {getCurrentRouteName, navigate} from 'src/navigation/RootNavigation';
 import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
 import MetaStorage from 'src/singletons/MetaStorage';
 
@@ -32,13 +33,13 @@ const NOTIFICATION_TYPES = {
 
 export const NotificationHelper = {
   resolveNotification: async (
-    notification: FirebaseMessagingTypes.RemoteMessage,
+    remoteMessage: FirebaseMessagingTypes.RemoteMessage,
   ) => {
-    if (notification?.data?.type === NOTIFICATION_TYPES.CHAT) {
-      NotificationHelper.handleChatNotification(notification);
-    } else if (notification?.data?.type === NOTIFICATION_TYPES.CHANNEL) {
-      NotificationHelper.handleChannelNotification(notification);
-    }
+    // if (notification?.data?.type === NOTIFICATION_TYPES.CHAT) {
+    //   NotificationHelper.handleChatNotification(notification);
+    // } else if (notification?.data?.type === NOTIFICATION_TYPES.CHANNEL) {
+    NotificationHelper.handleChannelNotification(remoteMessage);
+    // }
   },
 
   handleChatNotification: async (
@@ -72,35 +73,64 @@ export const NotificationHelper = {
     // });
   },
 
+  /**************************************************/
+  /** This Function will push CHANNEL notification **/
+  /**************************************************/
   handleChannelNotification: async (
-    message: FirebaseMessagingTypes.RemoteMessage,
+    remoteMessage: FirebaseMessagingTypes.RemoteMessage,
   ) => {
-    await NotificationHelper.sendNotification({
-      conversationId: message.from ?? 'default',
-      from: {
-        avatar: message.data?.image.toString() ?? '',
-        id: message.from ?? 'default',
-        name: message.data?.title.toString() ?? '',
-      },
-      messageId: message.messageId ?? 'default',
-      body: message.data?.body.toString(),
-      title: message.data?.title.toString(),
-      newMessage: {
-        text: message.data?.body.toString() ?? '',
-        timestamp: Date.now(),
-      },
-    });
+    try {
+      await notifee.displayNotification({
+        id: remoteMessage.messageId,
+        title: remoteMessage.notification?.title,
+        body: remoteMessage.notification?.body,
+        ios: {
+          sound: 'default',
+          foregroundPresentationOptions: {
+            alert: true,
+            badge: true,
+            sound: true,
+          },
+        },
+        android: {
+          channelId: 'default',
+          largeIcon: remoteMessage.notification?.android?.imageUrl,
+          smallIcon:
+            remoteMessage.notification?.android?.smallIcon ?? 'ic_notification',
+          color: remoteMessage.notification?.android?.color ?? '#e20880',
+          circularLargeIcon: true,
+          pressAction: {
+            id: 'default',
+          },
+        },
+        data: {
+          type: NOTIFICATION_TYPES.CHANNEL,
+          ...remoteMessage.data,
+        },
+      });
+    } catch (error) {
+      console.log('NOTIFEE ERROR', error);
+    }
   },
 
+  /***************************************************/
+  /**   This Function will push CHAT notification   **/
+  /***************************************************/
   sendNotification: async (notification: SendNotifeeNotification) => {
     try {
       const messages = [notification.newMessage];
 
-      notifee.displayNotification({
+      await notifee.displayNotification({
         id: notification.messageId,
         title: notification?.title,
         body: notification?.body,
         ios: {
+          sound: 'default',
+          foregroundPresentationOptions: {
+            alert: true,
+            badge: true,
+            sound: true,
+          },
           categoryId: 'Communications',
           communicationInfo: {
             conversationId: notification.conversationId,
@@ -131,7 +161,7 @@ export const NotificationHelper = {
         },
       });
     } catch (error) {
-      console.log('error', error);
+      console.log('NOTIFEE ERROR', error);
     }
   },
 
@@ -152,10 +182,12 @@ export const NotificationHelper = {
     }
   },
 
-  openDeeplink: async (type: string) => {
-    const BASE_URL = 'app.push.org://';
-    if (type === NOTIFICATION_TYPES.CHANNEL) {
-      await Linking.openURL(`${BASE_URL}inbox`);
+  handleNotificationRoute: async (type: string) => {
+    if (
+      type === NOTIFICATION_TYPES.CHANNEL &&
+      getCurrentRouteName() !== GLOBALS.SCREENS.NOTIF_TABS
+    ) {
+      navigate(GLOBALS.SCREENS.NOTIF_TABS);
     } else if (type === NOTIFICATION_TYPES.CHAT) {
     }
   },

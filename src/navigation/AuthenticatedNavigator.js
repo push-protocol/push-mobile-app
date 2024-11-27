@@ -56,15 +56,6 @@ export default function AuthenticatedNavigator() {
       <Stack.Screen
         name={GLOBALS.SCREENS.SINGLE_CHAT}
         component={SingleChatScreen}
-        // options={{
-        //   title: 'Chat',
-        //   headerStyle: {
-        //     backgroundColor: GLOBALS.COLORS.WHITE,
-        //     height:
-        //       Constants.statusBarHeight + GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
-        //   },
-        //   headerTintColor: GLOBALS.COLORS.MID_GRAY,
-        // }}
         options={{
           headerShown: false,
           headerTintColor: GLOBALS.COLORS.MID_GRAY,

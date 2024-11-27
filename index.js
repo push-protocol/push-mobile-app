@@ -53,22 +53,30 @@ function HeadlessCheck({isHeadless}) {
 // RNCallKeep.setAvailable(true);
 // }
 
+/************************************************/
+/**     Listeners used to display notifee      **/
+/**          and native notification           **/
+/************************************************/
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('Message handled in the background!', remoteMessage);
-  if (Platform.OS === 'android' && CallKeepHelper.isVideoCall(remoteMessage)) {
-    const caller = CallKeepHelper.getCaller(remoteMessage);
-    const addressTrimmed = CallKeepHelper.formatEthAddress(caller);
-    const uuid = getUUID();
-    RNCallKeep.displayIncomingCall(
-      uuid,
-      addressTrimmed,
-      addressTrimmed,
-      'generic',
-      true,
-    );
-  } else {
-    await NotificationHelper.resolveNotification(remoteMessage);
-  }
+
+  /***************************************************/
+  /** Uncomment below commented code if video call  **/
+  /**       feature is enabled in the app           **/
+  /***************************************************/
+
+  // if (Platform.OS === 'android' && CallKeepHelper.isVideoCall(remoteMessage)) {
+  //   const caller = CallKeepHelper.getCaller(remoteMessage);
+  //   const addressTrimmed = CallKeepHelper.formatEthAddress(caller);
+  //   const uuid = getUUID();
+  //   RNCallKeep.displayIncomingCall(
+  //     uuid,
+  //     addressTrimmed,
+  //     addressTrimmed,
+  //     'generic',
+  //     true,
+  //   );
+  // }
 });
 
 messaging().onMessage(async remoteMessage => {
@@ -76,19 +84,53 @@ messaging().onMessage(async remoteMessage => {
   await NotificationHelper.resolveNotification(remoteMessage);
 });
 
+/************************************************/
+/**   Handle native notification and notifee   **/
+/**        events(onPress and dismiss)         **/
+/************************************************/
+messaging()
+  .getInitialNotification()
+  .then(async remoteMessage => {
+    if (remoteMessage) {
+      console.log(
+        'Notification caused app to open from quit state:',
+        remoteMessage.notification,
+      );
+      await NotificationHelper.handleNotificationRoute(
+        remoteMessage.notification?.data?.type,
+      );
+    }
+  });
+
+messaging().onNotificationOpenedApp(async remoteMessage => {
+  console.log(
+    'Notification caused app to open from background state:',
+    JSON.stringify({remoteMessage}),
+  );
+  await NotificationHelper.handleNotificationRoute(
+    remoteMessage.notification?.data?.type,
+  );
+});
+
 notifee.onForegroundEvent(async ({type, detail}) => {
+  console.log('notifee.onForegroundEvent', JSON.stringify({type, detail}));
   if (type === EventType.PRESS) {
-    await NotificationHelper.openDeeplink(detail.notification?.data?.type);
+    await NotificationHelper.handleNotificationRoute(
+      detail.notification?.data?.type,
+    );
   }
 });
 
 notifee.onBackgroundEvent(async ({type, detail}) => {
+  console.log('notifee.onBackgroundEvent', JSON.stringify({type, detail}));
   if (type === EventType.PRESS) {
-    await NotificationHelper.openDeeplink(detail.notification?.data?.type);
+    await NotificationHelper.handleNotificationRoute(
+      detail.notification?.data?.type,
+    );
   }
 });
 
-NotificationHelper.handleChatNotification();
+// NotificationHelper.handleChatNotification();
 
 if (isCallAccepted) {
   AppRegistry.registerComponent(appName, () => HeadlessCheck);

@@ -32,10 +32,7 @@ const NotifTabNavigator = () => {
         renderTabBar={props => (
           <TabBar
             {...props}
-            labelStyle={{
-              textTransform: 'none',
-              fontSize: 16,
-            }}
+            labelStyle={styles.tabLabelStyles}
             indicatorStyle={{backgroundColor: GLOBALS.COLORS.PINK}}
             style={{backgroundColor: GLOBALS.COLORS.WHITE}}
             activeColor="black"
@@ -49,4 +46,9 @@ const NotifTabNavigator = () => {
 
 export default NotifTabNavigator;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  tabLabelStyles: {
+    textTransform: 'none',
+    fontSize: 16,
+  },
+});
