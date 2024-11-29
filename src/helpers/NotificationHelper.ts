@@ -1,16 +1,19 @@
 import notifee, {
   AndroidMessagingStyleMessage,
   AndroidStyle,
+  EventType,
 } from '@notifee/react-native';
 import * as PushApi from '@pushprotocol/restapi';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
 import {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
-import {Linking} from 'react-native';
 import GLOBALS from 'src/Globals';
 import envConfig from 'src/env.config';
 import {getCurrentRouteName, navigate} from 'src/navigation/RootNavigation';
 import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
+import {globalDispatch} from 'src/redux';
+import {setNotificationAlert} from 'src/redux/appSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 type SendNotifeeNotification = {
@@ -108,6 +111,9 @@ export const NotificationHelper = {
           ...remoteMessage.data,
         },
       });
+      NotificationHelper.handlePostNotificationReceived(
+        NOTIFICATION_TYPES.CHANNEL,
+      );
     } catch (error) {
       console.log('NOTIFEE ERROR', error);
     }
@@ -182,13 +188,100 @@ export const NotificationHelper = {
     }
   },
 
-  handleNotificationRoute: async (type: string) => {
+  /************************************************/
+  /**   Handle native notification and notifee   **/
+  /**        events(onPress and dismiss)         **/
+  /************************************************/
+  handleNotificationEvents: async () => {
+    console.log('Execute Notification events');
+    messaging()
+      .getInitialNotification()
+      .then(async remoteMessage => {
+        if (remoteMessage) {
+          console.log(
+            'Remote Notification caused app to open from quit state:',
+            remoteMessage,
+          );
+          await NotificationHelper.handleNotificationRoute(
+            remoteMessage.data?.type as string,
+          );
+        }
+      });
+
+    messaging().onNotificationOpenedApp(async remoteMessage => {
+      console.log(
+        'Remote Notification caused app to open from background state:',
+        remoteMessage,
+      );
+      await NotificationHelper.handleNotificationRoute(
+        remoteMessage.data?.type as string,
+      );
+    });
+
+    notifee.onForegroundEvent(async ({type, detail}) => {
+      console.log('notifee.onForegroundEvent', {type, detail});
+      if (type === EventType.PRESS) {
+        await NotificationHelper.handleNotificationRoute(
+          detail.notification?.data?.type as string,
+        );
+      }
+    });
+
+    notifee.onBackgroundEvent(async ({type, detail}) => {
+      console.log('Notifee caused application to open from background state', {
+        type,
+        detail,
+      });
+      if (type === EventType.PRESS) {
+        await NotificationHelper.handleNotificationRoute(
+          detail.notification?.data?.type as string,
+        );
+      }
+    });
+
+    const initialNotification = await notifee.getInitialNotification();
+    if (initialNotification) {
+      console.log(
+        'Notifee caused application to open from quit state',
+        initialNotification,
+      );
+      const {notification} = initialNotification;
+      await NotificationHelper.handleNotificationRoute(
+        notification?.data?.type as string,
+      );
+    }
+  },
+
+  /************************************************/
+  /**    Handle notification routes and data     **/
+  /************************************************/
+  handleNotificationRoute: async (type: string, data?: any) => {
+    navigate(GLOBALS.SCREENS.NOTIF_TABS, {activeTab: 'inbox'});
+    // if (
+    //   type === NOTIFICATION_TYPES.CHANNEL &&
+    //   getCurrentRouteName() !== GLOBALS.SCREENS.NOTIF_TABS
+    // ) {
+    //   navigate(GLOBALS.SCREENS.NOTIF_TABS);
+    // } else if (type === NOTIFICATION_TYPES.CHAT) {
+    // }
+  },
+
+  /*****************************************************/
+  /**   Handle data updates in the Foreground state   **/
+  /**       if the received notification is for       **/
+  /**      the currently active component screen.     **/
+  /*****************************************************/
+  handlePostNotificationReceived: (type: string, data?: any) => {
     if (
       type === NOTIFICATION_TYPES.CHANNEL &&
-      getCurrentRouteName() !== GLOBALS.SCREENS.NOTIF_TABS
+      getCurrentRouteName() == GLOBALS.SCREENS.NOTIF_TABS
     ) {
-      navigate(GLOBALS.SCREENS.NOTIF_TABS);
-    } else if (type === NOTIFICATION_TYPES.CHAT) {
+      globalDispatch(
+        setNotificationAlert({
+          screen: GLOBALS.SCREENS.NOTIF_TABS,
+          type: 'inbox',
+        }),
+      );
     }
   },
 };

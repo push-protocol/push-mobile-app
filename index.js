@@ -1,8 +1,6 @@
-import notifee, {EventType} from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import React, {useEffect} from 'react';
-import {AppRegistry, Platform} from 'react-native';
-import {AppState} from 'react-native';
+import {AppRegistry, AppState, Platform} from 'react-native';
 import RNCallKeep from 'react-native-callkeep';
 import 'react-native-crypto';
 import 'react-native-get-random-values';
@@ -83,54 +81,6 @@ messaging().onMessage(async remoteMessage => {
   console.log('Message handled in the foreground!', remoteMessage);
   await NotificationHelper.resolveNotification(remoteMessage);
 });
-
-/************************************************/
-/**   Handle native notification and notifee   **/
-/**        events(onPress and dismiss)         **/
-/************************************************/
-messaging()
-  .getInitialNotification()
-  .then(async remoteMessage => {
-    if (remoteMessage) {
-      console.log(
-        'Notification caused app to open from quit state:',
-        remoteMessage.notification,
-      );
-      await NotificationHelper.handleNotificationRoute(
-        remoteMessage.notification?.data?.type,
-      );
-    }
-  });
-
-messaging().onNotificationOpenedApp(async remoteMessage => {
-  console.log(
-    'Notification caused app to open from background state:',
-    JSON.stringify({remoteMessage}),
-  );
-  await NotificationHelper.handleNotificationRoute(
-    remoteMessage.notification?.data?.type,
-  );
-});
-
-notifee.onForegroundEvent(async ({type, detail}) => {
-  console.log('notifee.onForegroundEvent', JSON.stringify({type, detail}));
-  if (type === EventType.PRESS) {
-    await NotificationHelper.handleNotificationRoute(
-      detail.notification?.data?.type,
-    );
-  }
-});
-
-notifee.onBackgroundEvent(async ({type, detail}) => {
-  console.log('notifee.onBackgroundEvent', JSON.stringify({type, detail}));
-  if (type === EventType.PRESS) {
-    await NotificationHelper.handleNotificationRoute(
-      detail.notification?.data?.type,
-    );
-  }
-});
-
-// NotificationHelper.handleChatNotification();
 
 if (isCallAccepted) {
   AppRegistry.registerComponent(appName, () => HeadlessCheck);

@@ -11,6 +11,7 @@ import {
   persistReducer,
 } from 'redux-persist';
 
+import appSlice from './appSlice';
 import authSlice from './authSlice';
 import channelSlice from './channelSlice';
 import feedSlice from './feedSlice';
@@ -26,6 +27,7 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
+  app: appSlice,
   auth: authSlice,
   feed: feedSlice,
   video: videoSlice,

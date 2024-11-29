@@ -10,11 +10,15 @@ import {
   View,
 } from 'react-native';
 import ImageView from 'react-native-image-viewing';
+import {useDispatch, useSelector} from 'react-redux';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
+import {getCurrentRouteName} from 'src/navigation/RootNavigation';
+import {selectNotificationAlert} from 'src/redux/appSlice';
+import {setNotificationAlert} from 'src/redux/appSlice';
 
 import EmptyFeed from './EmptyFeed';
 import NotificationItem from './NotificationItem';
@@ -34,6 +38,11 @@ export default function InboxFeed(props) {
   const [renderGallery, setRenderGallery] = useState(false);
   const [startFromIndex, setStartFromIndex] = useState(0);
 
+  // GET REDUX STATES AND DISPATCH ACTIONS
+  const notificationAlert = useSelector(selectNotificationAlert);
+
+  const dispatch = useDispatch();
+
   // SET REFS
   const FlatListFeedsRef = useRef(null);
 
@@ -43,6 +52,16 @@ export default function InboxFeed(props) {
       fetchInitializedFeeds();
     }
   }, [initialized, userPushSDKInstance]);
+
+  useEffect(() => {
+    if (
+      notificationAlert?.screen === getCurrentRouteName() &&
+      notificationAlert?.type === 'inbox'
+    ) {
+      fetchFeed(true, true);
+      dispatch(setNotificationAlert(null));
+    }
+  }, [notificationAlert]);
 
   useEffect(() => {
     if (Platform.OS === 'android') {

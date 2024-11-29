@@ -72,7 +72,7 @@ const ServerHelper = {
         debug ? console.log(regResponse) : null;
 
         if (regResponse.success) {
-          //console.log(regResponse);
+          console.log('regResponse', JSON.stringify(regResponse));
 
           // Finally Adjust the flag
           await MetaStorage.instance.setTokenServerSynced(true);

@@ -8,9 +8,13 @@ import {
   View,
 } from 'react-native';
 import ImageView from 'react-native-image-viewing';
+import {useDispatch, useSelector} from 'react-redux';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
 import {usePushApi} from 'src/contexts/PushApiContext';
+import {getCurrentRouteName} from 'src/navigation/RootNavigation';
+import {selectNotificationAlert} from 'src/redux/appSlice';
+import {setNotificationAlert} from 'src/redux/appSlice';
 
 import EmptyFeed from './EmptyFeed';
 import NotificationItem from './NotificationItem';
@@ -29,6 +33,11 @@ export default function SpamFeed() {
   const [renderGallery, setRenderGallery] = useState(false);
   const [startFromIndex, setStartFromIndex] = useState(0);
 
+  // GET REDUX STATES AND DISPATCH ACTIONS
+  const notificationAlert = useSelector(selectNotificationAlert);
+
+  const dispatch = useDispatch();
+
   // SET REFS
   const FlatListFeedsRef = useRef(null);
 
@@ -37,6 +46,16 @@ export default function SpamFeed() {
       fetchInitializedFeeds();
     }
   }, []);
+
+  useEffect(() => {
+    if (
+      notificationAlert?.screen === getCurrentRouteName() &&
+      notificationAlert?.type === 'spam'
+    ) {
+      setInitialized(false);
+      dispatch(setNotificationAlert(null));
+    }
+  }, [notificationAlert]);
 
   // Refresh Feed
   const fetchInitializedFeeds = async () => {

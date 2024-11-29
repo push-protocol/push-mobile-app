@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, useWindowDimensions} from 'react-native';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import GLOBALS from 'src/Globals';
@@ -13,8 +14,16 @@ const renderScene = SceneMap({
 });
 
 const NotifTabNavigator = () => {
+  const route = useRoute<any>();
+  const activeTab = route.params?.activeTab;
+
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (activeTab === 'inbox') setIndex(0);
+    if (activeTab === 'spam') setIndex(1);
+  }, [activeTab]);
 
   const [routes] = useState([
     {key: GLOBALS.SCREENS.FEED, title: 'Inbox'},
