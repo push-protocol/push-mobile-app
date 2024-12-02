@@ -19,3 +19,7 @@ export function navigate(name: any, params?: any) {
 export const getCurrentRouteName = () => {
   return navigationRef?.current?.getCurrentRoute()?.name;
 };
+
+export const getCurrentRouteParams = () => {
+  return navigationRef?.current?.getCurrentRoute()?.params;
+};

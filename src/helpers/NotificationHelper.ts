@@ -171,18 +171,15 @@ export const NotificationHelper = {
     }
   },
 
-  getRecentMessageNotifications: async (
-    from: string,
-  ): Promise<AndroidMessagingStyleMessage[]> => {
+  getRecentMessageNotifications: async (from: string): Promise<any[]> => {
     try {
-      const data = await AsyncStorage.getItem(
-        GLOBALS.STORAGE.NOTIFICATION_MESSAGES,
+      const getDisplayedNotifications =
+        await notifee.getDisplayedNotifications();
+      console.log(
+        'getDisplayedNotifications',
+        JSON.stringify(getDisplayedNotifications),
       );
-      if (data) {
-        const messageMap = JSON.parse(data);
-        return messageMap[from] ?? [];
-      }
-      return [];
+      return getDisplayedNotifications;
     } catch (error) {
       return [];
     }
