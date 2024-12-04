@@ -5,7 +5,6 @@ import notifee, {
 } from '@notifee/react-native';
 import * as PushApi from '@pushprotocol/restapi';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
 import GLOBALS from 'src/Globals';
@@ -38,11 +37,11 @@ export const NotificationHelper = {
   resolveNotification: async (
     remoteMessage: FirebaseMessagingTypes.RemoteMessage,
   ) => {
-    // if (notification?.data?.type === NOTIFICATION_TYPES.CHAT) {
-    //   NotificationHelper.handleChatNotification(notification);
-    // } else if (notification?.data?.type === NOTIFICATION_TYPES.CHANNEL) {
-    NotificationHelper.handleChannelNotification(remoteMessage);
-    // }
+    if (remoteMessage?.data?.type === NOTIFICATION_TYPES.CHAT) {
+      NotificationHelper.handleChatNotification(remoteMessage);
+    } else if (remoteMessage?.data?.type === NOTIFICATION_TYPES.CHANNEL) {
+      NotificationHelper.handleChannelNotification(remoteMessage);
+    }
   },
 
   handleChatNotification: async (
@@ -83,6 +82,10 @@ export const NotificationHelper = {
     remoteMessage: FirebaseMessagingTypes.RemoteMessage,
   ) => {
     try {
+      const parsedDetails = remoteMessage.data?.details
+        ? JSON.parse(remoteMessage.data?.details as string)
+        : {};
+      const largeIcon = parsedDetails?.info?.icon ?? 'ic_launcher_round';
       await notifee.displayNotification({
         id: remoteMessage.messageId,
         title: remoteMessage.notification?.title,
@@ -97,7 +100,7 @@ export const NotificationHelper = {
         },
         android: {
           channelId: 'default',
-          largeIcon: remoteMessage.notification?.android?.imageUrl,
+          largeIcon,
           smallIcon:
             remoteMessage.notification?.android?.smallIcon ?? 'ic_notification',
           color: remoteMessage.notification?.android?.color ?? '#e20880',
@@ -106,14 +109,12 @@ export const NotificationHelper = {
             id: 'default',
           },
         },
-        data: {
-          type: NOTIFICATION_TYPES.CHANNEL,
-          ...remoteMessage.data,
-        },
+        data: remoteMessage.data,
       });
-      NotificationHelper.handlePostNotificationReceived(
-        NOTIFICATION_TYPES.CHANNEL,
-      );
+      // NotificationHelper.handlePostNotificationReceived(
+      //   NOTIFICATION_TYPES.CHANNEL,
+      //   remoteMessage.data,
+      // );
     } catch (error) {
       console.log('NOTIFEE ERROR', error);
     }
@@ -199,9 +200,7 @@ export const NotificationHelper = {
             'Remote Notification caused app to open from quit state:',
             remoteMessage,
           );
-          await NotificationHelper.handleNotificationRoute(
-            remoteMessage.data?.type as string,
-          );
+          await NotificationHelper.handleNotificationRoute(remoteMessage.data);
         }
       });
 
@@ -210,16 +209,14 @@ export const NotificationHelper = {
         'Remote Notification caused app to open from background state:',
         remoteMessage,
       );
-      await NotificationHelper.handleNotificationRoute(
-        remoteMessage.data?.type as string,
-      );
+      await NotificationHelper.handleNotificationRoute(remoteMessage.data);
     });
 
     notifee.onForegroundEvent(async ({type, detail}) => {
       console.log('notifee.onForegroundEvent', {type, detail});
       if (type === EventType.PRESS) {
         await NotificationHelper.handleNotificationRoute(
-          detail.notification?.data?.type as string,
+          detail.notification?.data,
         );
       }
     });
@@ -231,7 +228,7 @@ export const NotificationHelper = {
       });
       if (type === EventType.PRESS) {
         await NotificationHelper.handleNotificationRoute(
-          detail.notification?.data?.type as string,
+          detail.notification?.data,
         );
       }
     });
@@ -243,24 +240,26 @@ export const NotificationHelper = {
         initialNotification,
       );
       const {notification} = initialNotification;
-      await NotificationHelper.handleNotificationRoute(
-        notification?.data?.type as string,
-      );
+      await NotificationHelper.handleNotificationRoute(notification?.data);
     }
   },
 
   /************************************************/
   /**    Handle notification routes and data     **/
   /************************************************/
-  handleNotificationRoute: async (type: string, data?: any) => {
-    navigate(GLOBALS.SCREENS.NOTIF_TABS, {activeTab: 'inbox'});
-    // if (
-    //   type === NOTIFICATION_TYPES.CHANNEL &&
-    //   getCurrentRouteName() !== GLOBALS.SCREENS.NOTIF_TABS
-    // ) {
-    //   navigate(GLOBALS.SCREENS.NOTIF_TABS);
-    // } else if (type === NOTIFICATION_TYPES.CHAT) {
-    // }
+  handleNotificationRoute: async (data?: {
+    [key: string]: string | number | object;
+  }) => {
+    const parsedDetails = data?.details
+      ? JSON.parse(data?.details as string)
+      : {};
+    if (
+      data?.type === NOTIFICATION_TYPES.CHANNEL &&
+      getCurrentRouteName() !== GLOBALS.SCREENS.NOTIF_TABS
+    ) {
+      navigate(GLOBALS.SCREENS.NOTIF_TABS, {activeTab: parsedDetails?.subType});
+    } else if (data?.type === NOTIFICATION_TYPES.CHAT) {
+    }
   },
 
   /*****************************************************/

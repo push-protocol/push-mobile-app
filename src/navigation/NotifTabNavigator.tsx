@@ -21,8 +21,7 @@ const NotifTabNavigator = () => {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    if (activeTab === 'inbox') setIndex(0);
-    if (activeTab === 'spam') setIndex(1);
+    if (activeTab === 'INBOX') setIndex(0);
   }, [activeTab]);
 
   const [routes] = useState([
