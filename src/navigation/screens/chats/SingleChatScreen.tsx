@@ -407,9 +407,12 @@ const SingleChatScreen = ({route}: any) => {
           </View>
         </View>
 
-        {feed && !feed.groupInformation ? (
-          <>
-            {/* {!(isIntentSendPage || isIntentReceivePage) && (
+        {/********************************************/
+        /**     Uncomment this conditional code     **/
+        /**     if video call feature is enabled    **/
+        /**    Note: enable for single user chat    **/
+        /********************************************/}
+        {/* {!(isIntentSendPage || isIntentReceivePage) && (
               <TouchableOpacity
                 onPress={startVideoCall}
                 style={styles.rightAligned}>
@@ -420,8 +423,8 @@ const SingleChatScreen = ({route}: any) => {
                 />
               </TouchableOpacity>
             )} */}
-          </>
-        ) : (
+
+        {feed && feed.groupInformation && (
           <TouchableOpacity
             style={styles.rightAligned}
             onPress={navigateToGroupInfo}>
