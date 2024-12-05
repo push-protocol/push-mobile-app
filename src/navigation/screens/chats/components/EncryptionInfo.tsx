@@ -9,7 +9,7 @@ interface EncryptionInfoProps {
 }
 
 const DOC_URL =
-  'https://docs.push.org/developers/concepts/push-chat-for-web3#encryption';
+  'https://push.org/docs/chat/concepts/encryption-version-in-push-chat';
 
 const EncryptionInfo = ({addrs, senderAddrs}: EncryptionInfoProps) => {
   const [isAccepted, setIsAccepted] = useState(false);
@@ -23,8 +23,6 @@ const EncryptionInfo = ({addrs, senderAddrs}: EncryptionInfoProps) => {
         addrs,
         senderAddrs,
       );
-      console.log(_isAccepted);
-
       setIsAccepted(_isAccepted);
     })();
   }, []);
@@ -70,7 +68,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     paddingRight: 4,
-    // backgroundColor: 'red',
   },
   iconUnlock: {
     paddingRight: 2,
