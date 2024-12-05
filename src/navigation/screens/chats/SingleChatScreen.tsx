@@ -152,11 +152,8 @@ const SingleChatScreen = ({route}: any) => {
 
     const [_cid, msg] = res;
     if (_cid && msg) {
-      console.log('_after sending got', _cid);
-      // No need to push intent to chat, will receive from socket
-      if (!isIntentSendPage) {
-        pushChatDataDirect(_cid, msg);
-      }
+      // console.log('_after sending got', _cid);
+      pushChatDataDirect(_cid, msg);
     }
   };
 
@@ -330,11 +327,8 @@ const SingleChatScreen = ({route}: any) => {
 
     const [_cid, msg] = res;
     if (_cid && msg) {
-      console.log('_after sending got', _cid);
-      // No need to push intent to chat, will receive from socket
-      if (!isIntentSendPage) {
-        pushChatDataDirect(_cid, msg);
-      }
+      // console.log('_after sending got', _cid);
+      pushChatDataDirect(_cid, msg);
     }
   };
 
