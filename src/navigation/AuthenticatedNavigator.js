@@ -1,9 +1,10 @@
 import {createStackNavigator} from '@react-navigation/stack';
 import Constants from 'expo-constants';
-import React from 'react';
+import React, {useEffect} from 'react';
 import GLOBALS from 'src/Globals';
 import Header from 'src/components/ui/Header';
 import Tabs from 'src/components/ui/Tabs';
+import {NotificationHelper} from 'src/helpers/NotificationHelper';
 import QRScanScreen from 'src/navigation/screens/dapp/QRScanScreen';
 
 import ChatProfileScreen from './screens/ChatProfileScreen';
@@ -17,6 +18,14 @@ import VideoScreen from './screens/video/VideoScreen';
 const Stack = createStackNavigator();
 
 export default function AuthenticatedNavigator() {
+  /************************************************/
+  /**   Handle native notification and notifee   **/
+  /**        events(onPress and dismiss)         **/
+  /************************************************/
+  useEffect(() => {
+    NotificationHelper.handleNotificationEvents();
+  }, []);
+
   return (
     <Stack.Navigator
       initialRouteName={GLOBALS.SCREENS.TABS}
@@ -56,15 +65,6 @@ export default function AuthenticatedNavigator() {
       <Stack.Screen
         name={GLOBALS.SCREENS.SINGLE_CHAT}
         component={SingleChatScreen}
-        // options={{
-        //   title: 'Chat',
-        //   headerStyle: {
-        //     backgroundColor: GLOBALS.COLORS.WHITE,
-        //     height:
-        //       Constants.statusBarHeight + GLOBALS.CONSTANTS.STATUS_BAR_HEIGHT,
-        //   },
-        //   headerTintColor: GLOBALS.COLORS.MID_GRAY,
-        // }}
         options={{
           headerShown: false,
           headerTintColor: GLOBALS.COLORS.MID_GRAY,

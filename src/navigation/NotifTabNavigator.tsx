@@ -1,8 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, useWindowDimensions} from 'react-native';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
+import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import Header from 'src/components/ui/Header';
+import {selectInboxNotificationAcknowledgement} from 'src/redux/homeSlice';
 
 import HomeScreen from './screens/HomeScreen';
 import SpamBoxScreen from './screens/SpamBoxScreen';
@@ -15,6 +17,17 @@ const renderScene = SceneMap({
 const NotifTabNavigator = () => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
+
+  // GET REDUX STATES
+  const notificationOpened = useSelector(
+    selectInboxNotificationAcknowledgement,
+  )?.notificationOpened;
+
+  useEffect(() => {
+    if (notificationOpened && index === 1) {
+      setIndex(0);
+    }
+  }, [notificationOpened]);
 
   const [routes] = useState([
     {key: GLOBALS.SCREENS.FEED, title: 'Inbox'},
@@ -32,10 +45,7 @@ const NotifTabNavigator = () => {
         renderTabBar={props => (
           <TabBar
             {...props}
-            labelStyle={{
-              textTransform: 'none',
-              fontSize: 16,
-            }}
+            labelStyle={styles.tabLabelStyles}
             indicatorStyle={{backgroundColor: GLOBALS.COLORS.PINK}}
             style={{backgroundColor: GLOBALS.COLORS.WHITE}}
             activeColor="black"
@@ -49,4 +59,9 @@ const NotifTabNavigator = () => {
 
 export default NotifTabNavigator;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  tabLabelStyles: {
+    textTransform: 'none',
+    fontSize: 16,
+  },
+});

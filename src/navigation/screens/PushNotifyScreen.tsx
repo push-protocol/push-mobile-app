@@ -24,7 +24,11 @@ const PushNotifyScreen = () => {
         showToast();
       }
     } else {
-      const settings = await messaging().requestPermission();
+      const settings = await messaging().requestPermission({
+        sound: true,
+        alert: true,
+        badge: true,
+      });
       if (settings == messaging.AuthorizationStatus.AUTHORIZED) {
         loadNextScreen();
       } else {

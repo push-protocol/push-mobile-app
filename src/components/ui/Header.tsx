@@ -4,7 +4,6 @@ import {StyleSheet, Text, View} from 'react-native';
 import {connect} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {switchUser} from 'src/redux/authSlice';
-import {clearFeed, fetchFeedData} from 'src/redux/feedSlice';
 
 import HeaderBanner from './HeaderBanner';
 import UserProfile from './UserProfile';
@@ -64,6 +63,4 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps, {
   switchUser,
-  fetchFeedData,
-  clearFeed,
 })(Header);
