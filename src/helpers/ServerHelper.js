@@ -38,7 +38,6 @@ const ServerHelper = {
         },
         body: JSON.stringify(body),
       });
-
       await MetaStorage.instance.setTokenServerSynced(true);
     } catch (error) {
       console.warn(error);
@@ -72,8 +71,6 @@ const ServerHelper = {
         debug ? console.log(regResponse) : null;
 
         if (regResponse.success) {
-          console.log('regResponse', JSON.stringify(regResponse));
-
           // Finally Adjust the flag
           await MetaStorage.instance.setTokenServerSynced(true);
         }

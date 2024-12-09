@@ -16,9 +16,10 @@ import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
-import {getCurrentRouteName} from 'src/navigation/RootNavigation';
-import {selectNotificationAlert} from 'src/redux/appSlice';
-import {setNotificationAlert} from 'src/redux/appSlice';
+import {
+  selectInboxNotificationAcknowledgement,
+  updateInboxNotificationAcknowledgement,
+} from 'src/redux/homeSlice';
 
 import EmptyFeed from './EmptyFeed';
 import NotificationItem from './NotificationItem';
@@ -39,7 +40,9 @@ export default function InboxFeed(props) {
   const [startFromIndex, setStartFromIndex] = useState(0);
 
   // GET REDUX STATES AND DISPATCH ACTIONS
-  const notificationAlert = useSelector(selectNotificationAlert);
+  const channelInboxNotificationAcknowledgement = useSelector(
+    selectInboxNotificationAcknowledgement,
+  );
 
   const dispatch = useDispatch();
 
@@ -55,13 +58,18 @@ export default function InboxFeed(props) {
 
   useEffect(() => {
     if (
-      notificationAlert?.screen === getCurrentRouteName() &&
-      notificationAlert?.type === 'inbox'
+      channelInboxNotificationAcknowledgement.notificationReceived ||
+      channelInboxNotificationAcknowledgement.notificationOpened
     ) {
       fetchFeed(true, true);
-      dispatch(setNotificationAlert(null));
+      dispatch(
+        updateInboxNotificationAcknowledgement({
+          notificationOpened: false,
+          notificationReceived: false,
+        }),
+      );
     }
-  }, [notificationAlert]);
+  }, [channelInboxNotificationAcknowledgement]);
 
   useEffect(() => {
     if (Platform.OS === 'android') {

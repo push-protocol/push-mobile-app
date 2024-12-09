@@ -1,6 +1,6 @@
 import messaging from '@react-native-firebase/messaging';
 import React, {useEffect} from 'react';
-import {AppRegistry, AppState, Platform} from 'react-native';
+import {Alert, AppRegistry, AppState, Platform} from 'react-native';
 import RNCallKeep from 'react-native-callkeep';
 import 'react-native-crypto';
 import 'react-native-get-random-values';
@@ -10,6 +10,7 @@ import {NotifeClearBadge} from 'src/notifee';
 import {getUUID} from 'src/push_video/payloads/helpers';
 import MetaStorage from 'src/singletons/MetaStorage';
 import 'text-encoding';
+import {stringify} from 'uuid';
 
 import App from './App';
 import {name as appName} from './app.json';
@@ -56,13 +57,11 @@ function HeadlessCheck({isHeadless}) {
 /**          and native notification           **/
 /************************************************/
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log('Message handled in the background!', remoteMessage);
-
+  // console.log('Message handled in the background!', remoteMessage);
   /***************************************************/
   /** Uncomment below commented code if video call  **/
   /**       feature is enabled in the app           **/
   /***************************************************/
-
   // if (Platform.OS === 'android' && CallKeepHelper.isVideoCall(remoteMessage)) {
   //   const caller = CallKeepHelper.getCaller(remoteMessage);
   //   const addressTrimmed = CallKeepHelper.formatEthAddress(caller);
@@ -78,8 +77,10 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 });
 
 messaging().onMessage(async remoteMessage => {
-  console.log('Message handled in the foreground!', remoteMessage);
-  await NotificationHelper.resolveNotification(remoteMessage);
+  // console.log('Message handled in the foreground!', remoteMessage);
+  if (remoteMessage.notification) {
+    await NotificationHelper.resolveNotification(remoteMessage);
+  }
 });
 
 if (isCallAccepted) {

@@ -7,12 +7,13 @@ import * as PushApi from '@pushprotocol/restapi';
 import {ENV} from '@pushprotocol/restapi/src/lib/constants';
 import messaging from '@react-native-firebase/messaging';
 import {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
+import Globals from 'src/Globals';
 import GLOBALS from 'src/Globals';
 import envConfig from 'src/env.config';
 import {getCurrentRouteName, navigate} from 'src/navigation/RootNavigation';
 import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
 import {globalDispatch} from 'src/redux';
-import {setNotificationAlert} from 'src/redux/appSlice';
+import {updateInboxNotificationAcknowledgement} from 'src/redux/homeSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
 type SendNotifeeNotification = {
@@ -31,6 +32,10 @@ type SendNotifeeNotification = {
 const NOTIFICATION_TYPES = {
   CHANNEL: 'PUSH_NOTIFICATION_CHANNEL',
   CHAT: 'PUSH_NOTIFICATION_CHAT',
+};
+
+const NOTIFICATION_SUB_TYPES = {
+  INBOX: 'INBOX',
 };
 
 export const NotificationHelper = {
@@ -93,7 +98,8 @@ export const NotificationHelper = {
         ios: {
           sound: 'default',
           foregroundPresentationOptions: {
-            alert: true,
+            banner: true,
+            list: true,
             badge: true,
             sound: true,
           },
@@ -103,7 +109,9 @@ export const NotificationHelper = {
           largeIcon,
           smallIcon:
             remoteMessage.notification?.android?.smallIcon ?? 'ic_notification',
-          color: remoteMessage.notification?.android?.color ?? '#e20880',
+          color:
+            remoteMessage.notification?.android?.color ??
+            Globals.COLORS.IC_NOTIFICATION,
           circularLargeIcon: true,
           pressAction: {
             id: 'default',
@@ -111,10 +119,7 @@ export const NotificationHelper = {
         },
         data: remoteMessage.data,
       });
-      // NotificationHelper.handlePostNotificationReceived(
-      //   NOTIFICATION_TYPES.CHANNEL,
-      //   remoteMessage.data,
-      // );
+      NotificationHelper.handlePostNotificationReceived(remoteMessage.data);
     } catch (error) {
       console.log('NOTIFEE ERROR', error);
     }
@@ -176,10 +181,6 @@ export const NotificationHelper = {
     try {
       const getDisplayedNotifications =
         await notifee.getDisplayedNotifications();
-      console.log(
-        'getDisplayedNotifications',
-        JSON.stringify(getDisplayedNotifications),
-      );
       return getDisplayedNotifications;
     } catch (error) {
       return [];
@@ -191,29 +192,19 @@ export const NotificationHelper = {
   /**        events(onPress and dismiss)         **/
   /************************************************/
   handleNotificationEvents: async () => {
-    console.log('Execute Notification events');
     messaging()
       .getInitialNotification()
       .then(async remoteMessage => {
         if (remoteMessage) {
-          console.log(
-            'Remote Notification caused app to open from quit state:',
-            remoteMessage,
-          );
           await NotificationHelper.handleNotificationRoute(remoteMessage.data);
         }
       });
 
     messaging().onNotificationOpenedApp(async remoteMessage => {
-      console.log(
-        'Remote Notification caused app to open from background state:',
-        remoteMessage,
-      );
       await NotificationHelper.handleNotificationRoute(remoteMessage.data);
     });
 
     notifee.onForegroundEvent(async ({type, detail}) => {
-      console.log('notifee.onForegroundEvent', {type, detail});
       if (type === EventType.PRESS) {
         await NotificationHelper.handleNotificationRoute(
           detail.notification?.data,
@@ -222,10 +213,6 @@ export const NotificationHelper = {
     });
 
     notifee.onBackgroundEvent(async ({type, detail}) => {
-      console.log('Notifee caused application to open from background state', {
-        type,
-        detail,
-      });
       if (type === EventType.PRESS) {
         await NotificationHelper.handleNotificationRoute(
           detail.notification?.data,
@@ -235,10 +222,6 @@ export const NotificationHelper = {
 
     const initialNotification = await notifee.getInitialNotification();
     if (initialNotification) {
-      console.log(
-        'Notifee caused application to open from quit state',
-        initialNotification,
-      );
       const {notification} = initialNotification;
       await NotificationHelper.handleNotificationRoute(notification?.data);
     }
@@ -250,14 +233,34 @@ export const NotificationHelper = {
   handleNotificationRoute: async (data?: {
     [key: string]: string | number | object;
   }) => {
+    // Parse the stringified data
     const parsedDetails = data?.details
       ? JSON.parse(data?.details as string)
       : {};
+
+    // Handle conditional checks to confirm if route navigation &
+    //    data needs to be updated after notification opened
     if (
       data?.type === NOTIFICATION_TYPES.CHANNEL &&
-      getCurrentRouteName() !== GLOBALS.SCREENS.NOTIF_TABS
+      parsedDetails?.subType === NOTIFICATION_SUB_TYPES.INBOX
     ) {
-      navigate(GLOBALS.SCREENS.NOTIF_TABS, {activeTab: parsedDetails?.subType});
+      // If Home(Notification) tab is active then update data
+      if (getCurrentRouteName() == GLOBALS.SCREENS.NOTIF_TABS) {
+        globalDispatch(
+          updateInboxNotificationAcknowledgement({
+            notificationOpened: true,
+          }),
+        );
+      } else {
+        // If Home(Notification) tab is inactive then first
+        //     navigate to Home tab then update data
+        navigate(GLOBALS.SCREENS.NOTIF_TABS);
+        globalDispatch(
+          updateInboxNotificationAcknowledgement({
+            notificationOpened: true,
+          }),
+        );
+      }
     } else if (data?.type === NOTIFICATION_TYPES.CHAT) {
     }
   },
@@ -267,15 +270,24 @@ export const NotificationHelper = {
   /**       if the received notification is for       **/
   /**      the currently active component screen.     **/
   /*****************************************************/
-  handlePostNotificationReceived: (type: string, data?: any) => {
+  handlePostNotificationReceived: (data?: {
+    [key: string]: string | number | object;
+  }) => {
+    // Parse the stringified data
+    const parsedDetails = data?.details
+      ? JSON.parse(data?.details as string)
+      : {};
+
+    // Handle condition check please data needs to be
+    //      updated after notification received
     if (
-      type === NOTIFICATION_TYPES.CHANNEL &&
+      data?.type === NOTIFICATION_TYPES.CHANNEL &&
+      parsedDetails?.subType === NOTIFICATION_SUB_TYPES.INBOX &&
       getCurrentRouteName() == GLOBALS.SCREENS.NOTIF_TABS
     ) {
       globalDispatch(
-        setNotificationAlert({
-          screen: GLOBALS.SCREENS.NOTIF_TABS,
-          type: 'inbox',
+        updateInboxNotificationAcknowledgement({
+          notificationReceived: true,
         }),
       );
     }
