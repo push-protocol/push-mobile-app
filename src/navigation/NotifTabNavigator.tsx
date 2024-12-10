@@ -4,7 +4,7 @@ import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import Header from 'src/components/ui/Header';
-import {selectInboxNotificationAcknowledgement} from 'src/redux/homeSlice';
+import {selectNotificationOpened} from 'src/redux/homeSlice';
 
 import HomeScreen from './screens/HomeScreen';
 import SpamBoxScreen from './screens/SpamBoxScreen';
@@ -19,9 +19,7 @@ const NotifTabNavigator = () => {
   const [index, setIndex] = useState(0);
 
   // GET REDUX STATES
-  const notificationOpened = useSelector(
-    selectInboxNotificationAcknowledgement,
-  )?.notificationOpened;
+  const notificationOpened = useSelector(selectNotificationOpened);
 
   useEffect(() => {
     if (notificationOpened && index === 1) {

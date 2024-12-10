@@ -13,21 +13,13 @@ import envConfig from 'src/env.config';
 import {getCurrentRouteName, navigate} from 'src/navigation/RootNavigation';
 import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
 import {globalDispatch} from 'src/redux';
-import {updateInboxNotificationAcknowledgement} from 'src/redux/homeSlice';
+import {
+  updateNotificationOpened,
+  updateNotificationReceived,
+} from 'src/redux/homeSlice';
 import MetaStorage from 'src/singletons/MetaStorage';
 
-type SendNotifeeNotification = {
-  messageId: string;
-  title?: string;
-  body?: string;
-  conversationId: string;
-  from: {
-    id: string;
-    avatar: string;
-    name: string;
-  };
-  newMessage: AndroidMessagingStyleMessage;
-};
+import {getNotifeeConfig} from './helpers.utils';
 
 const NOTIFICATION_TYPES = {
   CHANNEL: 'PUSH_NOTIFICATION_CHANNEL',
@@ -49,6 +41,27 @@ export const NotificationHelper = {
     }
   },
 
+  /**************************************************/
+  /** This Function will push CHANNEL notification **/
+  /**************************************************/
+  handleChannelNotification: async (
+    remoteMessage: FirebaseMessagingTypes.RemoteMessage,
+  ) => {
+    try {
+      const notifeeConfig = getNotifeeConfig(
+        'PUSH_NOTIFICATION_CHANNEL',
+        remoteMessage,
+      );
+      await notifee.displayNotification(notifeeConfig);
+      NotificationHelper.handlePostNotificationReceived(remoteMessage.data);
+    } catch (error) {
+      console.log('NOTIFEE ERROR', error);
+    }
+  },
+
+  /***************************************************/
+  /**   This Function will push CHAT notification   **/
+  /***************************************************/
   handleChatNotification: async (
     message: FirebaseMessagingTypes.RemoteMessage,
   ) => {
@@ -80,98 +93,15 @@ export const NotificationHelper = {
     // });
   },
 
-  /**************************************************/
-  /** This Function will push CHANNEL notification **/
-  /**************************************************/
-  handleChannelNotification: async (
+  sendNotification: async (
     remoteMessage: FirebaseMessagingTypes.RemoteMessage,
   ) => {
     try {
-      const parsedDetails = remoteMessage.data?.details
-        ? JSON.parse(remoteMessage.data?.details as string)
-        : {};
-      const largeIcon = parsedDetails?.info?.icon ?? 'ic_launcher_round';
-      await notifee.displayNotification({
-        id: remoteMessage.messageId,
-        title: remoteMessage.notification?.title,
-        body: remoteMessage.notification?.body,
-        ios: {
-          sound: 'default',
-          foregroundPresentationOptions: {
-            banner: true,
-            list: true,
-            badge: true,
-            sound: true,
-          },
-        },
-        android: {
-          channelId: 'default',
-          largeIcon,
-          smallIcon:
-            remoteMessage.notification?.android?.smallIcon ?? 'ic_notification',
-          color:
-            remoteMessage.notification?.android?.color ??
-            Globals.COLORS.IC_NOTIFICATION,
-          circularLargeIcon: true,
-          pressAction: {
-            id: 'default',
-          },
-        },
-        data: remoteMessage.data,
-      });
-      NotificationHelper.handlePostNotificationReceived(remoteMessage.data);
-    } catch (error) {
-      console.log('NOTIFEE ERROR', error);
-    }
-  },
-
-  /***************************************************/
-  /**   This Function will push CHAT notification   **/
-  /***************************************************/
-  sendNotification: async (notification: SendNotifeeNotification) => {
-    try {
-      const messages = [notification.newMessage];
-
-      await notifee.displayNotification({
-        id: notification.messageId,
-        title: notification?.title,
-        body: notification?.body,
-        ios: {
-          sound: 'default',
-          foregroundPresentationOptions: {
-            alert: true,
-            badge: true,
-            sound: true,
-          },
-          categoryId: 'Communications',
-          communicationInfo: {
-            conversationId: notification.conversationId,
-            sender: {
-              id: notification.from.id,
-              avatar: notification.from.avatar,
-              displayName: notification.from.name,
-            },
-          },
-        },
-        android: {
-          channelId: 'default',
-          largeIcon: notification.from.avatar,
-          smallIcon: '@drawable/ic_stat_name',
-          color: '#e20880',
-          circularLargeIcon: true,
-          pressAction: {
-            id: 'default',
-          },
-          style: {
-            type: AndroidStyle.MESSAGING,
-            person: {
-              name: notification.from.name,
-              icon: notification.from.avatar,
-            },
-            messages: messages,
-          },
-        },
-      });
+      const notifeeConfig = getNotifeeConfig(
+        'PUSH_NOTIFICATION_CHAT',
+        remoteMessage,
+      );
+      await notifee.displayNotification(notifeeConfig);
     } catch (error) {
       console.log('NOTIFEE ERROR', error);
     }
@@ -246,20 +176,12 @@ export const NotificationHelper = {
     ) {
       // If Home(Notification) tab is active then update data
       if (getCurrentRouteName() == GLOBALS.SCREENS.NOTIF_TABS) {
-        globalDispatch(
-          updateInboxNotificationAcknowledgement({
-            notificationOpened: true,
-          }),
-        );
+        globalDispatch(updateNotificationOpened(true));
       } else {
         // If Home(Notification) tab is inactive then first
         //     navigate to Home tab then update data
         navigate(GLOBALS.SCREENS.NOTIF_TABS);
-        globalDispatch(
-          updateInboxNotificationAcknowledgement({
-            notificationOpened: true,
-          }),
-        );
+        globalDispatch(updateNotificationOpened(true));
       }
     } else if (data?.type === NOTIFICATION_TYPES.CHAT) {
     }
@@ -285,11 +207,7 @@ export const NotificationHelper = {
       parsedDetails?.subType === NOTIFICATION_SUB_TYPES.INBOX &&
       getCurrentRouteName() == GLOBALS.SCREENS.NOTIF_TABS
     ) {
-      globalDispatch(
-        updateInboxNotificationAcknowledgement({
-          notificationReceived: true,
-        }),
-      );
+      globalDispatch(updateNotificationReceived(true));
     }
   },
 };

@@ -1,42 +1,36 @@
 import {PayloadAction, createSlice} from '@reduxjs/toolkit';
 
-export type ChannelInboxNotificationAcknowledgement = {
-  notificationReceived?: boolean;
-  notificationOpened?: boolean;
-};
-
 type HomeInitialState = {
-  channelInboxNotificationAcknowledgement: ChannelInboxNotificationAcknowledgement;
+  notificationReceived: boolean;
+  notificationOpened: boolean;
 };
 
 type ReturnTypeHome = {home: HomeInitialState};
 
 const initialState: HomeInitialState = {
-  channelInboxNotificationAcknowledgement: {
-    notificationReceived: false,
-    notificationOpened: false,
-  },
+  notificationReceived: false,
+  notificationOpened: false,
 };
 
 const homeSlice = createSlice({
   name: 'home',
   initialState,
   reducers: {
-    updateInboxNotificationAcknowledgement: (
-      state,
-      action: PayloadAction<ChannelInboxNotificationAcknowledgement>,
-    ) => {
-      state.channelInboxNotificationAcknowledgement = {
-        ...state.channelInboxNotificationAcknowledgement,
-        ...action.payload,
-      };
+    updateNotificationReceived: (state, action: PayloadAction<boolean>) => {
+      state.notificationReceived = action.payload;
+    },
+    updateNotificationOpened: (state, action: PayloadAction<boolean>) => {
+      state.notificationOpened = action.payload;
     },
   },
 });
 
-export const {updateInboxNotificationAcknowledgement} = homeSlice.actions;
+export const {updateNotificationReceived, updateNotificationOpened} =
+  homeSlice.actions;
 
-export const selectInboxNotificationAcknowledgement = (state: ReturnTypeHome) =>
-  state.home.channelInboxNotificationAcknowledgement;
+export const selectNotificationReceived = (state: ReturnTypeHome) =>
+  state.home.notificationReceived;
+export const selectNotificationOpened = (state: ReturnTypeHome) =>
+  state.home.notificationOpened;
 
 export default homeSlice.reducer;

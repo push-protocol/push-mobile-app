@@ -17,8 +17,10 @@ import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
 import {
-  selectInboxNotificationAcknowledgement,
-  updateInboxNotificationAcknowledgement,
+  selectNotificationOpened,
+  selectNotificationReceived,
+  updateNotificationOpened,
+  updateNotificationReceived,
 } from 'src/redux/homeSlice';
 
 import EmptyFeed from './EmptyFeed';
@@ -40,9 +42,8 @@ export default function InboxFeed(props) {
   const [startFromIndex, setStartFromIndex] = useState(0);
 
   // GET REDUX STATES AND DISPATCH ACTIONS
-  const channelInboxNotificationAcknowledgement = useSelector(
-    selectInboxNotificationAcknowledgement,
-  );
+  const notificationOpened = useSelector(selectNotificationOpened);
+  const notificationReceived = useSelector(selectNotificationReceived);
 
   const dispatch = useDispatch();
 
@@ -57,19 +58,12 @@ export default function InboxFeed(props) {
   }, [initialized, userPushSDKInstance]);
 
   useEffect(() => {
-    if (
-      channelInboxNotificationAcknowledgement.notificationReceived ||
-      channelInboxNotificationAcknowledgement.notificationOpened
-    ) {
+    if (notificationReceived || notificationOpened) {
       fetchFeed(true, true);
-      dispatch(
-        updateInboxNotificationAcknowledgement({
-          notificationOpened: false,
-          notificationReceived: false,
-        }),
-      );
+      dispatch(updateNotificationOpened(false));
+      dispatch(updateNotificationReceived(false));
     }
-  }, [channelInboxNotificationAcknowledgement]);
+  }, [notificationOpened, notificationReceived]);
 
   useEffect(() => {
     if (Platform.OS === 'android') {
