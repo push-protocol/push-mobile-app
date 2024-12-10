@@ -162,6 +162,9 @@ export default {
     BG_PUSHNOTIFY: '#FCF2E3',
     BG_ALLSET: '#F8ECFF',
     BG_OBSLIDER: '#F8ECFF',
+
+    // Notification
+    IC_NOTIFICATION: '#e20880',
   },
   SCREENS: {
     WELCOME: 'Welcome',

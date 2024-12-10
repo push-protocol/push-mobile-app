@@ -10,11 +10,18 @@ import {
   View,
 } from 'react-native';
 import ImageView from 'react-native-image-viewing';
+import {useDispatch, useSelector} from 'react-redux';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
+import {
+  selectNotificationOpened,
+  selectNotificationReceived,
+  updateNotificationOpened,
+  updateNotificationReceived,
+} from 'src/redux/homeSlice';
 
 import EmptyFeed from './EmptyFeed';
 import NotificationItem from './NotificationItem';
@@ -34,6 +41,12 @@ export default function InboxFeed(props) {
   const [renderGallery, setRenderGallery] = useState(false);
   const [startFromIndex, setStartFromIndex] = useState(0);
 
+  // GET REDUX STATES AND DISPATCH ACTIONS
+  const notificationOpened = useSelector(selectNotificationOpened);
+  const notificationReceived = useSelector(selectNotificationReceived);
+
+  const dispatch = useDispatch();
+
   // SET REFS
   const FlatListFeedsRef = useRef(null);
 
@@ -45,6 +58,14 @@ export default function InboxFeed(props) {
   }, [initialized, userPushSDKInstance]);
 
   useEffect(() => {
+    if (notificationReceived || notificationOpened) {
+      fetchFeed(true, true);
+      dispatch(updateNotificationOpened(false));
+      dispatch(updateNotificationReceived(false));
+    }
+  }, [notificationOpened, notificationReceived]);
+
+  useEffect(() => {
     if (Platform.OS === 'android') {
       messaging()
         .hasPermission()
@@ -54,6 +75,7 @@ export default function InboxFeed(props) {
             notifee.createChannel({
               id: 'default',
               name: 'Default Channel',
+              sound: 'default',
             });
           }
         });
