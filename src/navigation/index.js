@@ -1,7 +1,6 @@
-import notifee, {AndroidImportance, AndroidStyle} from '@notifee/react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect} from 'react';
-import {Button, Platform, StyleSheet, View} from 'react-native';
+import {Platform} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import IncomingCall from 'src/components/modals/IncomingCall';
@@ -20,6 +19,7 @@ import AuthenticatedNavigator from './AuthenticatedNavigator';
 import InitializingNavigator from './InitializingNavigator';
 import OnboardedNavigator from './OnboardedNavigator';
 import OnboardingNavigator from './OnboardingNavigator';
+import {navigationRef} from './RootNavigation';
 import {linkingConfig} from './config/navigation-linking';
 import useVideoSocket from './screens/video/helpers/useVideoSocket';
 
@@ -44,7 +44,7 @@ const Screens = ({callAccepted}) => {
     <>
       <ToasterContextProvider>
         <PushApiContextProvider>
-          <NavigationContainer linking={linkingConfig}>
+          <NavigationContainer ref={navigationRef} linking={linkingConfig}>
             <DeeplinkContextProvider>
               {/* Show Modal on Android devices and iOS devices in China */}
               {isReceivingCall &&
