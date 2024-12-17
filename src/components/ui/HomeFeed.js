@@ -1,33 +1,28 @@
-import notifee from '@notifee/react-native';
-import messaging from '@react-native-firebase/messaging';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
-  Platform,
   RefreshControl,
   SafeAreaView,
   StyleSheet,
+  Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import ImageView from 'react-native-image-viewing';
-import {useDispatch, useSelector} from 'react-redux';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
+import {useNotificationsApi} from 'src/contexts/NotificationContext';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
-import {
-  selectNotificationOpened,
-  selectNotificationReceived,
-  updateNotificationOpened,
-  updateNotificationReceived,
-} from 'src/redux/homeSlice';
+import {getTrimmedAddress} from 'src/navigation/screens/chats/helpers/chatAddressFormatter';
 
 import EmptyFeed from './EmptyFeed';
 import NotificationItem from './NotificationItem';
 
 export default function InboxFeed(props) {
   const {userPushSDKInstance, userInfo} = usePushApi();
+  const {createNotificationChannel} = useNotificationsApi();
 
   // SET STATES
   const [initialized, setInitialized] = useState(false);
@@ -41,11 +36,12 @@ export default function InboxFeed(props) {
   const [renderGallery, setRenderGallery] = useState(false);
   const [startFromIndex, setStartFromIndex] = useState(0);
 
-  // GET REDUX STATES AND DISPATCH ACTIONS
-  const notificationOpened = useSelector(selectNotificationOpened);
-  const notificationReceived = useSelector(selectNotificationReceived);
-
-  const dispatch = useDispatch();
+  const {
+    channelNotificationOpened,
+    channelNotificationReceived,
+    setChannelNotificationOpened,
+    setChannelNotificationReceived,
+  } = useNotificationsApi();
 
   // SET REFS
   const FlatListFeedsRef = useRef(null);
@@ -58,28 +54,15 @@ export default function InboxFeed(props) {
   }, [initialized, userPushSDKInstance]);
 
   useEffect(() => {
-    if (notificationReceived || notificationOpened) {
+    if (channelNotificationReceived || channelNotificationOpened) {
       fetchFeed(true, true);
-      dispatch(updateNotificationOpened(false));
-      dispatch(updateNotificationReceived(false));
+      setChannelNotificationOpened(false);
+      setChannelNotificationReceived(false);
     }
-  }, [notificationOpened, notificationReceived]);
+  }, [channelNotificationOpened, channelNotificationReceived]);
 
   useEffect(() => {
-    if (Platform.OS === 'android') {
-      messaging()
-        .hasPermission()
-        .then(val => {
-          if (val === 1) {
-            // User has enabled notifications
-            notifee.createChannel({
-              id: 'default',
-              name: 'Default Channel',
-              sound: 'default',
-            });
-          }
-        });
-    }
+    createNotificationChannel();
   }, []);
 
   useEffect(() => {
@@ -163,9 +146,133 @@ export default function InboxFeed(props) {
     }
   };
 
+  function generateRandomChatSentence() {
+    const subjects = ['I', 'You', 'We', 'They', 'Someone'];
+    const verbs = ['love', 'hate', 'enjoy', 'miss', 'think about', 'remember'];
+    const objects = [
+      'coding',
+      'chatting',
+      'pizza',
+      'movies',
+      'nature',
+      'music',
+    ];
+    const phrases = [
+      'in the morning.',
+      'right now.',
+      'every day.',
+      'all the time.',
+      'on weekends.',
+      "when I'm alone.",
+    ];
+    const message = [
+      'sent a message',
+      'sent a GIF',
+      'sent an image',
+      'sent a file',
+      'replied to a message',
+    ];
+
+    const randomElement = arr => arr[Math.floor(Math.random() * arr.length)];
+
+    const msg = randomElement(message);
+
+    const sentence = `${randomElement(subjects)} ${randomElement(
+      verbs,
+    )} ${randomElement(objects)} ${randomElement(phrases)}`;
+    return msg;
+  }
+
+  const chatMessage = {
+    singleChat: (msg, timeStamp) => ({
+      collapseKey: 'io.epns.epnsstaging',
+      data: {
+        type: 'PUSH_NOTIFICATION_CHAT',
+        details: JSON.stringify({
+          subType: 'INDIVIDUAL_CHAT',
+          info: {
+            wallets: '0x9B220a17929Ac119dD3D0711d916e28263dd0D9C',
+            profilePicture:
+              'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAuUlEQVR4AcXBMWrDUBBF0avHh+zLjRp9XDrFZGfBTaaIcfndeHVKO3IhEMG8c6bvj+tKMTJ5px5BJcyEmTBrI5Pq9vNLlc8H/xHzQnXJTyphJsyEWeNFPh9UI5OqR7BnZLIRbH2xIcyEmTBrvIh5oRokVcwLewZJFfNCNUgqYSbMhNl0vp9WjISZMBNmjYN6BHtGJkcIM2EmzFqP4IiRyZ4ewRHCTJgJs+l8P60UPYJ3GplUwkyYCbM/Vc0q3B9XBygAAAAASUVORK5CYII=',
+            chatId:
+              '248d2886f49bb26e6715b214e063d27c6d57eb16fd0f594ea0cd0f135bfe4cbd',
+            combinedDID:
+              'eip155:0xDcA78D2f7cF9cF40bbC752494Fa41639280FbC3B_eip155:0x9B220a17929Ac119dD3D0711d916e28263dd0D9C',
+            threadhash:
+              'v2:a78b22977759c2a3798a4fbdf78f8f84688198470ae4879c298944bf67267082', //cid
+          },
+        }),
+      },
+      from: '755180533582',
+      messageId: `0:1732875400813721%841${timeStamp}`,
+      notification: {
+        android: {
+          color: '#e20880',
+          imageUrl: null,
+          smallIcon: 'ic_notification',
+        },
+        body: msg,
+        title: getTrimmedAddress('0x9B220a17929Ac119dD3D0711d916e28263dd0D9C'),
+      },
+      sentTime: timeStamp,
+      ttl: 2419200,
+    }),
+    groupChat: (msg, timeStamp) => ({
+      collapseKey: 'io.epns.epnsstaging',
+      data: {
+        type: 'PUSH_NOTIFICATION_CHAT',
+        details: JSON.stringify({
+          subType: 'GROUP_CHAT',
+          info: {
+            wallets: '0x9B220a17929Ac119dD3D0711d916e28263dd0D9C',
+            profilePicture:
+              'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAuUlEQVR4AcXBMWrDUBBF0avHh+zLjRp9XDrFZGfBTaaIcfndeHVKO3IhEMG8c6bvj+tKMTJ5px5BJcyEmTBrI5Pq9vNLlc8H/xHzQnXJTyphJsyEWeNFPh9UI5OqR7BnZLIRbH2xIcyEmTBrvIh5oRokVcwLewZJFfNCNUgqYSbMhNl0vp9WjISZMBNmjYN6BHtGJkcIM2EmzFqP4IiRyZ4ewRHCTJgJs+l8P60UPYJ3GplUwkyYCbM/Vc0q3B9XBygAAAAASUVORK5CYII=',
+            chatId:
+              '6bc7bef45a30b033390c060698e72f5a07a416d97db73e1363e171337469f339',
+            combinedDID:
+              'eip155:0xDcA78D2f7cF9cF40bbC752494Fa41639280FbC3B_eip155:0x9B220a17929Ac119dD3D0711d916e28263dd0D9C',
+            threadhash:
+              'v2:aad7f7f9129656e50bed6e5a08f254bf749e4a3de323a2b4fd3e2d188db58ef3', //cid
+            isRequestAccepted: true,
+          },
+        }),
+      },
+      from: '755180533582',
+      messageId: `0:1732875400813721%841${timeStamp}`,
+      notification: {
+        android: {
+          color: '#e20880',
+          imageUrl: null,
+          smallIcon: 'ic_notification',
+        },
+        body: `${getTrimmedAddress(
+          '0x9B220a17929Ac119dD3D0711d916e28263dd0D9C',
+          4,
+        )}: ${msg}`,
+        title: 'Tech Updates',
+      },
+      sentTime: timeStamp,
+      ttl: 2419200,
+    }),
+  };
+  const {resolveNotification} = useNotificationsApi();
   return (
     <>
       <SafeAreaView style={styles.container}>
+        <TouchableOpacity
+          onPress={() => {
+            const msg = generateRandomChatSentence();
+            const timeStamp = Date.now();
+            resolveNotification(chatMessage.groupChat(msg, timeStamp));
+          }}
+          style={{
+            padding: 8,
+            margin: 15,
+            borderRadius: 10,
+            backgroundColor: 'yellow',
+          }}>
+          <Text>Send Test Notification</Text>
+        </TouchableOpacity>
         <View style={{flex: 1}}>
           <FlatList
             ref={FlatListFeedsRef}

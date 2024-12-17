@@ -56,32 +56,25 @@ function HeadlessCheck({isHeadless}) {
 /**     Listeners used to display notifee      **/
 /**          and native notification           **/
 /************************************************/
-messaging().setBackgroundMessageHandler(async remoteMessage => {
-  // console.log('Message handled in the background!', remoteMessage);
-  /***************************************************/
-  /** Uncomment below commented code if video call  **/
-  /**       feature is enabled in the app           **/
-  /***************************************************/
-  // if (Platform.OS === 'android' && CallKeepHelper.isVideoCall(remoteMessage)) {
-  //   const caller = CallKeepHelper.getCaller(remoteMessage);
-  //   const addressTrimmed = CallKeepHelper.formatEthAddress(caller);
-  //   const uuid = getUUID();
-  //   RNCallKeep.displayIncomingCall(
-  //     uuid,
-  //     addressTrimmed,
-  //     addressTrimmed,
-  //     'generic',
-  //     true,
-  //   );
-  // }
-});
-
-messaging().onMessage(async remoteMessage => {
-  // console.log('Message handled in the foreground!', remoteMessage);
-  if (remoteMessage.notification) {
-    await NotificationHelper.resolveNotification(remoteMessage);
-  }
-});
+// messaging().setBackgroundMessageHandler(async remoteMessage => {
+// console.log('Message handled in the background!', remoteMessage);
+/***************************************************/
+/** Uncomment below commented code if video call  **/
+/**       feature is enabled in the app           **/
+/***************************************************/
+// if (Platform.OS === 'android' && CallKeepHelper.isVideoCall(remoteMessage)) {
+//   const caller = CallKeepHelper.getCaller(remoteMessage);
+//   const addressTrimmed = CallKeepHelper.formatEthAddress(caller);
+//   const uuid = getUUID();
+//   RNCallKeep.displayIncomingCall(
+//     uuid,
+//     addressTrimmed,
+//     addressTrimmed,
+//     'generic',
+//     true,
+//   );
+// }
+// });
 
 if (isCallAccepted) {
   AppRegistry.registerComponent(appName, () => HeadlessCheck);

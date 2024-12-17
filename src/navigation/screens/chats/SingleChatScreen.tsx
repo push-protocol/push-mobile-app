@@ -36,11 +36,9 @@ import {Toaster} from 'src/components/indicators/Toaster';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import {VideoCallContext} from 'src/contexts/VideoContext';
-import envConfig from 'src/env.config';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
 import {setOtherUserProfilePicture} from 'src/redux/videoSlice';
-import MetaStorage from 'src/singletons/MetaStorage';
 
 import {AcceptIntent, MessageComponent, ReplyMessageBubble} from './components';
 import {CustomScroll} from './components/CustomScroll';
@@ -53,7 +51,6 @@ interface ChatScreenParam {
   cid: string;
   senderAddress: string;
   connectedUser: ConnectedUser;
-  combinedDID: string;
   isIntentSendPage: boolean;
   isIntentReceivePage: boolean;
   chatId: string;
@@ -75,11 +72,12 @@ const SingleChatScreen = ({route}: any) => {
     senderAddress,
     connectedUser,
     isIntentSendPage,
-    combinedDID,
     chatId,
     feed,
     title,
   }: ChatScreenParam = route.params;
+
+  console.log('Single chat route', route.params);
 
   const [isIntentReceivePage, setisIntentReceivePage] = useState<boolean>(
     route.params.isIntentReceivePage,
@@ -110,7 +108,6 @@ const SingleChatScreen = ({route}: any) => {
     connectedUser.privateKey,
     connectedUser.wallets,
     senderAddress,
-    combinedDID,
     chatId,
   );
 
