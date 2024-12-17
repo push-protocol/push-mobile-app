@@ -127,11 +127,6 @@ const ChatScreen = (props: any) => {
     throw new Error('No user data');
   }
 
-  console.log(
-    'chatData.connectedUserData',
-    JSON.stringify(chatData.connectedUserData),
-  );
-
   return (
     <Context.Provider
       value={{
