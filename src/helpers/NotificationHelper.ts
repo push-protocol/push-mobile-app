@@ -5,6 +5,10 @@ import {
 } from '@notifee/react-native';
 import {Platform} from 'react-native';
 import Globals from 'src/Globals';
+import {
+  NOTIFICATION_SUB_TYPES,
+  NOTIFICATION_TYPES,
+} from 'src/contexts/NotificationContext';
 import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
 import MetaStorage from 'src/singletons/MetaStorage';
 
@@ -16,10 +20,10 @@ export const NotificationHelper: NotificationHelperType = {
     remoteMessage,
     getRecentMessageNotifications,
   ) => {
-    const parsedDetails = remoteMessage.data?.details
-      ? JSON.parse(remoteMessage.data?.details as string)
-      : {};
-    if (type === 'PUSH_NOTIFICATION_CHANNEL') {
+    const parsedDetails = JSON.parse(
+      (remoteMessage.data?.details as string) || '{}',
+    );
+    if (type === NOTIFICATION_TYPES.CHANNEL) {
       const largeIcon = parsedDetails?.info?.icon ?? 'ic_launcher_round';
       return {
         id: remoteMessage.messageId,
@@ -49,24 +53,37 @@ export const NotificationHelper: NotificationHelperType = {
         },
         data: remoteMessage.data,
       };
-    } else if (type === 'PUSH_NOTIFICATION_CHAT') {
+    } else if (type === NOTIFICATION_TYPES.CHAT) {
       let recentChatNotifications: DisplayedNotification[] = [];
       let messages: AndroidMessagingStyleMessage[] = [];
+      let lines: string[] = [];
       if (Platform.OS === 'android') {
         recentChatNotifications = await getRecentMessageNotifications(
           parsedDetails?.info?.chatId,
         );
 
-        messages =
-          recentChatNotifications.length > 0
-            ? recentChatNotifications?.[0]?.notification?.android?.style
-                ?.messages
-            : [];
+        if (parsedDetails?.subType === NOTIFICATION_SUB_TYPES.INDIVIDUAL_CHAT) {
+          messages =
+            recentChatNotifications.length > 0
+              ? recentChatNotifications?.[0]?.notification?.android?.style
+                  ?.messages
+              : [];
 
-        messages.push({
-          text: remoteMessage.notification?.body ?? '',
-          timestamp: remoteMessage.sentTime ?? Date.now(),
-        });
+          messages.push({
+            text: remoteMessage.notification?.body ?? '',
+            timestamp: remoteMessage.sentTime ?? Date.now(),
+          });
+        } else if (
+          parsedDetails?.subType === NOTIFICATION_SUB_TYPES.GROUP_CHAT
+        ) {
+          lines =
+            recentChatNotifications.length > 0
+              ? recentChatNotifications?.[0]?.notification?.android?.style
+                  ?.lines
+              : [];
+
+          lines.push(remoteMessage.notification?.body ?? '');
+        }
       }
       return {
         id:
@@ -102,17 +119,17 @@ export const NotificationHelper: NotificationHelperType = {
           pressAction: {
             id: 'default',
           },
-          style: {
-            type: AndroidStyle.MESSAGING,
-            person: {
-              name: remoteMessage.notification?.title ?? '',
-              icon:
-                parsedDetails?.subType === 'GROUP_CHAT'
-                  ? 'ic_launcher_round'
-                  : parsedDetails?.info?.profilePicture,
-            },
-            messages,
-          },
+          style:
+            parsedDetails?.subType === NOTIFICATION_SUB_TYPES.GROUP_CHAT
+              ? {type: AndroidStyle.INBOX, lines}
+              : {
+                  type: AndroidStyle.MESSAGING,
+                  person: {
+                    name: remoteMessage.notification?.title ?? '',
+                    icon: parsedDetails?.info?.profilePicture,
+                  },
+                  messages,
+                },
         },
         data: remoteMessage.data,
       };
@@ -142,10 +159,10 @@ export const NotificationHelper: NotificationHelperType = {
         if (isGroupConversation) {
           const groupInformationResponse =
             await userPushSDKInstance?.chat.group.info(chatId);
-          console.log(
-            'groupInformationResponse',
-            JSON.stringify(groupInformationResponse),
-          );
+          // console.log(
+          //   'groupInformationResponse',
+          //   JSON.stringify(groupInformationResponse),
+          // );
           groupInformation = {
             groupName: groupInformationResponse?.groupName,
             groupImage: groupInformationResponse?.groupImage,
@@ -156,10 +173,10 @@ export const NotificationHelper: NotificationHelperType = {
         let isIntentReceivePage = false;
         const conversationHashResponse: any =
           await userPushSDKInstance?.chat.latest(chatId);
-        console.log(
-          'conversationHashResponse',
-          JSON.stringify(conversationHashResponse),
-        );
+        // console.log(
+        //   'conversationHashResponse',
+        //   JSON.stringify(conversationHashResponse),
+        // );
         if (conversationHashResponse?.length > 0) {
           isIntentReceivePage =
             conversationHashResponse?.[0]?.listType !== 'CHATS';

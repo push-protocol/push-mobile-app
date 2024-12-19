@@ -34,6 +34,7 @@ import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
+import {useNotificationsApi} from 'src/contexts/NotificationContext';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import {VideoCallContext} from 'src/contexts/VideoContext';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
@@ -77,8 +78,6 @@ const SingleChatScreen = ({route}: any) => {
     title,
   }: ChatScreenParam = route.params;
 
-  console.log('Single chat route', route.params);
-
   const [isIntentReceivePage, setisIntentReceivePage] = useState<boolean>(
     route.params.isIntentReceivePage,
   );
@@ -117,6 +116,12 @@ const SingleChatScreen = ({route}: any) => {
     isIntentSendPage,
     toastRef.current ? toastRef.current.showToast : null,
   );
+
+  const {removeOpenedChatNotifications} = useNotificationsApi();
+
+  useEffect(() => {
+    removeOpenedChatNotifications(chatId);
+  }, [chatId]);
 
   const dispatch = useDispatch();
 

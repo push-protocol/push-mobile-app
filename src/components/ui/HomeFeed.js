@@ -4,8 +4,6 @@ import {
   RefreshControl,
   SafeAreaView,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import ImageView from 'react-native-image-viewing';
@@ -15,7 +13,6 @@ import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
 import {useNotificationsApi} from 'src/contexts/NotificationContext';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
-import {getTrimmedAddress} from 'src/navigation/screens/chats/helpers/chatAddressFormatter';
 
 import EmptyFeed from './EmptyFeed';
 import NotificationItem from './NotificationItem';

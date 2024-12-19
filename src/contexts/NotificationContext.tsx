@@ -20,13 +20,14 @@ import {
 
 import {usePushApi} from './PushApiContext';
 
-const NOTIFICATION_TYPES = {
+export const NOTIFICATION_TYPES = {
   CHANNEL: 'PUSH_NOTIFICATION_CHANNEL',
   CHAT: 'PUSH_NOTIFICATION_CHAT',
 };
 
-const NOTIFICATION_SUB_TYPES = {
+export const NOTIFICATION_SUB_TYPES = {
   INBOX: 'INBOX',
+  SPAM: 'SPAM',
   INDIVIDUAL_CHAT: 'INDIVIDUAL_CHAT',
   GROUP_CHAT: 'GROUP_CHAT',
 };
@@ -46,6 +47,7 @@ type NotificationContextType = {
   setChannelNotificationReceived: (value: boolean) => void;
   channelNotificationOpened: boolean;
   setChannelNotificationOpened: (value: boolean) => void;
+  removeOpenedChatNotifications: (chatId: string) => void;
 };
 
 const NotificationContext = createContext<NotificationContextType>({
@@ -57,6 +59,7 @@ const NotificationContext = createContext<NotificationContextType>({
   setChannelNotificationReceived: () => {},
   channelNotificationOpened: false,
   setChannelNotificationOpened: () => {},
+  removeOpenedChatNotifications: () => {},
 });
 
 export const NotificationContextProvider = ({
@@ -83,7 +86,10 @@ export const NotificationContextProvider = ({
   useEffect(() => {
     // Foreground Notifications
     const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
-      //   console.log('Message handled in the foreground!', remoteMessage);
+      // console.log(
+      //   'Message handled in the foreground!',
+      //   JSON.stringify(remoteMessage),
+      // );
       if (remoteMessage.notification) {
         resolveNotification(remoteMessage);
       }
@@ -91,7 +97,10 @@ export const NotificationContextProvider = ({
 
     // Background/Quit state Notifications
     messaging().setBackgroundMessageHandler(async remoteMessage => {
-      //   console.log('Message handled in the background!', remoteMessage);
+      // console.log(
+      //   'Message handled in the background!',
+      //   JSON.stringify(remoteMessage),
+      // );
     });
 
     return () => {
@@ -124,9 +133,10 @@ export const NotificationContextProvider = ({
   const resolveNotification = async (
     remoteMessage: FirebaseMessagingTypes.RemoteMessage,
   ) => {
-    if (remoteMessage?.data?.type === NOTIFICATION_TYPES.CHAT) {
+    const type = remoteMessage?.data?.type;
+    if (type === NOTIFICATION_TYPES.CHAT) {
       handleChatNotification(remoteMessage);
-    } else if (remoteMessage?.data?.type === NOTIFICATION_TYPES.CHANNEL) {
+    } else if (type === NOTIFICATION_TYPES.CHANNEL) {
       handleChannelNotification(remoteMessage);
     }
   };
@@ -157,9 +167,9 @@ export const NotificationContextProvider = ({
     remoteMessage: FirebaseMessagingTypes.RemoteMessage,
   ) => {
     // Parse the stringified data
-    const parsedDetails = remoteMessage.data?.details
-      ? JSON.parse(remoteMessage.data?.details as string)
-      : {};
+    const parsedDetails = JSON.parse(
+      (remoteMessage.data?.details as string) || '{}',
+    );
     try {
       if (
         getCurrentRouteName() !== GLOBALS.SCREENS.SINGLE_CHAT ||
@@ -264,9 +274,7 @@ export const NotificationContextProvider = ({
   /************************************************/
   const handleNotificationRoute = async (data?: NotificationDataType) => {
     // Parse the stringified data
-    const parsedDetails = data?.details
-      ? JSON.parse(data?.details as string)
-      : {};
+    const parsedDetails = JSON.parse((data?.details as string) || '{}');
 
     // Handle conditional checks to confirm if route navigation &
     //    data needs to be updated after notification opened
@@ -285,7 +293,7 @@ export const NotificationContextProvider = ({
       }
     } else if (data?.type === NOTIFICATION_TYPES.CHAT) {
       // Handle Chat notification banner press
-      console.log('isChatEnabled===>', isChatEnabled);
+      // console.log('isChatEnabled===>', isChatEnabled);
       if (isChatEnabled) {
         try {
           // Get navigation params for SINGLE CHAT Screen
@@ -304,12 +312,10 @@ export const NotificationContextProvider = ({
             if (getCurrentRouteName() === GLOBALS.SCREENS.SINGLE_CHAT) {
               // If Single chat screen is already active then update params data
               replaceRoute(GLOBALS.SCREENS.SINGLE_CHAT, singleChatParams);
-              removeOpenedChatNotifications(parsedDetails?.info?.chatId);
               setTempNotificationData(null);
             } else {
               // Navigate to Single/Group chat screen
               navigate(GLOBALS.SCREENS.SINGLE_CHAT, singleChatParams);
-              removeOpenedChatNotifications(parsedDetails?.info?.chatId);
               setTempNotificationData(null);
             }
           }
@@ -330,9 +336,7 @@ export const NotificationContextProvider = ({
   /*****************************************************/
   const handlePostNotificationReceived = (data?: NotificationDataType) => {
     // Parse the stringified data
-    const parsedDetails = data?.details
-      ? JSON.parse(data?.details as string)
-      : {};
+    const parsedDetails = JSON.parse((data?.details as string) || '{}');
 
     // Handle condition check please data needs to be
     //      updated after notification received
@@ -356,6 +360,7 @@ export const NotificationContextProvider = ({
         setChannelNotificationReceived,
         channelNotificationOpened,
         setChannelNotificationOpened,
+        removeOpenedChatNotifications,
       }}>
       {children}
     </NotificationContext.Provider>
