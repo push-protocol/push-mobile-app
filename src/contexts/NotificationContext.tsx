@@ -6,7 +6,7 @@ import notifee, {
 import messaging, {
   FirebaseMessagingTypes,
 } from '@react-native-firebase/messaging';
-import React, {createContext, useEffect, useState} from 'react';
+import React, {createContext, useEffect, useRef, useState} from 'react';
 import {Platform} from 'react-native';
 import GLOBALS from 'src/Globals';
 import {NotificationHelper} from 'src/helpers/NotificationHelper';
@@ -70,6 +70,8 @@ export const NotificationContextProvider = ({
   const {isChatEnabled} = usePushApiMode();
   const {showUnlockProfileModal, userPushSDKInstance} = usePushApi();
 
+  const isChatEnabledRef = useRef<boolean>(isChatEnabled);
+
   const [tempNotificationData, setTempNotificationData] =
     useState<NotificationDataType | null>(null);
   const [channelNotificationReceived, setChannelNotificationReceived] =
@@ -78,30 +80,22 @@ export const NotificationContextProvider = ({
     useState<boolean>(false);
 
   useEffect(() => {
+    isChatEnabledRef.current = isChatEnabled;
     if (isChatEnabled && tempNotificationData) {
-      handleNotificationRoute(tempNotificationData);
+      handleNotificationRoute(tempNotificationData, true);
     }
   }, [isChatEnabled]);
 
   useEffect(() => {
     // Foreground Notifications
     const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
-      // console.log(
-      //   'Message handled in the foreground!',
-      //   JSON.stringify(remoteMessage),
-      // );
       if (remoteMessage.notification) {
         resolveNotification(remoteMessage);
       }
     });
 
-    // Background/Quit state Notifications
-    messaging().setBackgroundMessageHandler(async remoteMessage => {
-      // console.log(
-      //   'Message handled in the background!',
-      //   JSON.stringify(remoteMessage),
-      // );
-    });
+    // Background Notifications
+    messaging().setBackgroundMessageHandler(async remoteMessage => {});
 
     return () => {
       unsubscribeOnMessage();
@@ -246,7 +240,9 @@ export const NotificationContextProvider = ({
 
     messaging().onNotificationOpenedApp(
       async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
-        handleNotificationRoute(remoteMessage.data);
+        if (remoteMessage) {
+          handleNotificationRoute(remoteMessage.data);
+        }
       },
     );
 
@@ -272,7 +268,10 @@ export const NotificationContextProvider = ({
   /************************************************/
   /**    Handle notification routes and data     **/
   /************************************************/
-  const handleNotificationRoute = async (data?: NotificationDataType) => {
+  const handleNotificationRoute = async (
+    data?: NotificationDataType,
+    canAccessChat?: boolean,
+  ) => {
     // Parse the stringified data
     const parsedDetails = JSON.parse((data?.details as string) || '{}');
 
@@ -293,8 +292,8 @@ export const NotificationContextProvider = ({
       }
     } else if (data?.type === NOTIFICATION_TYPES.CHAT) {
       // Handle Chat notification banner press
-      // console.log('isChatEnabled===>', isChatEnabled);
-      if (isChatEnabled) {
+      const resolvedCanAccessChat = canAccessChat ?? isChatEnabledRef.current; // Use ref for default
+      if (resolvedCanAccessChat) {
         try {
           // Get navigation params for SINGLE CHAT Screen
           const isGroupConversation =

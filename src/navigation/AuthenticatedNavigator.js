@@ -24,10 +24,7 @@ export default function AuthenticatedNavigator() {
   const {handleNotificationEvents} = useNotificationsApi();
 
   useEffect(() => {
-    let eventTimeout = setTimeout(() => handleNotificationEvents(), 800);
-    return () => {
-      clearTimeout(eventTimeout);
-    };
+    handleNotificationEvents();
   }, []);
 
   return (

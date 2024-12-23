@@ -12,6 +12,7 @@ import {
 import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
 import MetaStorage from 'src/singletons/MetaStorage';
 
+import {caip10ToWallet} from './CAIPHelper';
 import {GroupInformation, NotificationHelperType} from './helpers.types';
 
 export const NotificationHelper: NotificationHelperType = {
@@ -126,7 +127,11 @@ export const NotificationHelper: NotificationHelperType = {
                   type: AndroidStyle.MESSAGING,
                   person: {
                     name: remoteMessage.notification?.title ?? '',
-                    icon: parsedDetails?.info?.profilePicture,
+                    icon:
+                      parsedDetails?.info?.profilePicture &&
+                      parsedDetails?.info?.profilePicture?.length > 0
+                        ? parsedDetails?.info?.profilePicture
+                        : 'default',
                   },
                   messages,
                 },
@@ -159,10 +164,6 @@ export const NotificationHelper: NotificationHelperType = {
         if (isGroupConversation) {
           const groupInformationResponse =
             await userPushSDKInstance?.chat.group.info(chatId);
-          // console.log(
-          //   'groupInformationResponse',
-          //   JSON.stringify(groupInformationResponse),
-          // );
           groupInformation = {
             groupName: groupInformationResponse?.groupName,
             groupImage: groupInformationResponse?.groupImage,
@@ -173,10 +174,6 @@ export const NotificationHelper: NotificationHelperType = {
         let isIntentReceivePage = false;
         const conversationHashResponse: any =
           await userPushSDKInstance?.chat.latest(chatId);
-        // console.log(
-        //   'conversationHashResponse',
-        //   JSON.stringify(conversationHashResponse),
-        // );
         if (conversationHashResponse?.length > 0) {
           isIntentReceivePage =
             conversationHashResponse?.[0]?.listType !== 'CHATS';
@@ -190,7 +187,7 @@ export const NotificationHelper: NotificationHelperType = {
             wallets: connectedUser.wallet,
             privateKey: pgpPrivateKey,
           },
-          senderAddress: wallets,
+          senderAddress: isGroupConversation ? null : caip10ToWallet(wallets),
           image: isGroupConversation
             ? groupInformation?.groupImage
             : profilePicture,

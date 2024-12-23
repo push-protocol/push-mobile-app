@@ -35,7 +35,7 @@ export type ChatNavigationParams = {
 
 export type ReturnChatNavigationParams = {
   cid: string;
-  senderAddress: string;
+  senderAddress: string | null;
   connectedUser: any;
   isIntentReceivePage: boolean;
   isIntentSendPage: boolean;

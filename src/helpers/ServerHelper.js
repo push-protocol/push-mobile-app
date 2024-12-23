@@ -25,7 +25,7 @@ const ServerHelper = {
 
     if (Platform.OS === 'ios' && apnsToken !== '') {
       // iOS device, need to register the token on the server
-      console.log('apns token is', apnsToken);
+      // console.log('apns token is', apnsToken);
       body.apn_token = apnsToken;
     }
 
