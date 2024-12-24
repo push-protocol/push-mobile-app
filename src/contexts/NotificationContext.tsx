@@ -319,14 +319,17 @@ export const NotificationContextProvider = ({
                 threadhash: parsedDetails?.info?.threadhash,
               });
             if (singleChatParams) {
-              if (getCurrentRouteName() === GLOBALS.SCREENS.SINGLE_CHAT) {
-                // If Single chat screen is already active then update params data
+              if (
+                getCurrentRouteName() === GLOBALS.SCREENS.SINGLE_CHAT &&
+                getCurrentRouteParams()?.chatId !== parsedDetails?.info?.chatId
+              ) {
+                // If Single/Group chat screen is already active with different chatId then update params data
                 replaceRoute(GLOBALS.SCREENS.SINGLE_CHAT, singleChatParams);
-                setTempNotificationData(null);
-              } else {
+              } else if (
+                getCurrentRouteName() !== GLOBALS.SCREENS.SINGLE_CHAT
+              ) {
                 // Navigate to Single/Group chat screen
                 navigate(GLOBALS.SCREENS.SINGLE_CHAT, singleChatParams);
-                setTempNotificationData(null);
               }
             }
           } else if (
@@ -339,6 +342,7 @@ export const NotificationContextProvider = ({
               pkey,
             });
           }
+          setTempNotificationData(null);
         } catch (error) {
           console.log('Notification Route ERROR', error);
         }
