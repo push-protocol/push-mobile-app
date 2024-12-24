@@ -103,9 +103,10 @@ export const NotificationHelper: NotificationHelperType = {
           },
           categoryId: 'Communications',
           communicationInfo: {
-            conversationId: parsedDetails?.info?.chatId,
+            conversationId:
+              parsedDetails?.info?.chatId ?? remoteMessage.messageId,
             sender: {
-              id: parsedDetails?.info?.wallets,
+              id: parsedDetails?.info?.wallets ?? remoteMessage.messageId,
               displayName: remoteMessage.notification?.title ?? '',
             },
           },

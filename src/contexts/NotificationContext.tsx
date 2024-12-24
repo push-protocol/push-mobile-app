@@ -8,6 +8,7 @@ import messaging, {
 } from '@react-native-firebase/messaging';
 import React, {createContext, useEffect, useRef, useState} from 'react';
 import {Platform} from 'react-native';
+import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import {NotificationHelper} from 'src/helpers/NotificationHelper';
 import {usePushApiMode} from 'src/hooks/pushapi/usePushApiMode';
@@ -17,6 +18,7 @@ import {
   navigate,
   replaceRoute,
 } from 'src/navigation/RootNavigation';
+import {selectCurrentUser, selectUsers} from 'src/redux/authSlice';
 
 import {usePushApi} from './PushApiContext';
 
@@ -69,6 +71,12 @@ export const NotificationContextProvider = ({
 }) => {
   const {isChatEnabled} = usePushApiMode();
   const {showUnlockProfileModal, userPushSDKInstance} = usePushApi();
+
+  const users = useSelector(selectUsers);
+  const currentUser = useSelector(selectCurrentUser);
+
+  const wallet = users[currentUser]?.wallet;
+  const pkey = users[currentUser]?.userPKey;
 
   const isChatEnabledRef = useRef<boolean>(isChatEnabled);
 
@@ -215,8 +223,8 @@ export const NotificationContextProvider = ({
       const recentChatNotificationsIDs = recentNotifications
         .filter(
           item =>
-            JSON.parse(item.notification.data?.details as string)?.info
-              ?.chatId === chatId,
+            JSON.parse((item.notification.data?.details as string) ?? '{}')
+              ?.info?.chatId === chatId,
         )
         .map(item => `${item.id}`);
       await notifee.cancelDisplayedNotifications(recentChatNotificationsIDs);
@@ -287,7 +295,9 @@ export const NotificationContextProvider = ({
       } else {
         // If Home(Notification) tab is inactive then first
         //     navigate to Home tab then update data
-        navigate(GLOBALS.SCREENS.NOTIF_TABS);
+        navigate(GLOBALS.SCREENS.NOTIF_TABS, {
+          wallet,
+        });
         setChannelNotificationOpened(true);
       }
     } else if (data?.type === NOTIFICATION_TYPES.CHAT) {
@@ -295,28 +305,39 @@ export const NotificationContextProvider = ({
       const resolvedCanAccessChat = canAccessChat ?? isChatEnabledRef.current; // Use ref for default
       if (resolvedCanAccessChat) {
         try {
-          // Get navigation params for SINGLE CHAT Screen
-          const isGroupConversation =
-            parsedDetails?.subType === NOTIFICATION_SUB_TYPES.GROUP_CHAT;
-          const singleChatParams =
-            await NotificationHelper.getChatNavigationParams({
-              chatId: parsedDetails?.info?.chatId,
-              userPushSDKInstance: userPushSDKInstance,
-              isGroupConversation,
-              wallets: parsedDetails?.info?.wallets,
-              profilePicture: parsedDetails?.info?.profilePicture,
-              threadhash: parsedDetails?.info?.threadhash,
-            });
-          if (singleChatParams) {
-            if (getCurrentRouteName() === GLOBALS.SCREENS.SINGLE_CHAT) {
-              // If Single chat screen is already active then update params data
-              replaceRoute(GLOBALS.SCREENS.SINGLE_CHAT, singleChatParams);
-              setTempNotificationData(null);
-            } else {
-              // Navigate to Single/Group chat screen
-              navigate(GLOBALS.SCREENS.SINGLE_CHAT, singleChatParams);
-              setTempNotificationData(null);
+          if (parsedDetails?.subType) {
+            // Get navigation params for SINGLE CHAT Screen
+            const isGroupConversation =
+              parsedDetails?.subType === NOTIFICATION_SUB_TYPES.GROUP_CHAT;
+            const singleChatParams =
+              await NotificationHelper.getChatNavigationParams({
+                chatId: parsedDetails?.info?.chatId,
+                userPushSDKInstance: userPushSDKInstance,
+                isGroupConversation,
+                wallets: parsedDetails?.info?.wallets,
+                profilePicture: parsedDetails?.info?.profilePicture,
+                threadhash: parsedDetails?.info?.threadhash,
+              });
+            if (singleChatParams) {
+              if (getCurrentRouteName() === GLOBALS.SCREENS.SINGLE_CHAT) {
+                // If Single chat screen is already active then update params data
+                replaceRoute(GLOBALS.SCREENS.SINGLE_CHAT, singleChatParams);
+                setTempNotificationData(null);
+              } else {
+                // Navigate to Single/Group chat screen
+                navigate(GLOBALS.SCREENS.SINGLE_CHAT, singleChatParams);
+                setTempNotificationData(null);
+              }
             }
+          } else if (
+            !parsedDetails?.subType &&
+            getCurrentRouteName() !== GLOBALS.SCREENS.CHATS
+          ) {
+            // Handled rare case for missing notification data: navigates to the chat list instead of a specific chat.
+            navigate(GLOBALS.SCREENS.CHATS, {
+              wallet,
+              pkey,
+            });
           }
         } catch (error) {
           console.log('Notification Route ERROR', error);
