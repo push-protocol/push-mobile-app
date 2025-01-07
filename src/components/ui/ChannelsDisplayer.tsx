@@ -17,14 +17,19 @@ import {
 } from 'src/redux/channelSlice';
 
 import GLOBALS from '../../Globals';
+import Globals from '../../Globals';
+import {ChannelCategories} from './ChannelCategories';
 
 const ChannelsDisplayer = () => {
   const [searchTimer, setSearchTimer] = useState<NodeJS.Timeout>();
 
   const DEBOUNCE_TIMEOUT = 500; //time in millisecond which we want to wait for then to finish typing
-  const [search, setSearch] = React.useState('');
 
+  const [search, setSearch] = React.useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    Globals.CONSTANTS.ALL_CATEGORIES,
+  );
 
   const channelResults = useSelector(selectChannels);
   const channelsReachedEnd = useSelector(selectChannelsReachedEnd);
@@ -34,7 +39,7 @@ const ChannelsDisplayer = () => {
     isLoadingChannels,
     isLoadingSearchResults,
     searchResults,
-  } = useChannels();
+  } = useChannels({tag: selectedCategory});
 
   const isLoadingSubscriptions = useSelector(selectIsLoadingSubscriptions);
   const {refreshSubscriptions} = useSubscriptions();
@@ -64,6 +69,13 @@ const ChannelsDisplayer = () => {
     }
   }, [userPushSDKInstance]);
 
+  useEffect(() => {
+    if (search.length > 0 || showSearchResults) {
+      setSearch('');
+      setShowSearchResults(false);
+    }
+  }, [selectedCategory]);
+
   const selectChannelForSettings = (channel: Channel) => {
     openSheet({name: 'NFSettingsSheet', channel});
   };
@@ -83,6 +95,7 @@ const ChannelsDisplayer = () => {
         clearTimeout(searchTimer);
       }
       setSearch(searchQuery);
+      setSelectedCategory(Globals.CONSTANTS.ALL_CATEGORIES);
       setSearchTimer(
         setTimeout(() => {
           searchForChannel(searchQuery);
@@ -109,6 +122,11 @@ const ChannelsDisplayer = () => {
             placeholderTextColor="#7D7F89"
           />
         </View>
+
+        <ChannelCategories
+          onChangeCategory={category => setSelectedCategory(category as string)}
+          value={selectedCategory}
+        />
 
         {channels.length === 0 && (
           <View style={[styles.infodisplay]}>
