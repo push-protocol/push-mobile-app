@@ -2,8 +2,12 @@ import {FontAwesome} from '@expo/vector-icons';
 import {IMessageIPFS} from '@pushprotocol/restapi';
 import React from 'react';
 import {Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator} from 'react-native';
 import {SvgUri} from 'react-native-svg';
+import {useToaster} from 'src/contexts/ToasterContext';
 import {formatAMPM} from 'src/helpers/DateTimeHelper';
+
+import {useFileDownload} from '../../helpers/useFileDownload';
 
 export interface FileMessageContent {
   content: string;
@@ -42,6 +46,13 @@ export const FileMessageComponent = ({
   const content = fileContent.content as string;
   const size = fileContent.size;
 
+  const {toastRef} = useToaster();
+  const [isDownloading, saveBase64File] = useFileDownload(
+    content,
+    name,
+    toastRef,
+  );
+
   return (
     <View
       style={
@@ -62,16 +73,14 @@ export const FileMessageComponent = ({
           {formatFileSize(size)}
         </Text>
       </View>
-      {!messageType && (
-        <TouchableOpacity
-          onPress={() =>
-            Linking.openURL(content).catch(e => {
-              console.log('err', e);
-            })
-          }>
-          <FontAwesome name="download" size={24} color="gray" />
-        </TouchableOpacity>
-      )}
+      {!messageType &&
+        (isDownloading ? (
+          <ActivityIndicator color="gray" size={'small'} />
+        ) : (
+          <TouchableOpacity onPress={() => saveBase64File()}>
+            <FontAwesome name="download" size={24} color="gray" />
+          </TouchableOpacity>
+        ))}
 
       {!messageType && (
         <Text style={styles.time}>{formatAMPM(chatMessage.timestamp!)}</Text>
