@@ -5,7 +5,7 @@ import Globals from 'src/Globals';
 import {PillProps} from '.';
 
 const Pill: FC<PillProps> = ({data, value, onChange, disabled}) => {
-  const isActive = data.value === value;
+  const isActive = useMemo(() => data.value === value, [value]);
   return (
     <Pressable
       disabled={disabled}
