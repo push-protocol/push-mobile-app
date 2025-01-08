@@ -24,7 +24,7 @@ const ChannelCategories: FC<ChannelCategoriesProps> = ({
         <ScrollView showsHorizontalScrollIndicator={false} horizontal>
           {channelCategories.map((item, index) => (
             <Pill
-              disabled={disabled}
+              disabled={disabled || item.value === value}
               key={`${index}_pill_keys`}
               value={value}
               data={item}

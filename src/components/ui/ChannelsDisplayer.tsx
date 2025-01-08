@@ -139,7 +139,11 @@ const ChannelsDisplayer = () => {
               <StylishLabel
                 style={styles.infoText}
                 fontSize={16}
-                title="[dg:No channels match your query, please search for another name/address]"
+                title={
+                  showSearchResults
+                    ? '[dg:No channels match your query, please search for another name/address]'
+                    : '[dg:No results available.]'
+                }
               />
             ) : (
               // Show channel fetching label
