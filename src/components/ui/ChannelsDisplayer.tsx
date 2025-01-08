@@ -36,10 +36,11 @@ const ChannelsDisplayer = () => {
   const {
     loadMoreChannels,
     loadSearchResults,
+    resetChannelData,
     isLoadingChannels,
     isLoadingSearchResults,
     searchResults,
-  } = useChannels({tag: selectedCategory});
+  } = useChannels({tag: selectedCategory, showSearchResults});
 
   const isLoadingSubscriptions = useSelector(selectIsLoadingSubscriptions);
   const {refreshSubscriptions} = useSubscriptions();
@@ -69,13 +70,6 @@ const ChannelsDisplayer = () => {
     }
   }, [userPushSDKInstance]);
 
-  useEffect(() => {
-    if (search.length > 0 || showSearchResults) {
-      setSearch('');
-      setShowSearchResults(false);
-    }
-  }, [selectedCategory]);
-
   const selectChannelForSettings = (channel: Channel) => {
     openSheet({name: 'NFSettingsSheet', channel});
   };
@@ -86,6 +80,7 @@ const ChannelsDisplayer = () => {
       return;
     }
     setShowSearchResults(true);
+    setSelectedCategory(Globals.CONSTANTS.ALL_CATEGORIES);
     await loadSearchResults(channelName);
   };
 
@@ -95,13 +90,21 @@ const ChannelsDisplayer = () => {
         clearTimeout(searchTimer);
       }
       setSearch(searchQuery);
-      setSelectedCategory(Globals.CONSTANTS.ALL_CATEGORIES);
       setSearchTimer(
         setTimeout(() => {
           searchForChannel(searchQuery);
         }, DEBOUNCE_TIMEOUT),
       );
     } catch (e) {}
+  };
+
+  const handleCategoryChange = (category: string) => {
+    if (search.length > 0 || showSearchResults) {
+      setSearch('');
+      setShowSearchResults(false);
+    }
+    resetChannelData();
+    setSelectedCategory(category as string);
   };
 
   return (
@@ -124,7 +127,8 @@ const ChannelsDisplayer = () => {
         </View>
 
         <ChannelCategories
-          onChangeCategory={category => setSelectedCategory(category as string)}
+          disabled={isLoadingChannels}
+          onChangeCategory={handleCategoryChange}
           value={selectedCategory}
         />
 
@@ -155,7 +159,7 @@ const ChannelsDisplayer = () => {
           <FlatList
             data={channels}
             style={styles.channels}
-            contentContainerStyle={{paddingVertical: 10}}
+            contentContainerStyle={styles.channelListContentContainerStyle}
             keyExtractor={item => item.channel.toString()}
             initialNumToRender={20}
             showsVerticalScrollIndicator={false}
@@ -192,6 +196,10 @@ const styles = StyleSheet.create({
   channels: {
     flex: 1,
     width: '100%',
+  },
+  channelListContentContainerStyle: {
+    paddingTop: 10,
+    paddingBottom: 80, // Add some padding to the bottom to display last item content
   },
   infodisplay: {
     width: '100%',

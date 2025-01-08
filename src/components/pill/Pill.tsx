@@ -4,10 +4,11 @@ import Globals from 'src/Globals';
 
 import {PillProps} from '.';
 
-const Pill: FC<PillProps> = ({data, value, onChange}) => {
+const Pill: FC<PillProps> = ({data, value, onChange, disabled}) => {
   const isActive = data.value === value;
   return (
     <Pressable
+      disabled={disabled}
       onPress={() => onChange(data)}
       style={[
         styles.mainView,

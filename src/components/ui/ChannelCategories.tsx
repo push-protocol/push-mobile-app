@@ -8,11 +8,13 @@ import {Pill} from '../pill';
 type ChannelCategoriesProps = {
   onChangeCategory: (category: string) => void;
   value: string;
+  disabled: boolean;
 };
 
 const ChannelCategories: FC<ChannelCategoriesProps> = ({
   onChangeCategory,
   value,
+  disabled,
 }) => {
   const {isLoading, channelCategories} = useChannelCategories();
 
@@ -22,6 +24,7 @@ const ChannelCategories: FC<ChannelCategoriesProps> = ({
         <ScrollView showsHorizontalScrollIndicator={false} horizontal>
           {channelCategories.map((item, index) => (
             <Pill
+              disabled={disabled}
               key={`${index}_pill_keys`}
               value={value}
               data={item}

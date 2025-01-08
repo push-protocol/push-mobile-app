@@ -16,9 +16,10 @@ import {
 
 export type UseChannelsProps = {
   tag: string;
+  showSearchResults: boolean;
 };
 
-const useChannels = ({tag}: UseChannelsProps) => {
+const useChannels = ({tag, showSearchResults}: UseChannelsProps) => {
   const [isLoadingChannels, setChannelsLoading] = useState<boolean>(false);
   const [isLoadingSearchResults, setSearchResultsLoading] =
     useState<boolean>(false);
@@ -31,18 +32,16 @@ const useChannels = ({tag}: UseChannelsProps) => {
   const channelsReachedEnd = useSelector(selectChannelsReachedEnd);
 
   useEffect(() => {
-    if (!channelsReachedEnd && !isLoadingChannels && channelsPage !== 0) {
+    if (
+      !channelsReachedEnd &&
+      !isLoadingChannels &&
+      channelsPage !== 0 &&
+      tag &&
+      !showSearchResults
+    ) {
       loadChannels({page: channelsPage});
     }
-  }, [channelsPage]);
-
-  useEffect(() => {
-    if (tag) {
-      dispatch(setChannelsPage(1));
-      dispatch(resetChannels());
-      loadChannels({page: 1});
-    }
-  }, [tag]);
+  }, [channelsPage, tag]);
 
   const loadMoreChannels = () => {
     if (channelsReachedEnd || isLoadingChannels) return;
@@ -54,13 +53,11 @@ const useChannels = ({tag}: UseChannelsProps) => {
     if (channelsReachedEnd || isLoadingChannels) return;
     setChannelsLoading(true);
     try {
-      console.log('Call channel API');
       const apiURL = envConfig.EPNS_SERVER + envConfig.ENDPOINT_FETCH_CHANNELS;
       let requestURL = `${apiURL}?limit=${GLOBALS.CONSTANTS.FEED_ITEMS_TO_PULL}&page=${page}`;
       if (tag.length > 0 && tag !== Globals.CONSTANTS.ALL_CATEGORIES) {
         requestURL = `${requestURL}&tag=${tag}`;
       }
-      console.log(requestURL);
       const resJson = await fetch(requestURL).then(response => response.json());
       if (resJson.channels.length !== 0) {
         dispatch(addChannels(resJson.channels));
@@ -69,10 +66,21 @@ const useChannels = ({tag}: UseChannelsProps) => {
         dispatch(setChannelsReachedEnd(true));
       }
     } catch (e) {
-      console.log('Error', JSON.stringify(e));
+      console.error(e);
     } finally {
       setChannelsLoading(false);
     }
+  };
+
+  /***************************************************/
+  /**   This function will reset all channel data   **/
+  /**     Currently handled for onChangeCategory    **/
+  /***************************************************/
+  const resetChannelData = () => {
+    dispatch(setChannelsPage(1));
+    dispatch(setChannelsReachedEnd(false));
+    setChannelsLoading(false);
+    dispatch(resetChannels());
   };
 
   const loadSearchResults = async (query: string) => {
@@ -81,7 +89,6 @@ const useChannels = ({tag}: UseChannelsProps) => {
       const results = await userPushSDKInstance?.channel.search(query, {
         page: 1,
         limit: GLOBALS.CONSTANTS.FEED_ITEMS_TO_PULL,
-        tag,
       });
       setSearchResults(results);
     } catch (e) {
@@ -94,6 +101,7 @@ const useChannels = ({tag}: UseChannelsProps) => {
   return {
     loadMoreChannels,
     loadSearchResults,
+    resetChannelData,
     isLoadingChannels,
     isLoadingSearchResults,
     searchResults,
