@@ -51,21 +51,21 @@ function HeadlessCheck({isHeadless}) {
 // RNCallKeep.setAvailable(true);
 // }
 
-// messaging().setBackgroundMessageHandler(async remoteMessage => {
-//   console.log('Message handled in the background!', remoteMessage);
-// if (Platform.OS === 'android' && CallKeepHelper.isVideoCall(remoteMessage)) {
-//   const caller = CallKeepHelper.getCaller(remoteMessage);
-//   const addressTrimmed = CallKeepHelper.formatEthAddress(caller);
-//   const uuid = getUUID();
-//   RNCallKeep.displayIncomingCall(
-//     uuid,
-//     addressTrimmed,
-//     addressTrimmed,
-//     'generic',
-//     true,
-//   );
-// }
-// });
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('Message handled in the background!', remoteMessage);
+  // if (Platform.OS === 'android' && CallKeepHelper.isVideoCall(remoteMessage)) {
+  //   const caller = CallKeepHelper.getCaller(remoteMessage);
+  //   const addressTrimmed = CallKeepHelper.formatEthAddress(caller);
+  //   const uuid = getUUID();
+  //   RNCallKeep.displayIncomingCall(
+  //     uuid,
+  //     addressTrimmed,
+  //     addressTrimmed,
+  //     'generic',
+  //     true,
+  //   );
+  // }
+});
 
 if (isCallAccepted) {
   AppRegistry.registerComponent(appName, () => HeadlessCheck);

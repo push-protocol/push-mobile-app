@@ -8,8 +8,10 @@ import messaging, {
 } from '@react-native-firebase/messaging';
 import React, {createContext, useEffect, useRef, useState} from 'react';
 import {Platform} from 'react-native';
+import EncryptedStorage from 'react-native-encrypted-storage';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
+import Globals from 'src/Globals';
 import {NotificationHelper} from 'src/helpers/NotificationHelper';
 import {usePushApiMode} from 'src/hooks/pushapi/usePushApiMode';
 import {
@@ -90,6 +92,7 @@ export const NotificationContextProvider = ({
   useEffect(() => {
     isChatEnabledRef.current = isChatEnabled;
     if (isChatEnabled && tempNotificationData) {
+      console.log('====navigate after chat enabled=>>>>');
       handleNotificationRoute(tempNotificationData, true);
     }
   }, [isChatEnabled]);
@@ -103,7 +106,9 @@ export const NotificationContextProvider = ({
     });
 
     // Background Notifications
-    messaging().setBackgroundMessageHandler(async remoteMessage => {});
+    // messaging().setBackgroundMessageHandler(async remoteMessage => {
+    //   console.log('quit/BG notification', JSON.stringify(remoteMessage));
+    // });
 
     return () => {
       unsubscribeOnMessage();
@@ -119,6 +124,7 @@ export const NotificationContextProvider = ({
       messaging()
         .hasPermission()
         .then(val => {
+          console.log('======>>>>>>>> hasPermission', val);
           if (val === 1) {
             // User has enabled notifications
             notifee.createChannel({
@@ -190,6 +196,27 @@ export const NotificationContextProvider = ({
     }
   };
 
+  /***************************************************/
+  /**   This Function will push CHAT notification   **/
+  /***************************************************/
+  const storeNotificationData = async (id: string, data: any) => {
+    try {
+      const existingData =
+        JSON.parse(
+          (await EncryptedStorage.getItem(
+            Globals.STORAGE.RECENT_NOTIFICATIONS,
+          )) as string,
+        ) || {};
+      existingData[id] = data;
+      await EncryptedStorage.setItem(
+        'notificationData',
+        JSON.stringify(existingData),
+      );
+    } catch (error) {
+      console.error('Error saving notification data:', error);
+    }
+  };
+
   /**********************************************************/
   /**   This Function will return list of notifications    **/
   /**      that are available in notification centre       **/
@@ -220,6 +247,10 @@ export const NotificationContextProvider = ({
   const removeOpenedChatNotifications = async (chatId: string) => {
     try {
       const recentNotifications = await getRecentMessageNotifications();
+      console.log(
+        'recentNotifications===>',
+        JSON.stringify(recentNotifications),
+      );
       const recentChatNotificationsIDs = recentNotifications
         .filter(
           item =>
@@ -227,6 +258,10 @@ export const NotificationContextProvider = ({
               ?.info?.chatId === chatId,
         )
         .map(item => `${item.id}`);
+      console.log(
+        'recentChatNotificationsIDs===>',
+        JSON.stringify(recentChatNotificationsIDs),
+      );
       await notifee.cancelDisplayedNotifications(recentChatNotificationsIDs);
     } catch (error) {
       console.log('removeOpenedChatNotifications ERROR', error);
@@ -302,6 +337,10 @@ export const NotificationContextProvider = ({
       }
     } else if (data?.type === NOTIFICATION_TYPES.CHAT) {
       // Handle Chat notification banner press
+      console.log('===============> chat check', {
+        canAccessChat,
+        isChatEnabledRef: isChatEnabledRef.current,
+      });
       const resolvedCanAccessChat = canAccessChat ?? isChatEnabledRef.current; // Use ref for default
       if (resolvedCanAccessChat) {
         try {

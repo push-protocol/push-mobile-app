@@ -61,7 +61,7 @@ export default {
 
     IS_BACKGROUND_CALL_ACCEPTED: 'IsBackgroundCallAccepted',
 
-    NOTIFICATION_MESSAGES: 'NotificationMessages',
+    RECENT_NOTIFICATIONS: 'RecentNotification',
   },
 
   CONSTANTS: {

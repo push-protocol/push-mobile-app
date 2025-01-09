@@ -176,12 +176,11 @@ const SingleChatScreen = ({route}: any) => {
   const onDecline = () => {};
 
   const handleAddressCopy = () => {
-    Clipboard.setString(senderAddress);
-    toastRef.current.showToast(
-      'Address copied to clipboard',
-      '',
-      ToasterOptions.TYPE.GRADIENT_PRIMARY,
-    );
+    const msg = senderAddress
+      ? 'Address copied to clipboard'
+      : 'Chat ID copied to clipboard';
+    Clipboard.setString(senderAddress ?? chatId);
+    toastRef.current.showToast(msg, '', ToasterOptions.TYPE.GRADIENT_PRIMARY);
   };
 
   // const dispatch = useDispatch();
