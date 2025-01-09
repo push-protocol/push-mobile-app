@@ -14,6 +14,7 @@
   <uses-feature android:name="android.hardware.audio.output"/>
   <uses-feature android:name="android.hardware.microphone"/>
   <uses-permission android:name="android.permission.POST_NOTIFICATION"/>
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
   <queries>
     <intent>
       <action android:name="android.intent.action.VIEW"/>
@@ -38,5 +39,10 @@
         <data android:scheme="app.push.org"/>
       </intent-filter>
     </activity>
+
+    <!-- Notification icon -->
+     <meta-data 
+        android:name="com.google.firebase.messaging.default_notification_icon"
+        android:resource="@mipmap/ic_notification" />
   </application>
 </manifest>

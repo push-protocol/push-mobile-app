@@ -152,11 +152,8 @@ const SingleChatScreen = ({route}: any) => {
 
     const [_cid, msg] = res;
     if (_cid && msg) {
-      console.log('_after sending got', _cid);
-      // No need to push intent to chat, will receive from socket
-      if (!isIntentSendPage) {
-        pushChatDataDirect(_cid, msg);
-      }
+      // console.log('_after sending got', _cid);
+      pushChatDataDirect(_cid, msg);
     }
   };
 
@@ -330,11 +327,8 @@ const SingleChatScreen = ({route}: any) => {
 
     const [_cid, msg] = res;
     if (_cid && msg) {
-      console.log('_after sending got', _cid);
-      // No need to push intent to chat, will receive from socket
-      if (!isIntentSendPage) {
-        pushChatDataDirect(_cid, msg);
-      }
+      // console.log('_after sending got', _cid);
+      pushChatDataDirect(_cid, msg);
     }
   };
 
@@ -407,9 +401,12 @@ const SingleChatScreen = ({route}: any) => {
           </View>
         </View>
 
-        {feed && !feed.groupInformation ? (
-          <>
-            {/* {!(isIntentSendPage || isIntentReceivePage) && (
+        {/********************************************/
+        /**     Uncomment this conditional code     **/
+        /**     if video call feature is enabled    **/
+        /**    Note: enable for single user chat    **/
+        /********************************************/}
+        {/* {!(isIntentSendPage || isIntentReceivePage) && (
               <TouchableOpacity
                 onPress={startVideoCall}
                 style={styles.rightAligned}>
@@ -420,8 +417,8 @@ const SingleChatScreen = ({route}: any) => {
                 />
               </TouchableOpacity>
             )} */}
-          </>
-        ) : (
+
+        {feed && feed.groupInformation && (
           <TouchableOpacity
             style={styles.rightAligned}
             onPress={navigateToGroupInfo}>
@@ -510,17 +507,9 @@ const SingleChatScreen = ({route}: any) => {
                           senderAddrs={senderAddress}
                         />
                         {isLoadingMore && (
-                          <View
-                            style={{
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}>
+                          <View style={styles.viewCenterAlignStyles}>
                             <Image
-                              style={{
-                                marginBottom: 22,
-                                width: 40,
-                                height: 40,
-                              }}
+                              style={styles.loadingImage}
                               source={require('assets/chat/loading.gif')}
                             />
                           </View>
@@ -537,14 +526,7 @@ const SingleChatScreen = ({route}: any) => {
                       addrs={connectedUser.wallets}
                       senderAddrs={senderAddress}
                     />
-                    <Text
-                      style={{
-                        marginTop: 20,
-                        paddingHorizontal: 40,
-                        lineHeight: 22,
-                        color: '#657795',
-                        textAlign: 'center',
-                      }}>
+                    <Text style={styles.firstConversationGuideText}>
                       This is your first conversation with recipient. Start the
                       conversation by sending a message.
                     </Text>
@@ -574,18 +556,12 @@ const SingleChatScreen = ({route}: any) => {
                       animated: true,
                     });
                   }}>
-                  <View
-                    style={{
-                      position: 'absolute',
-                      width: 30,
-                      height: 30,
-                      bottom: 80,
-                      borderRadius: 20,
-                      right: 0,
-                      backgroundColor: '#00000033',
-                      zIndex: 200,
-                    }}
-                  />
+                  <View style={styles.scrollToBottomWrapper}>
+                    <Image
+                      style={styles.caretIcon}
+                      source={require('assets/ui/icCaretDown.png')}
+                    />
+                  </View>
                 </TouchableOpacity>
               )}
 
@@ -818,5 +794,36 @@ const styles = StyleSheet.create({
   },
   rightAligned: {
     marginLeft: 'auto',
+  },
+  scrollToBottomWrapper: {
+    position: 'absolute',
+    width: 30,
+    height: 30,
+    bottom: 80,
+    borderRadius: 15,
+    right: 0,
+    backgroundColor: '#00000033',
+    zIndex: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  caretIcon: {
+    tintColor: Globals.COLORS.WHITE,
+  },
+  firstConversationGuideText: {
+    marginTop: 20,
+    paddingHorizontal: 40,
+    lineHeight: 22,
+    color: '#657795',
+    textAlign: 'center',
+  },
+  viewCenterAlignStyles: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingImage: {
+    marginBottom: 22,
+    width: 40,
+    height: 40,
   },
 });

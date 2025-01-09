@@ -113,6 +113,15 @@ const MessageComponent = React.memo(
             componentType={componentType}
           />
 
+          {isGroupMessage && componentType === 'RECEIVER' && (
+            <ProfilePicture address={caip10ToWallet(fromDID)} />
+          )}
+          {isGroupMessage && componentType === 'RECEIVER' && (
+            <Text style={messageStyle.groupAddress}>
+              {getTrimmedAddress(caip10ToWallet(fromDID))}
+            </Text>
+          )}
+
           {/* Render the message content */}
           <Swipeable
             containerStyle={styles.bubbleAlignment}
@@ -156,17 +165,8 @@ const MessageComponent = React.memo(
                   />
                 )}
 
-                {isGroupMessage && componentType === 'RECEIVER' && (
-                  <ProfilePicture address={caip10ToWallet(fromDID)} />
-                )}
-
                 {/* Render the main message content */}
                 <View>
-                  {isGroupMessage && componentType === 'RECEIVER' && (
-                    <Text style={messageStyle.groupAddress}>
-                      {getTrimmedAddress(caip10ToWallet(fromDID))}
-                    </Text>
-                  )}
                   {(messageType === 'GIF' || messageType === 'MediaEmbed') && (
                     <ImageMessage imageSource={messageContent} time={time} />
                   )}

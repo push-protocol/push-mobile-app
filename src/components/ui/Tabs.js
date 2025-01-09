@@ -28,7 +28,7 @@ export default function Tabs() {
 
   return (
     <Tab.Navigator
-      initialRouteName={GLOBALS.SCREENS.FEED}
+      initialRouteName={GLOBALS.SCREENS.NOTIF_TABS}
       screenOptions={{
         tabBarStyle: {
           position: 'absolute',
