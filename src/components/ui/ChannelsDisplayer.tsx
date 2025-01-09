@@ -99,7 +99,7 @@ const ChannelsDisplayer = () => {
   };
 
   const handleCategoryChange = (category: string) => {
-    if (search.length > 0 || showSearchResults) {
+    if (search.length || showSearchResults) {
       setSearch('');
       setShowSearchResults(false);
     }

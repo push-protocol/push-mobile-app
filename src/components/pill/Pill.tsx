@@ -1,11 +1,11 @@
-import React, {FC, useMemo} from 'react';
-import {Pressable, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import React, {FC} from 'react';
+import {Pressable, StyleSheet, Text} from 'react-native';
 import Globals from 'src/Globals';
 
 import {PillProps} from '.';
 
 const Pill: FC<PillProps> = ({data, value, onChange, disabled}) => {
-  const isActive = useMemo(() => data.value === value, [value]);
+  const isActive = data.value === value;
   return (
     <Pressable
       disabled={disabled}
