@@ -38,7 +38,6 @@ const ServerHelper = {
         },
         body: JSON.stringify(body),
       });
-      console.log('FCM token registration', JSON.stringify(res));
       await MetaStorage.instance.setTokenServerSynced(true);
     } catch (error) {
       console.warn(error);
