@@ -17,24 +17,30 @@ import {
 } from 'src/redux/channelSlice';
 
 import GLOBALS from '../../Globals';
+import Globals from '../../Globals';
+import {ChannelCategories} from './ChannelCategories';
 
 const ChannelsDisplayer = () => {
   const [searchTimer, setSearchTimer] = useState<NodeJS.Timeout>();
 
   const DEBOUNCE_TIMEOUT = 500; //time in millisecond which we want to wait for then to finish typing
-  const [search, setSearch] = React.useState('');
 
+  const [search, setSearch] = React.useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    Globals.CONSTANTS.ALL_CATEGORIES,
+  );
 
   const channelResults = useSelector(selectChannels);
   const channelsReachedEnd = useSelector(selectChannelsReachedEnd);
   const {
     loadMoreChannels,
     loadSearchResults,
+    resetChannelData,
     isLoadingChannels,
     isLoadingSearchResults,
     searchResults,
-  } = useChannels();
+  } = useChannels({tag: selectedCategory, showSearchResults});
 
   const isLoadingSubscriptions = useSelector(selectIsLoadingSubscriptions);
   const {refreshSubscriptions} = useSubscriptions();
@@ -74,6 +80,7 @@ const ChannelsDisplayer = () => {
       return;
     }
     setShowSearchResults(true);
+    setSelectedCategory(Globals.CONSTANTS.ALL_CATEGORIES);
     await loadSearchResults(channelName);
   };
 
@@ -89,6 +96,15 @@ const ChannelsDisplayer = () => {
         }, DEBOUNCE_TIMEOUT),
       );
     } catch (e) {}
+  };
+
+  const handleCategoryChange = (category: string) => {
+    if (search.length || showSearchResults) {
+      setSearch('');
+      setShowSearchResults(false);
+    }
+    resetChannelData();
+    setSelectedCategory(category as string);
   };
 
   return (
@@ -110,6 +126,12 @@ const ChannelsDisplayer = () => {
           />
         </View>
 
+        <ChannelCategories
+          disabled={isLoadingChannels}
+          onChangeCategory={handleCategoryChange}
+          value={selectedCategory}
+        />
+
         {channels.length === 0 && (
           <View style={[styles.infodisplay]}>
             {!isLoading && !isLoadingSubscriptions ? (
@@ -117,7 +139,11 @@ const ChannelsDisplayer = () => {
               <StylishLabel
                 style={styles.infoText}
                 fontSize={16}
-                title="[dg:No channels match your query, please search for another name/address]"
+                title={
+                  showSearchResults
+                    ? '[dg:No channels match your query, please search for another name/address]'
+                    : '[dg:No results available.]'
+                }
               />
             ) : (
               // Show channel fetching label
@@ -137,7 +163,7 @@ const ChannelsDisplayer = () => {
           <FlatList
             data={channels}
             style={styles.channels}
-            contentContainerStyle={{paddingVertical: 10}}
+            contentContainerStyle={styles.channelListContentContainerStyle}
             keyExtractor={item => item.channel.toString()}
             initialNumToRender={20}
             showsVerticalScrollIndicator={false}
@@ -174,6 +200,10 @@ const styles = StyleSheet.create({
   channels: {
     flex: 1,
     width: '100%',
+  },
+  channelListContentContainerStyle: {
+    paddingTop: 10,
+    paddingBottom: 80, // Add some padding to the bottom to display last item content
   },
   infodisplay: {
     width: '100%',
