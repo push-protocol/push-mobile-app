@@ -50,6 +50,9 @@ const channelSlice = createSlice({
     addChannels: (state, action) => {
       state.channels = [...state.channels, ...action.payload];
     },
+    resetChannels: state => {
+      state.channels = [];
+    },
     removeChannelSubscription: (
       state,
       action: PayloadAction<{channel: string}>,
@@ -79,6 +82,7 @@ const channelSlice = createSlice({
 
 export const {
   addChannels,
+  resetChannels,
   setChannelsPage,
   setChannelsReachedEnd,
   addChannelSubscription,

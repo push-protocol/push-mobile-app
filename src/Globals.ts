@@ -16,6 +16,7 @@ export default {
     ENDPOINT_GET_FEEDS: '/feeds/get_feeds',
     ENDPOINT_GET_SPAM_FEEDS: '/feeds/get_spam_feeds',
     ENDPOINT_FETCH_CHANNELS: '/v1/channels',
+    ENDPOINT_FETCH_CHANNEL_CATEGORIES: '/v1/channels/tags/all',
     ENDPOINT_SEARCH_CHANNELS: '/v1/channels/search',
     ENDPOINT_FETCH_SUBSCRIPTION: '/channels/_is_user_subscribed',
     ENDPOINT_SUBSCRIBE_OFFCHAIN: '/channels/subscribe_offchain',
@@ -82,6 +83,7 @@ export default {
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
 
     PASSCODE_LENGTH: 6,
+    ALL_CATEGORIES: 'All',
   },
 
   ADJUSTMENTS: {
@@ -165,6 +167,13 @@ export default {
 
     // Notification
     IC_NOTIFICATION: '#e20880',
+
+    // Pill
+    PILL_BG_DEFAULT: '#F5F6F8',
+    PILL_TEXT_DEFAULT: '#17181B',
+
+    // Border
+    BORDER_DEFAULT: '#C4CBD5',
   },
   SCREENS: {
     WELCOME: 'Welcome',

@@ -7566,6 +7566,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"base-64@npm:0.1.0":
+  version: 0.1.0
+  resolution: "base-64@npm:0.1.0"
+  checksum: 10/5a42938f82372ab5392cbacc85a5a78115cbbd9dbef9f7540fa47d78763a3a8bd7d598475f0d92341f66285afd377509851a9bb5c67bbecb89686e9255d5b3eb
+  languageName: node
+  linkType: hard
+
 "base-64@npm:^1.0.0":
   version: 1.0.0
   resolution: "base-64@npm:1.0.0"
@@ -16922,6 +16929,7 @@ __metadata:
     prettier: "npm:^2.7.1"
     react: "npm:18.2.0"
     react-native: "npm:0.71.14"
+    react-native-blob-util: "npm:^0.19.11"
     react-native-cache: "npm:^2.0.3"
     react-native-callkeep: "npm:4.3.8"
     react-native-config: "npm:^1.5.0"
@@ -17196,6 +17204,19 @@ __metadata:
   dependencies:
     prop-types: "npm:^15.7.2"
   checksum: 10/be7552f9eca8a881e64ce4650849da4a20d68023a445288d609e4dce0ad454ebccefbe52a0cd4ee412782731174b84cdd89acbb384107ad1ed2af05441593ed3
+  languageName: node
+  linkType: hard
+
+"react-native-blob-util@npm:^0.19.11":
+  version: 0.19.11
+  resolution: "react-native-blob-util@npm:0.19.11"
+  dependencies:
+    base-64: "npm:0.1.0"
+    glob: "npm:^10.3.10"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/b5496b2d41ea76fc4ff85d3f88ec1c6b2d7d409b88b1d71d5a51edf64564fa0f9f444d1cd634e641f043387ca04425a9e7e337670870a528095afd64223186f9
   languageName: node
   linkType: hard
 

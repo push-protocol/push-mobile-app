@@ -1,17 +1,25 @@
 import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
+import Globals from 'src/Globals';
 import GLOBALS from 'src/Globals';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import envConfig from 'src/env.config';
 import {
   addChannels,
   nextChannelsPage,
+  resetChannels,
   selectChannelsPage,
   selectChannelsReachedEnd,
+  setChannelsPage,
   setChannelsReachedEnd,
 } from 'src/redux/channelSlice';
 
-const useChannels = () => {
+export type UseChannelsProps = {
+  tag: string;
+  showSearchResults: boolean;
+};
+
+const useChannels = ({tag, showSearchResults}: UseChannelsProps) => {
   const [isLoadingChannels, setChannelsLoading] = useState<boolean>(false);
   const [isLoadingSearchResults, setSearchResultsLoading] =
     useState<boolean>(false);
@@ -24,10 +32,16 @@ const useChannels = () => {
   const channelsReachedEnd = useSelector(selectChannelsReachedEnd);
 
   useEffect(() => {
-    if (!channelsReachedEnd && !isLoadingChannels && channelsPage !== 0) {
+    if (
+      !channelsReachedEnd &&
+      !isLoadingChannels &&
+      channelsPage !== 0 &&
+      tag &&
+      !showSearchResults
+    ) {
       loadChannels({page: channelsPage});
     }
-  }, [channelsPage]);
+  }, [channelsPage, tag]);
 
   const loadMoreChannels = () => {
     if (channelsReachedEnd || isLoadingChannels) return;
@@ -40,7 +54,10 @@ const useChannels = () => {
     setChannelsLoading(true);
     try {
       const apiURL = envConfig.EPNS_SERVER + envConfig.ENDPOINT_FETCH_CHANNELS;
-      const requestURL = `${apiURL}?limit=${GLOBALS.CONSTANTS.FEED_ITEMS_TO_PULL}&page=${page}`;
+      let requestURL = `${apiURL}?limit=${GLOBALS.CONSTANTS.FEED_ITEMS_TO_PULL}&page=${page}`;
+      if (tag.length > 0 && tag !== Globals.CONSTANTS.ALL_CATEGORIES) {
+        requestURL = `${requestURL}&tag=${tag}`;
+      }
       const resJson = await fetch(requestURL).then(response => response.json());
       if (resJson.channels.length !== 0) {
         dispatch(addChannels(resJson.channels));
@@ -49,9 +66,21 @@ const useChannels = () => {
         dispatch(setChannelsReachedEnd(true));
       }
     } catch (e) {
+      console.error(e);
     } finally {
       setChannelsLoading(false);
     }
+  };
+
+  /***************************************************/
+  /**   This function will reset all channel data   **/
+  /**     Currently handled for onChangeCategory    **/
+  /***************************************************/
+  const resetChannelData = () => {
+    dispatch(setChannelsPage(1));
+    dispatch(setChannelsReachedEnd(false));
+    setChannelsLoading(false);
+    dispatch(resetChannels());
   };
 
   const loadSearchResults = async (query: string) => {
@@ -72,6 +101,7 @@ const useChannels = () => {
   return {
     loadMoreChannels,
     loadSearchResults,
+    resetChannelData,
     isLoadingChannels,
     isLoadingSearchResults,
     searchResults,
