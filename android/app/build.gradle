@@ -116,8 +116,8 @@ android {
             applicationId "io.epns.epns"
             targetSdkVersion rootProject.ext.targetSdkVersion
             resValue "string", "build_config_package", "io.epns.epns"
-            versionCode 73
-            versionName "0.12"
+            versionCode 74
+            versionName "0.13"
         }
         staging {
             minSdkVersion rootProject.ext.minSdkVersion
