@@ -6,6 +6,7 @@ import GLOBALS from 'src/Globals';
 import IncomingCall from 'src/components/modals/IncomingCall';
 import {ModalsWrapper} from 'src/components/modals/ModalsWrapper';
 import DeeplinkContextProvider from 'src/contexts/DeeplinkContext';
+import NotificationContextProvider from 'src/contexts/NotificationContext';
 import PushApiContextProvider from 'src/contexts/PushApiContext';
 import SheetContextProvider from 'src/contexts/SheetContext';
 import ToasterContextProvider from 'src/contexts/ToasterContext';
@@ -45,39 +46,41 @@ const Screens = ({callAccepted}) => {
       <ToasterContextProvider>
         <PushApiContextProvider>
           <NavigationContainer ref={navigationRef} linking={linkingConfig}>
-            <DeeplinkContextProvider>
-              {/* Show Modal on Android devices and iOS devices in China */}
-              {isReceivingCall &&
-                (Platform.OS === 'android' ||
-                  (Platform.OS === 'ios' && CallkeepHelper.isChina())) && (
-                  <IncomingCall />
+            <NotificationContextProvider>
+              <DeeplinkContextProvider>
+                {/* Show Modal on Android devices and iOS devices in China */}
+                {isReceivingCall &&
+                  (Platform.OS === 'android' ||
+                    (Platform.OS === 'ios' && CallkeepHelper.isChina())) && (
+                    <IncomingCall />
+                  )}
+
+                {authState === GLOBALS.AUTH_STATE.INITIALIZING && (
+                  <InitializingNavigator />
+                )}
+                {authState === GLOBALS.AUTH_STATE.ONBOARDING && (
+                  <OnboardingNavigator />
                 )}
 
-              {authState === GLOBALS.AUTH_STATE.INITIALIZING && (
-                <InitializingNavigator />
-              )}
-              {authState === GLOBALS.AUTH_STATE.ONBOARDING && (
-                <OnboardingNavigator />
-              )}
+                {authState === GLOBALS.AUTH_STATE.ONBOARDED && (
+                  <OnboardedNavigator />
+                )}
 
-              {authState === GLOBALS.AUTH_STATE.ONBOARDED && (
-                <OnboardedNavigator />
-              )}
-
-              {authState === GLOBALS.AUTH_STATE.AUTHENTICATED && (
-                <>
-                  {connectedUser && (
-                    <NavGlobalSocket
-                      callAccepted={callAccepted}
-                      connectedUser={connectedUser}
-                    />
-                  )}
-                  <SheetContextProvider>
-                    <AuthenticatedNavigator />
-                  </SheetContextProvider>
-                </>
-              )}
-            </DeeplinkContextProvider>
+                {authState === GLOBALS.AUTH_STATE.AUTHENTICATED && (
+                  <>
+                    {connectedUser && (
+                      <NavGlobalSocket
+                        callAccepted={callAccepted}
+                        connectedUser={connectedUser}
+                      />
+                    )}
+                    <SheetContextProvider>
+                      <AuthenticatedNavigator />
+                    </SheetContextProvider>
+                  </>
+                )}
+              </DeeplinkContextProvider>
+            </NotificationContextProvider>
           </NavigationContainer>
           <ModalsWrapper />
         </PushApiContextProvider>

@@ -2,9 +2,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 import Constants from 'expo-constants';
 import React, {useEffect} from 'react';
 import GLOBALS from 'src/Globals';
-import Header from 'src/components/ui/Header';
 import Tabs from 'src/components/ui/Tabs';
-import {NotificationHelper} from 'src/helpers/NotificationHelper';
+import {useNotificationsApi} from 'src/contexts/NotificationContext';
 import QRScanScreen from 'src/navigation/screens/dapp/QRScanScreen';
 
 import ChatProfileScreen from './screens/ChatProfileScreen';
@@ -22,8 +21,10 @@ export default function AuthenticatedNavigator() {
   /**   Handle native notification and notifee   **/
   /**        events(onPress and dismiss)         **/
   /************************************************/
+  const {handleNotificationEvents} = useNotificationsApi();
+
   useEffect(() => {
-    NotificationHelper.handleNotificationEvents();
+    handleNotificationEvents();
   }, []);
 
   return (

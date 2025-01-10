@@ -19,7 +19,6 @@ const useConversationLoader = (
   pgpPrivateKey: string,
   userAddress: string,
   senderAddress: string,
-  combinedDID: string,
   chatId: string,
 ): [
   boolean,
@@ -176,11 +175,7 @@ const useConversationLoader = (
                   messageObj,
                 },
               ];
-              await storeConversationData(
-                combinedDID,
-                message.reference,
-                newMsgs,
-              );
+              await storeConversationData(chatId, message.reference, newMsgs);
               setChatData(prev => [...newMsgs.reverse(), ...prev]);
             }
           },

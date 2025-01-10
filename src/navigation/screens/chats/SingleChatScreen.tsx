@@ -34,13 +34,12 @@ import Globals from 'src/Globals';
 import {ConnectedUser} from 'src/apis';
 import {Toaster} from 'src/components/indicators/Toaster';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
+import {useNotificationsApi} from 'src/contexts/NotificationContext';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import {VideoCallContext} from 'src/contexts/VideoContext';
-import envConfig from 'src/env.config';
 import {caip10ToWallet} from 'src/helpers/CAIPHelper';
 import {EncryptionInfo} from 'src/navigation/screens/chats/components/EncryptionInfo';
 import {setOtherUserProfilePicture} from 'src/redux/videoSlice';
-import MetaStorage from 'src/singletons/MetaStorage';
 
 import {AcceptIntent, MessageComponent, ReplyMessageBubble} from './components';
 import {CustomScroll} from './components/CustomScroll';
@@ -53,7 +52,6 @@ interface ChatScreenParam {
   cid: string;
   senderAddress: string;
   connectedUser: ConnectedUser;
-  combinedDID: string;
   isIntentSendPage: boolean;
   isIntentReceivePage: boolean;
   chatId: string;
@@ -75,7 +73,6 @@ const SingleChatScreen = ({route}: any) => {
     senderAddress,
     connectedUser,
     isIntentSendPage,
-    combinedDID,
     chatId,
     feed,
     title,
@@ -110,7 +107,6 @@ const SingleChatScreen = ({route}: any) => {
     connectedUser.privateKey,
     connectedUser.wallets,
     senderAddress,
-    combinedDID,
     chatId,
   );
 
@@ -120,6 +116,12 @@ const SingleChatScreen = ({route}: any) => {
     isIntentSendPage,
     toastRef.current ? toastRef.current.showToast : null,
   );
+
+  const {removeOpenedChatNotifications} = useNotificationsApi();
+
+  useEffect(() => {
+    removeOpenedChatNotifications(chatId);
+  }, [chatId]);
 
   const dispatch = useDispatch();
 
@@ -174,12 +176,11 @@ const SingleChatScreen = ({route}: any) => {
   const onDecline = () => {};
 
   const handleAddressCopy = () => {
-    Clipboard.setString(senderAddress);
-    toastRef.current.showToast(
-      'Address copied to clipboard',
-      '',
-      ToasterOptions.TYPE.GRADIENT_PRIMARY,
-    );
+    const msg = senderAddress
+      ? 'Address copied to clipboard'
+      : 'Chat ID copied to clipboard';
+    Clipboard.setString(senderAddress ?? chatId);
+    toastRef.current.showToast(msg, '', ToasterOptions.TYPE.GRADIENT_PRIMARY);
   };
 
   // const dispatch = useDispatch();
