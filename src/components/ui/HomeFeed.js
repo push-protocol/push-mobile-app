@@ -19,7 +19,6 @@ import NotificationItem from './NotificationItem';
 
 export default function InboxFeed(props) {
   const {userPushSDKInstance, userInfo} = usePushApi();
-  const {createNotificationChannel} = useNotificationsApi();
 
   // SET STATES
   const [initialized, setInitialized] = useState(false);
@@ -38,6 +37,8 @@ export default function InboxFeed(props) {
     channelNotificationReceived,
     setChannelNotificationOpened,
     setChannelNotificationReceived,
+    createNotificationChannel,
+    removeInboxChannelNotifications,
   } = useNotificationsApi();
 
   // SET REFS
@@ -108,6 +109,7 @@ export default function InboxFeed(props) {
 
           // clear the notifs if present
           AppBadgeHelper.setAppBadgeCount(0);
+          removeInboxChannelNotifications();
 
           if (rewrite) {
             setFeed([...feeds]);

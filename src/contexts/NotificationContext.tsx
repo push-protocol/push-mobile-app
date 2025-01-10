@@ -8,10 +8,8 @@ import messaging, {
 } from '@react-native-firebase/messaging';
 import React, {createContext, useEffect, useRef, useState} from 'react';
 import {Platform} from 'react-native';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
-import Globals from 'src/Globals';
 import {NotificationHelper} from 'src/helpers/NotificationHelper';
 import {usePushApiMode} from 'src/hooks/pushapi/usePushApiMode';
 import {
@@ -52,6 +50,7 @@ type NotificationContextType = {
   channelNotificationOpened: boolean;
   setChannelNotificationOpened: (value: boolean) => void;
   removeOpenedChatNotifications: (chatId: string) => void;
+  removeInboxChannelNotifications: () => void;
 };
 
 const NotificationContext = createContext<NotificationContextType>({
@@ -64,6 +63,7 @@ const NotificationContext = createContext<NotificationContextType>({
   channelNotificationOpened: false,
   setChannelNotificationOpened: () => {},
   removeOpenedChatNotifications: () => {},
+  removeInboxChannelNotifications: () => {},
 });
 
 export const NotificationContextProvider = ({
@@ -235,6 +235,28 @@ export const NotificationContextProvider = ({
     }
   };
 
+  /*****************************************************************************************/
+  /**  This function will remove other notification banners from the notification center  **/
+  /**                           if Home feed screen is opened.                            **/
+  /*****************************************************************************************/
+  const removeInboxChannelNotifications = async () => {
+    try {
+      const recentNotifications = await getRecentMessageNotifications();
+      if (recentNotifications.length) {
+        const recentChatNotificationsIDs = recentNotifications
+          .filter(
+            item =>
+              JSON.parse((item.notification.data?.details as string) ?? '{}')
+                ?.subType === NOTIFICATION_SUB_TYPES.INBOX,
+          )
+          .map(item => `${item.id}`);
+        await notifee.cancelDisplayedNotifications(recentChatNotificationsIDs);
+      }
+    } catch (error) {
+      console.log('removeInboxChannelNotifications ERROR', error);
+    }
+  };
+
   /************************************************/
   /**   Handle native notification and notifee   **/
   /**        events(onPress and dismiss)         **/
@@ -387,6 +409,7 @@ export const NotificationContextProvider = ({
         channelNotificationOpened,
         setChannelNotificationOpened,
         removeOpenedChatNotifications,
+        removeInboxChannelNotifications,
       }}>
       {children}
     </NotificationContext.Provider>
