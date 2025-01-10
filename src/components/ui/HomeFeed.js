@@ -1,27 +1,18 @@
-import notifee from '@notifee/react-native';
-import messaging from '@react-native-firebase/messaging';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
-  Platform,
   RefreshControl,
   SafeAreaView,
   StyleSheet,
   View,
 } from 'react-native';
 import ImageView from 'react-native-image-viewing';
-import {useDispatch, useSelector} from 'react-redux';
 import {ToasterOptions} from 'src/components/indicators/Toaster';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ImagePreviewFooter from 'src/components/ui/ImagePreviewFooter';
+import {useNotificationsApi} from 'src/contexts/NotificationContext';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import AppBadgeHelper from 'src/helpers/AppBadgeHelper';
-import {
-  selectNotificationOpened,
-  selectNotificationReceived,
-  updateNotificationOpened,
-  updateNotificationReceived,
-} from 'src/redux/homeSlice';
 
 import EmptyFeed from './EmptyFeed';
 import NotificationItem from './NotificationItem';
@@ -41,11 +32,14 @@ export default function InboxFeed(props) {
   const [renderGallery, setRenderGallery] = useState(false);
   const [startFromIndex, setStartFromIndex] = useState(0);
 
-  // GET REDUX STATES AND DISPATCH ACTIONS
-  const notificationOpened = useSelector(selectNotificationOpened);
-  const notificationReceived = useSelector(selectNotificationReceived);
-
-  const dispatch = useDispatch();
+  const {
+    channelNotificationOpened,
+    channelNotificationReceived,
+    setChannelNotificationOpened,
+    setChannelNotificationReceived,
+    createNotificationChannel,
+    removeInboxChannelNotifications,
+  } = useNotificationsApi();
 
   // SET REFS
   const FlatListFeedsRef = useRef(null);
@@ -58,28 +52,15 @@ export default function InboxFeed(props) {
   }, [initialized, userPushSDKInstance]);
 
   useEffect(() => {
-    if (notificationReceived || notificationOpened) {
+    if (channelNotificationReceived || channelNotificationOpened) {
       fetchFeed(true, true);
-      dispatch(updateNotificationOpened(false));
-      dispatch(updateNotificationReceived(false));
+      setChannelNotificationOpened(false);
+      setChannelNotificationReceived(false);
     }
-  }, [notificationOpened, notificationReceived]);
+  }, [channelNotificationOpened, channelNotificationReceived]);
 
   useEffect(() => {
-    if (Platform.OS === 'android') {
-      messaging()
-        .hasPermission()
-        .then(val => {
-          if (val === 1) {
-            // User has enabled notifications
-            notifee.createChannel({
-              id: 'default',
-              name: 'Default Channel',
-              sound: 'default',
-            });
-          }
-        });
-    }
+    createNotificationChannel();
   }, []);
 
   useEffect(() => {
@@ -128,6 +109,7 @@ export default function InboxFeed(props) {
 
           // clear the notifs if present
           AppBadgeHelper.setAppBadgeCount(0);
+          removeInboxChannelNotifications();
 
           if (rewrite) {
             setFeed([...feeds]);

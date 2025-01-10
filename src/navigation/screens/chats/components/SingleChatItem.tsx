@@ -56,7 +56,6 @@ const ChatItem = (props: SingleChatItemProps) => {
       cid: cid,
       senderAddress: props.wallet,
       connectedUser: appContext.connectedUser,
-      combinedDID: props.combinedDID,
       isIntentReceivePage: isIntenReceivePage,
       isIntentSendPage: isIntentSendPage,
       image: props.image,

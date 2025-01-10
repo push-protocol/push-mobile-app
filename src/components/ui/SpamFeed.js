@@ -113,7 +113,7 @@ export default function SpamFeed() {
         <FlatList
           ref={FlatListFeedsRef}
           data={feed}
-          keyExtractor={item => item.sid.toString()}
+          keyExtractor={(item, index) => `${item.sid}-${index}`}
           initialNumToRender={10}
           style={{flex: 1}}
           contentContainerStyle={styles.contentContainerStyle}

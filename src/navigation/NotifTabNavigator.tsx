@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, useWindowDimensions} from 'react-native';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
-import {useSelector} from 'react-redux';
 import GLOBALS from 'src/Globals';
 import Header from 'src/components/ui/Header';
-import {selectNotificationOpened} from 'src/redux/homeSlice';
+import {useNotificationsApi} from 'src/contexts/NotificationContext';
 
 import HomeScreen from './screens/HomeScreen';
 import SpamBoxScreen from './screens/SpamBoxScreen';
@@ -18,14 +17,13 @@ const NotifTabNavigator = () => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
 
-  // GET REDUX STATES
-  const notificationOpened = useSelector(selectNotificationOpened);
+  const {channelNotificationOpened} = useNotificationsApi();
 
   useEffect(() => {
-    if (notificationOpened && index === 1) {
+    if (channelNotificationOpened && index === 1) {
       setIndex(0);
     }
-  }, [notificationOpened]);
+  }, [channelNotificationOpened]);
 
   const [routes] = useState([
     {key: GLOBALS.SCREENS.FEED, title: 'Inbox'},

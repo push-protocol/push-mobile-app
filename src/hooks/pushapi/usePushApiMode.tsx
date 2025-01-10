@@ -16,10 +16,10 @@ export const usePushApiMode = () => {
     // If instance is in read mode, profile is not enabled
     if (readMode) return false;
     // Profile enabled and connected with private key
-    if (connectedUser.userPKey) return true;
+    if (connectedUser?.userPKey) return true;
     // If profile is enabled, but user is not connected, not enabled
     return isConnected && provider !== undefined;
-  }, [userPushSDKInstance, connectedUser.userPKey, isConnected, provider]);
+  }, [userPushSDKInstance, connectedUser?.userPKey, isConnected, provider]);
 
   const isChatEnabled = useMemo(() => {
     // If userPushSDKInstance is not available, not in enabled state
@@ -30,7 +30,7 @@ export const usePushApiMode = () => {
 
   const isSignerEnabled = useMemo(() => {
     // If connected with private key, signer is enabled
-    if (connectedUser.userPKey) return true;
+    if (connectedUser?.userPKey) return true;
     // If connected with wallet and signer is available
     return isConnected && provider !== undefined;
   }, [connectedUser, isConnected, provider]);

@@ -25,6 +25,8 @@ import {
 import MetaStorage from 'src/singletons/MetaStorage';
 import {getSigner} from 'src/walletconnect/chat/utils';
 
+import {useNotificationsApi} from './NotificationContext';
+
 type PushApiContextType = {
   userPushSDKInstance: PushAPI | null;
   userInfo: IUser | null;
@@ -69,6 +71,7 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
   const isGuest = useSelector(selectIsGuest);
   const dispatch = useDispatch();
   const {login} = useAuth();
+  const {setTempNotificationData} = useNotificationsApi();
 
   const {
     ModalComponent: UnlockProfileModal,
@@ -316,7 +319,10 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
               title: 'Not now',
               bgColor: GLOBALS.COLORS.TRANSPARENT,
               fontColor: GLOBALS.COLORS.BLACK,
-              onPress: () => hideUnlockProfileModal(),
+              onPress: () => {
+                hideUnlockProfileModal();
+                setTempNotificationData(null);
+              },
             },
           ],
         }}

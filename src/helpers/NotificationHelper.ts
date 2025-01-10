@@ -1,213 +1,205 @@
-import notifee, {
+import {
   AndroidMessagingStyleMessage,
   AndroidStyle,
-  EventType,
+  DisplayedNotification,
 } from '@notifee/react-native';
-import * as PushApi from '@pushprotocol/restapi';
-import {ENV} from '@pushprotocol/restapi/src/lib/constants';
-import messaging from '@react-native-firebase/messaging';
-import {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
+import {Platform} from 'react-native';
 import Globals from 'src/Globals';
-import GLOBALS from 'src/Globals';
-import envConfig from 'src/env.config';
-import {getCurrentRouteName, navigate} from 'src/navigation/RootNavigation';
-import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
-import {globalDispatch} from 'src/redux';
 import {
-  updateNotificationOpened,
-  updateNotificationReceived,
-} from 'src/redux/homeSlice';
+  NOTIFICATION_SUB_TYPES,
+  NOTIFICATION_TYPES,
+} from 'src/contexts/NotificationContext';
+import {UserChatCredentials} from 'src/navigation/screens/chats/ChatScreen';
 import MetaStorage from 'src/singletons/MetaStorage';
 
-import {getNotifeeConfig} from './helpers.utils';
+import {caip10ToWallet} from './CAIPHelper';
+import {GroupInformation, NotificationHelperType} from './helpers.types';
 
-const NOTIFICATION_TYPES = {
-  CHANNEL: 'PUSH_NOTIFICATION_CHANNEL',
-  CHAT: 'PUSH_NOTIFICATION_CHAT',
-};
-
-const NOTIFICATION_SUB_TYPES = {
-  INBOX: 'INBOX',
-};
-
-export const NotificationHelper = {
-  resolveNotification: async (
-    remoteMessage: FirebaseMessagingTypes.RemoteMessage,
+export const NotificationHelper: NotificationHelperType = {
+  getNotifeeConfig: async (
+    type,
+    remoteMessage,
+    getRecentMessageNotifications,
   ) => {
-    if (remoteMessage?.data?.type === NOTIFICATION_TYPES.CHAT) {
-      NotificationHelper.handleChatNotification(remoteMessage);
-    } else if (remoteMessage?.data?.type === NOTIFICATION_TYPES.CHANNEL) {
-      NotificationHelper.handleChannelNotification(remoteMessage);
-    }
-  },
+    const parsedDetails = JSON.parse(
+      (remoteMessage.data?.details as string) || '{}',
+    );
+    if (type === NOTIFICATION_TYPES.CHANNEL) {
+      const largeIcon = parsedDetails?.info?.icon ?? 'ic_launcher_round';
+      return {
+        id: remoteMessage.messageId,
+        title: remoteMessage.notification?.title,
+        body: remoteMessage.notification?.body,
+        ios: {
+          sound: 'default',
+          foregroundPresentationOptions: {
+            banner: true,
+            list: true,
+            badge: true,
+            sound: true,
+          },
+        },
+        android: {
+          channelId: 'default',
+          largeIcon,
+          smallIcon:
+            remoteMessage.notification?.android?.smallIcon ?? 'ic_notification',
+          color:
+            remoteMessage.notification?.android?.color ??
+            Globals.COLORS.IC_NOTIFICATION,
+          circularLargeIcon: true,
+          pressAction: {
+            id: 'default',
+          },
+        },
+        data: remoteMessage.data,
+      };
+    } else if (type === NOTIFICATION_TYPES.CHAT) {
+      let recentChatNotifications: DisplayedNotification[] = [];
+      let messages: AndroidMessagingStyleMessage[] = [];
+      let lines: string[] = [];
+      if (Platform.OS === 'android') {
+        recentChatNotifications = await getRecentMessageNotifications(
+          parsedDetails?.info?.chatId,
+        );
 
-  /**************************************************/
-  /** This Function will push CHANNEL notification **/
-  /**************************************************/
-  handleChannelNotification: async (
-    remoteMessage: FirebaseMessagingTypes.RemoteMessage,
-  ) => {
-    try {
-      const notifeeConfig = getNotifeeConfig(
-        'PUSH_NOTIFICATION_CHANNEL',
-        remoteMessage,
-      );
-      await notifee.displayNotification(notifeeConfig);
-      NotificationHelper.handlePostNotificationReceived(remoteMessage.data);
-    } catch (error) {
-      console.log('NOTIFEE ERROR', error);
-    }
-  },
+        if (parsedDetails?.subType === NOTIFICATION_SUB_TYPES.INDIVIDUAL_CHAT) {
+          messages =
+            recentChatNotifications.length > 0
+              ? recentChatNotifications?.[0]?.notification?.android?.style
+                  ?.messages
+              : [];
 
-  /***************************************************/
-  /**   This Function will push CHAT notification   **/
-  /***************************************************/
-  handleChatNotification: async (
-    message: FirebaseMessagingTypes.RemoteMessage,
-  ) => {
-    const {pgpPrivateKey}: UserChatCredentials =
-      await MetaStorage.instance.getUserChatData();
+          messages.push({
+            text: remoteMessage.notification?.body ?? '',
+            timestamp: remoteMessage.sentTime ?? Date.now(),
+          });
+        } else if (
+          parsedDetails?.subType === NOTIFICATION_SUB_TYPES.GROUP_CHAT
+        ) {
+          lines =
+            recentChatNotifications.length > 0
+              ? recentChatNotifications?.[0]?.notification?.android?.style
+                  ?.lines
+              : [];
 
-    const users = await MetaStorage.instance.getStoredWallets();
-    const connectedUser = users[0];
-
-    const [mssg] = await PushApi.chat.decryptConversation({
-      messages: [message.data?.message as any],
-      env: envConfig.ENV as ENV,
-      pgpPrivateKey: pgpPrivateKey,
-      connectedUser: {
-        ...connectedUser,
-        wallets: connectedUser.wallet,
-      },
-    });
-
-    // await NotificationHelper.sendNotification({
-    //   newMessage: {
-    //     text: mssg.messageContent,
-    //     timestamp: mssg.timestamp ?? Date.now(),
-    //     person: {
-    //       name: mssg.fromCAIP10,
-    //       icon: 'https://picsum.photos/200',
-    //     },
-    //   },
-    // });
-  },
-
-  sendNotification: async (
-    remoteMessage: FirebaseMessagingTypes.RemoteMessage,
-  ) => {
-    try {
-      const notifeeConfig = getNotifeeConfig(
-        'PUSH_NOTIFICATION_CHAT',
-        remoteMessage,
-      );
-      await notifee.displayNotification(notifeeConfig);
-    } catch (error) {
-      console.log('NOTIFEE ERROR', error);
-    }
-  },
-
-  getRecentMessageNotifications: async (from: string): Promise<any[]> => {
-    try {
-      const getDisplayedNotifications =
-        await notifee.getDisplayedNotifications();
-      return getDisplayedNotifications;
-    } catch (error) {
-      return [];
-    }
-  },
-
-  /************************************************/
-  /**   Handle native notification and notifee   **/
-  /**        events(onPress and dismiss)         **/
-  /************************************************/
-  handleNotificationEvents: async () => {
-    messaging()
-      .getInitialNotification()
-      .then(async remoteMessage => {
-        if (remoteMessage) {
-          await NotificationHelper.handleNotificationRoute(remoteMessage.data);
+          lines.push(remoteMessage.notification?.body ?? '');
         }
-      });
-
-    messaging().onNotificationOpenedApp(async remoteMessage => {
-      await NotificationHelper.handleNotificationRoute(remoteMessage.data);
-    });
-
-    notifee.onForegroundEvent(async ({type, detail}) => {
-      if (type === EventType.PRESS) {
-        await NotificationHelper.handleNotificationRoute(
-          detail.notification?.data,
-        );
       }
-    });
-
-    notifee.onBackgroundEvent(async ({type, detail}) => {
-      if (type === EventType.PRESS) {
-        await NotificationHelper.handleNotificationRoute(
-          detail.notification?.data,
-        );
-      }
-    });
-
-    const initialNotification = await notifee.getInitialNotification();
-    if (initialNotification) {
-      const {notification} = initialNotification;
-      await NotificationHelper.handleNotificationRoute(notification?.data);
+      return {
+        id:
+          Platform.OS === 'android'
+            ? parsedDetails?.info?.chatId
+            : remoteMessage.messageId,
+        title: remoteMessage.notification?.title,
+        body: remoteMessage.notification?.body,
+        ios: {
+          sound: 'default',
+          foregroundPresentationOptions: {
+            banner: true,
+            list: true,
+            badge: true,
+            sound: true,
+          },
+          categoryId: 'Communications',
+          communicationInfo: {
+            conversationId:
+              parsedDetails?.info?.chatId ?? remoteMessage.messageId,
+            sender: {
+              id: parsedDetails?.info?.wallets ?? remoteMessage.messageId,
+              displayName: remoteMessage.notification?.title ?? '',
+            },
+          },
+        },
+        android: {
+          channelId: 'default',
+          smallIcon:
+            remoteMessage.notification?.android?.smallIcon ?? 'ic_notification',
+          color:
+            remoteMessage.notification?.android?.color ??
+            Globals.COLORS.IC_NOTIFICATION,
+          pressAction: {
+            id: 'default',
+          },
+          style:
+            parsedDetails?.subType === NOTIFICATION_SUB_TYPES.GROUP_CHAT
+              ? {type: AndroidStyle.INBOX, lines}
+              : {
+                  type: AndroidStyle.MESSAGING,
+                  person: {
+                    name: remoteMessage.notification?.title ?? '',
+                    icon:
+                      parsedDetails?.info?.profilePicture &&
+                      parsedDetails?.info?.profilePicture?.length > 0
+                        ? parsedDetails?.info?.profilePicture
+                        : 'default',
+                  },
+                  messages,
+                },
+        },
+        data: remoteMessage.data,
+      };
     }
+    return {};
   },
 
-  /************************************************/
-  /**    Handle notification routes and data     **/
-  /************************************************/
-  handleNotificationRoute: async (data?: {
-    [key: string]: string | number | object;
-  }) => {
-    // Parse the stringified data
-    const parsedDetails = data?.details
-      ? JSON.parse(data?.details as string)
-      : {};
+  getChatNavigationParams: async data => {
+    const {
+      userPushSDKInstance,
+      chatId,
+      isGroupConversation,
+      wallets,
+      profilePicture,
+      threadhash,
+    } = data;
+    try {
+      if (userPushSDKInstance) {
+        // Make connectUser Obj
+        const {pgpPrivateKey}: UserChatCredentials =
+          await MetaStorage.instance.getUserChatData();
+        const users = await MetaStorage.instance.getStoredWallets();
+        const connectedUser = users[0];
 
-    // Handle conditional checks to confirm if route navigation &
-    //    data needs to be updated after notification opened
-    if (
-      data?.type === NOTIFICATION_TYPES.CHANNEL &&
-      parsedDetails?.subType === NOTIFICATION_SUB_TYPES.INBOX
-    ) {
-      // If Home(Notification) tab is active then update data
-      if (getCurrentRouteName() == GLOBALS.SCREENS.NOTIF_TABS) {
-        globalDispatch(updateNotificationOpened(true));
-      } else {
-        // If Home(Notification) tab is inactive then first
-        //     navigate to Home tab then update data
-        navigate(GLOBALS.SCREENS.NOTIF_TABS);
-        globalDispatch(updateNotificationOpened(true));
+        // Get Group Data
+        let groupInformation: GroupInformation = null;
+        if (isGroupConversation) {
+          const groupInformationResponse =
+            await userPushSDKInstance?.chat.group.info(chatId);
+          groupInformation = {
+            groupName: groupInformationResponse?.groupName,
+            groupImage: groupInformationResponse?.groupImage,
+          };
+        }
+
+        // Get latest message to check if conversation request accepted or not
+        let isIntentReceivePage = false;
+        const conversationHashResponse: any =
+          await userPushSDKInstance?.chat.latest(chatId);
+        if (conversationHashResponse?.length > 0) {
+          isIntentReceivePage =
+            conversationHashResponse?.[0]?.listType !== 'CHATS';
+        }
+        return {
+          feed: {groupInformation},
+          isIntentSendPage: false,
+          isIntentReceivePage,
+          connectedUser: {
+            ...connectedUser,
+            wallets: connectedUser.wallet,
+            privateKey: pgpPrivateKey,
+          },
+          senderAddress: isGroupConversation ? null : caip10ToWallet(wallets),
+          image: isGroupConversation
+            ? groupInformation?.groupImage
+            : profilePicture,
+          cid: threadhash,
+          title: isGroupConversation ? groupInformation?.groupName : null,
+          chatId,
+        };
       }
-    } else if (data?.type === NOTIFICATION_TYPES.CHAT) {
-    }
-  },
-
-  /*****************************************************/
-  /**   Handle data updates in the Foreground state   **/
-  /**       if the received notification is for       **/
-  /**      the currently active component screen.     **/
-  /*****************************************************/
-  handlePostNotificationReceived: (data?: {
-    [key: string]: string | number | object;
-  }) => {
-    // Parse the stringified data
-    const parsedDetails = data?.details
-      ? JSON.parse(data?.details as string)
-      : {};
-
-    // Handle condition check please data needs to be
-    //      updated after notification received
-    if (
-      data?.type === NOTIFICATION_TYPES.CHANNEL &&
-      parsedDetails?.subType === NOTIFICATION_SUB_TYPES.INBOX &&
-      getCurrentRouteName() == GLOBALS.SCREENS.NOTIF_TABS
-    ) {
-      globalDispatch(updateNotificationReceived(true));
+      return null;
+    } catch (error) {
+      return null;
     }
   },
 };
