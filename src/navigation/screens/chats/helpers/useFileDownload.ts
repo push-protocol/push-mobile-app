@@ -88,6 +88,14 @@ const useFileDownload = (
           ? `${androidDownloadDir}/${fileName}` // Public Downloads on Android
           : `${RNBlobUtil.fs.dirs.CacheDir}/${fileName}`; // Documents directory on iOS
 
+      // Check if the file exists
+      const fileExists = await RNBlobUtil.fs.exists(filePath);
+
+      if (fileExists) {
+        // Delete the file if it exists
+        await RNBlobUtil.fs.unlink(filePath);
+      }
+
       // Write the file
       await RNBlobUtil.fs.writeFile(filePath, base64Data, 'base64');
       if (Platform.OS === 'ios') {
