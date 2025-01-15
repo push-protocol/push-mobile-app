@@ -1,3 +1,4 @@
+import Clipboard from '@react-native-clipboard/clipboard';
 import {WalletConnectModal} from '@walletconnect/modal-react-native';
 import '@walletconnect/react-native-compat';
 import React from 'react';
@@ -31,6 +32,7 @@ const App = ({isCallAccepted}) => {
           )}
           sessionParams={WalletConnectConfig.sessionParams}
           relayUrl="wss://relay.walletconnect.com"
+          onCopyClipboard={value => Clipboard.setString(value)}
         />
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
