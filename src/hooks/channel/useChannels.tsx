@@ -4,54 +4,62 @@ import Globals from 'src/Globals';
 import GLOBALS from 'src/Globals';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import envConfig from 'src/env.config';
-import {
-  addChannels,
-  nextChannelsPage,
-  resetChannels,
-  selectChannelsPage,
-  selectChannelsReachedEnd,
-  setChannelsPage,
-  setChannelsReachedEnd,
-} from 'src/redux/channelSlice';
+import {addChannels, resetChannels, setChannels} from 'src/redux/channelSlice';
 
 export type UseChannelsProps = {
   tag: string;
-  showSearchResults: boolean;
+  searchQuery: string;
 };
 
-const useChannels = ({tag, showSearchResults}: UseChannelsProps) => {
-  const [isLoadingChannels, setChannelsLoading] = useState<boolean>(false);
-  const [isLoadingSearchResults, setSearchResultsLoading] =
-    useState<boolean>(false);
-  const [searchResults, setSearchResults] = useState([]);
+const DEBOUNCE_TIMEOUT = 500; //time in millisecond which we want to wait for then to finish typing
+
+const useChannels = ({tag, searchQuery}: UseChannelsProps) => {
+  const [searchTimer, setSearchTimer] = useState<NodeJS.Timeout>();
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isEndReached, setIsEndReached] = useState(false); // this confirms that all data is loaded
+
   const {userPushSDKInstance} = usePushApi();
 
   const dispatch = useDispatch();
 
-  const channelsPage = useSelector(selectChannelsPage);
-  const channelsReachedEnd = useSelector(selectChannelsReachedEnd);
-
   useEffect(() => {
-    if (
-      !channelsReachedEnd &&
-      !isLoadingChannels &&
-      channelsPage !== 0 &&
-      tag &&
-      !showSearchResults
-    ) {
-      loadChannels({page: channelsPage});
-    }
-  }, [channelsPage, tag]);
+    console.log('first', {page, tag, searchQuery});
+    handleChannelInterval();
+  }, [page, tag, searchQuery]);
 
-  const loadMoreChannels = () => {
-    if (channelsReachedEnd || isLoadingChannels) return;
-    dispatch(nextChannelsPage());
+  const handleChannelInterval = () => {
+    if (searchTimer) {
+      clearTimeout(searchTimer);
+    }
+    setSearchTimer(
+      setTimeout(() => {
+        getChannelsData();
+      }, DEBOUNCE_TIMEOUT),
+    );
   };
 
-  const loadChannels = async ({page}: {page: number}) => {
-    // If we have reached the end of the channels or loading, do nothing
-    if (channelsReachedEnd || isLoadingChannels) return;
-    setChannelsLoading(true);
+  const getChannelsData = () => {
+    console.log('second', {page, tag, searchQuery});
+    if (searchQuery.trim().length) {
+      handleSearchAPI();
+    } else {
+      handleChannelAPI();
+    }
+  };
+
+  const loadMore = () => {
+    if (!isEndReached && !isLoading && !isLoadingMore) {
+      setIsLoadingMore(true);
+      setPage(page + 1);
+    }
+  };
+
+  /*************************************************************/
+  /**   This function will handle Normal API call with tags   **/
+  /*************************************************************/
+  const handleChannelAPI = async () => {
     try {
       const apiURL = envConfig.EPNS_SERVER + envConfig.ENDPOINT_FETCH_CHANNELS;
       let requestURL = `${apiURL}?limit=${GLOBALS.CONSTANTS.FEED_ITEMS_TO_PULL}&page=${page}`;
@@ -59,16 +67,47 @@ const useChannels = ({tag, showSearchResults}: UseChannelsProps) => {
         requestURL = `${requestURL}&tag=${tag}`;
       }
       const resJson = await fetch(requestURL).then(response => response.json());
-      if (resJson.channels.length !== 0) {
+      if (page > 1) {
         dispatch(addChannels(resJson.channels));
-        dispatch(setChannelsReachedEnd(false));
-      } else if (resJson.channels.length === 0) {
-        dispatch(setChannelsReachedEnd(true));
+      } else {
+        dispatch(setChannels(resJson.channels));
+      }
+      if (resJson.channels.length < GLOBALS.CONSTANTS.FEED_ITEMS_TO_PULL) {
+        setIsEndReached(true);
       }
     } catch (e) {
       console.error(e);
     } finally {
-      setChannelsLoading(false);
+      setIsLoading(false);
+      setIsLoadingMore(false);
+    }
+  };
+
+  /***************************************************/
+  /**   This function will handle search API call   **/
+  /***************************************************/
+  const handleSearchAPI = async () => {
+    try {
+      const query = searchQuery.trim();
+      if (query.length) {
+        const results = await userPushSDKInstance?.channel.search(query, {
+          page: page,
+          limit: GLOBALS.CONSTANTS.FEED_ITEMS_TO_PULL,
+        });
+        if (page > 1) {
+          dispatch(addChannels(results));
+        } else {
+          dispatch(setChannels(results));
+        }
+        if (results.length < GLOBALS.CONSTANTS.FEED_ITEMS_TO_PULL) {
+          setIsEndReached(true);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+      setIsLoadingMore(false);
     }
   };
 
@@ -77,34 +116,18 @@ const useChannels = ({tag, showSearchResults}: UseChannelsProps) => {
   /**     Currently handled for onChangeCategory    **/
   /***************************************************/
   const resetChannelData = () => {
-    dispatch(setChannelsPage(1));
-    dispatch(setChannelsReachedEnd(false));
-    setChannelsLoading(false);
+    setIsLoading(true);
+    setPage(1);
     dispatch(resetChannels());
-  };
-
-  const loadSearchResults = async (query: string) => {
-    setSearchResultsLoading(true);
-    try {
-      const results = await userPushSDKInstance?.channel.search(query, {
-        page: 1,
-        limit: GLOBALS.CONSTANTS.FEED_ITEMS_TO_PULL,
-      });
-      setSearchResults(results);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setSearchResultsLoading(false);
-    }
+    setIsLoadingMore(false);
+    setIsEndReached(false);
   };
 
   return {
-    loadMoreChannels,
-    loadSearchResults,
+    isLoading,
+    isLoadingMore,
+    loadMore,
     resetChannelData,
-    isLoadingChannels,
-    isLoadingSearchResults,
-    searchResults,
   };
 };
 
