@@ -1,6 +1,13 @@
 import '@ethersproject/shims';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {FlatList, Image, StyleSheet, TextInput, View} from 'react-native';
+import React, {useEffect, useMemo, useState} from 'react';
+import {
+  FlatList,
+  Image,
+  Platform,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
 import {useSelector} from 'react-redux';
 import StylishLabel from 'src/components/labels/StylishLabel';
 import EPNSActivity from 'src/components/loaders/EPNSActivity';
@@ -12,7 +19,6 @@ import useSubscriptions from 'src/hooks/channel/useSubscriptions';
 import {
   Channel,
   selectChannels,
-  selectChannelsReachedEnd,
   selectIsLoadingSubscriptions,
 } from 'src/redux/channelSlice';
 
@@ -21,52 +27,25 @@ import Globals from '../../Globals';
 import {ChannelCategories} from './ChannelCategories';
 
 const ChannelsDisplayer = () => {
-  const [searchTimer, setSearchTimer] = useState<NodeJS.Timeout>();
-
-  const DEBOUNCE_TIMEOUT = 500; //time in millisecond which we want to wait for then to finish typing
-
   const [search, setSearch] = React.useState('');
-  const [showSearchResults, setShowSearchResults] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>(
     Globals.CONSTANTS.ALL_CATEGORIES,
   );
 
   const channelResults = useSelector(selectChannels);
-  const channelsReachedEnd = useSelector(selectChannelsReachedEnd);
-  const {
-    loadMoreChannels,
-    loadSearchResults,
-    resetChannelData,
-    isLoadingChannels,
-    isLoadingSearchResults,
-    searchResults,
-  } = useChannels({tag: selectedCategory, showSearchResults});
+  const {isLoading, isLoadingMore, resetChannelData, loadMore} = useChannels({
+    tag: selectedCategory,
+    searchQuery: search,
+  });
 
   const isLoadingSubscriptions = useSelector(selectIsLoadingSubscriptions);
   const {refreshSubscriptions} = useSubscriptions();
   const {userPushSDKInstance} = usePushApi();
   const {openSheet} = useSheets();
 
-  const channels = useMemo(() => {
-    return showSearchResults ? searchResults : channelResults;
-  }, [showSearchResults, searchResults, channelResults]);
-
-  const endReached = useMemo(() => {
-    return showSearchResults ? true : channelsReachedEnd;
-  }, [showSearchResults, true, channelsReachedEnd]);
-
-  const isLoading = useMemo(() => {
-    return showSearchResults ? isLoadingSearchResults : isLoadingChannels;
-  }, [showSearchResults, isLoadingSearchResults, isLoadingChannels]);
-
-  const loadMore = useMemo(() => {
-    return showSearchResults ? () => {} : loadMoreChannels;
-  }, [showSearchResults]);
-
   useEffect(() => {
     if (userPushSDKInstance) {
       refreshSubscriptions();
-      loadMore();
     }
   }, [userPushSDKInstance]);
 
@@ -74,34 +53,15 @@ const ChannelsDisplayer = () => {
     openSheet({name: 'NFSettingsSheet', channel});
   };
 
-  const searchForChannel = async (channelName: string) => {
-    if (channelName.trim() === '') {
-      setShowSearchResults(false);
-      return;
-    }
-    setShowSearchResults(true);
-    setSelectedCategory(Globals.CONSTANTS.ALL_CATEGORIES);
-    await loadSearchResults(channelName);
-  };
-
   const handleChannelSearch = async (searchQuery: string) => {
-    try {
-      if (searchTimer) {
-        clearTimeout(searchTimer);
-      }
-      setSearch(searchQuery);
-      setSearchTimer(
-        setTimeout(() => {
-          searchForChannel(searchQuery);
-        }, DEBOUNCE_TIMEOUT),
-      );
-    } catch (e) {}
+    setSearch(searchQuery);
+    resetChannelData();
+    setSelectedCategory(Globals.CONSTANTS.ALL_CATEGORIES);
   };
 
   const handleCategoryChange = (category: string) => {
-    if (search.length || showSearchResults) {
+    if (search.length) {
       setSearch('');
-      setShowSearchResults(false);
     }
     resetChannelData();
     setSelectedCategory(category as string);
@@ -127,12 +87,12 @@ const ChannelsDisplayer = () => {
         </View>
 
         <ChannelCategories
-          disabled={isLoadingChannels}
+          disabled={isLoading}
           onChangeCategory={handleCategoryChange}
           value={selectedCategory}
         />
 
-        {channels.length === 0 && (
+        {channelResults.length === 0 && (
           <View style={[styles.infodisplay]}>
             {!isLoading && !isLoadingSubscriptions ? (
               // Show channel not found label
@@ -140,7 +100,7 @@ const ChannelsDisplayer = () => {
                 style={styles.infoText}
                 fontSize={16}
                 title={
-                  showSearchResults
+                  search.length
                     ? '[dg:No channels match your query, please search for another name/address]'
                     : '[dg:No results available.]'
                 }
@@ -159,26 +119,23 @@ const ChannelsDisplayer = () => {
           </View>
         )}
 
-        {channels.length !== 0 && !isLoadingSubscriptions && (
+        {channelResults.length !== 0 && !isLoadingSubscriptions && (
           <FlatList
-            data={channels}
+            data={channelResults}
             style={styles.channels}
             contentContainerStyle={styles.channelListContentContainerStyle}
-            keyExtractor={item => item.channel.toString()}
+            keyExtractor={(item, index) => `${item.name}-${index}-channel-key`}
             initialNumToRender={20}
             showsVerticalScrollIndicator={false}
             ItemSeparatorComponent={() => <View style={styles.seperator} />}
-            onEndReached={() => {
-              if (!endReached) {
-                loadMore();
-              }
-            }}
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.8}
             renderItem={({item: channel}) => (
               <ChannelItem {...{channel, selectChannelForSettings}} />
             )}
             ListFooterComponent={() => {
-              return isLoading ? (
-                <View style={{paddingBottom: 80, marginTop: 20}}>
+              return isLoading || isLoadingMore ? (
+                <View style={styles.footerLoadingView}>
                   <EPNSActivity style={{}} size="small" />
                 </View>
               ) : null;
@@ -203,7 +160,7 @@ const styles = StyleSheet.create({
   },
   channelListContentContainerStyle: {
     paddingTop: 10,
-    paddingBottom: 80, // Add some padding to the bottom to display last item content
+    paddingBottom: Platform.OS === 'android' ? 100 : 140, // Add some padding to the bottom to display last item content
   },
   infodisplay: {
     width: '100%',
@@ -246,6 +203,7 @@ const styles = StyleSheet.create({
     borderColor: '#E5E5E5',
     marginVertical: 24,
   },
+  footerLoadingView: {paddingVertical: 10},
 });
 
 export default ChannelsDisplayer;
