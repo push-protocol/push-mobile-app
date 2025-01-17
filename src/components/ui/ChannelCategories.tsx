@@ -21,7 +21,10 @@ const ChannelCategories: FC<ChannelCategoriesProps> = ({
   if (!isLoading && channelCategories?.length > 0) {
     return (
       <View style={styles.mainView}>
-        <ScrollView showsHorizontalScrollIndicator={false} horizontal>
+        <ScrollView
+          contentContainerStyle={styles.scrollViewStyle}
+          showsHorizontalScrollIndicator={false}
+          horizontal>
           {channelCategories.map((item, index) => (
             <Pill
               disabled={disabled || item.value === value}
@@ -48,5 +51,8 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     marginBottom: 16,
+  },
+  scrollViewStyle: {
+    paddingHorizontal: 16,
   },
 });

@@ -164,6 +164,7 @@ export default {
     BG_PUSHNOTIFY: '#FCF2E3',
     BG_ALLSET: '#F8ECFF',
     BG_OBSLIDER: '#F8ECFF',
+    BG_SEARCH_BAR: '#EFEFEF',
 
     // Notification
     IC_NOTIFICATION: '#e20880',
@@ -174,6 +175,7 @@ export default {
 
     // Border
     BORDER_DEFAULT: '#C4CBD5',
+    BORDER_SEPARATOR: '#E5E5E5',
   },
   SCREENS: {
     WELCOME: 'Welcome',
