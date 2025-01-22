@@ -1,5 +1,5 @@
 import '@ethersproject/shims';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -68,8 +68,9 @@ const ChannelsDisplayer = () => {
   };
 
   return (
-    <>
-      <View style={styles.container}>
+    <View style={styles.container}>
+      {/* Render Search Bar */}
+      <View style={styles.searchBarWrapper}>
         <View style={styles.searchView}>
           <Image
             source={require('assets/ui/search.png')}
@@ -85,65 +86,68 @@ const ChannelsDisplayer = () => {
             placeholderTextColor="#7D7F89"
           />
         </View>
+      </View>
 
-        <ChannelCategories
-          disabled={isLoading}
-          onChangeCategory={handleCategoryChange}
-          value={selectedCategory}
-        />
+      {/* Render Channel Categories(tags) */}
+      <ChannelCategories
+        disabled={isLoading}
+        onChangeCategory={handleCategoryChange}
+        value={selectedCategory}
+      />
 
-        {channelResults.length === 0 && (
-          <View style={[styles.infodisplay]}>
-            {!isLoading && !isLoadingSubscriptions ? (
-              // Show channel not found label
+      {/* Render No Data View */}
+      {channelResults.length === 0 && (
+        <View style={[styles.infodisplay]}>
+          {!isLoading && !isLoadingSubscriptions ? (
+            // Show channel not found label
+            <StylishLabel
+              style={styles.infoText}
+              fontSize={16}
+              title={
+                search.length
+                  ? '[dg:No channels match your query, please search for another name/address]'
+                  : '[dg:No results available.]'
+              }
+            />
+          ) : (
+            // Show channel fetching label
+            <>
+              <EPNSActivity style={{}} size="small" />
               <StylishLabel
                 style={styles.infoText}
                 fontSize={16}
-                title={
-                  search.length
-                    ? '[dg:No channels match your query, please search for another name/address]'
-                    : '[dg:No results available.]'
-                }
+                title="[dg:Fetching Channels!]"
               />
-            ) : (
-              // Show channel fetching label
-              <>
-                <EPNSActivity style={{}} size="small" />
-                <StylishLabel
-                  style={styles.infoText}
-                  fontSize={16}
-                  title="[dg:Fetching Channels!]"
-                />
-              </>
-            )}
-          </View>
-        )}
+            </>
+          )}
+        </View>
+      )}
 
-        {channelResults.length !== 0 && !isLoadingSubscriptions && (
-          <FlatList
-            data={channelResults}
-            style={styles.channels}
-            contentContainerStyle={styles.channelListContentContainerStyle}
-            keyExtractor={(item, index) => `${item.name}-${index}-channel-key`}
-            initialNumToRender={20}
-            showsVerticalScrollIndicator={false}
-            ItemSeparatorComponent={() => <View style={styles.seperator} />}
-            onEndReached={loadMore}
-            onEndReachedThreshold={0.8}
-            renderItem={({item: channel}) => (
-              <ChannelItem {...{channel, selectChannelForSettings}} />
-            )}
-            ListFooterComponent={() => {
-              return isLoading || isLoadingMore ? (
-                <View style={styles.footerLoadingView}>
-                  <EPNSActivity style={{}} size="small" />
-                </View>
-              ) : null;
-            }}
-          />
-        )}
-      </View>
-    </>
+      {/* Render Channel List */}
+      {channelResults.length !== 0 && !isLoadingSubscriptions && (
+        <FlatList
+          data={channelResults}
+          style={styles.channels}
+          contentContainerStyle={styles.channelListContentContainerStyle}
+          keyExtractor={(item, index) => `${item.name}-${index}-channel-key`}
+          initialNumToRender={20}
+          showsVerticalScrollIndicator={false}
+          ItemSeparatorComponent={() => <View style={styles.seperator} />}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.8}
+          renderItem={({item: channel}) => (
+            <ChannelItem {...{channel, selectChannelForSettings}} />
+          )}
+          ListFooterComponent={() => {
+            return isLoading || isLoadingMore ? (
+              <View style={styles.footerLoadingView}>
+                <EPNSActivity style={{}} size="small" />
+              </View>
+            ) : null;
+          }}
+        />
+      )}
+    </View>
   );
 };
 
@@ -151,7 +155,6 @@ const ChannelsDisplayer = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
     backgroundColor: GLOBALS.COLORS.WHITE,
   },
   channels: {
@@ -161,6 +164,7 @@ const styles = StyleSheet.create({
   channelListContentContainerStyle: {
     paddingTop: 10,
     paddingBottom: Platform.OS === 'android' ? 100 : 140, // Add some padding to the bottom to display last item content
+    paddingHorizontal: 16,
   },
   infodisplay: {
     width: '100%',
@@ -177,12 +181,15 @@ const styles = StyleSheet.create({
   infoText: {
     marginVertical: 10,
   },
+  searchBarWrapper: {
+    paddingHorizontal: 16,
+    marginBottom: 24,
+  },
   searchView: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 16,
-    backgroundColor: '#EFEFEF',
-    marginBottom: 24,
+    backgroundColor: GLOBALS.COLORS.BG_SEARCH_BAR,
     height: 42,
     paddingHorizontal: 8,
   },
@@ -200,7 +207,7 @@ const styles = StyleSheet.create({
   },
   seperator: {
     borderBottomWidth: 1,
-    borderColor: '#E5E5E5',
+    borderColor: GLOBALS.COLORS.BORDER_SEPARATOR,
     marginVertical: 24,
   },
   footerLoadingView: {paddingVertical: 10},
