@@ -30,7 +30,7 @@
     "@gorhom/bottom-sheet": "^4",
     "@metamask/eth-sig-util": "^5.0.0",
     "@notifee/react-native": "^9.1.8",
-    "@pushprotocol/restapi": "^1.7.28",
+    "@pushprotocol/restapi": "^1.7.30",
     "@pushprotocol/socket": "latest",
     "@react-native-async-storage/async-storage": "1.17.11",
     "@react-native-clipboard/clipboard": "^1.11.1",

@@ -22,6 +22,7 @@ import {
 
 import {usePushApiMode} from '../pushapi/usePushApiMode';
 import {useSigner} from '../pushapi/useSigner';
+import useModalBlur from '../ui/useModalBlur';
 
 const useSubscriptions = () => {
   const [loaded, setLoaded] = useState(false);
@@ -81,6 +82,7 @@ const useSubscriptions = () => {
           ? // @ts-ignore
             baseClass.getMinimalUserSetting(pushSettings)
           : null;
+        const pgpPrivateKey = userPushSDKInstance?.decryptedPgpPvtKey;
         await channels.subscribeV2({
           channelAddress: channelCaip,
           signer: signer,
@@ -89,6 +91,7 @@ const useSubscriptions = () => {
           settings: settings,
           onSuccess: onSuccess,
           onError: onError,
+          pgpPrivateKey,
         });
       } catch (e) {
         console.error(e);
@@ -120,6 +123,7 @@ const useSubscriptions = () => {
     const {account, signer} = await getPushSigner();
     if (isSignerEnabled && signer && account) {
       try {
+        const pgpPrivateKey = userPushSDKInstance?.decryptedPgpPvtKey;
         await channels.unsubscribeV2({
           channelAddress: channelCaip,
           signer,
@@ -127,6 +131,7 @@ const useSubscriptions = () => {
           env: envConfig.ENV as ENV,
           onSuccess: onSuccess,
           onError: onError,
+          pgpPrivateKey,
         });
       } catch (e) {
         console.error(e);
@@ -139,6 +144,7 @@ const useSubscriptions = () => {
   const refreshSubscriptions = async (force = false) => {
     try {
       if (loaded && !force) return;
+      console.log('Refreshing subscriptions');
       dispatch(setLoadingSubscriptions(true));
       const response = await userPushSDKInstance?.notification.subscriptions({
         account: caip10ToWallet(userPushSDKInstance?.account),

@@ -1,4 +1,5 @@
 import {PayloadAction, createSlice} from '@reduxjs/toolkit';
+import {ChannelPendingSubscriptionType} from 'src/components/buttons/SubscriptionStatus';
 import {
   ChannelSetting,
   UserSetting,
@@ -30,12 +31,17 @@ type ChannelSliceData = {
   channels: Array<Channel>;
   subscriptions: SubscriptionsMapping;
   isLoadingSubscriptions: boolean;
+  channelPendingSubscription: ChannelPendingSubscriptionType;
 };
 
 const initialState: ChannelSliceData = {
   channels: [],
   subscriptions: {},
   isLoadingSubscriptions: false,
+  channelPendingSubscription: {
+    channel_id: null,
+    status: false,
+  },
 };
 
 const channelSlice = createSlice({
@@ -66,6 +72,12 @@ const channelSlice = createSlice({
     setLoadingSubscriptions: (state, action: PayloadAction<boolean>) => {
       state.isLoadingSubscriptions = action.payload;
     },
+    setChannelPendingSubscription: (
+      state,
+      action: PayloadAction<ChannelPendingSubscriptionType>,
+    ) => {
+      state.channelPendingSubscription = action.payload;
+    },
   },
 });
 
@@ -77,6 +89,7 @@ export const {
   removeChannelSubscription,
   setSubscriptions,
   setLoadingSubscriptions,
+  setChannelPendingSubscription,
 } = channelSlice.actions;
 
 type ReturnTypeChannel = {channel: ChannelSliceData};
@@ -88,5 +101,7 @@ export const selectSubscriptions = (state: ReturnTypeChannel) =>
   state.channel.subscriptions;
 export const selectIsLoadingSubscriptions = (state: ReturnTypeChannel) =>
   state.channel.isLoadingSubscriptions;
+export const selectChannelPendingSubscription = (state: ReturnTypeChannel) =>
+  state.channel.channelPendingSubscription;
 
 export default channelSlice.reducer;
