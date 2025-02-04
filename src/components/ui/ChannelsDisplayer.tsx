@@ -136,7 +136,12 @@ const ChannelsDisplayer = () => {
           onEndReached={loadMore}
           onEndReachedThreshold={0.8}
           renderItem={({item: channel}) => (
-            <ChannelItem {...{channel, selectChannelForSettings}} />
+            <ChannelItem
+              {...{
+                channel,
+                selectChannelForSettings,
+              }}
+            />
           )}
           ListFooterComponent={() => {
             return isLoading || isLoadingMore ? (

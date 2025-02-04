@@ -36,6 +36,7 @@ type PushApiContextType = {
   getReadOnlyInstance: (overrideAccount?: string) => Promise<void>;
   isLoading: boolean;
   showUnlockProfileModal: () => void;
+  isUnlockProfileModalOpen: boolean;
 };
 
 export const PushApiContext = createContext<PushApiContextType>({
@@ -47,6 +48,7 @@ export const PushApiContext = createContext<PushApiContextType>({
   getReadOnlyInstance: () => Promise.resolve(),
   isLoading: true,
   showUnlockProfileModal: () => {},
+  isUnlockProfileModalOpen: false,
 });
 
 export const usePushApi = () => {
@@ -77,6 +79,7 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
     ModalComponent: UnlockProfileModal,
     hideModal: hideUnlockProfileModal,
     showModal: showUnlockProfileModal,
+    isModalOpen: isUnlockProfileModalOpen,
   } = useModalBlur();
 
   const {
@@ -234,6 +237,7 @@ const PushApiContextProvider = ({children}: {children: React.ReactNode}) => {
         userInfo,
         isLoading,
         showUnlockProfileModal,
+        isUnlockProfileModalOpen,
       }}>
       <AddressMismatchModal
         InnerComponent={AuthModalWrapper}
