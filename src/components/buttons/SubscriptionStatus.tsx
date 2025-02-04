@@ -14,7 +14,7 @@ import {usePushApi} from 'src/contexts/PushApiContext';
 import {useToaster} from 'src/contexts/ToasterContext';
 import {TimeoutHelper} from 'src/helpers/TimeoutHelper';
 import useSubscriptions from 'src/hooks/channel/useSubscriptions';
-import {selectIsGuest} from 'src/redux/authSlice';
+import {usePushApiMode} from 'src/hooks/pushapi/usePushApiMode';
 import {
   Channel,
   selectChannelPendingSubscription,
@@ -47,11 +47,11 @@ const SubscriptionStatus = ({
     selectChannelPendingSubscription,
   );
   const isLoadingSubscriptions = useSelector(selectIsLoadingSubscriptions);
-  const isGuest = useSelector(selectIsGuest);
 
   const {subscribe} = useSubscriptions();
   const {toastRef} = useToaster();
   const {showUnlockProfileModal, isUnlockProfileModalOpen} = usePushApi();
+  const {isGreenStatus} = usePushApiMode();
 
   const channelSettings = channelData.channel_settings;
   const channel = channelData.channel;
@@ -68,7 +68,7 @@ const SubscriptionStatus = ({
       !isUnlockProfileModalOpen
     ) {
       // If the user is not guest, then subscribe/unsubscribe the channel
-      if (!isGuest) {
+      if (isGreenStatus) {
         dispatch(
           setChannelPendingSubscription({
             channel_id: null,
@@ -83,15 +83,14 @@ const SubscriptionStatus = ({
             status: false,
           }),
         );
-        setProcessing(false);
       }
     }
-  }, [isGuest]);
+  }, [isGreenStatus]);
 
   const checkIfGuest = async () => {
+    console.log({isGreenStatus});
     // If the user is a guest, show the unlock profile modal
-    if (isGuest) {
-      setProcessing(true);
+    if (!isGreenStatus) {
       dispatch(
         setChannelPendingSubscription({
           channel_id: channelData.channel_id,
@@ -106,6 +105,7 @@ const SubscriptionStatus = ({
 
   const handleChangeSubStatus = async () => {
     if (await checkIfGuest()) return;
+    setProcessing(true);
     if (subscribed === true) {
       selectChannelForSettings(channelData);
     } else {
