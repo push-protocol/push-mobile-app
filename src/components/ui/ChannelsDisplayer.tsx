@@ -14,6 +14,8 @@ import EPNSActivity from 'src/components/loaders/EPNSActivity';
 import ChannelItem from 'src/components/ui/ChannelItem';
 import {usePushApi} from 'src/contexts/PushApiContext';
 import {useSheets} from 'src/contexts/SheetContext';
+import ENV_CONFIG from 'src/env.config';
+import {ChainHelper} from 'src/helpers/ChainHelper';
 import useChannels from 'src/hooks/channel/useChannels';
 import useSubscriptions from 'src/hooks/channel/useSubscriptions';
 import {
@@ -24,6 +26,7 @@ import {
 
 import GLOBALS from '../../Globals';
 import Globals from '../../Globals';
+import {Dropdown} from '../dropdown';
 import {ChannelCategories} from './ChannelCategories';
 
 const ChannelsDisplayer = () => {
@@ -67,10 +70,24 @@ const ChannelsDisplayer = () => {
     setSelectedCategory(category as string);
   };
 
+  const getSelectChains = (chainIdList: Array<number>) => {
+    return chainIdList?.map((key: number) => {
+      return {
+        value: key.toString(),
+        label:
+          ChainHelper.networkName?.[
+            key as keyof typeof ChainHelper.networkName
+          ] ?? '',
+        icon: ChainHelper.chainIdToLogo(key),
+      };
+    });
+  };
+
   return (
     <View style={styles.container}>
       {/* Render Search Bar */}
       <View style={styles.searchBarWrapper}>
+        {/* Render Search Bar */}
         <View style={styles.searchView}>
           <Image
             source={require('assets/ui/search.png')}
@@ -82,10 +99,16 @@ const ChannelsDisplayer = () => {
               handleChannelSearch(e);
             }}
             value={search}
-            placeholder={'Search for channel name or address'}
+            placeholder={'Search for channel name...'}
             placeholderTextColor="#7D7F89"
           />
         </View>
+
+        {/* Render Dropdown Field */}
+        <Dropdown
+          style={styles.dropdownField}
+          data={getSelectChains(ENV_CONFIG.ALLOWED_NETWORKS)}
+        />
       </View>
 
       {/* Render Channel Categories(tags) */}
@@ -189,14 +212,18 @@ const styles = StyleSheet.create({
   searchBarWrapper: {
     paddingHorizontal: 16,
     marginBottom: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   searchView: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 16,
     backgroundColor: GLOBALS.COLORS.BG_SEARCH_BAR,
-    height: 42,
-    paddingHorizontal: 8,
+    height: 48,
+    paddingHorizontal: 12,
+    width: '70%',
   },
   searchBar: {
     fontSize: 14,
@@ -216,6 +243,10 @@ const styles = StyleSheet.create({
     marginVertical: 24,
   },
   footerLoadingView: {paddingVertical: 10},
+  dropdownField: {
+    width: '25%',
+    height: 48,
+  },
 });
 
 export default ChannelsDisplayer;

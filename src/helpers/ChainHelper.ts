@@ -1,19 +1,24 @@
 import {ImageSourcePropType} from 'react-native';
 
-type chainNameType =
+export type chainNameType =
   | 'ETH_TEST_SEPOLIA'
   | 'POLYGON_TEST_MUMBAI'
+  | 'POLYGON_AMOY'
   | 'ETH_MAINNET'
   | 'POLYGON_MAINNET'
   | 'BSC_MAINNET'
   | 'BSC_TESTNET'
   | 'OPTIMISM_MAINNET'
   | 'OPTIMISM_TESTNET'
+  | 'OPTIMISM_SEPOLIA'
   | 'POLYGON_ZK_EVM_TESTNET'
   | 'POLYGON_ZK_EVM_MAINNET'
   | 'ARBITRUMONE_MAINNET'
   | 'ARBITRUM_TESTNET'
   | 'FUSE_MAINNET'
+  | 'FUSE_TESTNET'
+  | 'CYBER_TESTNET'
+  | 'CYBER_MAINNET'
   | 'FUSE_TESTNET'
   | undefined;
 
@@ -28,7 +33,9 @@ export const ChainHelper = {
         return 'POLYGON_MAINNET';
       case 80001:
         return 'POLYGON_TEST_MUMBAI';
-      case 1442:
+      case 80002:
+        return 'POLYGON_AMOY';
+      case 2442:
         return 'POLYGON_ZK_EVM_TESTNET';
       case 1101:
         return 'POLYGON_ZK_EVM_MAINNET';
@@ -40,6 +47,8 @@ export const ChainHelper = {
         return 'OPTIMISM_MAINNET';
       case 69:
         return 'OPTIMISM_TESTNET';
+      case 11155420:
+        return 'OPTIMISM_SEPOLIA';
       case 42161:
         return 'ARBITRUMONE_MAINNET';
       case 421614:
@@ -48,6 +57,10 @@ export const ChainHelper = {
         return 'FUSE_MAINNET';
       case 123:
         return 'FUSE_TESTNET';
+      case 7560:
+        return 'CYBER_MAINNET';
+      case 111557560:
+        return 'CYBER_TESTNET';
       default:
         return undefined;
     }
@@ -60,6 +73,7 @@ export const ChainHelper = {
         return require('assets/ui/ethereum.png');
       case 'POLYGON_MAINNET':
       case 'POLYGON_TEST_MUMBAI':
+      case 'POLYGON_AMOY':
         return require('assets/ui/polygon.png');
       case 'POLYGON_ZK_EVM_TESTNET':
       case 'POLYGON_ZK_EVM_MAINNET':
@@ -69,6 +83,7 @@ export const ChainHelper = {
         return require('assets/ui/bnb.png');
       case 'OPTIMISM_MAINNET':
       case 'OPTIMISM_TESTNET':
+      case 'OPTIMISM_SEPOLIA':
         return require('assets/ui/optimism.png');
       case 'ARBITRUMONE_MAINNET':
       case 'ARBITRUM_TESTNET':
@@ -76,6 +91,13 @@ export const ChainHelper = {
       case 'FUSE_MAINNET':
       case 'FUSE_TESTNET':
         return require('assets/ui/fuse.png');
+      case 'CYBER_MAINNET':
+      case 'CYBER_TESTNET':
+        return require('assets/ui/cyber.png');
+      case 'CYBER_MAINNET':
+      case 'CYBER_TESTNET':
+        return require('assets/ui/base.png');
+
       default:
         return null;
     }
@@ -87,5 +109,30 @@ export const ChainHelper = {
       return ChainHelper.chainNameToLogo(chainName);
     }
     return null;
+  },
+
+  networkName: {
+    42: 'Ethereum Kovan',
+    5: 'Ethereum Goerli',
+    11155111: 'Ethereum Sepolia',
+    1: 'Ethereum Mainnet',
+    137: 'Polygon Mainnet',
+    80002: 'Polygon Amoy',
+    97: 'BNB Testnet',
+    56: 'BNB Mainnet',
+    11155420: 'Optimism Sepolia',
+    10: 'Optimism Mainnet',
+    2442: 'Polygon zkEVM Testnet',
+    1101: 'Polygon zkEVM Mainnet',
+    42161: 'ArbitrumOne Mainnet',
+    421614: 'Arbitrum Testnet',
+    122: 'Fuse Mainnet',
+    123: 'Fuse Testnet',
+    111557560: 'Cyber Testnet',
+    7560: 'Cyber Mainnet',
+    8453: 'Base Mainnet',
+    84532: 'Base Sepolia',
+    59141: 'Linea Sepolia',
+    59144: 'Linea Mainnet',
   },
 };
